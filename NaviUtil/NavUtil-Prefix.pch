@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'NavUtil' target in the 'NavUtil' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif

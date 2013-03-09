@@ -1,0 +1,17 @@
+//
+//  Speech.h
+//  NavUtil
+//
+//  Created by Coming on 13/2/26.
+//  Copyright (c) 2013年 Coming. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
+
+@interface Speech : NSObject
+
+@property (nonatomic) CLLocationCoordinate2D coordinate;
+@property (nonatomic, strong) NSString* filePath;
+@property (nonatomic, strong) NSString* text;
+@end

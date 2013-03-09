@@ -7,7 +7,25 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "DownloadManager.h"
+#import "DownloadRequest.h"
+#import "FileDownloader.h"
+#import "GeoUtil.h"
+#import "GuideRouteUIView.h"
+#import "linmsdebug.h"
+#import "Log.h"
+#import "NaviQueryManager.h"
+#import "NSString+category.h"
+#import "NSValue+category.h"
+#import "Place.h"
+#import "Route.h"
+#import "RouteInstruction.h"
+#import "Speech.h"
+#import "SystemManager.h"
 
 @interface NaviUtil : NSObject
 
++(void) setGoogleAPIKey:(NSString*) key;
++(NSString*) getGoogleAPIKey;
++(void) init;
 @end

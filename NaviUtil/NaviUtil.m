@@ -10,4 +10,25 @@
 
 @implementation NaviUtil
 
+static bool isInit = false;
+static NSString* googleAPIKey=@"";
+
++(void) setGoogleAPIKey:(NSString*) key
+{
+    googleAPIKey=key;
+}
+
++(NSString*) getGoogleAPIKey
+{
+    return googleAPIKey;
+}
+
++(void) init
+{
+    [SystemManager init];
+    [NaviQueryManager init];
+    
+    isInit = true;
+}
 @end
+

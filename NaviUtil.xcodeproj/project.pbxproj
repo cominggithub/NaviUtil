@@ -16,6 +16,21 @@
 		2B6CBFB716DFA6DA0095CBD4 /* libNaviUtil.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBF9E16DFA6D90095CBD4 /* libNaviUtil.a */; };
 		2B6CBFBD16DFA6DA0095CBD4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 2B6CBFBB16DFA6DA0095CBD4 /* InfoPlist.strings */; };
 		2B6CBFC016DFA6DA0095CBD4 /* NaviUtilTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFBF16DFA6DA0095CBD4 /* NaviUtilTests.m */; };
+		2B6CBFE516DFA6FD0095CBD4 /* DownloadManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFCA16DFA6FD0095CBD4 /* DownloadManager.m */; };
+		2B6CBFE616DFA6FD0095CBD4 /* DownloadRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFCC16DFA6FD0095CBD4 /* DownloadRequest.m */; };
+		2B6CBFE716DFA6FD0095CBD4 /* FileDownloader.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFCE16DFA6FD0095CBD4 /* FileDownloader.m */; };
+		2B6CBFE816DFA6FD0095CBD4 /* GeoUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFD016DFA6FD0095CBD4 /* GeoUtil.m */; };
+		2B6CBFE916DFA6FD0095CBD4 /* GuideRouteUIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFD216DFA6FD0095CBD4 /* GuideRouteUIView.m */; };
+		2B6CBFEA16DFA6FD0095CBD4 /* NaviQueryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFD516DFA6FD0095CBD4 /* NaviQueryManager.m */; };
+		2B6CBFEB16DFA6FD0095CBD4 /* NSString+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFD816DFA6FD0095CBD4 /* NSString+category.m */; };
+		2B6CBFEC16DFA6FD0095CBD4 /* NSValue+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFDA16DFA6FD0095CBD4 /* NSValue+category.m */; };
+		2B6CBFED16DFA6FD0095CBD4 /* Place.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFDC16DFA6FD0095CBD4 /* Place.m */; };
+		2B6CBFEE16DFA6FD0095CBD4 /* Route.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFDE16DFA6FD0095CBD4 /* Route.m */; };
+		2B6CBFEF16DFA6FD0095CBD4 /* RouteInstruction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE016DFA6FD0095CBD4 /* RouteInstruction.m */; };
+		2B6CBFF016DFA6FD0095CBD4 /* Speech.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE216DFA6FD0095CBD4 /* Speech.m */; };
+		2B6CBFF116DFA6FD0095CBD4 /* SystemManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */; };
+		2B7ADCAC16E4E5DE00F8A182 /* Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B7ADCAB16E4E5DE00F8A182 /* Log.m */; };
+		2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +69,38 @@
 		2B6CBFBC16DFA6DA0095CBD4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		2B6CBFBE16DFA6DA0095CBD4 /* NaviUtilTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = NaviUtilTests.h; sourceTree = "<group>"; };
 		2B6CBFBF16DFA6DA0095CBD4 /* NaviUtilTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = NaviUtilTests.m; sourceTree = "<group>"; };
+		2B6CBFC916DFA6FD0095CBD4 /* DownloadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadManager.h; sourceTree = "<group>"; };
+		2B6CBFCA16DFA6FD0095CBD4 /* DownloadManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadManager.m; sourceTree = "<group>"; };
+		2B6CBFCB16DFA6FD0095CBD4 /* DownloadRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadRequest.h; sourceTree = "<group>"; };
+		2B6CBFCC16DFA6FD0095CBD4 /* DownloadRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DownloadRequest.m; sourceTree = "<group>"; };
+		2B6CBFCD16DFA6FD0095CBD4 /* FileDownloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileDownloader.h; sourceTree = "<group>"; };
+		2B6CBFCE16DFA6FD0095CBD4 /* FileDownloader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FileDownloader.m; sourceTree = "<group>"; };
+		2B6CBFCF16DFA6FD0095CBD4 /* GeoUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeoUtil.h; sourceTree = "<group>"; };
+		2B6CBFD016DFA6FD0095CBD4 /* GeoUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoUtil.m; sourceTree = "<group>"; };
+		2B6CBFD116DFA6FD0095CBD4 /* GuideRouteUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuideRouteUIView.h; sourceTree = "<group>"; };
+		2B6CBFD216DFA6FD0095CBD4 /* GuideRouteUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GuideRouteUIView.m; sourceTree = "<group>"; };
+		2B6CBFD316DFA6FD0095CBD4 /* linmsdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linmsdebug.h; sourceTree = "<group>"; };
+		2B6CBFD416DFA6FD0095CBD4 /* NaviQueryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NaviQueryManager.h; sourceTree = "<group>"; };
+		2B6CBFD516DFA6FD0095CBD4 /* NaviQueryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NaviQueryManager.m; sourceTree = "<group>"; };
+		2B6CBFD616DFA6FD0095CBD4 /* NavUtil-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NavUtil-Prefix.pch"; sourceTree = "<group>"; };
+		2B6CBFD716DFA6FD0095CBD4 /* NSString+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+category.h"; sourceTree = "<group>"; };
+		2B6CBFD816DFA6FD0095CBD4 /* NSString+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+category.m"; sourceTree = "<group>"; };
+		2B6CBFD916DFA6FD0095CBD4 /* NSValue+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+category.h"; sourceTree = "<group>"; };
+		2B6CBFDA16DFA6FD0095CBD4 /* NSValue+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+category.m"; sourceTree = "<group>"; };
+		2B6CBFDB16DFA6FD0095CBD4 /* Place.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Place.h; sourceTree = "<group>"; };
+		2B6CBFDC16DFA6FD0095CBD4 /* Place.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Place.m; sourceTree = "<group>"; };
+		2B6CBFDD16DFA6FD0095CBD4 /* Route.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Route.h; sourceTree = "<group>"; };
+		2B6CBFDE16DFA6FD0095CBD4 /* Route.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Route.m; sourceTree = "<group>"; };
+		2B6CBFDF16DFA6FD0095CBD4 /* RouteInstruction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouteInstruction.h; sourceTree = "<group>"; };
+		2B6CBFE016DFA6FD0095CBD4 /* RouteInstruction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RouteInstruction.m; sourceTree = "<group>"; };
+		2B6CBFE116DFA6FD0095CBD4 /* Speech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Speech.h; sourceTree = "<group>"; };
+		2B6CBFE216DFA6FD0095CBD4 /* Speech.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Speech.m; sourceTree = "<group>"; };
+		2B6CBFE316DFA6FD0095CBD4 /* SystemManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemManager.h; sourceTree = "<group>"; };
+		2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemManager.m; sourceTree = "<group>"; };
+		2B7ADCAA16E4E5DE00F8A182 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
+		2B7ADCAB16E4E5DE00F8A182 /* Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Log.m; sourceTree = "<group>"; };
+		2BBA453D16E8CB6500C0B7FC /* GoogleJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleJson.h; sourceTree = "<group>"; };
+		2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleJson.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,9 +158,41 @@
 		2B6CBFA316DFA6D90095CBD4 /* NaviUtil */ = {
 			isa = PBXGroup;
 			children = (
+				2B6CBFC916DFA6FD0095CBD4 /* DownloadManager.h */,
+				2B6CBFCA16DFA6FD0095CBD4 /* DownloadManager.m */,
+				2B6CBFCB16DFA6FD0095CBD4 /* DownloadRequest.h */,
+				2B6CBFCC16DFA6FD0095CBD4 /* DownloadRequest.m */,
+				2B6CBFCD16DFA6FD0095CBD4 /* FileDownloader.h */,
+				2B6CBFCE16DFA6FD0095CBD4 /* FileDownloader.m */,
+				2B6CBFCF16DFA6FD0095CBD4 /* GeoUtil.h */,
+				2B6CBFD016DFA6FD0095CBD4 /* GeoUtil.m */,
+				2B6CBFD116DFA6FD0095CBD4 /* GuideRouteUIView.h */,
+				2B6CBFD216DFA6FD0095CBD4 /* GuideRouteUIView.m */,
+				2B6CBFD316DFA6FD0095CBD4 /* linmsdebug.h */,
+				2B7ADCAA16E4E5DE00F8A182 /* Log.h */,
+				2B7ADCAB16E4E5DE00F8A182 /* Log.m */,
+				2B6CBFD416DFA6FD0095CBD4 /* NaviQueryManager.h */,
+				2B6CBFD516DFA6FD0095CBD4 /* NaviQueryManager.m */,
 				2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */,
 				2B6CBFA816DFA6D90095CBD4 /* NaviUtil.m */,
+				2B6CBFD616DFA6FD0095CBD4 /* NavUtil-Prefix.pch */,
+				2B6CBFD716DFA6FD0095CBD4 /* NSString+category.h */,
+				2B6CBFD816DFA6FD0095CBD4 /* NSString+category.m */,
+				2B6CBFD916DFA6FD0095CBD4 /* NSValue+category.h */,
+				2B6CBFDA16DFA6FD0095CBD4 /* NSValue+category.m */,
+				2B6CBFDB16DFA6FD0095CBD4 /* Place.h */,
+				2B6CBFDC16DFA6FD0095CBD4 /* Place.m */,
+				2B6CBFDD16DFA6FD0095CBD4 /* Route.h */,
+				2B6CBFDE16DFA6FD0095CBD4 /* Route.m */,
+				2B6CBFDF16DFA6FD0095CBD4 /* RouteInstruction.h */,
+				2B6CBFE016DFA6FD0095CBD4 /* RouteInstruction.m */,
+				2B6CBFE116DFA6FD0095CBD4 /* Speech.h */,
+				2B6CBFE216DFA6FD0095CBD4 /* Speech.m */,
+				2BBA453D16E8CB6500C0B7FC /* GoogleJson.h */,
+				2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */,
 				2B6CBFA416DFA6D90095CBD4 /* Supporting Files */,
+				2B6CBFE316DFA6FD0095CBD4 /* SystemManager.h */,
+				2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */,
 			);
 			path = NaviUtil;
 			sourceTree = "<group>";
@@ -244,6 +323,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B6CBFA916DFA6D90095CBD4 /* NaviUtil.m in Sources */,
+				2B6CBFE516DFA6FD0095CBD4 /* DownloadManager.m in Sources */,
+				2B6CBFE616DFA6FD0095CBD4 /* DownloadRequest.m in Sources */,
+				2B6CBFE716DFA6FD0095CBD4 /* FileDownloader.m in Sources */,
+				2B6CBFE816DFA6FD0095CBD4 /* GeoUtil.m in Sources */,
+				2B6CBFE916DFA6FD0095CBD4 /* GuideRouteUIView.m in Sources */,
+				2B6CBFEA16DFA6FD0095CBD4 /* NaviQueryManager.m in Sources */,
+				2B6CBFEB16DFA6FD0095CBD4 /* NSString+category.m in Sources */,
+				2B6CBFEC16DFA6FD0095CBD4 /* NSValue+category.m in Sources */,
+				2B6CBFED16DFA6FD0095CBD4 /* Place.m in Sources */,
+				2B6CBFEE16DFA6FD0095CBD4 /* Route.m in Sources */,
+				2B6CBFEF16DFA6FD0095CBD4 /* RouteInstruction.m in Sources */,
+				2B6CBFF016DFA6FD0095CBD4 /* Speech.m in Sources */,
+				2B6CBFF116DFA6FD0095CBD4 /* SystemManager.m in Sources */,
+				2B7ADCAC16E4E5DE00F8A182 /* Log.m in Sources */,
+				2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,6 +497,7 @@
 				2B6CBFC516DFA6DA0095CBD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		2B6CBFC616DFA6DA0095CBD4 /* Build configuration list for PBXNativeTarget "NaviUtilTests" */ = {
 			isa = XCConfigurationList;
@@ -411,6 +506,7 @@
 				2B6CBFC816DFA6DA0095CBD4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
