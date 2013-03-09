@@ -42,4 +42,34 @@
     return NSOrderedSame;
 }
 
+
+-(NSString *) description {
+    
+    return [NSString stringWithFormat:@"DownloadId: %d %@ %@ %@", self.downloadId, self.getStatusStr, self.url, self.fileName];
+}
+
+-(NSString*) getStatusStr
+{
+    NSString *result = nil;
+    switch (self.status)
+    {
+        case kDownloadStatus_DownloadFail:
+            result = @"Fail";
+            break;
+        case kDownloadStatus_Downloading:
+            result = @"Downloading";
+            break;
+        case kDownloadStatus_Finished:
+            result = @"Finished";
+            break;
+        case kDownloadStatus_Pending:
+            result = @"Pending";
+            break;
+        default:
+            result = @"Unknown";
+            break;
+    }
+    
+    return result;
+}
 @end

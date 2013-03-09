@@ -10,7 +10,8 @@
 #import <CoreLocation/CoreLocation.h>
 #import "Route.h"
 #import "Place.h"
-
+#import "DownloadRequest.h"
+#import "Speech.h"
 
 
 #define GG_DIRECTION_URL            @"https://maps.googleapis.com/maps/api/directions"
@@ -48,13 +49,7 @@ typedef enum DownloadFileFormat {
 @interface NaviQueryManager : NSObject
 
 
-+(void) queryRoute;
-+(void) queryPlace;
-+(void) queryRegion;
-+(void) querySpeech;
 
-+(bool) isQueryFinished;
-+(NSString*) getQueryFilePath;
 
 +(Route*) getRoute:(CLLocationCoordinate2D) startLocation endLocation:(CLLocationCoordinate2D) endLocation;
 +(NSArray*) getPlace:(NSString*) location;
@@ -67,17 +62,20 @@ typedef enum DownloadFileFormat {
 
 
 +(NSString*) getQueryBaseUrl:(NSString*)url parameters:(NSDictionary*) params downloadFileFormat:(DownloadFileFormat)downloadFileFormat;
-+(NSString*) getRouteStartLocation:(CLLocationCoordinate2D) startLocation endLocation:(CLLocationCoordinate2D) endLocation;
 +(NSString*) getPlaceQuery:(NSString*) location;
 +(NSString*) getSpeechQuery:(NSString*) text;
-+(NSString*) getRegionQuery:(NSDictionary*) params;
 
-+(void) startNavigationStartLocation:(CLLocationCoordinate2D) start EndLocation:(CLLocationCoordinate2D) end;
+
++(void) planRouteStartLocation:(CLLocationCoordinate2D) start EndLocation:(CLLocationCoordinate2D) end;
++(void) startNavigation;
 +(void) stopNavigation;
 +(void) startDownloadPlaces;
 +(void) startDownloadSpeech;
 
 +(void) init;
+
++(void) downloadRequestStatusChange:(DownloadRequest*) downloadRequest;
+
 @end
 
 

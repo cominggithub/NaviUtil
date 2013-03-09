@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SystemManager.h"
 
 void logWarning(id formatString, ...);
 void logError(id formatString, ...);

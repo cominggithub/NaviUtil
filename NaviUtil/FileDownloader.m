@@ -33,7 +33,7 @@
     return self;
     
 }
--(void)downloadFile:(DownloadRequest*)downloadRequest delegate:(id<FileDownloaderDelegate>)delegate;
+-(void)download:(DownloadRequest*)downloadRequest delegate:(id<FileDownloaderDelegate>)delegate;
 {
 
     self.delegate = delegate;

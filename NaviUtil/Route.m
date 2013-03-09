@@ -25,6 +25,7 @@
 
 -(id) initWithJsonRouteFile: (NSString*) fileName
 {
+    
     self = [self init];
     NSError* error;
     NSFileManager *filemanager;
@@ -50,14 +51,50 @@
                           options:kNilOptions
                           error:&error];
 
-    
-    steps = [[[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0] objectForKey:@"steps"];
+    legs    = [[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"];
+    steps   = [[[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0] objectForKey:@"steps"];
 
-    [self saveToKMLFile:@"台南到宜蘭" fileName:@"TainanToYlan.kml"];
+    [self saveToKMLFile:[self getName] fileName:[NSString stringWithFormat:@"%@.xml", [self getName]]];
     
     return self;
 }
 
+-(void) parseJson:(NSString*) fileName
+{
+
+    int i;
+    NSArray *array;
+    NSDictionary *dic;
+    NSError* error;
+    NSData *data = [[NSFileManager defaultManager] contentsAtPath:fileName];
+    NSDictionary* root = [NSJSONSerialization
+                          JSONObjectWithData:data //1
+                          
+                          options:kNilOptions
+                          error:&error];
+    
+    array = [root objectForKey:@"results"];
+    dic = [array objectAtIndex:0];
+    
+    legs    = [[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"];
+    steps   = [[[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0] objectForKey:@"steps"];
+
+    speech = [[NSMutableArray alloc] initWithCapacity:steps.count];
+    for(i=0; i<steps.count; i++)
+    {
+        Speech* s = [[Speech alloc] init];
+        dic = [steps objectAtIndex:i];
+        NSDictionary *location = [dic objectForKey:@"start_location"];
+        
+        s.text = [NSString stringWithString:[dic objectForKey:@"html_instructions"]];
+        s.coordinate  = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue],
+                                                   [[location objectForKey:@"lng"] doubleValue]);
+        [speech addObject:s];
+    }
+    
+    [self saveToKMLFile:[self getName] fileName:[NSString stringWithFormat:@"%@.xml", [self getName]]];
+    
+}
 -(void) printDictionaryKeys:(NSDictionary*) dic
 {
     
@@ -266,6 +303,80 @@
     return docsDir;
 }
 
+-(NSArray*) getSpeechText
+{
+    NSMutableArray* result;
+    
+    return result;
+}
 
+-(NSString*) getStartAddress
+{
+    return [[legs objectAtIndex:0] objectForKey:@"start_address"];
+}
+
+-(NSString*) getEndAddress
+{
+    return [[legs objectAtIndex:0] objectForKey:@"end_address"];
+}
+
+-(CLLocationCoordinate2D) getStartLocation
+{
+    NSDictionary *location = [[legs objectAtIndex:0] objectForKey:@"start_location"];
+    CLLocationCoordinate2D result = CLLocationCoordinate2DMake(
+                                        [[location objectForKey:@"lat"] doubleValue],
+                                        [[location objectForKey:@"lng"] doubleValue]);
+    
+    return result;
+}
+
+-(CLLocationCoordinate2D) getEndLocation
+{
+    NSDictionary *location = [[legs objectAtIndex:0] objectForKey:@"end_location"];
+    CLLocationCoordinate2D result = CLLocationCoordinate2DMake(
+                                                               [[location objectForKey:@"lat"] doubleValue],
+                                                               [[location objectForKey:@"lng"] doubleValue]);
+    
+    return result;
+}
+
+-(NSString *) getName
+{
+    return [NSString stringWithFormat:@"%@_to_%@",
+            [self getStartAddress],
+            [self getEndAddress]
+            ];
+    
+}
+
+-(NSString *) getNameWithCoordinate
+{
+    CLLocationCoordinate2D startLocation = [self getStartLocation];
+    CLLocationCoordinate2D endLocation = [self getStartLocation];
+    
+    return [NSString stringWithFormat:@"%@_to_%@((%.7f,%.7f)_To_(%.7f,%.7f))",
+            [self getStartAddress],
+            [self getEndAddress],
+            startLocation.latitude,
+            startLocation.longitude,
+            endLocation.latitude,
+            endLocation.longitude
+            ];
+}
+
+-(NSString *) description
+{
+    CLLocationCoordinate2D startLocation = [self getStartLocation];
+    CLLocationCoordinate2D endLocation = [self getStartLocation];
+    
+    return [NSString stringWithFormat:@"%@ To %@ (%.7f,%.7f) -> (%.7f,%.7f)",
+            [self getStartAddress],
+            [self getEndAddress],
+            startLocation.latitude,
+            startLocation.longitude,
+            endLocation.latitude,
+            endLocation.longitude
+            ];
+}
 
 @end

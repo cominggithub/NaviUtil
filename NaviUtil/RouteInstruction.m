@@ -14,7 +14,7 @@
 -(bool) isEnterRoute:(PointD) p
 {
     
-
+    return false;
 }
 
 @end

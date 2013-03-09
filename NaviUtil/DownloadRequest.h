@@ -43,6 +43,7 @@ typedef enum DownloadStatus
 @property (nonatomic, strong) NSString* name;
 @property (nonatomic, strong) NSString* url;
 @property (nonatomic, strong) NSString* fileName;
+@property (nonatomic, strong) NSString* filePath;
 @property (nonatomic) DownloadStatus status;
 @property (nonatomic) DownloadMode mode;
 @property (nonatomic) CLLocationCoordinate2D coordinate;

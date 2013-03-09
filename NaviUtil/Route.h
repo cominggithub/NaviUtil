@@ -10,6 +10,8 @@
 #import "NSString+category.h"
 #import "NSValue+category.h"
 #import "GeoUtil.h"
+#import "TextValue.h"
+#import "Speech.h"
 
 
 typedef enum
@@ -22,11 +24,27 @@ typedef enum
 {
     NSArray* steps;
     NSArray* polyLines;
+    NSMutableArray *speech;
+    NSArray *legs;
 }
 
+
 @property (readonly) RouteStatusCode status;
+@property (nonatomic, strong) TextValue *distance;
+@property (nonatomic, strong) TextValue *duration;
+@property (nonatomic, strong) NSString *endAddress;
+@property (nonatomic, strong) NSString *startAddress;
+@property (nonatomic) int distanceValue;
+@property (nonatomic) int durationValue;
+@property (nonatomic) CLLocationCoordinate2D startLocation;
+@property (nonatomic) CLLocationCoordinate2D endLocation;
+@property (nonatomic) int numOfStep;
+@property (nonatomic, strong) NSDictionary *root;
+
+
 -(id) initWithJsonRouteFile: (NSString*) fileName;
 -(int) getStepCount;
+-(void) parseJson:(NSString*) fileName;
 -(NSArray*) getRoutePolyLine;
 -(NSArray*) getRoutePolyLinePointD;
 -(NSArray*) getStepPolyLine:(int) stepIndex;
@@ -35,4 +53,10 @@ typedef enum
 -(NSString*) getStepDistanceString: (int) stepIndex;
 -(NSString*) getDocumentFilePath:(NSString*) fileName;
 -(NSString*) getDocumentDirectory;
+-(NSArray*) getSpeechText;
+-(NSString*) getStartAddress;
+-(NSString*) getEndAddress;
+-(CLLocationCoordinate2D) getStartLocation;
+-(CLLocationCoordinate2D) getEndLocation;
+
 @end

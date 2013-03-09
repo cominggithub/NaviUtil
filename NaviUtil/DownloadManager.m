@@ -54,9 +54,11 @@
 {
     DownloadRequest *downloadRequest = [self getDownloadRequest:fileDownloader.downloadId];
     downloadRequest.status = kDownloadStatus_Finished;
-    [downloadRequest.delegate statusChange:downloadRequest];
+    [NaviQueryManager downloadRequestStatusChange:downloadRequest];
     [self.downloadingQueue removeObject:downloadRequest];
     [self.finishedQueue addObject:downloadRequest];
+    logInfo(@"%@", downloadRequest);
+    
     [self triggerDownload];
 }
 
@@ -73,13 +75,18 @@
         [self.downloadingQueue removeObject:downloadRequest];
         [self.waitingQueue addObject:downloadRequest];
         [downloadRequest.delegate statusChange:downloadRequest];
+        logInfo(@"%@", downloadRequest);
+        
+        [self triggerDownload];
     }
 }
 
 -(void) download:(DownloadRequest*) downloadRequest
 {
+    downloadRequest.downloadId = [self getNextDownloadId];
     [self.downloadingQueue addObject:downloadRequest];
     [self triggerDownload];
+    logInfo(@"%@", downloadRequest);
 }
 
 -(void) triggerDownload
@@ -103,12 +110,11 @@
 {
     FileDownloader* fileDownloader  = [[FileDownloader alloc] init];
     
-    downloadRequest.downloadId      = [self getNextDownloadId];
+
     downloadRequest.status          = kDownloadStatus_Downloading;
     [downloadRequest.delegate statusChange:downloadRequest];
     [fileDownloader download:downloadRequest delegate:self];
-
-    
+    logInfo(@"%@", downloadRequest);
 }
 
 -(DownloadRequest*) getDownloadRequest:(int)downloadId

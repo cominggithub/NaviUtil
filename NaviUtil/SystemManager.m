@@ -17,6 +17,7 @@ static NSString *_tmpPath=@"";
 static NSString *_routeFilePath=@"";
 static NSString *_placeFilePath=@"";
 static NSString *_speechFilePath=@"";
+static NSString *_logFilePath=@"";
 static NSString *_defaultLanguage=@"en-US";
 static NSDictionary *_supportedLanguage;
 static CLLocationCoordinate2D _defaultLocation;
@@ -44,9 +45,11 @@ static CLLocationCoordinate2D _defaultLocation;
 
 +(void) initDirectory
 {
+    NSDateFormatter *dateFormattor = [[NSDateFormatter alloc] init];
     NSFileManager *filemanager;
     NSString *currentPath;
     
+    [dateFormattor setDateFormat:@"HHMM"];
     filemanager =[NSFileManager defaultManager];
     currentPath = [filemanager currentDirectoryPath];
     
@@ -56,11 +59,11 @@ static CLLocationCoordinate2D _defaultLocation;
     dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     _tmpPath = NSTemporaryDirectory();
     
-    _documentPath = [dirPaths objectAtIndex:0];
-    _placeFilePath = [NSString stringWithFormat:@"%@/place", _tmpPath];
-    _routeFilePath = [NSString stringWithFormat:@"%@/route", _tmpPath];
-    _speechFilePath = [NSString stringWithFormat:@"%@/speech", _tmpPath];
-    
+    _documentPath   = [dirPaths objectAtIndex:0];
+    _placeFilePath  = [NSString stringWithFormat:@"%@place", _tmpPath];
+    _routeFilePath  = [NSString stringWithFormat:@"%@route", _tmpPath];
+    _speechFilePath = [NSString stringWithFormat:@"%@speech", _tmpPath];
+    _logFilePath    = [NSString stringWithFormat:@"%@%@.log", _tmpPath, [dateFormattor stringFromDate:[NSDate date]]];
     
     for(NSString *path in dirPaths)
     {
@@ -71,11 +74,20 @@ static CLLocationCoordinate2D _defaultLocation;
     linmso([self placeFilePath]);
     linmso([self routeFilePath]);
     linmso([self speechFilePath]);
+    linmso([self logFilePath]);
 
-    [self initDirectory:[self placeFilePath]];
-    [self initDirectory:[self routeFilePath]];
-    [self initDirectory:[self speechFilePath]];
-    
+    [self cleanDirectory:_tmpPath];
+    [self makeDirectory:[self placeFilePath]];
+    [self makeDirectory:[self routeFilePath]];
+    [self makeDirectory:[self speechFilePath]];
+  
+
+    logInfo(@"System Init");
+    logInfo(@"   Document Path: %@", [self documentPath]);
+    logInfo(@" Place File Path: %@", [self placeFilePath]);
+    logInfo(@" Route File Path: %@", [self routeFilePath]);
+    logInfo(@"Speech File Path: %@", [self speechFilePath]);
+    logInfo(@"   Log File Path: %@", [self logFilePath]);
 }
 
 +(NSString*) documentPath
@@ -103,15 +115,24 @@ static CLLocationCoordinate2D _defaultLocation;
     return _speechFilePath;
 }
 
-+(void) initDirectory:(NSString*) path
++(NSString *) logFilePath
+{
+    return _logFilePath;
+}
+
++(void) cleanDirectory:(NSString*) path
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
     if([fileManager fileExistsAtPath:path]) {
         [fileManager removeItemAtPath:path error:nil];
     }
-    
-    [fileManager createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:NULL];
+
+}
+
++(void) makeDirectory:(NSString*) path
+{
+    [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:NULL];
 
 }
 

@@ -11,6 +11,12 @@
 @implementation Speech
 
 @synthesize coordinate=_coordinate;
-@synthesize filePath=_filePath;
 @synthesize text=_text;
+
+-(NSString*) filePath
+{
+    
+    return [NSString stringWithFormat:@"%@%@.mp3", [SystemManager speechFilePath], self.text];
+}
+
 @end

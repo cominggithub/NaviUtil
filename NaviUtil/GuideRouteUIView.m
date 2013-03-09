@@ -147,8 +147,8 @@
     // Drawing code
     PointD prePoint;
     PointD curPoint;
-    CGRect startRect;
-    CGRect carRect;
+//    CGRect startRect;
+//    CGRect carRect;
     CGRect endRect;
     CGRect routeRect = rect;
    

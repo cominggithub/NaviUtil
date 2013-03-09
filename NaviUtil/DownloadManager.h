@@ -11,6 +11,7 @@
 #import "DownloadRequest.h"
 #import "SystemManager.h"
 #import <CoreLocation/CoreLocation.h>
+#import "NaviQueryManager.h"
 
 enum FileType {
     FILE_TYPE_ROUTE,
@@ -35,7 +36,5 @@ enum FileType {
 -(void) downloadFinish: (FileDownloader*) fileDownloader;
 -(void) downloadFail: (FileDownloader*) fileDownloader;
 -(void) download:(DownloadRequest*) downloadRequest;
--(DownloadRequest*) getNextDownloadRequest;
--(void) updateLocation;
 
 @end

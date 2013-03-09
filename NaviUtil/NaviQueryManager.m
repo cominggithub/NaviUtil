@@ -12,17 +12,38 @@
 @implementation NaviQueryManager
 
 
-static bool isInit = false;
+static bool _isInit = false;
+static int _requestId = 1;
+static DownloadManager *_downloadManager = nil;
+static Route* _currentRoute = nil;
+static DownloadRequest *_currentRouteDownloadRequest = nil;
 
 
 +(void) init
 {
-    isInit = true;
+    if( false == _isInit)
+    {
+        _downloadManager = [[DownloadManager alloc] init];
+    }
+    _isInit = true;
 }
 
-+(void) startNavigationStartLocation:(CLLocationCoordinate2D) start EndLocation:(CLLocationCoordinate2D) end;
++(void) planRouteStartLocation:(CLLocationCoordinate2D) start EndLocation:(CLLocationCoordinate2D) end
 {
-    
+    _currentRouteDownloadRequest = [self getRouteDownloadRequest:start EndLocation:end];
+    [_downloadManager download:_currentRouteDownloadRequest];
+
+}
+
++(void) startNavigation;
+{
+    _currentRoute = [[Route alloc] init];
+    [_currentRoute parseJson:_currentRouteDownloadRequest.filePath];
+    for(Speech *speech in [_currentRoute getSpeechText])
+    {
+        DownloadRequest *downloadRequest = [self getSpeechDownloadRequest:speech.text];
+        [_downloadManager download:downloadRequest];
+    }
 }
 
 +(void) stopNavigation
@@ -38,6 +59,37 @@ static bool isInit = false;
 +(void) startDownloadSpeech
 {
     
+}
+
++(void) downloadRequestStatusChange:(DownloadRequest*) downloadRequest
+{
+    if(downloadRequest == _currentRouteDownloadRequest)
+    {
+        [self startNavigation];
+    }
+}
++(DownloadRequest*) getRouteDownloadRequest:(CLLocationCoordinate2D) start EndLocation:(CLLocationCoordinate2D) end
+{
+    DownloadRequest* downloadRequest = [[DownloadRequest alloc] init];
+    downloadRequest.requestId = [self getNextRequestId];
+
+    return downloadRequest;
+}
+
++(DownloadRequest*) getPlaceDownloadRequest:(NSString*) locationName
+{
+    DownloadRequest* downloadRequest;
+    downloadRequest.requestId = [self getNextRequestId];
+    
+    return downloadRequest;
+}
+
++(DownloadRequest*) getSpeechDownloadRequest:(NSString*) text
+{
+    DownloadRequest* downloadRequest;
+    downloadRequest.requestId = [self getNextRequestId];
+    
+    return downloadRequest;
 }
 
 
@@ -256,6 +308,11 @@ static bool isInit = false;
     }
     
     return result;
+}
+
++(int) getNextRequestId
+{
+    return _requestId++;
 }
 
 
