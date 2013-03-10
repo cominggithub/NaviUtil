@@ -27,6 +27,8 @@
 @interface NaviUtil : NSObject
 
 +(void) setGoogleAPIKey:(NSString*) key;
++(void) setGooglePlaceAPIKey:(NSString*) key;
 +(NSString*) getGoogleAPIKey;
++(NSString*) getGooglePlaceAPIKey;
 +(void) init;
 @end

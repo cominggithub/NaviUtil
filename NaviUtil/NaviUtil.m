@@ -10,17 +10,28 @@
 
 @implementation NaviUtil
 
-static bool isInit = false;
-static NSString* googleAPIKey=@"";
+static bool _isInit = false;
+static NSString* _googleAPIKey=@"";
+static NSString* _googlePlaceAPIKey=@"";
 
 +(void) setGoogleAPIKey:(NSString*) key
 {
-    googleAPIKey=key;
+    _googleAPIKey=key;
+}
+
++(void) setGooglePlaceAPIKey:(NSString*) key
+{
+    _googlePlaceAPIKey=key;
 }
 
 +(NSString*) getGoogleAPIKey
 {
-    return googleAPIKey;
+    return _googleAPIKey;
+}
+
++(NSString*) getGooglePlaceAPIKey
+{
+    return _googlePlaceAPIKey;
 }
 
 +(void) init
@@ -28,7 +39,7 @@ static NSString* googleAPIKey=@"";
     [SystemManager init];
     [NaviQueryManager init];
     
-    isInit = true;
+    _isInit = true;
 }
 @end
 

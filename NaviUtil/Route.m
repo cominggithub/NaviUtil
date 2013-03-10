@@ -25,37 +25,7 @@
 
 -(id) initWithJsonRouteFile: (NSString*) fileName
 {
-    
-    self = [self init];
-    NSError* error;
-    NSFileManager *filemanager;
-    NSString *currentPath;
-    
-    filemanager =[NSFileManager defaultManager];
-    currentPath = [filemanager currentDirectoryPath];
-    
-    NSArray *dirPaths;
-    NSString *docsDir;
-    
-    dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
-                                                   NSUserDomainMask, YES);
-    docsDir = [dirPaths objectAtIndex:0];
-    NSString *jsonFile = [NSString stringWithFormat:@"%@/%@", docsDir, fileName];
-    
-    NSData *data = [[NSFileManager defaultManager] contentsAtPath:jsonFile];
-    
-    
-    NSDictionary* root = [NSJSONSerialization
-                          JSONObjectWithData:data //1
-                          
-                          options:kNilOptions
-                          error:&error];
 
-    legs    = [[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"];
-    steps   = [[[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0] objectForKey:@"steps"];
-
-    [self saveToKMLFile:[self getName] fileName:[NSString stringWithFormat:@"%@.xml", [self getName]]];
-    
     return self;
 }
 
@@ -86,13 +56,14 @@
         dic = [steps objectAtIndex:i];
         NSDictionary *location = [dic objectForKey:@"start_location"];
         
-        s.text = [NSString stringWithString:[dic objectForKey:@"html_instructions"]];
+        s.text = [[NSString stringWithString:[dic objectForKey:@"html_instructions"]] stripHTML];
         s.coordinate  = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue],
                                                    [[location objectForKey:@"lng"] doubleValue]);
         [speech addObject:s];
     }
     
-    [self saveToKMLFile:[self getName] fileName:[NSString stringWithFormat:@"%@.xml", [self getName]]];
+    logInfo(@"FFFFFFFFFFFFFFFFFFFFFF\n");
+    [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager routeFilePath], [self getName]]];
     
 }
 -(void) printDictionaryKeys:(NSDictionary*) dic
@@ -217,7 +188,7 @@
 
 -(NSString* ) getStepInstruction: (int) index
 {
-    return [[(NSDictionary*)[steps objectAtIndex:index] objectForKey:@"html_instructions"] stringByStrippingHTML];
+    return [[(NSDictionary*)[steps objectAtIndex:index] objectForKey:@"html_instructions"] stripHTML];
 }
 
 -(NSString* ) getStepDurationString: (int) index
@@ -230,7 +201,7 @@
     return [[(NSDictionary*)[steps objectAtIndex:index] objectForKey:@"distance"] objectForKey:@"text"];
 }
 
--(void) saveToKMLFile:(NSString*)name fileName: (NSString*)fName
+-(void) saveToKMLFileName:(NSString*)name filePath: (NSString*)filePath
 {
     
     NSMutableString *content = [[NSMutableString alloc] init];
@@ -267,24 +238,19 @@
     [content appendString:@"</Document>\n"];
     [content appendString:@"</kml>"];
     
-    NSString* filepath = [[NSString alloc] init];
     NSError *err;
+    logInfo(@"kml path:%@\n", filePath);
     
-    filepath = [self getDocumentFilePath:fName];
+    BOOL ok = [content writeToFile:filePath atomically:YES encoding:NSUnicodeStringEncoding error:&err];
     
-    BOOL ok = [content writeToFile:filepath atomically:YES encoding:NSUnicodeStringEncoding error:&err];
-    
-    if (!ok) {
-        NSLog(@"Error writing file at %@\n%@",
-              filepath, [err localizedFailureReason]);
+    if (!ok)
+    {
+        logWarning(@"cannot write: %@\n", filePath);
     }
     
 }
 
--(NSString*) getDocumentFilePath:(NSString*) fileName
-{
-    return [self.getDocumentDirectory stringByAppendingPathComponent:fileName];
-}
+
 
 -(NSString*) getDocumentDirectory
 {
@@ -303,11 +269,9 @@
     return docsDir;
 }
 
--(NSArray*) getSpeechText
+-(NSArray*) getSpeech
 {
-    NSMutableArray* result;
-    
-    return result;
+    return speech;
 }
 
 -(NSString*) getStartAddress
@@ -377,6 +341,11 @@
             endLocation.latitude,
             endLocation.longitude
             ];
+}
+
+-(void) dump
+{
+    
 }
 
 @end

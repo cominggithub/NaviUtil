@@ -12,11 +12,12 @@
 #import "Place.h"
 #import "DownloadRequest.h"
 #import "Speech.h"
+#import "NSDictionary+category.h"
 
 
 #define GG_DIRECTION_URL            @"https://maps.googleapis.com/maps/api/directions"
 #define GG_PLACE_TEXT_SEARCH_URL    @"https://maps.googleapis.com/maps/api/place/textsearch"
-#define GG_TEXT_TO_SPEECH_URL       @"http://translate.google.com/translate_tts?ie=UTF-8"
+#define GG_TEXT_TO_SPEECH_URL       @"http://translate.google.com/translate_tts?ie=UTF-8&"
 #define S_LANGUAGE                  @"language"
 #define S_ORIGIN                    @"origin"
 #define S_DESTINATION               @"destination"
@@ -65,7 +66,7 @@ typedef enum DownloadFileFormat {
 +(NSString*) getPlaceQuery:(NSString*) location;
 +(NSString*) getSpeechQuery:(NSString*) text;
 
-
++(void) planRouteStartLocationText:(NSString*) startLocationText EndLocationText:(NSString*) endLocationText;
 +(void) planRouteStartLocation:(CLLocationCoordinate2D) start EndLocation:(CLLocationCoordinate2D) end;
 +(void) startNavigation;
 +(void) stopNavigation;

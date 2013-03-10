@@ -11,4 +11,5 @@
 
 @interface NSDictionary (category)
 -(TextValue*) textValue;
+-(void) dump;
 @end

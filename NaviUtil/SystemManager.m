@@ -18,7 +18,7 @@ static NSString *_routeFilePath=@"";
 static NSString *_placeFilePath=@"";
 static NSString *_speechFilePath=@"";
 static NSString *_logFilePath=@"";
-static NSString *_defaultLanguage=@"en-US";
+static NSString *_defaultLanguage=@"zh-TW";
 static NSDictionary *_supportedLanguage;
 static CLLocationCoordinate2D _defaultLocation;
 

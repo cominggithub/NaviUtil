@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <Foundation/NSFileManager.h>
 #import "DownloadRequest.h"
+#import "Log.h"
+#import "SystemManager.h"
 
 @class FileDownloader;
 
@@ -25,7 +27,7 @@
 
 @property (nonatomic, weak) id<FileDownloaderDelegate> delegate;
 @property (nonatomic) unsigned long downloadId;
-@property (nonatomic, strong) NSString *fileName;
+@property (nonatomic, strong) NSString *filePath;
 @property (nonatomic, strong) NSString *url;
 @property (nonatomic) int retryCount;
 

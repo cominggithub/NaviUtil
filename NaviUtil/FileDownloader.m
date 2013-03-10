@@ -12,7 +12,7 @@
 @implementation FileDownloader
 @synthesize delegate=_delegate;
 @synthesize downloadId=_downloadId;
-@synthesize fileName=_fileName;
+@synthesize filePath=_filePath;
 @synthesize url=_url;
 @synthesize retryCount=_retryCount;
 
@@ -25,7 +25,7 @@
     {
         self.delegate   = nil;
         self.downloadId = -1;
-        self.fileName   = @"";
+        self.filePath   = @"";
         self.url        = @"";
         self.retryCount = 0;
     }
@@ -38,14 +38,15 @@
 
     self.delegate = delegate;
     
-    self.fileName = [[NSString alloc] initWithString:downloadRequest.fileName];
+    self.filePath = [[NSString alloc] initWithString:downloadRequest.filePath];
+//    self.filePath = [NSString stringWithFormat:@"%@/a.json", [SystemManager routeFilePath]];
     self.url = [[NSString alloc] initWithString:downloadRequest.url];
     self.downloadId = downloadRequest.downloadId;
     
     urlRequest = [NSMutableURLRequest requestWithURL:
                   [NSURL URLWithString:[self.url stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
     
-    NSLog(@"FileDownload %lu starts to download %@ from %@\n", self.downloadId, self.fileName, self.url);
+
     
 }
 
@@ -54,33 +55,34 @@
     [self deleteFile];
     [self createFile];
     self.retryCount++;
+//    logInfo(@"FileDownload %lu starts to download %@ from %@\n", self.downloadId, self.filePath, self.url);
     [NSURLConnection connectionWithRequest:urlRequest delegate:self];
 }
 
 - (void) createFile
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    if(![fileManager fileExistsAtPath:self.fileName]) {
-        [fileManager createFileAtPath:self.fileName contents:nil attributes:nil];
+    if(![fileManager fileExistsAtPath:self.filePath]) {
+        [fileManager createFileAtPath:self.filePath contents:nil attributes:nil];
     }
     else
     {
-        [fileManager removeItemAtPath:self.fileName error:nil];
-        [fileManager createFileAtPath:self.fileName contents:nil attributes:nil];
+        [fileManager removeItemAtPath:self.filePath error:nil];
+        [fileManager createFileAtPath:self.filePath contents:nil attributes:nil];
     }
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data {
-    NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:self.fileName];
+    NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:self.filePath];
     [fileHandle seekToEndOfFile];
     [fileHandle writeData:data];
     [fileHandle closeFile];
-    NSLog(@"FileDownloader %lu recv data length %u", self.downloadId, [data length]);
+//    logInfo(@"FileDownloader %lu recv data length %u", self.downloadId, [data length]);
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    NSLog(@"FileDownloader %lu didFailWithError %@\n", self.downloadId, error);
+//    logInfo(@"FileDownloader %lu didFailWithError %@\n", self.downloadId, error);
     
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFail:)])
         [self.delegate downloadFail: self];
@@ -89,26 +91,26 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
 {
-    NSLog(@"FileDownloader %lu didReceiveResponse\n", self.downloadId);
+ //   logInfo(@"FileDownloader %lu didReceiveResponse\n", self.downloadId);
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    NSLog(@"FileDownloader %lu finish download\n", self.downloadId);
+//    logInfo(@"FileDownloader %lu finish download\n", self.downloadId);
     
-    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(finishDownload:)])
+    if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFinish:)])
     {
-        
         [self.delegate downloadFinish: self];
     }
+    
 }
 
 -(void)deleteFile
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
     
-    if([fileManager fileExistsAtPath:self.fileName]) {
-        [fileManager removeItemAtPath:self.fileName error:nil];
+    if([fileManager fileExistsAtPath:self.filePath]) {
+        [fileManager removeItemAtPath:self.filePath error:nil];
     }
 }
 @end

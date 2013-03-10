@@ -10,12 +10,16 @@
 
 @implementation NSString (stringByStrippingHTML)
 
--(NSString *) stringByStrippingHTML
+-(NSString *) stripHTML
 {
     NSRange r;
     NSString *s = [self copy] ;
     while ((r = [s rangeOfString:@"<[^>]+>" options:NSRegularExpressionSearch]).location != NSNotFound)
         s = [s stringByReplacingCharactersInRange:r withString:@""];
+
+    /* remove / character */
+     
+    s = [s stringByReplacingOccurrencesOfString:@"/" withString:@""];
     return s;
 }
 

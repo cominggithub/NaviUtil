@@ -28,13 +28,16 @@ enum FileType {
 @property (nonatomic) int maxDownload;
 @property (nonatomic) int maxRetryCount;
 @property (nonatomic, strong) NSMutableArray* downloadingQueue;
-@property (nonatomic, strong) NSMutableArray* waitingQueue;
+@property (nonatomic, strong) NSMutableArray* pendingQueue;
 @property (nonatomic, strong) NSMutableArray* finishedQueue;
 @property (nonatomic) CLLocationCoordinate2D currentLocation;
+@property (nonatomic) LogLevel logLevel;
+
 
 
 -(void) downloadFinish: (FileDownloader*) fileDownloader;
 -(void) downloadFail: (FileDownloader*) fileDownloader;
 -(void) download:(DownloadRequest*) downloadRequest;
+
 
 @end

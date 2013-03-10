@@ -19,4 +19,13 @@
     return result;
 }
 
+-(void) dump
+{
+    printf("dump dic:\n");
+    for(NSString *key in self) {
+        printf("%s:%s\n", [key UTF8String], [[self objectForKey:key] UTF8String]);
+
+    }
+}
+
 @end

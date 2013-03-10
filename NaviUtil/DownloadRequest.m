@@ -30,6 +30,7 @@
         self.name           = @"";
         self.url            = @"";
         self.fileName       = @"";
+        self.filePath       = @"";
         self.status         = kDownloadStatus_Pending;
         self.mode           = kDownloadMode_Normal;
     }
@@ -45,7 +46,7 @@
 
 -(NSString *) description {
     
-    return [NSString stringWithFormat:@"DownloadId: %d %@ %@ %@", self.downloadId, self.getStatusStr, self.url, self.fileName];
+    return [NSString stringWithFormat:@"DownloadId: %d %@ %@ %@ %@", self.downloadId, self.getStatusStr, self.url, self.fileName, self.filePath];
 }
 
 -(NSString*) getStatusStr

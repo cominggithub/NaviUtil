@@ -53,10 +53,11 @@ typedef enum
 -(NSString*) getStepDistanceString: (int) stepIndex;
 -(NSString*) getDocumentFilePath:(NSString*) fileName;
 -(NSString*) getDocumentDirectory;
--(NSArray*) getSpeechText;
+-(NSArray*) getSpeech;
 -(NSString*) getStartAddress;
 -(NSString*) getEndAddress;
 -(CLLocationCoordinate2D) getStartLocation;
 -(CLLocationCoordinate2D) getEndLocation;
+-(void) dump;
 
 @end

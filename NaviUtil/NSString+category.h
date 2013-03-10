@@ -10,7 +10,7 @@
 #import <CoreLocation/CoreLocation.h>
 
 @interface NSString (stringByStrippingHTML)
--(NSString *) stringByStrippingHTML;
+-(NSString *) stripHTML;
 -(NSMutableArray *) decodePolyLine;
 -(NSMutableArray *) decodePolyLineLevel;
 + (NSString *)encodeStringWithCoordinate:(CLLocationCoordinate2D )coordinate;

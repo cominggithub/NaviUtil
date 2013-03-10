@@ -9,6 +9,14 @@
 #import <Foundation/Foundation.h>
 #import "SystemManager.h"
 
+typedef enum
+{
+    kLogDebug,
+    kLogInfo,
+    kLogWarning,
+    kLogError,
+}LogLevel;
+
 void logWarning(id formatString, ...);
 void logError(id formatString, ...);
 void logInfo(id formatString, ...);

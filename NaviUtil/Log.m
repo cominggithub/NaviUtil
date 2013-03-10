@@ -78,8 +78,8 @@ void logOut(NSString *level, NSString* msg)
 {
     logInit();
     NSString *outputStr = [NSString stringWithFormat:@"%@ %@ %@\n",
-                           [outputFormatter stringFromDate:[NSDate date]],
                            level,
+                           [outputFormatter stringFromDate:[NSDate date]],
                            msg
                            ];
     

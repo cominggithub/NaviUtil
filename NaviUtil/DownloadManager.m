@@ -16,8 +16,7 @@
 @synthesize maxDownload=_maxDownload;
 @synthesize maxRetryCount=_maxRetryCount;
 @synthesize downloadingQueue=_downloadingQueue;
-@synthesize currentLocation=_currentLocation;
-@synthesize waitingQueue=_waitingQueue;
+@synthesize pendingQueue=_pendingingQueue;
 @synthesize finishedQueue=_finishedQueue;
 
 
@@ -27,13 +26,15 @@
     if(self)
     {
         self.activeDownload     = 0;
-        self.maxDownload        = 10;
+        self.maxDownload        = 1;
         self.maxRetryCount      = 3;
         self.currentDownloadId  = 1;
         self.currentLocation    = [SystemManager getDefaultLocation];
         self.downloadingQueue   = [[NSMutableArray alloc] initWithCapacity:0];
-        self.waitingQueue       = [[NSMutableArray alloc] initWithCapacity:0];
+        self.pendingQueue       = [[NSMutableArray alloc] initWithCapacity:0];
         self.finishedQueue      = [[NSMutableArray alloc] initWithCapacity:0];
+        self.logLevel           = kLogInfo;
+
     }
     
     return self;
@@ -54,12 +55,18 @@
 {
     DownloadRequest *downloadRequest = [self getDownloadRequest:fileDownloader.downloadId];
     downloadRequest.status = kDownloadStatus_Finished;
-    [NaviQueryManager downloadRequestStatusChange:downloadRequest];
+
     [self.downloadingQueue removeObject:downloadRequest];
     [self.finishedQueue addObject:downloadRequest];
-    logInfo(@"%@", downloadRequest);
-    
+
+    if(self.logLevel <= kLogInfo)
+        logInfo(@"%@\n", self);
+
     [self triggerDownload];
+    [NaviQueryManager downloadRequestStatusChange:downloadRequest];
+    
+    
+
 }
 
 -(void) downloadFail: (FileDownloader*) fileDownloader
@@ -73,48 +80,62 @@
         downloadRequest.status  = kDownloadStatus_DownloadFail;
         
         [self.downloadingQueue removeObject:downloadRequest];
-        [self.waitingQueue addObject:downloadRequest];
+        [self.pendingQueue addObject:downloadRequest];
         [downloadRequest.delegate statusChange:downloadRequest];
-        logInfo(@"%@", downloadRequest);
+
+        if(self.logLevel <= kLogInfo)
+            logInfo(@"%@\n", downloadRequest);
         
         [self triggerDownload];
     }
+
+    if(self.logLevel <= kLogInfo)
+        logInfo(@"%@\n", self);
 }
 
 -(void) download:(DownloadRequest*) downloadRequest
 {
+
     downloadRequest.downloadId = [self getNextDownloadId];
-    [self.downloadingQueue addObject:downloadRequest];
+    [self.pendingQueue addObject:downloadRequest];
+
+    if(self.logLevel <= kLogInfo)
+        logInfo(@"%@\n", self);
+    
     [self triggerDownload];
-    logInfo(@"%@", downloadRequest);
 }
 
 -(void) triggerDownload
 {
     DownloadRequest *r;
-    if(self.downloadingQueue.count > 0)
+    if(self.pendingQueue.count > 0 && self.downloadingQueue.count < self.maxDownload)
     {
-        r = [self.downloadingQueue objectAtIndex:0];
+        r = [self.pendingQueue objectAtIndex:0];
+        [self.pendingQueue removeObjectAtIndex:0];
+        [self.downloadingQueue addObject:r];
         [self startDownload:r];
+        
+        if(self.logLevel <= kLogInfo)
+            logInfo(@"t %@\n", self);
     }
-    
 }
 
 -(int) getNextDownloadId
 {
-    
     return self.currentDownloadId++;
 }
 
 -(void) startDownload:(DownloadRequest*) downloadRequest
 {
     FileDownloader* fileDownloader  = [[FileDownloader alloc] init];
-    
 
     downloadRequest.status          = kDownloadStatus_Downloading;
     [downloadRequest.delegate statusChange:downloadRequest];
     [fileDownloader download:downloadRequest delegate:self];
-    logInfo(@"%@", downloadRequest);
+    [fileDownloader start];
+
+    if(self.logLevel <= kLogInfo)
+        logInfo(@"%@", downloadRequest);
 }
 
 -(DownloadRequest*) getDownloadRequest:(int)downloadId
@@ -132,13 +153,41 @@
             return r;
     }
     
-    for(DownloadRequest *r in self.waitingQueue)
+    for(DownloadRequest *r in self.pendingQueue)
     {
         if(r.downloadId == downloadId)
             return r;
     }
 
     return nil;
+}
+
+-(NSString*) description
+{
+    NSMutableString* result = [[NSMutableString alloc] init];
+    
+    [result appendString:@"[Download Manager] "];
+
+    
+    [result appendString:@"Pending: "];
+    for(DownloadRequest *r in self.pendingQueue)
+    {
+        [result appendFormat:@"%d,", r.downloadId];
+    }
+    
+    [result appendString:@"Downloading: "];
+    for(DownloadRequest *r in self.downloadingQueue)
+    {
+        [result appendFormat:@"%d,", r.downloadId];
+    }
+
+    [result appendString:@"Finished: "];
+    for(DownloadRequest *r in self.finishedQueue)
+    {
+        [result appendFormat:@"%d,", r.downloadId];
+    }
+
+    return result;
 }
 
 @end
