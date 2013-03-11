@@ -12,6 +12,8 @@
 #define radians(degrees) (degrees * M_PI/180)
 -(void) initSelf
 {
+//    logfn();
+#if 0
     int i;
     CLLocation* st = [[CLLocation alloc] initWithLatitude:0.0 longitude:0.0];
     
@@ -19,24 +21,27 @@
     {
         CLLocation* end = [[CLLocation alloc] initWithLatitude:i/100000.0 longitude:i/100000.0];
         
-        printf("%.5f distance: %.2f\n", i/100000.0, [st distanceFromLocation:end]);
+//        printf("%.5f distance: %.2f\n", i/100000.0, [st distanceFromLocation:end]);
     }
+#endif
+    
+    route = [[Route alloc] init];
+    [route parseJson:@"/Users/Coming/ios/google/direction_tainan_to_ilian.json"];
+    margin = 0.0;
+    routeDisplayBound.origin.x = floor(480*margin);
+    routeDisplayBound.origin.y = floor(320*margin);
     
     
-    route = [[Route alloc] initWithJsonRouteFile:@"GoogleDirectionAPI.json"];
-    margin = 0.1;
-    routeDisplayBound.origin.x = floor(320*margin);
-    routeDisplayBound.origin.y = floor(460*margin);
+    routeDisplayBound.size.width   = floor(480*(1-margin*2));
+    routeDisplayBound.size.height  = floor(320*(1-margin*2));
+
+    msgRect.origin.x = floor(480*0.15);
+    msgRect.origin.y = floor(320*0.15);
     
     
-    routeDisplayBound.size.width   = floor(320*(1-margin*2));
-    routeDisplayBound.size.height  = floor(460*(1-margin*2));
+    msgRect.size.width   = floor(480*(1-0.3));
+    msgRect.size.height  = floor(320*(1-0.3));
     
-    msgRect.origin.x = 10;
-    msgRect.origin.y = 100;
-    msgRect.size.width = 300;
-    msgRect.size.height = 300;
-   
     
     printf("bounds: (%f, %f, %f, %f)\n", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
     printf("routeDisplayBound: (%f, %f, %f, %f)\n", routeDisplayBound.origin.x, routeDisplayBound.origin.y, routeDisplayBound.size.width, routeDisplayBound.size.height);
@@ -77,10 +82,10 @@
     oneStep = 0.00013;
     
     directionAngle = 0;
-    screenSize.width = 320;
-    screenSize.height = 460;
+    screenSize.width = 480;
+    screenSize.height = 320;
     carCenterPoint.x = screenSize.width/2;
-    carCenterPoint.y = screenSize.height/4;
+    carCenterPoint.y = (screenSize.height/4)*3;
     carPoint.x = 0;
     carPoint.y = 0;
     locationIndex = 0;
@@ -93,7 +98,7 @@
     [self updateTranslationConstant];
     printf("car center point (%.5f, %.5f)\n", carCenterPoint.x, carCenterPoint.y);
     printf("car start at (%.5f, %.5f)\n", carPoint.x, carPoint.y);
-    
+    [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
     
 }
 
@@ -143,7 +148,7 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
-//    printf("drawRect (%f, %f)", rect.size.width, rect.size.height);
+    printf("drawRect (%f, %f)", rect.size.width, rect.size.height);
     // Drawing code
     PointD prePoint;
     PointD curPoint;
@@ -368,7 +373,6 @@
 
 
     [self drawCar:context];
-    [self drawMessageBox:context];
 
     CGColorSpaceRelease(colorspace);
     CGColorRelease(color);
@@ -425,38 +429,20 @@
 
 -(void) drawCar:(CGContextRef) context
 {
-    int size = 20;
-    CGPoint left;
-    CGPoint right;
-    CGPoint top;
-    CGPoint bottom;
-    screenSize.width = 320;
-    screenSize.height = 460;
-    carCenterPoint.x = screenSize.width/2;
-    carCenterPoint.y = screenSize.height/4;
+    int size = 10;
+
+    CGRect carRect;
     
-    CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
-    CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-    CGContextSetLineWidth(context, 2.0);
+    CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor yellowColor].CGColor);
+    CGContextSetLineWidth(context, 1.0);
     
-    left.x = carCenterPoint.x - size;
-    left.y = (screenSize.height - carCenterPoint.y);
-    right.x = left.x + size*2;
-    right.y = left.y;
-    top.x = carCenterPoint.x;
-    top.y = (screenSize.height - carCenterPoint.y) - size;
-    bottom.x = top.x;
-    bottom.y = top.y + size*2;
+    carRect.origin.x = carCenterPoint.x - size;
+    carRect.origin.y = carCenterPoint.y - size;
+    carRect.size.width = size*2;
+    carRect.size.height = size*2;
+    CGContextFillRect(context, carRect);
     
-    CGContextMoveToPoint(context, left.x, left.y);
-    CGContextAddLineToPoint(context, right.x, right.y);
-    CGContextStrokePath(context);
-    CGContextFillPath(context);
-    
-    CGContextMoveToPoint(context, top.x, top.y);
-    CGContextAddLineToPoint(context, bottom.x, bottom.y);
-    CGContextStrokePath(context);
-    CGContextFillPath(context);
     
 }
 

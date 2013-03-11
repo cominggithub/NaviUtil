@@ -62,7 +62,6 @@
         [speech addObject:s];
     }
     
-    logInfo(@"FFFFFFFFFFFFFFFFFFFFFF\n");
     [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager routeFilePath], [self getName]]];
     
 }

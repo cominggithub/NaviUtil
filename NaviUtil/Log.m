@@ -24,6 +24,10 @@ void logInit()
 {
     if(false == isInit)
     {
+        [[NSFileManager defaultManager] createFileAtPath:[SystemManager logFilePath]
+                                                contents:nil
+                                              attributes:nil];
+        
         fileHandle  = [NSFileHandle fileHandleForWritingAtPath:SystemManager.logFilePath];
         outputFormatter = [[NSDateFormatter alloc] init];
         [outputFormatter setDateFormat:@"MM-dd HH:mm:ss"];
@@ -77,11 +81,19 @@ void logDebug(id formatString, ...)
 void logOut(NSString *level, NSString* msg)
 {
     logInit();
+#if 0
     NSString *outputStr = [NSString stringWithFormat:@"%@ %@ %@\n",
                            level,
                            [outputFormatter stringFromDate:[NSDate date]],
                            msg
                            ];
+#else
+    NSString *outputStr = [NSString stringWithFormat:@"%@ %@\n",
+                           level,
+                           msg
+                           ];
+    
+#endif
     
     if( true == isLogToFile )
     {
@@ -95,6 +107,13 @@ void logOut(NSString *level, NSString* msg)
 void logToFile(NSString* msg)
 {
 
+#if 0
+    [msg writeToFile:[SystemManager logFilePath]
+              atomically:NO
+                encoding:NSStringEncodingConversionAllowLossy
+                   error:nil];
+#endif
+    NSLog(@"%@", fileHandle);
     [fileHandle writeData:[msg dataUsingEncoding:NSUTF8StringEncoding]];
     [fileHandle synchronizeFile];
     

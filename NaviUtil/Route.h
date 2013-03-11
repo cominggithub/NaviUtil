@@ -51,7 +51,6 @@ typedef enum
 -(NSString*) getStepInstruction: (int) stepIndex;
 -(NSString*) getStepDurationString: (int) stepIndex;
 -(NSString*) getStepDistanceString: (int) stepIndex;
--(NSString*) getDocumentFilePath:(NSString*) fileName;
 -(NSString*) getDocumentDirectory;
 -(NSArray*) getSpeech;
 -(NSString*) getStartAddress;

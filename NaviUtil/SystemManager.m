@@ -63,7 +63,8 @@ static CLLocationCoordinate2D _defaultLocation;
     _placeFilePath  = [NSString stringWithFormat:@"%@place", _tmpPath];
     _routeFilePath  = [NSString stringWithFormat:@"%@route", _tmpPath];
     _speechFilePath = [NSString stringWithFormat:@"%@speech", _tmpPath];
-    _logFilePath    = [NSString stringWithFormat:@"%@%@.log", _tmpPath, [dateFormattor stringFromDate:[NSDate date]]];
+//    _logFilePath    = [NSString stringWithFormat:@"%@%@.log", _tmpPath, [dateFormattor stringFromDate:[NSDate date]]];
+    _logFilePath    = [NSString stringWithFormat:@"%@log.txt", _tmpPath];
     
     for(NSString *path in dirPaths)
     {
@@ -75,12 +76,14 @@ static CLLocationCoordinate2D _defaultLocation;
     linmso([self routeFilePath]);
     linmso([self speechFilePath]);
     linmso([self logFilePath]);
+    
 
     [self cleanDirectory:_tmpPath];
     [self makeDirectory:[self placeFilePath]];
     [self makeDirectory:[self routeFilePath]];
     [self makeDirectory:[self speechFilePath]];
   
+
 
     logInfo(@"System Init");
     logInfo(@"   Document Path: %@", [self documentPath]);

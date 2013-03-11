@@ -9,6 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "SystemManager.h"
 
+#define logfn() printf("%s(%d)\n", __FUNCTION__, __LINE__)
+#define logfns(args...) do{printf("%s(%d): ", __FUNCTION__, __LINE__); printf(args);}while(0)
+#define logso(o) printf("%s: %s\n",#o, [o UTF8String])
+#define logos(o, args...) do{printf("%s", #o); printf(args);}while(0)
+
+
 typedef enum
 {
     kLogDebug,
