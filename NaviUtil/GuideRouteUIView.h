@@ -34,7 +34,7 @@
     PointD leftMost, rightMost, topMost, bottomMost;
     PointD currentLocation;
     PointD startLocation;
-    PointD mapOffset;
+    PointD toScreenOffset;
     CGSize screenSize;
     double distanceWidth;
     double distanceHeight;

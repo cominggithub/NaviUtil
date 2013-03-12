@@ -49,8 +49,8 @@
     [self generateRoutePoints];
     for (NSValue *v in routePoints)
     {
-        PointD p = [v PointDValue];
-        printf("(%.5f, %.5f)\n", p.x, p.y);
+//        PointD p = [v PointDValue];
+//        printf("(%.5f, %.5f)\n", p.x, p.y);
     }
  #if 0
     routePoints= [NSArray arrayWithObjects:
@@ -540,28 +540,32 @@
     PointD tmpPoint;
     PointD translatedPoint;
 
-    
-    //
   
+    // step 1: rotate
     // let carPoint be the origin
     tmpPoint.x = (p.x - carPoint.x);
     tmpPoint.y = (p.y - carPoint.y);
     
 
-//    printf("       tmpPoint (%.8f, %.8f)\n", tmpPoint.x, tmpPoint.y);
-    
-    
+    // rotate and move back
     translatedPoint.x = tmpPoint.x*cos(directionAngle) - tmpPoint.y*sin(directionAngle) + carPoint.x;
     translatedPoint.y = tmpPoint.x*sin(directionAngle) + tmpPoint.y*cos(directionAngle) + carPoint.y;
     
 
 //    printf("translatedPoint (%.8f, %.8f)\n", translatedPoint.x, translatedPoint.y);
     
-    translatedPoint.x = translatedPoint.x*ratio + mapOffset.x;
-    translatedPoint.y = translatedPoint.y*ratio + mapOffset.y;
+    // step2: scale and move to car screen point.
+    
+    translatedPoint.x = translatedPoint.x*ratio + toScreenOffset.x;
+    translatedPoint.y = translatedPoint.y*ratio + toScreenOffset.y;
 
 //    printf("translatedPoint (%.8f, %.8f)\n", translatedPoint.x, translatedPoint.y);
-    translatedPoint.y = screenSize.height - translatedPoint.y;
+    
+    // step3: mirror around the y axis of car center point
+    // 1. move to origin (-carCenterPoint)
+    // 2. mirror, y=-y
+    // 3. move back (+carCenterPoint)
+    translatedPoint.y = carCenterPoint.y - translatedPoint.y + carCenterPoint.y;
     
     
 //    printf("     draw point (%.5f, %.5f) - > (%.0f, %.0f)\n\n", p.x, p.y, translatedPoint.x, translatedPoint.y);
@@ -694,10 +698,10 @@
 
 -(void) updateTranslationConstant
 {
-    mapOffset.x = carCenterPoint.x - carPoint.x*ratio;
-    mapOffset.y = carCenterPoint.y - carPoint.y*ratio;
+    toScreenOffset.x = carCenterPoint.x - carPoint.x*ratio;
+    toScreenOffset.y = carCenterPoint.y - carPoint.y*ratio;
     
-//    printf("mapOffset (%.8f, %.8f)\n", mapOffset.x, mapOffset.y);
+    printf("toScreenOffset (%.8f, %.8f)\n", toScreenOffset.x, toScreenOffset.y);
 }
     
 
