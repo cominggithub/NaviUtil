@@ -123,3 +123,6 @@ void logToConsole(NSString* msg)
 {
     printf("%s", [msg UTF8String]);
 }
+
+
+

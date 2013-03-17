@@ -22,6 +22,7 @@
 #import "RouteInstruction.h"
 #import "Speech.h"
 #import "SystemManager.h"
+#import "User.h"
 
 @interface NaviUtil : NSObject
 

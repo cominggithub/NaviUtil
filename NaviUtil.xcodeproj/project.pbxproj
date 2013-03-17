@@ -29,6 +29,7 @@
 		2B6CBFEF16DFA6FD0095CBD4 /* RouteInstruction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE016DFA6FD0095CBD4 /* RouteInstruction.m */; };
 		2B6CBFF016DFA6FD0095CBD4 /* Speech.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE216DFA6FD0095CBD4 /* Speech.m */; };
 		2B6CBFF116DFA6FD0095CBD4 /* SystemManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */; };
+		2B70BEDE16F5F0E5002269AB /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B70BEDD16F5F0E5002269AB /* User.m */; };
 		2B7ADCAC16E4E5DE00F8A182 /* Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B7ADCAB16E4E5DE00F8A182 /* Log.m */; };
 		2B98912716EB82D90057A226 /* TextValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912616EB82D90057A226 /* TextValue.m */; };
 		2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912916EB89C10057A226 /* NSDictionary+category.m */; };
@@ -99,6 +100,8 @@
 		2B6CBFE216DFA6FD0095CBD4 /* Speech.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Speech.m; sourceTree = "<group>"; };
 		2B6CBFE316DFA6FD0095CBD4 /* SystemManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemManager.h; sourceTree = "<group>"; };
 		2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemManager.m; sourceTree = "<group>"; };
+		2B70BEDC16F5F0E5002269AB /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
+		2B70BEDD16F5F0E5002269AB /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		2B7ADCAA16E4E5DE00F8A182 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		2B7ADCAB16E4E5DE00F8A182 /* Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Log.m; sourceTree = "<group>"; };
 		2B98912516EB82D90057A226 /* TextValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextValue.h; sourceTree = "<group>"; };
@@ -203,6 +206,8 @@
 				2B98912616EB82D90057A226 /* TextValue.m */,
 				2B98912816EB89C10057A226 /* NSDictionary+category.h */,
 				2B98912916EB89C10057A226 /* NSDictionary+category.m */,
+				2B70BEDC16F5F0E5002269AB /* User.h */,
+				2B70BEDD16F5F0E5002269AB /* User.m */,
 			);
 			path = NaviUtil;
 			sourceTree = "<group>";
@@ -350,6 +355,7 @@
 				2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */,
 				2B98912716EB82D90057A226 /* TextValue.m in Sources */,
 				2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */,
+				2B70BEDE16F5F0E5002269AB /* User.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

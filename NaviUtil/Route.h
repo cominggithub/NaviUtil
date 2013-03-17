@@ -45,7 +45,7 @@ typedef enum
 -(id) initWithJsonRouteFile: (NSString*) fileName;
 -(int) getStepCount;
 -(void) parseJson:(NSString*) fileName;
--(NSArray*) getRoutePolyLine;
+-(NSArray*) getRoutePolyLineCLLocation;
 -(NSArray*) getRoutePolyLinePointD;
 -(NSArray*) getStepPolyLine:(int) stepIndex;
 -(NSString*) getStepInstruction: (int) stepIndex;

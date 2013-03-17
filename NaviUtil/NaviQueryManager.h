@@ -49,10 +49,8 @@ typedef enum DownloadFileFormat {
 
 @interface NaviQueryManager : NSObject
 
-
-
-
-+(Route*) getRoute:(CLLocationCoordinate2D) startLocation endLocation:(CLLocationCoordinate2D) endLocation;
++(Route*) getRoute;
++(Route*) getRouteStartLocation:(CLLocationCoordinate2D) startLocation endLocation:(CLLocationCoordinate2D) endLocation;
 +(NSArray*) getPlace:(NSString*) location;
 +(NSString*) getSpeechFile:text;
 +(NSString*) getFileNameParameters:(NSDictionary*) param downloadFileFormat:(DownloadFileFormat)downloadFileFormat;

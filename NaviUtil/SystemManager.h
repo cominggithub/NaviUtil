@@ -17,6 +17,7 @@
 +(NSString *) placeFilePath;
 +(NSString *) speechFilePath;
 +(NSString *) logFilePath;
++(NSString *) userFilePath;
 +(void) init;
 +(void) initDirectory;
 +(NSString *) getSystemLanguage;

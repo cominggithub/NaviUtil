@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreLocation/CoreLocation.h>
 #import "TextValue.h"
 
 @interface NSDictionary (category)
 -(TextValue*) textValue;
 -(void) dump;
++(NSDictionary*) getLatLngDic:(CLLocationCoordinate2D) coordinate;
 @end

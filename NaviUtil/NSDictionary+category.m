@@ -28,4 +28,14 @@
     }
 }
 
++(NSDictionary*) getLatLngDic:(CLLocationCoordinate2D) coordinate
+{
+    NSDictionary *result = [NSDictionary dictionaryWithObjectsAndKeys:
+                            
+                                [NSString stringWithFormat:@"%.7f", coordinate.latitude], @"lat",
+                                [NSString stringWithFormat:@"%.7f", coordinate.longitude], @"lng",
+                                nil];
+
+    return result;
+}
 @end

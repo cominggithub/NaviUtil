@@ -18,6 +18,7 @@ static NSString *_routeFilePath=@"";
 static NSString *_placeFilePath=@"";
 static NSString *_speechFilePath=@"";
 static NSString *_logFilePath=@"";
+static NSString *_userFilePath=@"";
 static NSString *_defaultLanguage=@"zh-TW";
 static NSDictionary *_supportedLanguage;
 static CLLocationCoordinate2D _defaultLocation;
@@ -63,7 +64,7 @@ static CLLocationCoordinate2D _defaultLocation;
     _placeFilePath  = [NSString stringWithFormat:@"%@place", _tmpPath];
     _routeFilePath  = [NSString stringWithFormat:@"%@route", _tmpPath];
     _speechFilePath = [NSString stringWithFormat:@"%@speech", _tmpPath];
-//    _logFilePath    = [NSString stringWithFormat:@"%@%@.log", _tmpPath, [dateFormattor stringFromDate:[NSDate date]]];
+    _userFilePath   = [NSString stringWithFormat:@"%@/user.json", _documentPath];
     _logFilePath    = [NSString stringWithFormat:@"%@log.txt", _tmpPath];
     
     for(NSString *path in dirPaths)
@@ -90,6 +91,7 @@ static CLLocationCoordinate2D _defaultLocation;
     logInfo(@" Place File Path: %@", [self placeFilePath]);
     logInfo(@" Route File Path: %@", [self routeFilePath]);
     logInfo(@"Speech File Path: %@", [self speechFilePath]);
+    logInfo(@"  User File Path: %@", [self userFilePath]);
     logInfo(@"   Log File Path: %@", [self logFilePath]);
 }
 
@@ -121,6 +123,11 @@ static CLLocationCoordinate2D _defaultLocation;
 +(NSString *) logFilePath
 {
     return _logFilePath;
+}
+
++(NSString *) userFilePath
+{
+    return _userFilePath;
 }
 
 +(void) cleanDirectory:(NSString*) path

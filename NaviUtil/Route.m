@@ -65,24 +65,6 @@
     [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager routeFilePath], [self getName]]];
     
 }
--(void) printDictionaryKeys:(NSDictionary*) dic
-{
-    
-    for(NSString *aKey in dic) {
-        NSLog(@"%@", aKey);
-        //        NSLog(@"%@", [[dic valueForKey:aKey] description]); //made up method
-    }
-}
-
--(void) printArray:(NSArray*) array
-{
-    int i=0;
-    for(i=0; i<[array count]; i++)
-    {
-        NSLog(@"v: %@", [array objectAtIndex:i]);
-    }
-}
-
 
 -(int) getStepCount
 {
@@ -120,7 +102,6 @@
         }
     }
     
-    NSLog(@"routePolyLine: %d", [routePolyLine count]);
     return routePolyLine;
 
 }
@@ -156,11 +137,10 @@
         }
     }
     
-    NSLog(@"routePolyLine: %d", [routePolyLine count]);
     return routePolyLine;
 }
 
--(NSArray*) getRoutePolyLine
+-(NSArray*) getRoutePolyLineCLLocation
 {
     int i = 0;
     NSMutableArray *routePolyLine = [[NSMutableArray alloc] initWithObjects:nil];
@@ -174,7 +154,6 @@
         }
     }
     
-    NSLog(@"routePolyLine: %d", [routePolyLine count]);
     return routePolyLine;
 }
 
@@ -205,7 +184,7 @@
     
     NSMutableString *content = [[NSMutableString alloc] init];
     NSMutableString *coordinates = [[NSMutableString alloc] init];
-    NSArray* routePolyLine = self.getRoutePolyLine;
+    NSArray* routePolyLine = self.getRoutePolyLineCLLocation;
 
     for(CLLocation* cl in routePolyLine)
     {

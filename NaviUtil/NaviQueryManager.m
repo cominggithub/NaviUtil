@@ -302,7 +302,12 @@ static CLLocationCoordinate2D _endLocation;
 }
 
 
-+(Route*) getRoute:(CLLocationCoordinate2D) startLocation endLocation:(CLLocationCoordinate2D) endLocation
++(Route*) getRoute
+{
+    return _currentRoute;
+}
+
++(Route*) getRouteStartLocation:(CLLocationCoordinate2D) startLocation endLocation:(CLLocationCoordinate2D) endLocation
 {
     Route *result = nil;
     NSString *filePath = [self getRouteFilePathStartLocation:startLocation endLocation:endLocation];
