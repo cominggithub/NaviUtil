@@ -19,7 +19,6 @@ static Route* _currentRoute = nil;
 static DownloadRequest *_currentRouteDownloadRequest = nil;
 static DownloadRequest *_startLocationDownloadRequest = nil;
 static DownloadRequest *_endLocationDownloadRequest = nil;
-static LogLevel _logLevel = kLogInfo;
 static bool _isGetStartLocation = false;
 static bool _isGetEndLocation = false;
 static CLLocationCoordinate2D _startLocation;
@@ -60,15 +59,13 @@ static CLLocationCoordinate2D _endLocation;
     _currentRoute = [[Route alloc] init];
     [_currentRoute parseJson:_currentRouteDownloadRequest.filePath];
 
-    if(_logLevel <= kLogInfo)
-        logInfo(@"Num of speech %d\n", [_currentRoute getSpeech].count);
+    mlogInfo(NAVI_QUERY_MANAGER, @"Num of speech %d\n", [_currentRoute getSpeech].count);
     
     for(Speech *speech in [_currentRoute getSpeech])
     {
         downloadRequest = [self getSpeechDownloadRequest:speech.text];
         
-        if(_logLevel <= kLogInfo)
-            logInfo(@"%@\n", speech.text);
+        mlogInfo(NAVI_QUERY_MANAGER, @"%@\n", speech.text);
         
         [_downloadManager download:downloadRequest];
     }
@@ -94,7 +91,9 @@ static CLLocationCoordinate2D _endLocation;
 {
     if(downloadRequest == _currentRouteDownloadRequest)
     {
+
         [self startNavigation];
+        [[NSNotificationCenter defaultCenter] postNotificationName:PLAN_ROUTE_DONE object:self];
     }
     else if(downloadRequest == _startLocationDownloadRequest)
     {

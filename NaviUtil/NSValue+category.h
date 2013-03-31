@@ -12,6 +12,8 @@
 @interface NSValue (NSValue_category)
 
 + (id)valueWithPointD:(PointD)v;
++ (id)valueWithCLLocationCoordinate2D:(CLLocationCoordinate2D)v;
 -(PointD) PointDValue;
+-(CLLocationCoordinate2D) CLLocationCoordinate2DValue;
 
 @end

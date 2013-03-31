@@ -31,10 +31,58 @@ static CLLocationCoordinate2D _defaultLocation;
 {
     [self initSupportedLanguage];
     [self initDirectory];
-    [NaviQueryManager init];
+    [self initOS];
+
     isInit = true;
 }
++(void) initOS
+{
+    UIDevice* device = [UIDevice currentDevice];
+    CGRect screenBounds = [[UIScreen mainScreen] bounds];
+    CGFloat screenScale = [[UIScreen mainScreen] scale];
+//    CGSize screenSize = CGSizeMake(screenBounds.size.width * screenScale, screenBounds.size.height * screenScale);
 
+    logo(device.localizedModel);
+    logo(device.model);
+    logo(device.name);
+    logi(device.orientation);
+    logo(device.systemName);
+    logns(device.systemVersion);
+    logi(device.userInterfaceIdiom);
+    mlogInfo(SYSTEM_MANAGER, @"screen %.0f X %.0f %s\n", screenBounds.size.width, screenBounds.size.height, screenScale > 1.0 ? "Retina":"");
+    
+    Reachability* networkStatus = [Reachability reachabilityWithHostName:@"tw.yahoo.com"];
+    NetworkStatus netStatus = [networkStatus currentReachabilityStatus];
+    BOOL connectionRequired= [networkStatus connectionRequired];
+    NSString* statusString= @"";
+    switch (netStatus)
+    {
+        case NotReachable:
+        {
+            statusString = @"Access Not Available";
+            //Minor interface detail- connectionRequired may return yes, even when the host is unreachable.  We cover that up here...
+            connectionRequired= NO;
+            break;
+        }
+            
+        case ReachableViaWWAN:
+        {
+            statusString = @"Reachable WWAN";
+            break;
+        }
+        case ReachableViaWiFi:
+        {
+            statusString= @"Reachable WiFi";
+            break;
+        }
+    }
+    if(connectionRequired)
+    {
+        statusString= [NSString stringWithFormat: @"%@, Connection Required", statusString];
+    }
+
+    logns(statusString);
+}
 +(void) initSupportedLanguage
 {
     _supportedLanguage = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -86,13 +134,13 @@ static CLLocationCoordinate2D _defaultLocation;
   
 
 
-    logInfo(@"System Init");
-    logInfo(@"   Document Path: %@", [self documentPath]);
-    logInfo(@" Place File Path: %@", [self placeFilePath]);
-    logInfo(@" Route File Path: %@", [self routeFilePath]);
-    logInfo(@"Speech File Path: %@", [self speechFilePath]);
-    logInfo(@"  User File Path: %@", [self userFilePath]);
-    logInfo(@"   Log File Path: %@", [self logFilePath]);
+    mlogInfo(SYSTEM_MANAGER, @"System Init");
+    mlogInfo(SYSTEM_MANAGER, @"   Document Path: %@", [self documentPath]);
+    mlogInfo(SYSTEM_MANAGER, @" Place File Path: %@", [self placeFilePath]);
+    mlogInfo(SYSTEM_MANAGER, @" Route File Path: %@", [self routeFilePath]);
+    mlogInfo(SYSTEM_MANAGER, @"Speech File Path: %@", [self speechFilePath]);
+    mlogInfo(SYSTEM_MANAGER, @"  User File Path: %@", [self userFilePath]);
+    mlogInfo(SYSTEM_MANAGER, @"   Log File Path: %@", [self logFilePath]);
 }
 
 +(NSString*) documentPath

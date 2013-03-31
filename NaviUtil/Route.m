@@ -106,10 +106,33 @@
 
 }
 
+-(NSArray*) getRoutePolyLineCLLocationCoordinate2D
+{
+
+    int i = 0;
+    CLLocationCoordinate2D p;
+    CLLocationCoordinate2D prev;
+    prev = CLLocationCoordinate2DMake(0, 0);
+    NSMutableArray *routePolyLine = [[NSMutableArray alloc] initWithObjects:nil];
+    for(i=0; i<[steps count]; i++)
+    {
+        NSArray *stepPolyLine = [self getStepPolyLine:i];
+        for(CLLocation *location in stepPolyLine)
+        {
+            p = location.coordinate;
+            if(!(prev.latitude == p.latitude && prev.longitude == prev.longitude))
+                [routePolyLine addObject:[NSValue valueWithCLLocationCoordinate2D:p]];
+            prev = p;
+        }
+    }
+    
+    return routePolyLine;
+}
+
 -(NSArray*) getRoutePolyLinePointD
 {
     int i = 0;
-    int max = 100;
+    int max = 1000000;
     int cnt = 0;
     PointD p;
     PointD prev;
@@ -217,13 +240,13 @@
     [content appendString:@"</kml>"];
     
     NSError *err;
-    logInfo(@"kml path:%@\n", filePath);
+    mlogInfo(ROUTE, @"kml path:%@\n", filePath);
     
     BOOL ok = [content writeToFile:filePath atomically:YES encoding:NSUnicodeStringEncoding error:&err];
     
     if (!ok)
     {
-        logWarning(@"cannot write: %@\n", filePath);
+        mlogWarning(ROUTE, @"cannot write: %@\n", filePath);
     }
     
 }
@@ -260,6 +283,16 @@
 -(NSString*) getEndAddress
 {
     return [[legs objectAtIndex:0] objectForKey:@"end_address"];
+}
+
+-(NSString*) getDurationString
+{
+    return [[[legs objectAtIndex:0] objectForKey:@"duration"] objectForKey:@"text"];
+}
+
+-(NSString*) getDistanceString
+{
+    return [[[legs objectAtIndex:0] objectForKey:@"distance"] objectForKey:@"text"];
 }
 
 -(CLLocationCoordinate2D) getStartLocation

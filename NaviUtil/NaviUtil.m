@@ -38,8 +38,15 @@ static NSString* _googlePlaceAPIKey=@"";
 {
     [SystemManager init];
     [NaviQueryManager init];
+    [User init];
     
     _isInit = true;
+}
+
++(void) close
+{
+    
+    [User save];
 }
 @end
 

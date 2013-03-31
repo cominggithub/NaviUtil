@@ -31,9 +31,13 @@
 		2B6CBFF116DFA6FD0095CBD4 /* SystemManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */; };
 		2B70BEDE16F5F0E5002269AB /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B70BEDD16F5F0E5002269AB /* User.m */; };
 		2B7ADCAC16E4E5DE00F8A182 /* Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B7ADCAB16E4E5DE00F8A182 /* Log.m */; };
+		2B92164D16F757A40072E44F /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92164C16F757A40072E44F /* Location.m */; };
 		2B98912716EB82D90057A226 /* TextValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912616EB82D90057A226 /* TextValue.m */; };
 		2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912916EB89C10057A226 /* NSDictionary+category.m */; };
+		2B995CD81706F27500991700 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B995CD71706F27500991700 /* Reachability.m */; };
 		2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */; };
+		2BE3A81017046D92007621EC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A80F17046D92007621EC /* LocationManager.m */; };
+		2BE3A81317046DD5007621EC /* LocationSimulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A81217046DD5007621EC /* LocationSimulator.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +64,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2B0958A617083B3A00934BAA /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
 		2B6CBF9E16DFA6D90095CBD4 /* libNaviUtil.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNaviUtil.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2B6CBFA516DFA6D90095CBD4 /* NaviUtil-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NaviUtil-Prefix.pch"; sourceTree = "<group>"; };
@@ -104,12 +109,20 @@
 		2B70BEDD16F5F0E5002269AB /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		2B7ADCAA16E4E5DE00F8A182 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		2B7ADCAB16E4E5DE00F8A182 /* Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Log.m; sourceTree = "<group>"; };
+		2B92164B16F757A40072E44F /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
+		2B92164C16F757A40072E44F /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
 		2B98912516EB82D90057A226 /* TextValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextValue.h; sourceTree = "<group>"; };
 		2B98912616EB82D90057A226 /* TextValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextValue.m; sourceTree = "<group>"; };
 		2B98912816EB89C10057A226 /* NSDictionary+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+category.h"; sourceTree = "<group>"; };
 		2B98912916EB89C10057A226 /* NSDictionary+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+category.m"; sourceTree = "<group>"; };
+		2B995CD61706F27500991700 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		2B995CD71706F27500991700 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		2BBA453D16E8CB6500C0B7FC /* GoogleJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleJson.h; sourceTree = "<group>"; };
 		2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleJson.m; sourceTree = "<group>"; };
+		2BE3A80E17046D92007621EC /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
+		2BE3A80F17046D92007621EC /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
+		2BE3A81117046DD5007621EC /* LocationSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationSimulator.h; sourceTree = "<group>"; };
+		2BE3A81217046DD5007621EC /* LocationSimulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationSimulator.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -167,6 +180,8 @@
 		2B6CBFA316DFA6D90095CBD4 /* NaviUtil */ = {
 			isa = PBXGroup;
 			children = (
+				2B995CD61706F27500991700 /* Reachability.h */,
+				2B995CD71706F27500991700 /* Reachability.m */,
 				2B6CBFC916DFA6FD0095CBD4 /* DownloadManager.h */,
 				2B6CBFCA16DFA6FD0095CBD4 /* DownloadManager.m */,
 				2B6CBFCB16DFA6FD0095CBD4 /* DownloadRequest.h */,
@@ -175,9 +190,17 @@
 				2B6CBFCE16DFA6FD0095CBD4 /* FileDownloader.m */,
 				2B6CBFCF16DFA6FD0095CBD4 /* GeoUtil.h */,
 				2B6CBFD016DFA6FD0095CBD4 /* GeoUtil.m */,
+				2BBA453D16E8CB6500C0B7FC /* GoogleJson.h */,
+				2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */,
 				2B6CBFD116DFA6FD0095CBD4 /* GuideRouteUIView.h */,
 				2B6CBFD216DFA6FD0095CBD4 /* GuideRouteUIView.m */,
 				2B6CBFD316DFA6FD0095CBD4 /* linmsdebug.h */,
+				2B92164B16F757A40072E44F /* Location.h */,
+				2B92164C16F757A40072E44F /* Location.m */,
+				2BE3A80E17046D92007621EC /* LocationManager.h */,
+				2BE3A80F17046D92007621EC /* LocationManager.m */,
+				2BE3A81117046DD5007621EC /* LocationSimulator.h */,
+				2BE3A81217046DD5007621EC /* LocationSimulator.m */,
 				2B7ADCAA16E4E5DE00F8A182 /* Log.h */,
 				2B7ADCAB16E4E5DE00F8A182 /* Log.m */,
 				2B6CBFD416DFA6FD0095CBD4 /* NaviQueryManager.h */,
@@ -185,6 +208,8 @@
 				2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */,
 				2B6CBFA816DFA6D90095CBD4 /* NaviUtil.m */,
 				2B6CBFD616DFA6FD0095CBD4 /* NavUtil-Prefix.pch */,
+				2B98912816EB89C10057A226 /* NSDictionary+category.h */,
+				2B98912916EB89C10057A226 /* NSDictionary+category.m */,
 				2B6CBFD716DFA6FD0095CBD4 /* NSString+category.h */,
 				2B6CBFD816DFA6FD0095CBD4 /* NSString+category.m */,
 				2B6CBFD916DFA6FD0095CBD4 /* NSValue+category.h */,
@@ -197,17 +222,14 @@
 				2B6CBFE016DFA6FD0095CBD4 /* RouteInstruction.m */,
 				2B6CBFE116DFA6FD0095CBD4 /* Speech.h */,
 				2B6CBFE216DFA6FD0095CBD4 /* Speech.m */,
-				2BBA453D16E8CB6500C0B7FC /* GoogleJson.h */,
-				2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */,
 				2B6CBFA416DFA6D90095CBD4 /* Supporting Files */,
 				2B6CBFE316DFA6FD0095CBD4 /* SystemManager.h */,
 				2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */,
 				2B98912516EB82D90057A226 /* TextValue.h */,
 				2B98912616EB82D90057A226 /* TextValue.m */,
-				2B98912816EB89C10057A226 /* NSDictionary+category.h */,
-				2B98912916EB89C10057A226 /* NSDictionary+category.m */,
 				2B70BEDC16F5F0E5002269AB /* User.h */,
 				2B70BEDD16F5F0E5002269AB /* User.m */,
+				2B0958A617083B3A00934BAA /* Event.h */,
 			);
 			path = NaviUtil;
 			sourceTree = "<group>";
@@ -356,6 +378,10 @@
 				2B98912716EB82D90057A226 /* TextValue.m in Sources */,
 				2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */,
 				2B70BEDE16F5F0E5002269AB /* User.m in Sources */,
+				2B92164D16F757A40072E44F /* Location.m in Sources */,
+				2BE3A81017046D92007621EC /* LocationManager.m in Sources */,
+				2BE3A81317046DD5007621EC /* LocationSimulator.m in Sources */,
+				2B995CD81706F27500991700 /* Reachability.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -413,7 +439,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 			};
@@ -436,7 +462,7 @@
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};

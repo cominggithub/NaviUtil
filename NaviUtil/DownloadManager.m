@@ -59,8 +59,8 @@
     [self.downloadingQueue removeObject:downloadRequest];
     [self.finishedQueue addObject:downloadRequest];
 
-    if(self.logLevel <= kLogInfo)
-        logInfo(@"%@\n", self);
+
+    mlogInfo(DOWNLOAD_MANAGER, @"%@\n", self);
 
     [self triggerDownload];
     [NaviQueryManager downloadRequestStatusChange:downloadRequest];
@@ -83,14 +83,14 @@
         [self.pendingQueue addObject:downloadRequest];
         [downloadRequest.delegate statusChange:downloadRequest];
 
-        if(self.logLevel <= kLogInfo)
-            logInfo(@"%@\n", downloadRequest);
+
+        mlogInfo(DOWNLOAD_MANAGER, @"%@\n", downloadRequest);
         
         [self triggerDownload];
     }
 
-    if(self.logLevel <= kLogInfo)
-        logInfo(@"%@\n", self);
+
+    mlogInfo(DOWNLOAD_MANAGER, @"%@\n", self);
 }
 
 -(void) download:(DownloadRequest*) downloadRequest
@@ -99,8 +99,8 @@
     downloadRequest.downloadId = [self getNextDownloadId];
     [self.pendingQueue addObject:downloadRequest];
 
-    if(self.logLevel <= kLogInfo)
-        logInfo(@"%@\n", self);
+
+    mlogInfo(DOWNLOAD_MANAGER, @"%@\n", self);
     
     [self triggerDownload];
 }
@@ -115,8 +115,8 @@
         [self.downloadingQueue addObject:r];
         [self startDownload:r];
         
-        if(self.logLevel <= kLogInfo)
-            logInfo(@"t %@\n", self);
+
+        mlogInfo(DOWNLOAD_MANAGER, @"t %@\n", self);
     }
 }
 
@@ -134,8 +134,8 @@
     [fileDownloader download:downloadRequest delegate:self];
     [fileDownloader start];
 
-    if(self.logLevel <= kLogInfo)
-        logInfo(@"%@", downloadRequest);
+
+    mlogInfo(DOWNLOAD_MANAGER, @"%@", downloadRequest);
 }
 
 -(DownloadRequest*) getDownloadRequest:(int)downloadId

@@ -8,8 +8,14 @@
 
 #import <Foundation/Foundation.h>
 #import "SystemManager.h"
+#import "Location.h"
 
 @interface User : NSObject
+
+
+
++(void) init;
 +(void) parseJson:(NSString*) fileName;
 +(void) save;
+
 @end

@@ -25,8 +25,7 @@
     }
 #endif
     
-    route = [[Route alloc] init];
-    [route parseJson:@"/Users/Coming/ios/google/direction_tainan_to_ilian.json"];
+    route = [NaviQueryManager getRoute];
     margin = 0.0;
     routeDisplayBound.origin.x = floor(480*margin);
     routeDisplayBound.origin.y = floor(320*margin);
@@ -148,7 +147,6 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
-    printf("drawRect (%f, %f)", rect.size.width, rect.size.height);
     // Drawing code
     PointD prePoint;
     PointD curPoint;
@@ -206,15 +204,18 @@
     for(NSValue *v in routePoints)
     {
         curPoint = [self getDrawPoint:[v PointDValue]];
-        
+        /* disable check out of bound point */
+#if 0
         if(curPoint.x == prePoint.x && curPoint.y == prePoint.y)
             continue;
-        
+
+
         if(!CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:curPoint]))
         {
             CGContextMoveToPoint(context, curPoint.x, curPoint.y);
             continue;
         }
+#endif
         [drawedPoint addObject:[NSValue valueWithPointD:curPoint]];
         CGContextAddLineToPoint(context, curPoint.x, curPoint.y);
 //        CGContextDrawPath(context, kCGPathFillStroke);
@@ -581,9 +582,9 @@
 //        [self nextRouteLine];
 //        carPoint = routeStartPoint;
 
-        [self updateLocation];
-        [self updateTranslationConstant];
-        [self setNeedsDisplay];
+//        [self updateLocation];
+//        [self updateTranslationConstant];
+//        [self setNeedsDisplay];
     }
     else
     {
@@ -639,9 +640,11 @@
 }
 
 
--(void) updateLocation
+-(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocationCoordinate2D
 {
-    PointD nextCarPoint = [self getNextCarPoint];
+    PointD nextCarPoint;
+    nextCarPoint.x = newCarLocationCoordinate2D.longitude;
+    nextCarPoint.y = newCarLocationCoordinate2D.latitude;
     
     if(routeUnitVector.y > 0)
     {
@@ -651,7 +654,7 @@
             if (nextCarPoint.x > routeEndPoint.x &&  nextCarPoint.y > routeEndPoint.y)
             {
                 [self nextRouteLine];
-                nextCarPoint = routeStartPoint;
+//                nextCarPoint = routeStartPoint;
             }
         }
         // (2) -+
@@ -660,7 +663,7 @@
             if (nextCarPoint.x <= routeEndPoint.x &&  nextCarPoint.y > routeEndPoint.y)
             {
                 [self nextRouteLine];
-                nextCarPoint = routeStartPoint;
+//                nextCarPoint = routeStartPoint;
             }
         }
     }
@@ -672,7 +675,7 @@
             if (nextCarPoint.x > routeEndPoint.x &&  nextCarPoint.y <= routeEndPoint.y)
             {
                 [self nextRouteLine];
-                nextCarPoint = routeStartPoint;
+//                nextCarPoint = routeStartPoint;
             }
         }
         // (3) --
@@ -681,7 +684,7 @@
             if (nextCarPoint.x <= routeEndPoint.x &&  nextCarPoint.y <= routeEndPoint.y)
             {
                 [self nextRouteLine];
-                nextCarPoint = routeStartPoint;
+//                nextCarPoint = routeStartPoint;
             }
         }
     }
@@ -764,4 +767,18 @@
     
     
 }
+
+-(void) locationUpdate:(CLLocationCoordinate2D) location
+{
+    mlogInfo(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f)\n", location.latitude, location.longitude);
+    [self updateCarLocation:location];
+    [self updateTranslationConstant];
+    [self setNeedsDisplay];
+}
+
+-(void) speedUpdate:(int) speed
+{
+    
+}
+
 @end

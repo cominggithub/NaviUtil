@@ -15,9 +15,21 @@
     return [NSValue value:&v withObjCType:@encode(PointD)];
 }
 
++ (id)valueWithCLLocationCoordinate2D:(CLLocationCoordinate2D)v
+{
+    return [NSValue value:&v withObjCType:@encode(CLLocationCoordinate2D)];
+}
+
 - (PointD)PointDValue
 {
     PointD v;
+    [self getValue:&v];
+    return v;
+}
+
+- (CLLocationCoordinate2D)CLLocationCoordinate2DValue
+{
+    CLLocationCoordinate2D v;
     [self getValue:&v];
     return v;
 }

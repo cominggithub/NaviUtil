@@ -12,12 +12,14 @@
 #import "GeoUtil.h"
 #import "NSValue+category.h"
 #import "Log.h"
+#import "LocationManager.h"
+#import "NaviQueryManager.h"
 
 
 
 
 
-@interface GuideRouteUIView : UIView
+@interface GuideRouteUIView : UIView<LocationManagerDelegate>
 {
     Route* route;
     NSMutableArray *routePoints;
@@ -63,7 +65,7 @@
 -(void) generateRoutePoints;
 -(PointD) getDrawPoint:(PointD) location;
 -(void) timerTimeout;
--(void) updateLocation;
+-(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocationCoordinate2D;
 -(UIImage*) getCarImage;
 
 

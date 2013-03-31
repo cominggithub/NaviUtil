@@ -30,10 +30,7 @@ typedef enum
 
 
 @property (readonly) RouteStatusCode status;
-@property (nonatomic, strong) TextValue *distance;
-@property (nonatomic, strong) TextValue *duration;
-@property (nonatomic, strong) NSString *endAddress;
-@property (nonatomic, strong) NSString *startAddress;
+
 @property (nonatomic) int distanceValue;
 @property (nonatomic) int durationValue;
 @property (nonatomic) CLLocationCoordinate2D startLocation;
@@ -42,9 +39,11 @@ typedef enum
 @property (nonatomic, strong) NSDictionary *root;
 
 
+
 -(id) initWithJsonRouteFile: (NSString*) fileName;
 -(int) getStepCount;
 -(void) parseJson:(NSString*) fileName;
+-(NSArray*) getRoutePolyLineCLLocationCoordinate2D;
 -(NSArray*) getRoutePolyLineCLLocation;
 -(NSArray*) getRoutePolyLinePointD;
 -(NSArray*) getStepPolyLine:(int) stepIndex;
@@ -55,6 +54,9 @@ typedef enum
 -(NSArray*) getSpeech;
 -(NSString*) getStartAddress;
 -(NSString*) getEndAddress;
+-(NSString*) getDurationString;
+-(NSString*) getDistanceString;
+
 -(CLLocationCoordinate2D) getStartLocation;
 -(CLLocationCoordinate2D) getEndLocation;
 -(void) dump;

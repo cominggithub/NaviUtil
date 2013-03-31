@@ -9,9 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "DownloadManager.h"
 #import "DownloadRequest.h"
+#import "Event.h"
 #import "FileDownloader.h"
 #import "GeoUtil.h"
 #import "GuideRouteUIView.h"
+#import "LocationManager.h"
+#import "LocationSimulator.h"
 #import "Log.h"
 #import "NaviQueryManager.h"
 #import "NSString+category.h"
