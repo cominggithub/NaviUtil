@@ -59,6 +59,7 @@
     double routeDistance;
     
     CGRect msgRect;
+    int currentStep;
 }
 
 -(void) initSelf;

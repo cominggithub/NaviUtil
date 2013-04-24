@@ -30,27 +30,21 @@
 {
     int i = nextLocationIndex;
     CLLocationCoordinate2D tmpLocationCoordinate2D = CLLocationCoordinate2DMake(0, 0);
-    logi(nextLocationIndex);
-    logi(self.locationPoints.count);
     if(nextLocationIndex == 0)
     {
-        logfn();
         tmpLocationCoordinate2D = [[self.locationPoints objectAtIndex:0] CLLocationCoordinate2DValue];
         currentLocation = [[CLLocation alloc] initWithLatitude:tmpLocationCoordinate2D.latitude longitude:tmpLocationCoordinate2D.longitude];
         nextLocationIndex++;
     }
     else if(nextLocationIndex < self.locationPoints.count)
     {
-        logfn();
         for(i = nextLocationIndex; i<self.locationPoints.count; i++)
         {
-            logfn();
             tmpLocationCoordinate2D = [[self.locationPoints objectAtIndex:i] CLLocationCoordinate2DValue];
             nextLocation = [[CLLocation alloc] initWithLatitude:tmpLocationCoordinate2D.latitude longitude:tmpLocationCoordinate2D.longitude];
             if([nextLocation distanceFromLocation:currentLocation] > 10.0)
                 break;
         }
-        logfn();
         currentLocation = nextLocation;
         nextLocationIndex = i;
     }

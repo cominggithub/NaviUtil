@@ -22,13 +22,28 @@
 
 +(float) isOnPath: (PointD) c Point1:(PointD) p1 Point2:(PointD) p2
 {
-    float angleCP1P2 = [self getAngle:p1 Point1:c Point2:p2];
-    float angleCP2P1 = [self getAngle:p2 Point1:c Point2:p2];
+    float angleCP1P2 = [self getAngleByPointD:p1 Point1:c Point2:p2];
+    float angleCP2P1 = [self getAngleByPointD:p2 Point1:c Point2:p2];
     
     return angleCP1P2 <= 90 && angleCP2P1 <= 90;
 }
 
-+(float) getAngle: (PointD) c Point1:(PointD) p1 Point2:(PointD) p2
++(float) getAngle: (CLLocationCoordinate2D) c Point1:(CLLocationCoordinate2D) p1 Point2:(CLLocationCoordinate2D) p2
+{
+    PointD tc, tp1, tp2;
+    tc.x = c.longitude;
+    tc.y = c.latitude;
+    
+    tp1.x = p1.longitude;
+    tp1.y = p1.latitude;
+    
+    tp2.x = p2.longitude;
+    tp2.y = p2.latitude;
+    
+    return [self getAngleByPointD:tc Point1:tp1 Point2:tp2];
+}
+
++(float) getAngleByPointD: (PointD) c Point1:(PointD) p1 Point2:(PointD) p2
 {
     float cp1Lengh, cp2Lengh, p1p2Length;
     double angle = 0;
@@ -53,6 +68,18 @@
     //    printf("p1(%.2f, %.2f), p2(%.2f, %.2f)", p1.x, p1.y, p2.x, p2.y);
     //    printf("r1: %.2f, r2: %.2f, r1+r2: %.2f", r1, r2, r1+r2);
     return sqrt(r1+r2);
+}
+
++(float) getLength: (CLLocationCoordinate2D) p1 ToLocation:(CLLocationCoordinate2D) p2
+{
+    PointD tp1, tp2;
+    tp1.x = p1.longitude;
+    tp1.y = p1.latitude;
+    
+    tp2.x = p2.longitude;
+    tp2.y = p2.latitude;
+    
+    return [self getLength:tp1 ToPoint:tp2];
 }
 
 +(double) getLevelLongitudeOffset:(int) level

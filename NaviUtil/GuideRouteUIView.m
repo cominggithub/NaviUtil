@@ -91,13 +91,15 @@
     routeLineM = 0;
     routeLineB = 0;
     isRouteLineMUndefind = false;
-    ratio = 122000;
+//    ratio = 122000;
+    ratio = 222000;
     [self nextRouteLine];
     carPoint = routeStartPoint;
     [self updateTranslationConstant];
     printf("car center point (%.5f, %.5f)\n", carCenterPoint.x, carCenterPoint.y);
     printf("car start at (%.5f, %.5f)\n", carPoint.x, carPoint.y);
     [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
+    currentStep = 0;
     
 }
 
@@ -310,16 +312,17 @@
     startPosText.size.width = 100;
     startPosText.size.height = 60;
     
-    endPosText.origin.x = 220;
-    endPosText.origin.y = 120;
-    endPosText.size.width = 100;
+    endPosText.origin.x = 20;
+    endPosText.origin.y = 20;
+    endPosText.size.width = 350;
     endPosText.size.height = 60;
     
-    NSString *startText = @"台南";
+    NSString *startText = [NSString stringWithFormat:@"angle:%.2f - %d", directionAngle*180/3.14, currentStep];
     [startText drawInRect:startPosText withFont:[UIFont boldSystemFontOfSize:32.0]];
     
-    NSString *endText = @"宜蘭";
-    [endText drawInRect:endPosText withFont:[UIFont boldSystemFontOfSize:32.0]];
+    NSString *endText = [NSString stringWithFormat:@"angle:%.2f - %d", directionAngle*180/3.14, currentStep];
+
+    [endText drawInRect:endPosText withFont:[UIFont boldSystemFontOfSize:20.0]];
 
 #if 0
     int i=0;
@@ -374,6 +377,7 @@
 
 
     [self drawCar:context];
+    [self drawCurrentRouteLine:context];
 
     CGColorSpaceRelease(colorspace);
     CGColorRelease(color);
@@ -446,6 +450,26 @@
     
     
 }
+
+-(void) drawCurrentRouteLine:(CGContextRef) context
+{
+    PointD curPoint;
+
+    
+    
+    CGContextSetStrokeColorWithColor(context, [UIColor purpleColor].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor purpleColor].CGColor);
+    CGContextSetLineWidth(context, 5.0);
+    
+    curPoint = [self getDrawPoint:routeStartPoint];
+    
+    CGContextMoveToPoint(context, curPoint.x, curPoint.y);
+    curPoint = [self getDrawPoint:routeEndPoint];
+    CGContextAddLineToPoint(context, curPoint.x, curPoint.y);
+    CGContextStrokePath(context);
+    
+}
+
 
 -(void) generateRoutePoints
 {
@@ -651,7 +675,7 @@
         // (1) ++
         if(routeUnitVector.x > 0)
         {
-            if (nextCarPoint.x > routeEndPoint.x &&  nextCarPoint.y > routeEndPoint.y)
+            if (nextCarPoint.x >= routeEndPoint.x &&  nextCarPoint.y >= routeEndPoint.y)
             {
                 [self nextRouteLine];
 //                nextCarPoint = routeStartPoint;
@@ -660,7 +684,7 @@
         // (2) -+
         else
         {
-            if (nextCarPoint.x <= routeEndPoint.x &&  nextCarPoint.y > routeEndPoint.y)
+            if (nextCarPoint.x <= routeEndPoint.x &&  nextCarPoint.y >= routeEndPoint.y)
             {
                 [self nextRouteLine];
 //                nextCarPoint = routeStartPoint;
@@ -672,7 +696,7 @@
         // (4) +-
         if(routeUnitVector.x > 0)
         {
-            if (nextCarPoint.x > routeEndPoint.x &&  nextCarPoint.y <= routeEndPoint.y)
+            if (nextCarPoint.x >= routeEndPoint.x &&  nextCarPoint.y <= routeEndPoint.y)
             {
                 [self nextRouteLine];
 //                nextCarPoint = routeStartPoint;
@@ -688,12 +712,14 @@
             }
         }
     }
-    
+
+/*
     printf("car (%.8f, %.8f) -> (%.8f, %.8f), distance: %.8f\n",
           carPoint.x, carPoint.y,
           nextCarPoint.x, nextCarPoint.y,
           [GeoUtil getLength:carPoint ToPoint:nextCarPoint]
         );
+*/
     carPoint = nextCarPoint;
     [self updateTranslationConstant];
 
@@ -704,7 +730,7 @@
     toScreenOffset.x = carCenterPoint.x - carPoint.x*ratio;
     toScreenOffset.y = carCenterPoint.y - carPoint.y*ratio;
     
-    printf("toScreenOffset (%.8f, %.8f)\n", toScreenOffset.x, toScreenOffset.y);
+//    printf("toScreenOffset (%.8f, %.8f)\n", toScreenOffset.x, toScreenOffset.y);
 }
     
 
@@ -732,7 +758,7 @@
     tmpPoint.x = routeStartPoint.x;
     tmpPoint.y = routeStartPoint.y;
     tmpPoint.y++;
-    directionAngle = [GeoUtil getAngle:routeStartPoint Point1:tmpPoint Point2:routeEndPoint];
+    directionAngle = [GeoUtil getAngleByPointD:routeStartPoint Point1:tmpPoint Point2:routeEndPoint];
     
     if(tmpPoint.x > routeEndPoint.x)
     {
@@ -742,16 +768,18 @@
 //    directionAngle = 0;
     
 //    printf("angle: %.5f\n", directionAngle*(180.0/M_PI));
-    printf("route: (%.5f, %.5f) -> (%.5f, %.5f)\n", routeStartPoint.x, routeStartPoint.y, routeEndPoint.x, routeEndPoint.y);
+//    printf("route: (%.5f, %.5f) -> (%.5f, %.5f)\n", routeStartPoint.x, routeStartPoint.y, routeEndPoint.x, routeEndPoint.y);
 
 
+/*
     if(isRouteLineMUndefind == true)
         printf("x = %.8f\n", routeStartPoint.x);
     else if(routeLineM == 0)
         printf("y = %.8f\n", routeLineB);
     else
         printf("y = %.8fx + %.8f\n", routeLineM, routeLineB);
-    
+
+*/
     locationIndex++;
     if(locationIndex >= routePoints.count -1)
         locationIndex = 0;
@@ -760,9 +788,9 @@
     routeUnitVector.x = (routeEndPoint.x - routeStartPoint.x)/routeDistance;
     routeUnitVector.y = (routeEndPoint.y - routeStartPoint.y)/routeDistance;
     
-    printf("routeUnitVector: (%.8f, %.8f)\n", routeUnitVector.x, routeUnitVector.y);
+//    printf("routeUnitVector: (%.8f, %.8f)\n", routeUnitVector.x, routeUnitVector.y);
    
-    printf("move distance point: (%.8f, %.8f)\n", routeUnitVector.x*oneStep, routeUnitVector.y*oneStep);
+//    printf("move distance point: (%.8f, %.8f)\n", routeUnitVector.x*oneStep, routeUnitVector.y*oneStep);
     
     
     
@@ -770,10 +798,13 @@
 
 -(void) locationUpdate:(CLLocationCoordinate2D) location
 {
-    mlogInfo(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f)\n", location.latitude, location.longitude);
+    currentStep++;
+    mlogInfo(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+
     [self updateCarLocation:location];
     [self updateTranslationConstant];
     [self setNeedsDisplay];
+    mlogInfo(GUIDE_ROUTE_UIVIEW, @" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
 }
 
 -(void) speedUpdate:(int) speed
