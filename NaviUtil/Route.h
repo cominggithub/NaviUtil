@@ -12,6 +12,7 @@
 #import "GeoUtil.h"
 #import "TextValue.h"
 #import "Speech.h"
+#import "RouteLine.h"
 
 
 typedef enum
@@ -26,6 +27,12 @@ typedef enum
     NSArray* polyLines;
     NSMutableArray *speech;
     NSArray *legs;
+    NSArray *routeLines;
+    NSMutableArray *tmpRouteLines;
+    int routeLineCount;
+    
+    CLLocationCoordinate2D routeLineStartLocation;
+    CLLocationCoordinate2D routeLineEndLocation;
 }
 
 
@@ -37,6 +44,7 @@ typedef enum
 @property (nonatomic) CLLocationCoordinate2D endLocation;
 @property (nonatomic) int numOfStep;
 @property (nonatomic, strong) NSDictionary *root;
+
 
 
 
@@ -56,6 +64,7 @@ typedef enum
 -(NSString*) getEndAddress;
 -(NSString*) getDurationString;
 -(NSString*) getDistanceString;
+-(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine;
 
 -(CLLocationCoordinate2D) getStartLocation;
 -(CLLocationCoordinate2D) getEndLocation;

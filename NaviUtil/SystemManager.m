@@ -9,6 +9,7 @@
 #import "SystemManager.h"
 #import "linmsdebug.h"
 #import "NaviQueryManager.h"
+#import <mach/mach.h>
 
 
 static bool isInit = false;
@@ -227,6 +228,34 @@ static CLLocationCoordinate2D _defaultLocation;
     return _defaultLocation;
 }
 
+
++(NSString*) getUsedMemoryStr
+{
+    struct task_basic_info info;
+    mach_msg_type_number_t size = sizeof(info);
+    kern_return_t kerr = task_info(mach_task_self(),
+                                   TASK_BASIC_INFO,
+                                   (task_info_t)&info,
+                                   &size);
+
+    NSString *result = @"";
+    if( kerr == KERN_SUCCESS ) {
+        if(info.resident_size < 1024)
+        {
+            result = [NSString stringWithFormat:@"%d Bytes", info.resident_size];
+        }
+        else if(info.resident_size < 1024*1024)
+        {
+            result = [NSString stringWithFormat:@"%d KB", (int)info.resident_size/1024];
+        }
+        else
+        {
+            result = [NSString stringWithFormat:@"%.2f MB", info.resident_size/(1024.0*1024.0)];
+        }
+    }
+    
+    return result;
+}
 
 @end
 

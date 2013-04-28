@@ -18,32 +18,45 @@
     return v;
 }
 
-
-
-+(float) isOnPath: (PointD) c Point1:(PointD) p1 Point2:(PointD) p2
++(float) getAngleByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3
 {
-    float angleCP1P2 = [self getAngleByPointD:p1 Point1:c Point2:p2];
-    float angleCP2P1 = [self getAngleByPointD:p2 Point1:c Point2:p2];
-    
-    return angleCP1P2 <= 90 && angleCP2P1 <= 90;
+    PointD p1, p2, p3;
+    p1.x = l1.longitude;
+    p1.y = l1.latitude;
+
+    p2.x = l2.longitude;
+    p2.y = l2.latitude;
+
+    p3.x = l3.longitude;
+    p3.y = l3.latitude;
+    return [self getAngleByPoint1:p1 Point2:p2 Point3:p3];
 }
 
-+(float) getAngle: (CLLocationCoordinate2D) c Point1:(CLLocationCoordinate2D) p1 Point2:(CLLocationCoordinate2D) p2
++(float) getAngleByPoint1: (PointD) p1 Point2:(PointD) p2 Point3:(PointD) p3;
 {
-    PointD tc, tp1, tp2;
-    tc.x = c.longitude;
-    tc.y = c.latitude;
+    float length12, length13, length23;
+    double angle = 0;
+    float cosValue = 0;
+    length12 = [self getLength:p1 ToPoint:p2];
+    length13 = [self getLength:p1 ToPoint:p3];
+    length23 = [self getLength:p2 ToPoint:p3];
     
-    tp1.x = p1.longitude;
-    tp1.y = p1.latitude;
     
-    tp2.x = p2.longitude;
-    tp2.y = p2.latitude;
+    if( length12*length23 != 0)
+    {
+        cosValue = (pow(length12, 2) + pow(length23, 2) - pow(length13, 2))/(2*length12*length23);
+        angle = acos(cosValue);
+    }
+    else
+    {
+        angle = 0;
+    }
     
-    return [self getAngleByPointD:tc Point1:tp1 Point2:tp2];
+    mlogDebug(GEOUTIL, @"angle: %8.4f, cosValue: %11.7f, (%11.7f, %11.7f, %11.7f)", TO_ANGLE(angle), cosValue, length12, length23, length13);
+    return angle;
 }
-
-+(float) getAngleByPointD: (PointD) c Point1:(PointD) p1 Point2:(PointD) p2
+#if 0
++(float) getAngleByCenterPoint: (PointD) c SidePoint1:(PointD) p1 SidePoint2:(PointD) p2
 {
     float cp1Lengh, cp2Lengh, p1p2Length;
     double angle = 0;
@@ -55,10 +68,12 @@
     
     cr = (pow(cp1Lengh, 2) + pow(cp2Lengh, 2) - pow(p1p2Length, 2))/(2*cp1Lengh*cp2Lengh);
     angle = acos(cr);
-    //    printf("angle: %.2f (%.2f, %.2f, %.2f)", (angle/M_PI)*180, cp1Lengh, cp2Lengh, p1p2Length);
+    
+    mlogInfo(GEOUTIL, @"angle: %.2f (%.2f, %.2f, %.2f)", TO_ANGLE(angle), cp1Lengh, cp2Lengh, p1p2Length);
     return angle;
 }
 
+#endif
 +(float) getLength: (PointD) p1 ToPoint:(PointD) p2
 {
     float length = 0;
@@ -70,7 +85,7 @@
     return sqrt(r1+r2);
 }
 
-+(float) getLength: (CLLocationCoordinate2D) p1 ToLocation:(CLLocationCoordinate2D) p2
++(float) getLengthFromLocation: (CLLocationCoordinate2D) p1 ToLocation:(CLLocationCoordinate2D) p2
 {
     PointD tp1, tp2;
     tp1.x = p1.longitude;
@@ -140,4 +155,31 @@
     NSString *result = [NSString stringWithFormat:@"%.5f,%.5f", location.latitude, location.longitude];
     return result;
 }
+
++(PointD) makePointDFromCLLocationCoordinate2D: (CLLocationCoordinate2D) location
+{
+    PointD d;
+    d.x = location.longitude;
+    d.y = location.latitude;
+    
+    return d;
+}
+
++(PointD) makePointDFromX: (double) x Y:(double) y
+{
+    PointD d;
+    d.x = x;
+    d.y = y;
+    
+    return d;
+}
+
++(float) getGeoDistanceFromLocation: (CLLocationCoordinate2D) p1 ToLocation:(CLLocationCoordinate2D) p2
+{
+    CLLocation* l1 = [[CLLocation alloc] initWithLatitude:p1.latitude longitude:p1.longitude];
+    CLLocation* l2 = [[CLLocation alloc] initWithLatitude:p2.latitude longitude:p2.longitude];
+    
+    return [l1 distanceFromLocation:l2];
+}
+
 @end

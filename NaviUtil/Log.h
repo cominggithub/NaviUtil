@@ -24,23 +24,25 @@
 #define NAVI_QUERY_MANAGER        (1<<4)
 #define LOCATION_SIMULATOR        (1<<5)
 #define GUIDE_ROUTE_UIVIEW        (1<<6)
+#define GEOUTIL                   (1<<7)
 #define NONE                      (1<<10)
 
 #define logfn() printf("%s(%d)\n", __FUNCTION__, __LINE__)
 #define logfns(args...) do{printf("%s(%d): ", __FUNCTION__, __LINE__); printf(args);}while(0)
-#define logo(o) printf("%s: %s\n",#o, [o UTF8String])
+#define logo(o) printf("%s: %s\n",#o, [[o description] UTF8String])
+#define logObjNoName(o) printf("%s\n",[[o description] UTF8String])
 #define logos(o, args...) do{printf("%s", #o); printf(args);}while(0)
 #define logi(o) printf("%s: %d\n",#o, o)
-#define logf(o) printf("%f: %d\n",#o, o)
+#define logf(o) printf("%s: %f\n",#o, o)
 #define logs(o) printf("%s: %s\n",#o, o)
 #define logns(o) printf("%s: %s\n",#o, [o UTF8String])
 
 #define getObjectName(oo) #oo
 #define logClass(o) printf("%s: %s\n", getObjectName(o), (char*)class_getName([o class]))
 
-#define mlogInfo(module, args...)     do{if (isLogModule(module)) {logInfo(#module, args);}}while(0)
-#define mlogWarning(module, args...)  do{if (isLogModule(module)) {logWarning(#module, args);}}while(0)
-#define mlogError(module, args...)    do{if (isLogModule(module)) {logError(#module, args);}}while(0)
+#define mlogInfo(module, args...)     do{logInfo(#module, args);}while(0)
+#define mlogWarning(module, args...)  do{logWarning(#module, args);}while(0)
+#define mlogError(module, args...)    do{logError(#module, args);}while(0)
 #define mlogDebug(module, args...)    do{if (isLogModule(module)) {logDebug(#module, args);}}while(0)
 
 

@@ -59,13 +59,13 @@ static CLLocationCoordinate2D _endLocation;
     _currentRoute = [[Route alloc] init];
     [_currentRoute parseJson:_currentRouteDownloadRequest.filePath];
 
-    mlogInfo(NAVI_QUERY_MANAGER, @"Num of speech %d\n", [_currentRoute getSpeech].count);
+    mlogDebug(NAVI_QUERY_MANAGER, @"Num of speech %d\n", [_currentRoute getSpeech].count);
     
     for(Speech *speech in [_currentRoute getSpeech])
     {
         downloadRequest = [self getSpeechDownloadRequest:speech.text];
         
-        mlogInfo(NAVI_QUERY_MANAGER, @"%@\n", speech.text);
+        mlogDebug(NAVI_QUERY_MANAGER, @"%@\n", speech.text);
         
         [_downloadManager download:downloadRequest];
     }

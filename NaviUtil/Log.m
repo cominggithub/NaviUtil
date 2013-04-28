@@ -13,7 +13,7 @@ static bool isInit = false;
 static NSFileHandle *fileHandle = nil;
 static bool isLogToFile = true;
 static bool isLogToConsole = true;
-static unsigned long long logModule = (ALL&~DOWNLOAD_MANAGER & ~NAVI_QUERY_MANAGER & ~LOCATION_SIMULATOR);
+static unsigned long long logModule = (ALL&~DOWNLOAD_MANAGER & ~NAVI_QUERY_MANAGER & ~LOCATION_SIMULATOR & ~GEOUTIL & ~ROUTE);
 static LogLevel logLevel = kLogAll;
 
 NSDateFormatter *outputFormatter;
@@ -43,11 +43,9 @@ void logInit()
     }
     isInit = true;
 }
+
 void logInfo(const char* moduleName, id formatString, ...)
 {
-    
-    if(logLevel < kLogInfo)
-        return;
     
     NSString *str;
     va_list args;
@@ -59,10 +57,6 @@ void logInfo(const char* moduleName, id formatString, ...)
 
 void logWarning(const char* moduleName, id formatString, ...)
 {
-    
-    if(logLevel < kLogWarning)
-        return;
-            
     NSString *str;
     va_list args;
     va_start(args, formatString);
@@ -75,8 +69,6 @@ void logWarning(const char* moduleName, id formatString, ...)
 
 void logError(const char* moduleName, id formatString, ...)
 {
-    if(logLevel < kLogError)
-        return;
     
     NSString *str;
     va_list args;

@@ -14,6 +14,7 @@
 #import "Log.h"
 #import "LocationManager.h"
 #import "NaviQueryManager.h"
+#import "RouteLine.h"
 
 
 
@@ -60,13 +61,17 @@
     
     CGRect msgRect;
     int currentStep;
+    RouteLine *lastRouteLine;
+    NSTimer *rotateTimer;
+    double angleRotateStep;
+    int rotateInterval;
 }
 
 -(void) initSelf;
 -(void) generateRoutePoints;
 -(PointD) getDrawPoint:(PointD) location;
 -(void) timerTimeout;
--(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocationCoordinate2D;
+-(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
 -(UIImage*) getCarImage;
 
 

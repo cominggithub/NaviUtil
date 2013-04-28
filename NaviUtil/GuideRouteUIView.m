@@ -21,7 +21,7 @@
     {
         CLLocation* end = [[CLLocation alloc] initWithLatitude:i/100000.0 longitude:i/100000.0];
         
-//        printf("%.5f distance: %.2f\n", i/100000.0, [st distanceFromLocation:end]);
+        printf("%.5f distance: %.2f\n", i/100000.0, [st distanceFromLocation:end]);
     }
 #endif
     
@@ -93,6 +93,9 @@
     isRouteLineMUndefind = false;
 //    ratio = 122000;
     ratio = 222000;
+    angleRotateStep = 1;
+    rotateInterval = 1;
+    rotateTimer = nil;
     [self nextRouteLine];
     carPoint = routeStartPoint;
     [self updateTranslationConstant];
@@ -100,6 +103,7 @@
     printf("car start at (%.5f, %.5f)\n", carPoint.x, carPoint.y);
     [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
     currentStep = 0;
+    
     
 }
 
@@ -284,7 +288,7 @@
     
     for(NSValue *v in drawedPoint)
     {
-        int size = 20;
+        int size = 8;
         curPoint = [v PointDValue];
     
         endRect.origin.x = curPoint.x-size/2;
@@ -304,25 +308,7 @@
     
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
     
-    CGRect startPosText;
-    CGRect endPosText;
-    
-    startPosText.origin.x = 70;
-    startPosText.origin.y = 335;
-    startPosText.size.width = 100;
-    startPosText.size.height = 60;
-    
-    endPosText.origin.x = 20;
-    endPosText.origin.y = 20;
-    endPosText.size.width = 350;
-    endPosText.size.height = 60;
-    
-    NSString *startText = [NSString stringWithFormat:@"angle:%.2f - %d", directionAngle*180/3.14, currentStep];
-    [startText drawInRect:startPosText withFont:[UIFont boldSystemFontOfSize:32.0]];
-    
-    NSString *endText = [NSString stringWithFormat:@"angle:%.2f - %d", directionAngle*180/3.14, currentStep];
 
-    [endText drawInRect:endPosText withFont:[UIFont boldSystemFontOfSize:20.0]];
 
 #if 0
     int i=0;
@@ -378,12 +364,30 @@
 
     [self drawCar:context];
     [self drawCurrentRouteLine:context];
+    [self drawDebugMessage:context];
 
     CGColorSpaceRelease(colorspace);
     CGColorRelease(color);
     
 }
 
+-(void) drawDebugMessage:(CGContextRef) context
+{
+    int routeLineNo = lastRouteLine != nil ? lastRouteLine.routeLineNo : -1;
+    CGRect endPosText;
+
+    CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
+    endPosText.origin.x = 20;
+    endPosText.origin.y = 20;
+    endPosText.size.width = 350;
+    endPosText.size.height = 60;
+    
+
+    NSString *endText = [NSString stringWithFormat:@"angle:%.2f - %d\n%@", TO_ANGLE(directionAngle), routeLineNo, [SystemManager getUsedMemoryStr]];
+    
+    [endText drawInRect:endPosText withFont:[UIFont boldSystemFontOfSize:14.0]];
+    
+}
 -(void) drawMessageBox:(CGContextRef) context
 {
     CGRect rect = msgRect;
@@ -434,19 +438,19 @@
 
 -(void) drawCar:(CGContextRef) context
 {
-    int size = 10;
+    int size = 20;
 
     CGRect carRect;
     
-    CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
+    CGContextSetStrokeColorWithColor(context, [UIColor yellowColor].CGColor);
     CGContextSetFillColorWithColor(context, [UIColor yellowColor].CGColor);
-    CGContextSetLineWidth(context, 1.0);
+    CGContextSetLineWidth(context, 4.0);
     
     carRect.origin.x = carCenterPoint.x - size;
     carRect.origin.y = carCenterPoint.y - size;
     carRect.size.width = size*2;
     carRect.size.height = size*2;
-    CGContextFillRect(context, carRect);
+    CGContextStrokeRect(context, carRect);
     
     
 }
@@ -455,8 +459,9 @@
 {
     PointD curPoint;
 
-    
-    
+    if(lastRouteLine == nil)
+        return;
+
     CGContextSetStrokeColorWithColor(context, [UIColor purpleColor].CGColor);
     CGContextSetFillColorWithColor(context, [UIColor purpleColor].CGColor);
     CGContextSetLineWidth(context, 5.0);
@@ -664,12 +669,12 @@
 }
 
 
--(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocationCoordinate2D
+-(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
 {
     PointD nextCarPoint;
-    nextCarPoint.x = newCarLocationCoordinate2D.longitude;
-    nextCarPoint.y = newCarLocationCoordinate2D.latitude;
-    
+    nextCarPoint.x = newCarLocation.longitude;
+    nextCarPoint.y = newCarLocation.latitude;
+#if 0
     if(routeUnitVector.y > 0)
     {
         // (1) ++
@@ -720,6 +725,15 @@
           [GeoUtil getLength:carPoint ToPoint:nextCarPoint]
         );
 */
+    
+#endif
+    lastRouteLine = [route findClosestRouteLineByLocation:newCarLocation LastRouteLine:lastRouteLine];
+    if(lastRouteLine != nil)
+    {
+        routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:lastRouteLine.startLocation];
+        routeEndPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:lastRouteLine.endLocation];
+        directionAngle = lastRouteLine.angle;
+    }
     carPoint = nextCarPoint;
     [self updateTranslationConstant];
 
@@ -758,7 +772,7 @@
     tmpPoint.x = routeStartPoint.x;
     tmpPoint.y = routeStartPoint.y;
     tmpPoint.y++;
-    directionAngle = [GeoUtil getAngleByPointD:routeStartPoint Point1:tmpPoint Point2:routeEndPoint];
+//    directionAngle = [GeoUtil getAngleByPointD:routeStartPoint Point1:tmpPoint Point2:routeEndPoint];
     
     if(tmpPoint.x > routeEndPoint.x)
     {
@@ -802,7 +816,6 @@
     mlogInfo(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
 
     [self updateCarLocation:location];
-    [self updateTranslationConstant];
     [self setNeedsDisplay];
     mlogInfo(GUIDE_ROUTE_UIVIEW, @" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
 }
