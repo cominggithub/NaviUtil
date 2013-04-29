@@ -93,9 +93,9 @@
     isRouteLineMUndefind = false;
 //    ratio = 122000;
     ratio = 222000;
-    angleRotateStep = 1;
-    rotateInterval = 1;
-    rotateTimer = nil;
+    angleRotateStep = 0.1;
+    rotateInterval = 0.1;
+
     [self nextRouteLine];
     carPoint = routeStartPoint;
     [self updateTranslationConstant];
@@ -104,6 +104,7 @@
     [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
     currentStep = 0;
     
+    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
     
 }
 
@@ -578,9 +579,12 @@
     
 
     // rotate and move back
-    translatedPoint.x = tmpPoint.x*cos(directionAngle) - tmpPoint.y*sin(directionAngle) + carPoint.x;
-    translatedPoint.y = tmpPoint.x*sin(directionAngle) + tmpPoint.y*cos(directionAngle) + carPoint.y;
-    
+//    translatedPoint.x = tmpPoint.x*cos(directionAngle) - tmpPoint.y*sin(directionAngle) + carPoint.x;
+//    translatedPoint.y = tmpPoint.x*sin(directionAngle) + tmpPoint.y*cos(directionAngle) + carPoint.y;
+
+    translatedPoint.x = tmpPoint.x*cos(currentAngle) - tmpPoint.y*sin(currentAngle) + carPoint.x;
+    translatedPoint.y = tmpPoint.x*sin(currentAngle) + tmpPoint.y*cos(currentAngle) + carPoint.y;
+
 
 //    printf("translatedPoint (%.8f, %.8f)\n", translatedPoint.x, translatedPoint.y);
     
@@ -823,6 +827,61 @@
 -(void) speedUpdate:(int) speed
 {
     
+}
+
+- (void)rotateAngle:(NSTimer *)theTimer
+{
+
+    if(true == [self resetCurrentAngle])
+    {
+        [self setNeedsDisplay];
+    }
+}
+
+-(bool) resetCurrentAngle
+{
+    int reverseDirection = 1;
+    double angleOffset = fabs(currentAngle - directionAngle);
+    
+    /* -PI = PI */
+    
+    reverseDirection = angleOffset > (M_PI/2.0)? (-1):(1);
+    
+    if(angleOffset == 0)
+        return false;
+    
+    if(angleOffset <= angleRotateStep)
+        currentAngle = directionAngle;
+    else
+    {
+        if(currentAngle < directionAngle)
+        {
+            currentAngle = currentAngle - reverseDirection*angleRotateStep;
+            
+        }
+        else
+        {
+            currentAngle = currentAngle + reverseDirection*angleRotateStep;
+        }
+    }
+    
+    currentAngle = [self adjustAngle:currentAngle];
+
+    return true;
+}
+
+-(double) adjustAngle:(double)angle
+{
+    if(angle > M_PI)
+    {
+        angle -= 2*M_PI;
+    }
+    else if(angle <-M_PI)
+    {
+        angle += 2*M_PI;
+    }
+    
+    return angle;
 }
 
 @end

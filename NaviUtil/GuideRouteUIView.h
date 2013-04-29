@@ -63,8 +63,9 @@
     int currentStep;
     RouteLine *lastRouteLine;
     NSTimer *rotateTimer;
+    double currentAngle;
     double angleRotateStep;
-    int rotateInterval;
+    double rotateInterval;
 }
 
 -(void) initSelf;
