@@ -105,6 +105,8 @@
     currentStep = 0;
     
     rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
+    carFootPrint = [NSMutableArray arrayWithCapacity:0];
+    isDrawCarFootPrint = true;
     
 }
 
@@ -366,10 +368,41 @@
     [self drawCar:context];
     [self drawCurrentRouteLine:context];
     [self drawDebugMessage:context];
-
+    [self drawCarFootPrint:context];
+    
     CGColorSpaceRelease(colorspace);
     CGColorRelease(color);
     
+}
+
+
+-(void) drawCarFootPrint:(CGContextRef) context
+{
+    PointD curPoint;
+    CGRect rect;
+    NSMutableArray* drawedPoint = [[NSMutableArray alloc] init];
+    if(false == isDrawCarFootPrint)
+        return;
+    
+    CGContextSetFillColorWithColor(context, [UIColor magentaColor].CGColor);
+    
+    for(NSValue *v in carFootPrint)
+    {
+        curPoint = [self getDrawPoint:[v PointDValue]];
+        /* disable check out of bound point */
+
+        int size = 8;
+        curPoint = [v PointDValue];
+        
+        rect.origin.x = curPoint.x-size/2;
+        rect.origin.y = curPoint.y-size/2;
+        rect.size.width = size;
+        rect.size.height = size;
+        
+        CGContextFillRect(context, rect);
+        
+        [drawedPoint addObject:[NSValue valueWithPointD:curPoint]];
+    }
 }
 
 -(void) drawDebugMessage:(CGContextRef) context
@@ -731,6 +764,11 @@
 */
     
 #endif
+    
+    
+    
+   
+    
     lastRouteLine = [route findClosestRouteLineByLocation:newCarLocation LastRouteLine:lastRouteLine];
     if(lastRouteLine != nil)
     {
@@ -739,8 +777,20 @@
         directionAngle = lastRouteLine.angle;
     }
     carPoint = nextCarPoint;
+    [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
+    [self dumpCarPoint];
     [self updateTranslationConstant];
+    
 
+}
+
+-(void) dumpCarPoint
+{
+    for(NSValue* v in carFootPrint)
+    {
+        PointD p = [v PointDValue];
+        mlogDebug(NONE, @"car foot print (%12.7f, %12.7f)\n", p.y, p.x);
+    }
 }
 
 -(void) updateTranslationConstant
@@ -845,7 +895,7 @@
     
     /* -PI = PI */
     
-    reverseDirection = angleOffset > (M_PI/2.0)? (-1):(1);
+    reverseDirection = angleOffset > (M_PI)? (-1):(1);
     
     if(angleOffset == 0)
         return false;
@@ -856,12 +906,12 @@
     {
         if(currentAngle < directionAngle)
         {
-            currentAngle = currentAngle - reverseDirection*angleRotateStep;
+            currentAngle = currentAngle + reverseDirection*angleRotateStep;
             
         }
         else
         {
-            currentAngle = currentAngle + reverseDirection*angleRotateStep;
+            currentAngle = currentAngle - reverseDirection*angleRotateStep;
         }
     }
     

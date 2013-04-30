@@ -24,6 +24,8 @@
 {
     Route* route;
     NSMutableArray *routePoints;
+    NSMutableArray *carFootPrint;
+    bool isDrawCarFootPrint;
     double margin;
     double ratio;
     double fitRatio;

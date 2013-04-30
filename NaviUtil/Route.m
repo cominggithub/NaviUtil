@@ -473,11 +473,13 @@
     
     
     RouteLine* matchedRouteLine = nil;
+    RouteLine* matchedRouteLineWithEndPoint = nil;
     double distance = 0;
+    double distanceFromEndPoint = 0.00008;
     double tmpDistance = 0.0;
     double angleStart = 0.0;
     double angleEnd = 0.0;
-    double minDistanceRequired = 0.00007; // almost 10m
+    double minDistanceRequired = 0.00008; // almost 10m
 
     startTime = [NSDate date];
 
@@ -518,7 +520,7 @@
     /* worest case */
     /* if not found, look up all route lines */
     
-    if(matchedRouteLine == nil || distance >= minDistanceRequired)
+//    if(matchedRouteLine == nil || distance >= minDistanceRequired)
     {
         for (RouteLine* rl in routeLines)
         {
@@ -532,6 +534,15 @@
                 distance = tmpDistance;
             }
             
+            tmpDistance = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:location];
+            
+            if(tmpDistance < distanceFromEndPoint)
+            {
+                matchedRouteLineWithEndPoint = rl;
+                distanceFromEndPoint = tmpDistance;
+                mlogDebug(ROUTE, @"RouteLineNo:%3d, distance: %11.7f", rl.routeLineNo, distanceFromEndPoint);
+            }
+            
             mlogDebug(ROUTE, @"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f",
                      rl.routeLineNo,
                      angleStart + angleEnd,
@@ -539,19 +550,20 @@
                      angleEnd,
                      tmpDistance
                      );
-
-            
             
             searchCount++;
-//            if(searchCount > 5)
-//                break;
+
         }
     }
+    
+    
+
 
     if(distance >= minDistanceRequired)
     {
-        matchedRouteLine = nil;
+        matchedRouteLine = matchedRouteLineWithEndPoint;
     }
+    
     
     endTime = [NSDate date];
     
