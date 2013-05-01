@@ -65,9 +65,9 @@
 
 -(double) GetRandomDouble
 {
-    int index = arc4random() % 6 - 3;
+    int index = arc4random() % 30 - 15;
 
-    return index/10000.0;
+    return index/100000.0;
 }
 
 -(void) updateLocation

@@ -32,9 +32,9 @@
 -(void) parseJson:(NSString*) fileName
 {
 
-    int i;
+    int i = 0;
     NSArray *array;
-
+    NSDictionary *location;
     NSDictionary *dic;
     NSError* error;
     NSData *data = [[NSFileManager defaultManager] contentsAtPath:fileName];
@@ -53,49 +53,39 @@
     speech = [[NSMutableArray alloc] initWithCapacity:steps.count];
 
     [self initRouteLines];
+
+
+
+    dic = [[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0];
+ 
+    /* add Start Location */
+    [self addLocationToRouteLinesWithStepNo:i Location:[self getStartLocation]];
+    
     for(i=0; i<steps.count; i++)
     {
         Speech* s = [[Speech alloc] init];
-        CLLocationCoordinate2D startLocation;
-        CLLocationCoordinate2D endLocation;
-
         dic = [steps objectAtIndex:i];
-        NSDictionary *location = [dic objectForKey:@"start_location"];
-        
         s.text = [[NSString stringWithString:[dic objectForKey:@"html_instructions"]] stripHTML];
         s.coordinate  = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue],
                                                    [[location objectForKey:@"lng"] doubleValue]);
-
-        startLocation  = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue],
-                                                   [[location objectForKey:@"lng"] doubleValue]);
-
-        location = [dic objectForKey:@"end_location"];
-        
-        endLocation  = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue],
-                                                    [[location objectForKey:@"lng"] doubleValue]);
-        
         [speech addObject:s];
-        
-        
         NSArray *stepPolyLine = [self getStepPolyLine:i];
-
-        [self addLocationToRouteLinesWithStepNo:i Location:startLocation];
-        
+        /* add points in PolyLie */
         for(CLLocation *location in stepPolyLine)
         {
             [self addLocationToRouteLinesWithStepNo:i Location:location.coordinate];
         }
-        
-        [self addLocationToRouteLinesWithStepNo:i Location:endLocation];
-        
+
     }
     
+    [self addLocationToRouteLinesWithStepNo:i Location:[self getEndLocation]];
+
     [self saveRouteLines];
-    
-    
     [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager routeFilePath], [self getName]]];
+    [self dumpRouteLines];
     
-//    [self dumpRouteLines];
+    [self dumpRouteLineAndPolyLine];
+    mlogInfo(ROUTE, @"%@", [self description]);
 }
 
 -(void) initRouteLines
@@ -106,6 +96,7 @@
 
 -(void) addLocationToRouteLinesWithStepNo:(int) stepNo Location:(CLLocationCoordinate2D) location
 {
+    mlogDebug(ROUTE, @"AddLocationToRouteLinesWithStepNo: %3d, Line: %3d, (%12.7f, %12.7f)", stepNo, routeLineCount, location.latitude, location.longitude);
     
     routeLineEndLocation = location;
     
@@ -124,6 +115,10 @@
                                                             routeLineNo:routeLineCount];
         [tmpRouteLines addObject:routeLine];
         routeLineCount++;
+    }
+    else
+    {
+        mlogDebug(ROUTE, @"    Skip");
     }
 
     routeLineStartLocation = routeLineEndLocation;
@@ -200,49 +195,31 @@
 -(NSArray*) getRoutePolyLinePointD
 {
     int i = 0;
-    int max = 1000000;
+    int max = 100000;
     int cnt = 0;
     PointD p;
     PointD prev;
     p.x = -1;
     prev.x = -2;
     NSMutableArray *routePolyLine = [[NSMutableArray alloc] initWithObjects:nil];
+    
+    /* add start location */
+    p = [GeoUtil makePointDFromCLLocationCoordinate2D:[self getStartLocation]];
+    prev.x  = p.x;
+    prev.y  = p.y;
+    [routePolyLine addObject:[NSValue valueWithPointD:p]];
+    
     for(i=0; i<[steps count] && cnt < max ; i++)
     {
         NSArray *stepPolyLine = [self getStepPolyLine:i];
-
-        NSDictionary *dic = [steps objectAtIndex:i];
-        NSDictionary *location = [dic objectForKey:@"start_location"];
-        CLLocationCoordinate2D startLocation;
-        CLLocationCoordinate2D endLocation;
         
-        startLocation  = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue],
-                                                    [[location objectForKey:@"lng"] doubleValue]);
-        
-        location = [dic objectForKey:@"end_location"];
-        
-        endLocation  = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue],
-                                                  [[location objectForKey:@"lng"] doubleValue]);
-        
-        /* add start location */
-
-        p.x = startLocation.longitude;
-        p.y = startLocation.latitude;
-        
-        if(!(prev.x == p.x && prev.y == prev.y))
-            [routePolyLine addObject:[NSValue valueWithPointD:p]];
-        
-        cnt++;
-        prev.x = p.x;
-        prev.y = p.y;
-        
-        /* add poly line */
+        /* add points in poly line */
         for(CLLocation *location in stepPolyLine)
         {
             p.x = location.coordinate.longitude;
             p.y = location.coordinate.latitude;
             
-            if(!(prev.x == p.x && prev.y == prev.y))
+            if(!(prev.x == p.x && prev.y == p.y))
                 [routePolyLine addObject:[NSValue valueWithPointD:p]];
             
             cnt++;
@@ -253,18 +230,13 @@
                 break;
         }
 
-        /* add end location */
-        p.x = endLocation.longitude;
-        p.y = endLocation.latitude;
-        
-        if(!(prev.x == p.x && prev.y == prev.y))
-            [routePolyLine addObject:[NSValue valueWithPointD:p]];
-        
-        cnt++;
-        prev.x = p.x;
-        prev.y = p.y;
-        
+
     }
+    
+    /* add end location */
+    p = [GeoUtil makePointDFromCLLocationCoordinate2D:[self getEndLocation]];
+    
+    [routePolyLine addObject:[NSValue valueWithPointD:p]];
     
     return routePolyLine;
 }
@@ -447,16 +419,15 @@
 
 -(NSString *) description
 {
-    CLLocationCoordinate2D startLocation = [self getStartLocation];
-    CLLocationCoordinate2D endLocation = [self getStartLocation];
-    
-    return [NSString stringWithFormat:@"%@ To %@ (%.7f,%.7f) -> (%.7f,%.7f)",
+    return [NSString stringWithFormat:@"%@ to %@ (%.7f,%.7f) -> (%.7f,%.7f), Step:%d, RouteLines:%d",
             [self getStartAddress],
             [self getEndAddress],
-            startLocation.latitude,
-            startLocation.longitude,
-            endLocation.latitude,
-            endLocation.longitude
+            [self getStartLocation].latitude,
+            [self getStartLocation].longitude,
+            [self getEndLocation].latitude,
+            [self getEndLocation].longitude,
+            steps.count,
+            routeLines.count
             ];
 }
 
@@ -475,11 +446,11 @@
     RouteLine* matchedRouteLine = nil;
     RouteLine* matchedRouteLineWithEndPoint = nil;
     double distance = 0;
-    double distanceFromEndPoint = 0.00008;
+    double distanceFromEndPoint = 0.00015;
     double tmpDistance = 0.0;
     double angleStart = 0.0;
     double angleEnd = 0.0;
-    double minDistanceRequired = 0.00008; // almost 10m
+    double minDistanceRequired = 0.00010; // almost 10m
 
     startTime = [NSDate date];
 
@@ -589,8 +560,26 @@
         logObjNoName(rl);
     }
 }
--(void) dump
+
+-(void) dumpRouteLineAndPolyLine
 {
+    int i=0;
+    NSArray* polyLine = [self getRoutePolyLinePointD];
+    for(i=0; i<polyLine.count && i<routeLines.count;i++)
+    {
+        NSValue *v = [polyLine objectAtIndex:i];
+        RouteLine *rl = [routeLines objectAtIndex:i];
+        PointD p = [v PointDValue];
+        if(p.y == rl.startLocation.latitude && p.x == rl.startLocation.longitude)
+        {
+            printf(" ");
+        }
+        else
+        {
+            printf("!");
+        }
+        printf("step:%4d, line: %4d, (%12.7f, %12.7f), (%12.7f, %12.7f)\n", rl.stepNo, rl.routeLineNo, p.y, rl.startLocation.latitude, p.x, rl.startLocation.longitude);
+    }
     
 }
 

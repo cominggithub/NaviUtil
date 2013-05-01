@@ -12,6 +12,7 @@
 #define radians(degrees) (degrees * M_PI/180)
 -(void) initSelf
 {
+    int routePointCount = 0;
 //    logfn();
 #if 0
     int i;
@@ -48,8 +49,9 @@
     [self generateRoutePoints];
     for (NSValue *v in routePoints)
     {
-//        PointD p = [v PointDValue];
-//        printf("(%.5f, %.5f)\n", p.x, p.y);
+        PointD p = [v PointDValue];
+        printf("%3d (%.5f, %.5f)\n", routePointCount, p.x, p.y);
+        routePointCount++;
     }
  #if 0
     routePoints= [NSArray arrayWithObjects:
@@ -384,15 +386,15 @@
     if(false == isDrawCarFootPrint)
         return;
     
-    CGContextSetFillColorWithColor(context, [UIColor magentaColor].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
     
     for(NSValue *v in carFootPrint)
     {
+        int size = 4;
         curPoint = [self getDrawPoint:[v PointDValue]];
         /* disable check out of bound point */
 
-        int size = 8;
-        curPoint = [v PointDValue];
+
         
         rect.origin.x = curPoint.x-size/2;
         rect.origin.y = curPoint.y-size/2;
@@ -778,18 +780,21 @@
     }
     carPoint = nextCarPoint;
     [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
-    [self dumpCarPoint];
+
+ 
     [self updateTranslationConstant];
+    
+//    [self dumpCarFootPrint];
     
 
 }
 
--(void) dumpCarPoint
+-(void) dumpCarFootPrint
 {
     for(NSValue* v in carFootPrint)
     {
         PointD p = [v PointDValue];
-        mlogDebug(NONE, @"car foot print (%12.7f, %12.7f)\n", p.y, p.x);
+        mlogDebug(NONE, @"car foot print (%12.7f, %12.7f)", p.y, p.x);
     }
 }
 

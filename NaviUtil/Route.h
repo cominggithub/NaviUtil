@@ -40,8 +40,6 @@ typedef enum
 
 @property (nonatomic) int distanceValue;
 @property (nonatomic) int durationValue;
-@property (nonatomic) CLLocationCoordinate2D startLocation;
-@property (nonatomic) CLLocationCoordinate2D endLocation;
 @property (nonatomic) int numOfStep;
 @property (nonatomic, strong) NSDictionary *root;
 
@@ -68,6 +66,6 @@ typedef enum
 
 -(CLLocationCoordinate2D) getStartLocation;
 -(CLLocationCoordinate2D) getEndLocation;
--(void) dump;
+
 
 @end
