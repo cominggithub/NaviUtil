@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "GeoUtil.h"
+#import "log.h"
 
 
 @interface RouteLine : NSObject
@@ -37,7 +38,7 @@
                        stepNo:(int) stepNo
                   routeLineNo:(int) routeLineNo;
 
--(double) getDistanceWithLocation:(CLLocationCoordinate2D) location;
+-(double) getGeoDistanceToLocation:(CLLocationCoordinate2D) location;
 -(double) getAngleToStartLocation:(CLLocationCoordinate2D) location;
 -(double) getAngleToEndLocation:(CLLocationCoordinate2D) location;
 @end

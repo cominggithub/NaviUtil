@@ -13,7 +13,8 @@ static bool isInit = false;
 static NSFileHandle *fileHandle = nil;
 static bool isLogToFile = true;
 static bool isLogToConsole = true;
-static unsigned long long logModule = (ALL&~DOWNLOAD_MANAGER & ~NAVI_QUERY_MANAGER & ~LOCATION_SIMULATOR & ~GEOUTIL);
+//static unsigned long long logModule = (ALL&~DOWNLOAD_MANAGER & ~NAVI_QUERY_MANAGER & ~LOCATION_SIMULATOR & ~GEOUTIL);
+static unsigned long long logModule = (ALL& ~LOCATION_SIMULATOR & ~GEOUTIL);
 static LogLevel logLevel = kLogAll;
 
 NSDateFormatter *outputFormatter;
@@ -139,5 +140,10 @@ void logToConsole(NSString* msg)
     printf("%s", [msg UTF8String]);
 }
 
-
+bool isDebug()
+{
+    if(logLevel < kLogDebug)
+        return false;
+    return true;
+}
 

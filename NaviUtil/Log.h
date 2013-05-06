@@ -25,7 +25,9 @@
 #define LOCATION_SIMULATOR        (1<<5)
 #define GUIDE_ROUTE_UIVIEW        (1<<6)
 #define GEOUTIL                   (1<<7)
-#define NONE                      (1<<10)
+#define ROUTELINE                 (1<<8)
+#define FILE_DOWNLOADER           (1<<9)
+#define NONE                      (1<<16)
 
 #define logfn() printf("%s(%d)\n", __FUNCTION__, __LINE__)
 #define logfns(args...) do{printf("%s(%d): ", __FUNCTION__, __LINE__); printf(args);}while(0)
@@ -35,6 +37,8 @@
 #define logi(o) printf("%s: %d\n",#o, o)
 #define logf(o) printf("%s: %f\n",#o, o)
 #define logs(o) printf("%s: %s\n",#o, o)
+#define loglc(o) printf("%s: (%f, %f)\n",#o, o.latitude, o.longitude)
+#define logpd(o) printf("%s: (%f, %f)\n",#o, o.x, o.y)
 #define logns(o) printf("%s: %s\n",#o, [o UTF8String])
 
 #define getObjectName(oo) #oo
@@ -44,6 +48,8 @@
 #define mlogWarning(module, args...)  do{logWarning(#module, args);}while(0)
 #define mlogError(module, args...)    do{logError(#module, args);}while(0)
 #define mlogDebug(module, args...)    do{if (isLogModule(module)) {logDebug(#module, args);}}while(0)
+#define mlogfn(module)                do{if (isLogModule(module)) {printf("[DEBUG] %s ", #module); logfn();printf("\n");}}while(0)
+#define mlogfns(module, args...)      do{if(isLogModule(module) && isDebug()) {printf("[DEBUG] %s: %s(%d): ", #module, __FUNCTION__, __LINE__); printf(args);printf("\n");}}while(0)
 
 
 typedef enum
@@ -62,6 +68,7 @@ void logWarning(const char* moduleName, id formatString, ...);
 void logError(const char* moduleName, id formatString, ...);
 void logInfo(const char* moduleName, id formatString, ...);
 void logDebug(const char* moduleName, id formatString, ...);
+bool isDebug();
 
 #endif
 

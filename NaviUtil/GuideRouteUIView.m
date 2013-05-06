@@ -158,6 +158,10 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
+
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+#if 0
     // Drawing code
     PointD prePoint;
     PointD curPoint;
@@ -179,7 +183,7 @@
     drawedPoint = [[NSMutableArray alloc] init];
     //printf("bounds: (%f, %f, %f, %f)", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
     
-    CGContextRef context = UIGraphicsGetCurrentContext();
+
     CGContextSetLineWidth(context, 3.0);
     CGColorSpaceRef  colorspace = CGColorSpaceCreateDeviceRGB();
     
@@ -365,19 +369,146 @@
     }
    
 #endif
+#endif
 
-
+    [self drawRoute:context Rectangle:rect];
     [self drawCar:context];
     [self drawCurrentRouteLine:context];
     [self drawDebugMessage:context];
     [self drawCarFootPrint:context];
+    [self drawRouteLabel:context];
     
-    CGColorSpaceRelease(colorspace);
-    CGColorRelease(color);
+//    CGColorSpaceRelease(colorspace);
+//    CGColorRelease(color);
     
 }
 
 
+-(void) drawRoute:(CGContextRef) context Rectangle:(CGRect) rect
+{
+    
+    PointD startPoint;
+    PointD endPoint;
+    PointD curPoint;
+    CGRect roundRect;
+    CGRect routeRect = rect;
+    int roundRectSize = 8;
+    int currentStepNo = -1;
+    
+    NSMutableArray *stepPoint;
+    
+//    NSMutableArray *drawedPoint;
+    
+    [super drawRect:rect];
+    routeRect.origin.x -= 200;
+    routeRect.origin.y -= 200;
+    routeRect.size.width +=400;
+    routeRect.size.height +=400;
+    stepPoint = [[NSMutableArray alloc] init];
+    
+    CGContextSetLineWidth(context, 3.0);
+
+    CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
+    
+    CGContextAddRect(context, routeDisplayBound);
+    CGContextStrokeRect(context, routeDisplayBound);
+    
+    CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
+    
+    CGContextSetLineWidth(context, 10.0);
+
+
+    for(RouteLine *rl in route.routeLines)
+    {
+        startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
+        endPoint    = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
+        CGContextMoveToPoint(context, startPoint.x, startPoint.y);
+        CGContextAddLineToPoint(context, endPoint.x, endPoint.y);
+
+        if(currentStepNo != rl.stepNo)
+        {
+            currentStepNo = rl.stepNo;
+            
+            roundRect.origin.x = startPoint.x-roundRectSize/2;
+            roundRect.origin.y = startPoint.y-roundRectSize/2;
+            roundRect.size.width = roundRectSize;
+            roundRect.size.height = roundRectSize;
+            
+        }
+        else
+        {
+            roundRect.origin.x = startPoint.x-roundRectSize/4;
+            roundRect.origin.y = startPoint.y-roundRectSize/4;
+            roundRect.size.width = roundRectSize/2;
+            roundRect.size.height = roundRectSize/2;
+        }
+        CGContextAddEllipseInRect(context, roundRect);
+    }
+    
+    CGContextStrokePath(context);
+
+    CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
+    CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
+    for(RouteLine *rl in route.routeLines)
+    {
+        startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
+        endPoint    = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
+        roundRect.origin.x = startPoint.x-roundRectSize/2;
+        roundRect.origin.y = startPoint.y-roundRectSize/2;
+        roundRect.size.width = roundRectSize;
+        roundRect.size.height = roundRectSize;
+        
+        CGContextAddEllipseInRect(context, roundRect);
+        
+    }
+    CGContextFillPath(context);
+    
+    CGContextSetFillColorWithColor(context, [UIColor cyanColor].CGColor);
+    
+    
+    if(lastRouteLine == nil)
+        return;
+    
+    CGContextSetStrokeColorWithColor(context, [UIColor purpleColor].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor purpleColor].CGColor);
+    CGContextSetLineWidth(context, 5.0);
+    
+    curPoint = [self getDrawPoint:routeStartPoint];
+    
+    CGContextMoveToPoint(context, curPoint.x, curPoint.y);
+    curPoint = [self getDrawPoint:routeEndPoint];
+    CGContextAddLineToPoint(context, curPoint.x, curPoint.y);
+    CGContextStrokePath(context);
+    
+}
+
+-(void) drawRouteLabel:(CGContextRef) context
+{
+    // Drawing code
+    int i;
+    PointD startPoint;
+    PointD endPoint;
+    CGRect routeLineLabelRect;
+    NSString *routeLineLabel;
+    
+    CGContextSetFillColorWithColor(context, [UIColor cyanColor].CGColor);
+    for(i=0; i<route.routeLines.count; i++)
+    {
+        RouteLine *rl = [route.routeLines objectAtIndex:i];
+        startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
+        endPoint    = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
+        startPoint.x = (startPoint.x + endPoint.x)/2;
+        startPoint.y = (startPoint.y + endPoint.y)/2;
+        routeLineLabelRect.origin.x = startPoint.x+10;
+        routeLineLabelRect.origin.y = startPoint.y;
+        routeLineLabelRect.size.width = 30;
+        routeLineLabelRect.size.height = 20;
+        routeLineLabel = [NSString stringWithFormat:@"%d", rl.routeLineNo];
+        [routeLineLabel drawInRect:routeLineLabelRect withFont:[UIFont boldSystemFontOfSize:20.0]];
+        if(i<20)
+        printf("%d (%f, %f)\n", i, routeLineLabelRect.origin.x, routeLineLabelRect.origin.y);
+    }
+}
 -(void) drawCarFootPrint:(CGContextRef) context
 {
     PointD curPoint;

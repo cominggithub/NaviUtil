@@ -39,7 +39,6 @@
     self.delegate = delegate;
     
     self.filePath = [[NSString alloc] initWithString:downloadRequest.filePath];
-//    self.filePath = [NSString stringWithFormat:@"%@/a.json", [SystemManager routeFilePath]];
     self.url = [[NSString alloc] initWithString:downloadRequest.url];
     self.downloadId = downloadRequest.downloadId;
     
@@ -55,7 +54,7 @@
     [self deleteFile];
     [self createFile];
     self.retryCount++;
-//    logInfo(@"FileDownload %lu starts to download %@ from %@\n", self.downloadId, self.filePath, self.url);
+    mlogInfo(FILE_DOWNLOADER, @"%lu starts to download %@ from %@\n", self.downloadId, self.filePath, self.url);
     [NSURLConnection connectionWithRequest:urlRequest delegate:self];
 }
 
@@ -77,12 +76,12 @@
     [fileHandle seekToEndOfFile];
     [fileHandle writeData:data];
     [fileHandle closeFile];
-//    logInfo(@"FileDownloader %lu recv data length %u", self.downloadId, [data length]);
+    mlogInfo(FILE_DOWNLOADER, @"%lu recv data length %u", self.downloadId, [data length]);
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-//    logInfo(@"FileDownloader %lu didFailWithError %@\n", self.downloadId, error);
+    mlogInfo(FILE_DOWNLOADER, @"%lu didFailWithError %@\n", self.downloadId, error);
     
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFail:)])
         [self.delegate downloadFail: self];
@@ -91,12 +90,12 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
 {
- //   logInfo(@"FileDownloader %lu didReceiveResponse\n", self.downloadId);
+    mlogInfo(FILE_DOWNLOADER, @"%lu didReceiveResponse\n", self.downloadId);
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-//    logInfo(@"FileDownloader %lu finish download\n", self.downloadId);
+    mlogInfo(FILE_DOWNLOADER, @"FileDownloader %lu finish download\n", self.downloadId);
     
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFinish:)])
     {

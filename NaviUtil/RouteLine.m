@@ -83,12 +83,18 @@
  
 }
 
--(double) getDistanceWithLocation:(CLLocationCoordinate2D) location
+-(double) getGeoDistanceToLocation:(CLLocationCoordinate2D) location;
 {
     /* distance from a point x to a line
      * distance from x to start location * sin(angle(x->startLocation->EndLocation))
      */
-    return [GeoUtil getLengthFromLocation:location ToLocation:self.startLocation] * sin([self getAngleToStartLocation:location]);
+    double length = [GeoUtil getLengthFromLocation:location ToLocation:self.startLocation];
+    
+    double angle = [self getAngleToStartLocation:location];
+    double distance = [GeoUtil getLengthFromLocation:location ToLocation:self.startLocation] * sin([self getAngleToStartLocation:location]);
+
+//    mlogfns(ROUTELINE, "length: %f, angle: %f, distance: %f", length, angle, distance);
+    return [GeoUtil getGeoDistanceFromLocation:location ToLocation:self.startLocation] * sin([self getAngleToStartLocation:location]);
 }
 
 -(double) getAngleToStartLocation:(CLLocationCoordinate2D) location

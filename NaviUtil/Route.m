@@ -11,6 +11,7 @@
 @implementation Route
 
 @synthesize status=_status;
+@synthesize routeLines=_routeLines;
 -(id) init
 {
     self = [super init];
@@ -126,7 +127,7 @@
 
 -(void) saveRouteLines
 {
-    routeLines = [NSArray arrayWithArray:tmpRouteLines];
+    self.routeLines = [NSArray arrayWithArray:tmpRouteLines];
 }
 
 -(int) getStepCount
@@ -257,6 +258,7 @@
     
     return routePolyLine;
 }
+
 
 -(NSArray*) getStepPolyLine:(int) index
 {
@@ -427,7 +429,7 @@
             [self getEndLocation].latitude,
             [self getEndLocation].longitude,
             steps.count,
-            routeLines.count
+            self.routeLines.count
             ];
 }
 
@@ -435,7 +437,7 @@
 -(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine
 {
     int i=0;
-    int radius = 10;
+    int radius = 5;
     int searchCount = 0;
     NSDate* startTime;
     NSDate* endTime;
@@ -445,88 +447,158 @@
     
     RouteLine* matchedRouteLine = nil;
     RouteLine* matchedRouteLineWithEndPoint = nil;
-    double distance = 0;
-    double distanceFromEndPoint = 0.00015;
+    double distance = 99999;
+    double distanceFromEndPoint = 99999;
     double tmpDistance = 0.0;
+    double tmpStartDistance = 0.0;
     double angleStart = 0.0;
     double angleEnd = 0.0;
-    double minDistanceRequired = 0.00010; // almost 10m
+    double minDistanceRequired = 20; // 10m
 
     startTime = [NSDate date];
+    NSString *matchFlag;
 
-#if 0
-    if(lastRouteLine != nil)
-    {
+    if(lastRouteLine == nil)
+        i = 0;
+    else
+        i = lastRouteLine.routeLineNo;
+    
         /* look forward */
-        for(i=lastRouteLine.routeLineNo; i<lastRouteLine.routeLineNo+radius && i<routeLineCount; i++)
+        for(; i<lastRouteLine.routeLineNo+radius && i<routeLineCount; i++)
         {
-            logi(i);
-            RouteLine *rl = [routeLines objectAtIndex:i];
-            tmpDistance = [rl getDistanceWithLocation:location];
-            if(matchedRouteLine == nil || tmpDistance < distance)
+
+            RouteLine *rl = [self.routeLines objectAtIndex:i];
+            [self calculateDistanceFromLocation:location
+                                  fromRouteLine:rl
+                                     angleStart:&angleStart
+                                       angleEnd:&angleEnd
+                                       distance:&tmpDistance
+                              distanceFromStart:&tmpStartDistance];
+            matchFlag = @"";
+            if(angleStart <= 90 && angleEnd <= 90)
             {
+                matchFlag = @"A";
+            }
+            if((tmpDistance <= distance &&  ((angleStart <= 90) && angleEnd <= 90)))
+            {
+                
                 matchedRouteLine = rl;
                 distance = tmpDistance;
-                searchCount++;
+                matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"*"];
             }
+            if(tmpStartDistance < distanceFromEndPoint)
+            {
+                matchedRouteLineWithEndPoint = rl;
+                distanceFromEndPoint = tmpStartDistance;
+                matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
+            }
+            
+            mlogDebug(ROUTE, @"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
+                      rl.routeLineNo,
+                      angleStart + angleEnd,
+                      angleStart,
+                      angleEnd,
+                      tmpDistance,
+                      tmpStartDistance,
+                      matchFlag
+                      );
+            
+            searchCount++;
         }
         
         /* look backward */
-        for(i=lastRouteLine.routeLineNo; i>=0 && i<routeLineCount; i--)
+        if(lastRouteLine == nil)
+            i = -1;
+        for(i=lastRouteLine.routeLineNo-1; i>=0 && i>=lastRouteLine.routeLineNo-radius && i<routeLineCount; i--)
         {
-            logi(i);
-            RouteLine *rl = [routeLines objectAtIndex:i];
-            tmpDistance = [rl getDistanceWithLocation:location];
-            logf(tmpDistance);
-            if(matchedRouteLine == nil || tmpDistance < distance)
+            RouteLine *rl = [self.routeLines objectAtIndex:i];
+            [self calculateDistanceFromLocation:location
+                                  fromRouteLine:rl
+                                     angleStart:&angleStart
+                                       angleEnd:&angleEnd
+                                       distance:&tmpDistance
+                              distanceFromStart:&tmpStartDistance];
+            matchFlag = @"";   
+            if(angleStart <= 90 && angleEnd <= 90)
             {
+                matchFlag = @"A";
+            }
+            if((tmpDistance <= distance &&  ((angleStart <= 90) && angleEnd <= 90)))
+            {
+                
                 matchedRouteLine = rl;
                 distance = tmpDistance;
-                searchCount++;
+                matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"*"];
             }
+            if(tmpStartDistance < distanceFromEndPoint)
+            {
+                matchedRouteLineWithEndPoint = rl;
+                distanceFromEndPoint = tmpStartDistance;
+                matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
+            }
+            
+            mlogDebug(ROUTE, @"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
+                      rl.routeLineNo,
+                      angleStart + angleEnd,
+                      angleStart,
+                      angleEnd,
+                      tmpDistance,
+                      tmpStartDistance,
+                      matchFlag
+                      );
+            
+            searchCount++;
         }
-        
-    }
-#endif
+#if 0
     /* worest case */
     /* if not found, look up all route lines */
     
 //    if(matchedRouteLine == nil || distance >= minDistanceRequired)
     {
-        for (RouteLine* rl in routeLines)
+        for (RouteLine* rl in self.routeLines)
         {
-            tmpDistance = [rl getDistanceWithLocation:location];
+            tmpDistance = [rl getGeoDistanceToLocation:location];
             angleStart = TO_ANGLE([rl getAngleToStartLocation:location]);
             angleEnd = TO_ANGLE([rl getAngleToEndLocation:location]);
-            
-            if(matchedRouteLine == nil || (tmpDistance <= distance &&  ((angleStart <= 90) && angleEnd <= 90)))
+            matchFlag = @"";
+            if(angleStart <= 90 && angleEnd <= 90)
             {
+                matchFlag = @"A";
+            }
+            if((tmpDistance <= distance &&  ((angleStart <= 90) && angleEnd <= 90)))
+            {
+
                 matchedRouteLine = rl;
                 distance = tmpDistance;
+                matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"*"];
             }
-            
-            tmpDistance = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:location];
-            
-            if(tmpDistance < distanceFromEndPoint)
+            tmpStartDistance = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:location];
+
+            if(tmpStartDistance < distanceFromEndPoint)
             {
                 matchedRouteLineWithEndPoint = rl;
-                distanceFromEndPoint = tmpDistance;
-                mlogDebug(ROUTE, @"RouteLineNo:%3d, distance: %11.7f", rl.routeLineNo, distanceFromEndPoint);
+                distanceFromEndPoint = tmpStartDistance;
+                matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
             
-            mlogDebug(ROUTE, @"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f",
-                     rl.routeLineNo,
-                     angleStart + angleEnd,
-                     angleStart,
-                     angleEnd,
-                     tmpDistance
-                     );
+            mlogDebug(ROUTE, @"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
+                      rl.routeLineNo,
+                      angleStart + angleEnd,
+                      angleStart,
+                      angleEnd,
+                      tmpDistance,
+                      tmpStartDistance,
+                      matchFlag
+                      );
             
             searchCount++;
+            
+            if(searchCount > 20)
+                break;
 
         }
     }
-    
+#endif    
     
 
 
@@ -535,11 +607,10 @@
         matchedRouteLine = matchedRouteLineWithEndPoint;
     }
     
-    
+
     endTime = [NSDate date];
     
     duration = [endTime timeIntervalSinceDate:startTime];
-
 
     mlogInfo(ROUTE, @"Matched: %d(%.7f), RouteLine %d searched, in %f seconds",
              matchedRouteLine != nil ? matchedRouteLine.routeLineNo : -1,
@@ -549,13 +620,23 @@
              );
 
     return matchedRouteLine;
+        
 }
 
+-(void) calculateDistanceFromLocation:(CLLocationCoordinate2D) location fromRouteLine:(RouteLine*) rl
+               angleStart:(double*) angleStart angleEnd:(double*) angleEnd distance:(double*) distance distanceFromStart:(double*) distanceFromStart
+{
+    *distance           = [rl getGeoDistanceToLocation:location];
+    *angleStart         = TO_ANGLE([rl getAngleToStartLocation:location]);
+    *angleEnd           = TO_ANGLE([rl getAngleToEndLocation:location]);
+    *distance           = [rl getGeoDistanceToLocation:location];
+    *distanceFromStart  = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:location];
+}
 -(void) dumpRouteLines
 {
     logfn();
-    logi(routeLines.count);
-    for(RouteLine *rl in routeLines)
+    logi(self.routeLines.count);
+    for(RouteLine *rl in self.routeLines)
     {
         logObjNoName(rl);
     }
@@ -565,10 +646,10 @@
 {
     int i=0;
     NSArray* polyLine = [self getRoutePolyLinePointD];
-    for(i=0; i<polyLine.count && i<routeLines.count;i++)
+    for(i=0; i<polyLine.count && i<self.routeLines.count;i++)
     {
         NSValue *v = [polyLine objectAtIndex:i];
-        RouteLine *rl = [routeLines objectAtIndex:i];
+        RouteLine *rl = [self.routeLines objectAtIndex:i];
         PointD p = [v PointDValue];
         if(p.y == rl.startLocation.latitude && p.x == rl.startLocation.longitude)
         {

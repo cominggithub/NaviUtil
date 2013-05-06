@@ -34,7 +34,6 @@
     PointD carDrawPoint;
     PointD carCenterPoint;
     PointD screenOffsetPoint;
-    PointD startPoint;
     
     PointD leftMost, rightMost, topMost, bottomMost;
     PointD currentLocation;

@@ -27,7 +27,7 @@ typedef enum
     NSArray* polyLines;
     NSMutableArray *speech;
     NSArray *legs;
-    NSArray *routeLines;
+    
     NSMutableArray *tmpRouteLines;
     int routeLineCount;
     
@@ -42,6 +42,7 @@ typedef enum
 @property (nonatomic) int durationValue;
 @property (nonatomic) int numOfStep;
 @property (nonatomic, strong) NSDictionary *root;
+@property (nonatomic, strong) NSArray *routeLines;
 
 
 
@@ -52,6 +53,7 @@ typedef enum
 -(NSArray*) getRoutePolyLineCLLocationCoordinate2D;
 -(NSArray*) getRoutePolyLineCLLocation;
 -(NSArray*) getRoutePolyLinePointD;
+-(NSArray*) getRouteLines;
 -(NSArray*) getStepPolyLine:(int) stepIndex;
 -(NSString*) getStepInstruction: (int) stepIndex;
 -(NSString*) getStepDurationString: (int) stepIndex;
