@@ -632,6 +632,22 @@
     *distance           = [rl getGeoDistanceToLocation:location];
     *distanceFromStart  = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:location];
 }
+
+-(RouteLine*) getNextStepFirstRouteLineByStepNo:(int)stepNo CarLocation:(CLLocationCoordinate2D) carLocation
+{
+    for(RouteLine* rl in self.routeLines)
+    {
+        if(rl.stepNo == stepNo+1)
+        {
+            double distance = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:carLocation];
+            if(distance < 100)
+                return rl;
+        }
+    }
+    
+    return nil;
+}
+
 -(void) dumpRouteLines
 {
     logfn();

@@ -45,7 +45,6 @@ static NSString* _googlePlaceAPIKey=@"";
 
 +(void) close
 {
-    
     [User save];
 }
 @end

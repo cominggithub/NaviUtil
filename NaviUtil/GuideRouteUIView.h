@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreLocation/CoreLocation.h>
+#import <AVFoundation/AVFoundation.h>
 #import "Route.h"
 #import "GeoUtil.h"
 #import "NSValue+category.h"
@@ -63,10 +64,14 @@
     CGRect msgRect;
     int currentStep;
     RouteLine *lastRouteLine;
+    RouteLine *currentRouteLine;
     NSTimer *rotateTimer;
     double currentAngle;
     double angleRotateStep;
     double rotateInterval;
+    CLLocationCoordinate2D currentCarLocation;
+    AVAudioPlayer *audioPlayer;
+    double xOffset;
 }
 
 -(void) initSelf;

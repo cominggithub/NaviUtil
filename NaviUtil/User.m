@@ -15,6 +15,7 @@ static NSString*        _email;
 static Location*        _homeLocation;
 static NSMutableArray*  _officeLocations;
 static NSMutableArray*  _favorLocations;
+static NSMutableArray*  _searchedPlaces;
 
 +(NSString*) name
 {
@@ -44,6 +45,28 @@ static NSMutableArray*  _favorLocations;
     return _favorLocations;
 }
 
++(NSArray*) searchedPlaces
+{
+    
+    return _searchedPlaces;
+}
+
++(NSString*) getSearchPlaceByIndex:(int) index
+{
+    if(index < _searchedPlaces.count)
+    {
+        return [_searchedPlaces objectAtIndex:index];
+    }
+    
+    return nil;
+}
+
+
++(void) addSearchedPlace:(NSString*) place
+{
+    [_searchedPlaces addObject:place];
+}
+
 +(void) init
 {
     _name               = @"";
@@ -51,30 +74,33 @@ static NSMutableArray*  _favorLocations;
     _homeLocation       = [[Location alloc] init];
     _officeLocations    = [[NSMutableArray alloc] initWithCapacity:0];
     _favorLocations     = [[NSMutableArray alloc] initWithCapacity:0];
+    _searchedPlaces     = [[NSMutableArray alloc] initWithCapacity:0];
     _homeLocation.coordinate = CLLocationCoordinate2DMake(24.641790,121.798983);
                        
 }
 
 +(void) parseJson:(NSString*) fileName
 {
-#if 0
-    int i;
-    NSArray *array;
-    NSDictionary *dic;
-    NSDictionary *location;
     NSError* error;
-    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:10];
+    
     NSData *data = [[NSFileManager defaultManager] contentsAtPath:fileName];
 
     
     NSDictionary* root = [NSJSONSerialization
                       JSONObjectWithData:data //1
-                      
                       options:kNilOptions
                       error:&error];
+    _name               = [root objectForKey:@"Name"];
+    _email              = [root objectForKey:@"Email"];
+    _officeLocations    = [root objectForKey:@"Offices"];
+    _favorLocations     = [root objectForKey:@"Favors"];
+    _searchedPlaces     = [root objectForKey:@"SearchedPlaces"];
     
-#endif
-
+    int i=0;
+    for(i=0; i<_searchedPlaces.count; i++)
+    {
+        logo([_searchedPlaces objectAtIndex:i]);
+    }
 }
 
 +(NSDictionary*) toDictionary
@@ -83,6 +109,7 @@ static NSMutableArray*  _favorLocations;
     NSMutableDictionary *userDic = [[NSMutableDictionary alloc] init];
     NSMutableArray* officeLocationArray = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray* favorLocationArray = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray* searchedPlaceArray = [[NSMutableArray alloc] initWithCapacity:0];
     
     for(Location *location in self.officeLocations)
     {
@@ -94,13 +121,19 @@ static NSMutableArray*  _favorLocations;
         [favorLocationArray addObject:[location toDictionary]];
     }
 
+    for(NSString *place in self.searchedPlaces)
+    {
+        [searchedPlaceArray addObject:place];
+    }
+    
     [userDic setObject:self.name forKey:@"Name"];
-    [userDic setObject:self.email forKey:@"email"];
+    [userDic setObject:self.email forKey:@"Email"];
     [userDic setObject:[self.homeLocation toDictionary] forKey:@"Home"];
     
 
     [userDic setObject:officeLocationArray forKey:@"Offices"];
     [userDic setObject:favorLocationArray forKey:@"Favors"];
+    [userDic setObject:searchedPlaceArray forKey:@"SearchedPlaces"];
     
     result = [NSDictionary dictionaryWithObjectsAndKeys:userDic, @"User", nil];
     return result;

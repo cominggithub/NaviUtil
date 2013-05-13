@@ -17,5 +17,13 @@
 +(void) init;
 +(void) parseJson:(NSString*) fileName;
 +(void) save;
++(void) addSearchedPlace:(NSString*) place;
++(NSString*) getSearchPlaceByIndex:(int) index;
++(NSString*) name;
++(NSString*) email;
++(Location*) homeLocation;
++(NSArray*) officeLocations;
++(NSArray*) favorLocations;
++(NSArray*) searchedPlaces;
 
 @end

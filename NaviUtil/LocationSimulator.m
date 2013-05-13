@@ -51,7 +51,7 @@
                 break;
         }
         currentLocation = nextLocation;
-        nextLocationIndex = i;
+        nextLocationIndex = i+1;
     }
     
     mlogInfo(LOCATION_SIMULATOR, @"%.7f, %.7f +- (%.7f, %.7f)\n",

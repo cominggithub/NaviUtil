@@ -20,6 +20,7 @@
 #import "NSString+category.h"
 #import "NSValue+category.h"
 #import "NSDictionary+category.h"
+#import "UIView+category.h"
 #import "Place.h"
 #import "Route.h"
 #import "RouteInstruction.h"

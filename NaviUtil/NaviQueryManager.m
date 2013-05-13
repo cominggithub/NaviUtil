@@ -263,9 +263,10 @@ static CLLocationCoordinate2D _endLocation;
 
 +(NSString*) getSpeechFilePath:(NSString*) text
 {
-    NSDictionary* param = [self getSpeechQueryParam:text];
+//    NSDictionary* param = [self getSpeechQueryParam:text];
     
-    NSString *filePath = [NSString stringWithFormat:@"%@/%@", [SystemManager speechFilePath], [self getFileNameParameters:param downloadFileFormat:GOOGLE_SPEECH]];
+//    NSString *filePath = [NSString stringWithFormat:@"%@/%@", [SystemManager speechFilePath], [self getFileNameParameters:param downloadFileFormat:GOOGLE_SPEECH]];
+    NSString *filePath = [NSString stringWithFormat:@"%@/%@.mp3", [SystemManager speechFilePath], text];
     
     return filePath;
 }

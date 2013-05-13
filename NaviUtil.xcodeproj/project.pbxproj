@@ -37,6 +37,7 @@
 		2B995CD81706F27500991700 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B995CD71706F27500991700 /* Reachability.m */; };
 		2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD7FA917281CA100162D20 /* RouteLine.m */; };
 		2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */; };
+		2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC61A96173E783C00990DA7 /* UIView+category.m */; };
 		2BE3A81017046D92007621EC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A80F17046D92007621EC /* LocationManager.m */; };
 		2BE3A81317046DD5007621EC /* LocationSimulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A81217046DD5007621EC /* LocationSimulator.m */; };
 /* End PBXBuildFile section */
@@ -122,6 +123,8 @@
 		2BAD7FA917281CA100162D20 /* RouteLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RouteLine.m; sourceTree = "<group>"; };
 		2BBA453D16E8CB6500C0B7FC /* GoogleJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleJson.h; sourceTree = "<group>"; };
 		2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleJson.m; sourceTree = "<group>"; };
+		2BC61A95173E783C00990DA7 /* UIView+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+category.h"; sourceTree = "<group>"; };
+		2BC61A96173E783C00990DA7 /* UIView+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+category.m"; sourceTree = "<group>"; };
 		2BE3A80E17046D92007621EC /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
 		2BE3A80F17046D92007621EC /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		2BE3A81117046DD5007621EC /* LocationSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationSimulator.h; sourceTree = "<group>"; };
@@ -235,6 +238,8 @@
 				2B0958A617083B3A00934BAA /* Event.h */,
 				2BAD7FA817281CA100162D20 /* RouteLine.h */,
 				2BAD7FA917281CA100162D20 /* RouteLine.m */,
+				2BC61A95173E783C00990DA7 /* UIView+category.h */,
+				2BC61A96173E783C00990DA7 /* UIView+category.m */,
 			);
 			path = NaviUtil;
 			sourceTree = "<group>";
@@ -388,6 +393,7 @@
 				2BE3A81317046DD5007621EC /* LocationSimulator.m in Sources */,
 				2B995CD81706F27500991700 /* Reachability.m in Sources */,
 				2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */,
+				2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
