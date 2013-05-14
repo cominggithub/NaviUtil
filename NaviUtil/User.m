@@ -57,29 +57,37 @@ static NSMutableArray*  _searchedPlaces;
     {
         return [_searchedPlaces objectAtIndex:index];
     }
-    
+
     return nil;
 }
 
 
 +(void) addSearchedPlace:(NSString*) place
 {
-    [_searchedPlaces addObject:place];
+    NSString* newPlace = [NSString stringWithString:place];
+    [_searchedPlaces addObject:newPlace];
+    for(NSString* place in _searchedPlaces)
+    {
+        logo(place);
+    }
 }
 
 +(void) init
 {
-    _name               = @"";
-    _email              = @"";
-    _homeLocation       = [[Location alloc] init];
-    _officeLocations    = [[NSMutableArray alloc] initWithCapacity:0];
-    _favorLocations     = [[NSMutableArray alloc] initWithCapacity:0];
-    _searchedPlaces     = [[NSMutableArray alloc] initWithCapacity:0];
-    _homeLocation.coordinate = CLLocationCoordinate2DMake(24.641790,121.798983);
-                       
+    if(false == [User parseJson:[SystemManager userFilePath]])
+    {
+        _name               = @"";
+        _email              = @"";
+        _homeLocation       = [[Location alloc] init];
+        _officeLocations    = [[NSMutableArray alloc] initWithCapacity:0];
+        _favorLocations     = [[NSMutableArray alloc] initWithCapacity:0];
+        _searchedPlaces     = [[NSMutableArray alloc] initWithCapacity:0];
+        _homeLocation.coordinate = CLLocationCoordinate2DMake(24.641790,121.798983);
+    }
+
 }
 
-+(void) parseJson:(NSString*) fileName
++(bool) parseJson:(NSString*) fileName
 {
     NSError* error;
     
@@ -95,12 +103,18 @@ static NSMutableArray*  _searchedPlaces;
     _officeLocations    = [root objectForKey:@"Offices"];
     _favorLocations     = [root objectForKey:@"Favors"];
     _searchedPlaces     = [root objectForKey:@"SearchedPlaces"];
+
     
     int i=0;
+    logi(_searchedPlaces.count);
     for(i=0; i<_searchedPlaces.count; i++)
     {
         logo([_searchedPlaces objectAtIndex:i]);
     }
+    
+    [root dump];
+    
+    return true;
 }
 
 +(NSDictionary*) toDictionary

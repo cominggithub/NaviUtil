@@ -26,6 +26,7 @@
 +(NSString *) getSupportLanguage;
 +(CLLocationCoordinate2D) getDefaultLocation;
 +(NSString*) getUsedMemoryStr;
++(NSString *) getLanguageString:(NSString*) stringIndex;
 
 
 @end

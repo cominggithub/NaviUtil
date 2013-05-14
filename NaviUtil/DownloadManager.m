@@ -81,7 +81,7 @@
         
         [self.downloadingQueue removeObject:downloadRequest];
         [self.pendingQueue addObject:downloadRequest];
-        [downloadRequest.delegate statusChange:downloadRequest];
+        [downloadRequest.delegate downloadRequestStatusChange:downloadRequest];
 
 
         mlogDebug(DOWNLOAD_MANAGER, @"%@\n", downloadRequest);
@@ -130,7 +130,7 @@
     FileDownloader* fileDownloader  = [[FileDownloader alloc] init];
 
     downloadRequest.status          = kDownloadStatus_Downloading;
-    [downloadRequest.delegate statusChange:downloadRequest];
+    [downloadRequest.delegate downloadRequestStatusChange:downloadRequest];
     [fileDownloader download:downloadRequest delegate:self];
     [fileDownloader start];
 

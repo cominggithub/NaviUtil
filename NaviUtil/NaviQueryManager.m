@@ -34,6 +34,11 @@ static CLLocationCoordinate2D _endLocation;
     _isInit = true;
 }
 
++(void) download:(DownloadRequest*) dr
+{
+    [_downloadManager download:dr];
+}
+
 +(void) planRouteStartLocationText:(NSString*) startLocationText EndLocationText:(NSString*) endLocationText
 {
     _isGetStartLocation = false;
@@ -77,9 +82,9 @@ static CLLocationCoordinate2D _endLocation;
     
 }
 
-+(void) startDownloadPlaces
++(void) placeSearch:(NSString*) place
 {
-    
+
 }
 
 +(void) startDownloadSpeech

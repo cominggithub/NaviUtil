@@ -14,6 +14,16 @@
 @synthesize coordinate=_coordinate;
 
 
+-(id) init
+{
+    self = [super init];
+    if(self)
+    {
+        self.placeType = kPlaceType_None;
+    }
+    
+    return self;
+}
 +(NSArray*) parseJson:(NSString*) fileName
 {
     int i;

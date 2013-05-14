@@ -15,7 +15,7 @@
 
 
 +(void) init;
-+(void) parseJson:(NSString*) fileName;
++(bool) parseJson:(NSString*) fileName;
 +(void) save;
 +(void) addSearchedPlace:(NSString*) place;
 +(NSString*) getSearchPlaceByIndex:(int) index;

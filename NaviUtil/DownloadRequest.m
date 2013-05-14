@@ -7,6 +7,7 @@
 //
 
 #import "DownloadRequest.h"
+#import "DownloadManager.h"
 
 
 
@@ -72,5 +73,10 @@
     }
     
     return result;
+}
+
+-(void) start
+{
+    
 }
 @end

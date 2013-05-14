@@ -9,10 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 
+
 @class DownloadRequest;
 
 @protocol DownloadRequestDelegate <NSObject>
--(void) statusChange: (DownloadRequest*) downloadRequest;
+-(void) downloadRequestStatusChange: (DownloadRequest*) downloadRequest;
 @end
 
 typedef enum DownloadMode
@@ -51,6 +52,5 @@ typedef enum DownloadStatus
 
 - (NSComparisonResult)compare:(DownloadRequest *) o;
 //    NSOrderedAscending = -1L, NSOrderedSame, NSOrderedDescending
-
 
 @end
