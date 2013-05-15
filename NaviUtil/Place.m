@@ -79,7 +79,39 @@
 }
 
 
--(NSString *) description {
-    return [NSString stringWithFormat:@"%@ lat:%.7f lng:%.7f", self.name, self.coordinate.latitude, self.coordinate.longitude];
++(Place*) parseDictionary:(NSDictionary*) dic
+{
+    double lat, lng;
+    Place* p        = [[Place alloc] init];
+    
+    p.name          = [dic objectForKey:@"name"];
+    p.address       = [dic objectForKey:@"address"];
+    lat             = [[dic objectForKey:@"lat"] doubleValue];
+    lng             = [[dic objectForKey:@"lng"] doubleValue];
+    p.coordinate    = CLLocationCoordinate2DMake(lat, lng);
+    
+    return p;
 }
+
+-(NSDictionary*) toDictionary
+{
+    
+    NSDictionary* result = [NSDictionary dictionaryWithObjectsAndKeys:
+                            self.name, @"name",
+                            self.address, @"address",
+                            self.coordinate.latitude, @"lat",
+                            self.coordinate.longitude, @"lng",
+                            nil];
+    
+    
+    return result;
+}
+
+-(NSString*) description
+{
+    
+    return [NSString stringWithFormat:@"%@, %@, (%.7f, %.7f)", self.name, self.address, self.coordinate.latitude, self.coordinate.longitude];
+    
+}
+
 @end

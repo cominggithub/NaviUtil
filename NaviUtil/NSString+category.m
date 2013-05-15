@@ -10,6 +10,10 @@
 
 @implementation NSString (stringByStrippingHTML)
 
+-(NSString*) trim
+{
+    return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+}
 -(NSString *) stripHTML
 {
     NSRange r;

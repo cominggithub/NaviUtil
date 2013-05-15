@@ -12,7 +12,7 @@
 
 static NSString*        _name;
 static NSString*        _email;
-static Location*        _homeLocation;
+static Place*           _homeLocation;
 static NSMutableArray*  _officeLocations;
 static NSMutableArray*  _favorLocations;
 static NSMutableArray*  _searchedPlaces;
@@ -27,7 +27,7 @@ static NSMutableArray*  _searchedPlaces;
     return _email;
 }
 
-+(Location*) homeLocation
++(Place*) homeLocation
 {
     
     return _homeLocation;
@@ -64,25 +64,35 @@ static NSMutableArray*  _searchedPlaces;
 
 +(void) addSearchedPlace:(NSString*) place
 {
+    int i=0;
     NSString* newPlace = [NSString stringWithString:place];
-    [_searchedPlaces addObject:newPlace];
-    for(NSString* place in _searchedPlaces)
+    for(i=0; i<_searchedPlaces.count; i++)
     {
-        logo(place);
+        if ([place isEqualToString:[_searchedPlaces objectAtIndex:i]])
+        {
+            [_searchedPlaces removeObjectAtIndex:i];
+            i--;
+        }
     }
+    
+    [_searchedPlaces insertObject:newPlace atIndex:0];
+    
 }
 
 +(void) init
 {
     if(false == [User parseJson:[SystemManager userFilePath]])
     {
-        _name               = @"";
-        _email              = @"";
-        _homeLocation       = [[Location alloc] init];
-        _officeLocations    = [[NSMutableArray alloc] initWithCapacity:0];
-        _favorLocations     = [[NSMutableArray alloc] initWithCapacity:0];
-        _searchedPlaces     = [[NSMutableArray alloc] initWithCapacity:0];
-        _homeLocation.coordinate = CLLocationCoordinate2DMake(24.641790,121.798983);
+        _name                   = @"Coming";
+        _email                  = @"misscoming@gmail.com";
+        _officeLocations        = [[NSMutableArray alloc] initWithCapacity:0];
+        _favorLocations         = [[NSMutableArray alloc] initWithCapacity:0];
+        _searchedPlaces         = [[NSMutableArray alloc] initWithCapacity:0];
+        _homeLocation           = [[Place alloc] init];
+        _homeLocation.name      = @"家";
+        _homeLocation.address   = @"宜蘭縣冬山鄉保安二路131巷19號";
+        [self addSearchedPlace:@"成大"];
+        [self addSearchedPlace:@"宜蘭高中"];
     }
 
 }
@@ -90,30 +100,34 @@ static NSMutableArray*  _searchedPlaces;
 +(bool) parseJson:(NSString*) fileName
 {
     NSError* error;
+    NSDictionary *user;
+    NSDictionary* root;
+    NSData *data;
     
-    NSData *data = [[NSFileManager defaultManager] contentsAtPath:fileName];
-
+    data = [[NSFileManager defaultManager] contentsAtPath:fileName];
+    if(nil == data)
+        return false;
     
-    NSDictionary* root = [NSJSONSerialization
+    root = [NSJSONSerialization
                       JSONObjectWithData:data //1
                       options:kNilOptions
                       error:&error];
-    _name               = [root objectForKey:@"Name"];
-    _email              = [root objectForKey:@"Email"];
-    _officeLocations    = [root objectForKey:@"Offices"];
-    _favorLocations     = [root objectForKey:@"Favors"];
-    _searchedPlaces     = [root objectForKey:@"SearchedPlaces"];
 
+    if(nil == root)
+        return false;
     
-    int i=0;
-    logi(_searchedPlaces.count);
-    for(i=0; i<_searchedPlaces.count; i++)
-    {
-        logo([_searchedPlaces objectAtIndex:i]);
-    }
+    user = [root objectForKey:@"User"];
+
+    if(nil == user)
+        return false;
     
-    [root dump];
-    
+    _name               = [user objectForKey:@"Name"];
+    _email              = [user objectForKey:@"Email"];
+    _homeLocation       = [Place parseDictionary:[user objectForKey:@"Home"]];
+    _officeLocations    = [NSMutableArray arrayWithArray:[user objectForKey:@"Offices"]];
+    _favorLocations     = [NSMutableArray arrayWithArray:[user objectForKey:@"Favors"]];
+    _searchedPlaces     = [NSMutableArray arrayWithArray:[user objectForKey:@"SearchedPlaces"]];
+   
     return true;
 }
 

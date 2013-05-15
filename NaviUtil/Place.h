@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import "NSDictionary+category.h"
 
 typedef enum PlaceType
 {
@@ -22,10 +23,12 @@ typedef enum PlaceType
 @interface Place : NSObject
 
 @property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *address;
 @property (nonatomic) CLLocationCoordinate2D coordinate;
 @property (nonatomic) PlaceType placeType;
 
 
 +(NSArray*) parseJson:(NSString*) fileName;
-
++(Place*) parseDictionary:(NSDictionary*) dic;
+-(NSDictionary*) toDictionary;
 @end

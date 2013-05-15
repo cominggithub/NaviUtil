@@ -14,4 +14,5 @@
 -(TextValue*) textValue;
 -(void) dump;
 +(NSDictionary*) getLatLngDic:(CLLocationCoordinate2D) coordinate;
+-(CLLocationCoordinate2D) getCLLocationCoordinate2D;
 @end

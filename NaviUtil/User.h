@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "SystemManager.h"
 #import "Location.h"
+#import "Place.h"
 
 @interface User : NSObject
 

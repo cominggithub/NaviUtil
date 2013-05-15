@@ -16,6 +16,8 @@
 -(void) downloadRequestStatusChange: (DownloadRequest*) downloadRequest;
 @end
 
+
+
 typedef enum DownloadMode
 {
     kDownloadMode_Immediately,

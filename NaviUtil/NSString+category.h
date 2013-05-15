@@ -13,5 +13,6 @@
 -(NSString *) stripHTML;
 -(NSMutableArray *) decodePolyLine;
 -(NSMutableArray *) decodePolyLineLevel;
+-(NSString*) trim;
 + (NSString *)encodeStringWithCoordinate:(CLLocationCoordinate2D )coordinate;
 @end

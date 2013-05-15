@@ -23,7 +23,7 @@
 {
     printf("dump dic:\n");
     for(NSString *key in self) {
-        printf("%s:%s\n", [key UTF8String], [[self objectForKey:key] UTF8String]);
+        printf("%s:%s\n", [key UTF8String], [[[self objectForKey:key] description] UTF8String]);
 
     }
 }
@@ -37,5 +37,16 @@
                                 nil];
 
     return result;
+}
+
+-(CLLocationCoordinate2D) getCLLocationCoordinate2D
+{
+    if(nil == self)
+        return CLLocationCoordinate2DMake(0, 0);
+    CLLocationCoordinate2D cl = CLLocationCoordinate2DMake(
+                                                           [[self objectForKey:@"lat"] doubleValue],
+                                                           [[self objectForKey:@"lan"] doubleValue]);
+    
+    return cl;
 }
 @end
