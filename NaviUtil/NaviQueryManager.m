@@ -118,6 +118,14 @@ static CLLocationCoordinate2D _endLocation;
             _isGetEndLocation = true;
         }
     }
+
+    if ( nil != downloadRequest.delegate)
+    {
+        if ( [downloadRequest.delegate respondsToSelector:@selector(downloadRequestStatusChange:)])
+        {
+            [downloadRequest.delegate downloadRequestStatusChange:downloadRequest];
+        }
+    }
     
     if ( true == _isGetStartLocation && true == _isGetEndLocation)
     {
@@ -358,6 +366,10 @@ static CLLocationCoordinate2D _endLocation;
     for(id o in param.allKeys)
     {
         id v = [param objectForKey:o];
+        /* skip google key */
+        if([ o isEqualToString:@"key"])
+            continue;
+
         if (isFirstParam == true)
         {
             [result appendString:[NSString stringWithFormat:@"%@=%@", o, v]];
@@ -366,10 +378,7 @@ static CLLocationCoordinate2D _endLocation;
         {
             [result appendString:[NSString stringWithFormat:@"_%@=%@", o, v]];
         }
-        
-        
         isFirstParam = false;
-        
     }
     
     switch(downloadFileFormat)

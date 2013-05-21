@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B18AA911748D19700277F52 /* UILabel+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B18AA901748D19700277F52 /* UILabel+category.m */; };
 		2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */; };
 		2B6CBFA716DFA6D90095CBD4 /* NaviUtil.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */; };
 		2B6CBFA916DFA6D90095CBD4 /* NaviUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFA816DFA6D90095CBD4 /* NaviUtil.m */; };
@@ -67,6 +68,8 @@
 
 /* Begin PBXFileReference section */
 		2B0958A617083B3A00934BAA /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
+		2B18AA8F1748D19700277F52 /* UILabel+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+category.h"; sourceTree = "<group>"; };
+		2B18AA901748D19700277F52 /* UILabel+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+category.m"; sourceTree = "<group>"; };
 		2B6CBF9E16DFA6D90095CBD4 /* libNaviUtil.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNaviUtil.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2B6CBFA516DFA6D90095CBD4 /* NaviUtil-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NaviUtil-Prefix.pch"; sourceTree = "<group>"; };
@@ -240,6 +243,8 @@
 				2BAD7FA917281CA100162D20 /* RouteLine.m */,
 				2BC61A95173E783C00990DA7 /* UIView+category.h */,
 				2BC61A96173E783C00990DA7 /* UIView+category.m */,
+				2B18AA8F1748D19700277F52 /* UILabel+category.h */,
+				2B18AA901748D19700277F52 /* UILabel+category.m */,
 			);
 			path = NaviUtil;
 			sourceTree = "<group>";
@@ -394,6 +399,7 @@
 				2B995CD81706F27500991700 /* Reachability.m in Sources */,
 				2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */,
 				2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */,
+				2B18AA911748D19700277F52 /* UILabel+category.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -259,7 +259,7 @@ static CLLocationCoordinate2D _defaultLocation;
 
 +(NSString *) getLanguageString:(NSString*) stringIndex
 {
-    return @"請輸入地點";
+    return stringIndex;
 }
 
 @end

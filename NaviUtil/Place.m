@@ -24,6 +24,7 @@
     
     return self;
 }
+
 +(NSArray*) parseJson:(NSString*) fileName
 {
     int i;
@@ -51,6 +52,7 @@
         location = [dic objectForKey:@"geometry"];
         location = [location objectForKey:@"location"];
         p.name = [NSString stringWithString:[dic objectForKey:@"name"]];
+        p.address = [NSString stringWithString:[dic objectForKey:@"formatted_address"]];
         p.coordinate = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue], [[location objectForKey:@"lng"] doubleValue]);
         [result addObject:p];
     }
@@ -114,4 +116,31 @@
     
 }
 
+-(bool) isPlaceMatched:(NSString*) name
+{
+
+    if (nil == name || name.length < 1)
+        return true;
+    
+    int location, length, matchedCount, i;
+    float matchedRate = 0;
+    location = [self.name rangeOfString:name].location;
+    length = [self.name rangeOfString:name].length;
+
+    matchedCount = 0;
+    
+    for(i=0; i<name.length; i++)
+    {
+        if([self.name rangeOfString:[name substringWithRange:NSMakeRange(i, 1)]].location != NSNotFound)
+        {
+            matchedCount++;
+        }
+    }
+    
+    matchedRate = matchedCount/name.length;
+    mlogDebug(PLACE, @"matchedRate: (%@ - %@) = %.0f\%", self.name, name, matchedRate*100);
+    
+    return matchedRate > 0.6;
+    
+}
 @end

@@ -8,7 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
-#import "log.h"
+#import "Log.h"
+#import "Place.h"
+
 
 @protocol LocationManagerDelegate <NSObject>
 
@@ -20,6 +22,7 @@
 {
     CLLocationManager* clLocationManager;
 }
+@property (nonatomic, weak) id<LocationManagerDelegate> delegate;
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation;
@@ -27,5 +30,6 @@
 - (void)locationManager:(CLLocationManager *)manager
      didUpdateLocations:(NSArray *)locations;
 
-@property (nonatomic, weak) id<LocationManagerDelegate> delegate;
++(Place*) getCurrentPlace;
+
 @end

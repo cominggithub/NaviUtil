@@ -75,7 +75,7 @@ typedef enum DownloadFileFormat {
 +(void) init;
 
 +(void) downloadRequestStatusChange:(DownloadRequest*) downloadRequest;
-+(DownloadRequest*) getPlaceSearchDownloadRequest:(NSString*) place;
++(DownloadRequest*) getPlaceDownloadRequest:(NSString*) place;
 +(void) download:(DownloadRequest*) dr;
 @end
 

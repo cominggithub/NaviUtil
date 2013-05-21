@@ -30,7 +30,8 @@
 }
 -(NSString*) description
 {
-    
+    if (self.accessibilityLabel != nil)
+        return [NSString stringWithFormat:@"%s - %s", (char*)class_getName([self class]), [self.accessibilityLabel UTF8String]];
     return [NSString stringWithFormat:@"%s", (char*)class_getName([self class])];
 }
 

@@ -64,9 +64,6 @@
 
     [self triggerDownload];
     [NaviQueryManager downloadRequestStatusChange:downloadRequest];
-    
-    
-
 }
 
 -(void) downloadFail: (FileDownloader*) fileDownloader
