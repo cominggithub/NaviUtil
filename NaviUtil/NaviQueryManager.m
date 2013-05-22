@@ -52,7 +52,7 @@ static CLLocationCoordinate2D _endLocation;
 }
 +(void) planRouteStartLocation:(CLLocationCoordinate2D) start EndLocation:(CLLocationCoordinate2D) end
 {
-    _currentRouteDownloadRequest = [self getRouteDownloadRequest:start EndLocation:end];
+    _currentRouteDownloadRequest = [self getRouteDownloadRequestFrom:start To:end];
     [_downloadManager download:_currentRouteDownloadRequest];
 
 }
@@ -61,8 +61,7 @@ static CLLocationCoordinate2D _endLocation;
 {
 
     DownloadRequest *downloadRequest;
-    _currentRoute = [[Route alloc] init];
-    [_currentRoute parseJson:_currentRouteDownloadRequest.filePath];
+    _currentRoute = [Route parseJson:_currentRouteDownloadRequest.filePath];
 
     mlogDebug(NAVI_QUERY_MANAGER, @"Num of speech %d\n", [_currentRoute getSpeech].count);
     
@@ -136,7 +135,7 @@ static CLLocationCoordinate2D _endLocation;
     }
         
 }
-+(DownloadRequest*) getRouteDownloadRequest:(CLLocationCoordinate2D) start EndLocation:(CLLocationCoordinate2D) end
++(DownloadRequest*) getRouteDownloadRequestFrom:(CLLocationCoordinate2D) start To:(CLLocationCoordinate2D) end
 {
     DownloadRequest* downloadRequest = [[DownloadRequest alloc] init];
     downloadRequest.requestId   = [self getNextRequestId];

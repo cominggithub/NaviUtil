@@ -13,6 +13,7 @@
 #import "TextValue.h"
 #import "Speech.h"
 #import "RouteLine.h"
+#import "GoogleJson.h"
 
 
 typedef enum
@@ -47,9 +48,10 @@ typedef enum
 
 
 
++(Route*) parseJson:(NSString*) fileName;
+
 -(id) initWithJsonRouteFile: (NSString*) fileName;
 -(int) getStepCount;
--(void) parseJson:(NSString*) fileName;
 -(NSArray*) getRoutePolyLineCLLocationCoordinate2D;
 -(NSArray*) getRoutePolyLineCLLocation;
 -(NSArray*) getRoutePolyLinePointD;

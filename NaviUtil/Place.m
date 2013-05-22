@@ -25,6 +25,7 @@
     return self;
 }
 
+
 +(NSArray*) parseJson:(NSString*) fileName
 {
     int i;
@@ -32,32 +33,51 @@
     NSDictionary *dic;
     NSDictionary *location;
     NSError* error;
-    NSMutableArray *result = [[NSMutableArray alloc] initWithCapacity:10];
-    NSData *data = [[NSFileManager defaultManager] contentsAtPath:fileName];
+    NSMutableArray *result;
+    NSData *data;
     
     
-    NSDictionary* root = [NSJSONSerialization
-                          JSONObjectWithData:data //1
-                          
-                          options:kNilOptions
-                          error:&error];
+    NSDictionary* root;
     
-    array = [root objectForKey:@"results"];
-    dic = [array objectAtIndex:0];
-
-    for(i=0; i<array.count; i++)
+    if ( [GoogleJson getStatus:fileName] != kGoogleJsonStatus_Ok )
     {
-        Place *p = [[Place alloc] init];
-        dic = [array objectAtIndex:i];
-        location = [dic objectForKey:@"geometry"];
-        location = [location objectForKey:@"location"];
-        p.name = [NSString stringWithString:[dic objectForKey:@"name"]];
-        p.address = [NSString stringWithString:[dic objectForKey:@"formatted_address"]];
-        p.coordinate = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue], [[location objectForKey:@"lng"] doubleValue]);
-        [result addObject:p];
+        return nil;
     }
+    
+    @try
+    {
+        result  = [[NSMutableArray alloc] initWithCapacity:0];
+        data    = [[NSFileManager defaultManager] contentsAtPath:fileName];
+        root    = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+    
+        array = [root objectForKey:@"results"];
+        dic = [array objectAtIndex:0];
 
-    return result;
+        for(i=0; i<array.count; i++)
+        {
+            Place *p = [[Place alloc] init];
+            dic = [array objectAtIndex:i];
+            location = [dic objectForKey:@"geometry"];
+            location = [location objectForKey:@"location"];
+            p.name = [NSString stringWithString:[dic objectForKey:@"name"]];
+            p.address = [NSString stringWithString:[dic objectForKey:@"formatted_address"]];
+            p.coordinate = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue], [[location objectForKey:@"lng"] doubleValue]);
+            [result addObject:p];
+        }
+
+        return result;
+    
+    }
+    @catch (NSException *exception)
+    {
+        mlogWarning(PLACE, @"parse json file fail: %@", fileName);
+    }
+    @finally
+    {
+        mlogWarning(PLACE, @"parse json file fail: %@", fileName);            
+    }
+    
+    return nil;
 }
 
 +(void) printDictionaryKeys:(NSDictionary*) dic
@@ -142,5 +162,12 @@
     
     return matchedRate > 0.6;
     
+}
+
+-(bool) isCoordinateEqualTo:(Place*) p
+{
+    if (nil == self || nil == p)
+        return false;
+    return [GeoUtil isCLLocationCoordinate2DEqual:self.coordinate To:p.coordinate];
 }
 @end

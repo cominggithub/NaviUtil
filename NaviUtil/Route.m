@@ -30,7 +30,7 @@
     return self;
 }
 
--(void) parseJson:(NSString*) fileName
+-(bool) parseJson:(NSString*) fileName
 {
 
     int i = 0;
@@ -38,57 +38,80 @@
     NSDictionary *location;
     NSDictionary *dic;
     NSError* error;
-    NSData *data = [[NSFileManager defaultManager] contentsAtPath:fileName];
+    NSData *data;
+    NSDictionary* root;
     
-    NSDictionary* root = [NSJSONSerialization
-                          JSONObjectWithData:data //1
-                          options:kNilOptions
-                          error:&error];
-    
-    array = [root objectForKey:@"results"];
-    dic = [array objectAtIndex:0];
-    
-    legs    = [[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"];
-    steps   = [[[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0] objectForKey:@"steps"];
-
-    speech = [[NSMutableArray alloc] initWithCapacity:steps.count];
-
-    [self initRouteLines];
-
-
-
-    dic = [[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0];
- 
-    /* add Start Location */
-    [self addLocationToRouteLinesWithStepNo:i Location:[self getStartLocation]];
-    
-    for(i=0; i<steps.count; i++)
+    if ( [GoogleJson getStatus:fileName] != kGoogleJsonStatus_Ok )
     {
-        Speech* s = [[Speech alloc] init];
-        dic = [steps objectAtIndex:i];
-        s.text = [[NSString stringWithString:[dic objectForKey:@"html_instructions"]] stripHTML];
-        s.coordinate  = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue],
-                                                   [[location objectForKey:@"lng"] doubleValue]);
-        [speech addObject:s];
-        NSArray *stepPolyLine = [self getStepPolyLine:i];
-        /* add points in PolyLie */
-        for(CLLocation *location in stepPolyLine)
-        {
-            [self addLocationToRouteLinesWithStepNo:i Location:location.coordinate];
-        }
-
+        return nil;
     }
     
-    [self addLocationToRouteLinesWithStepNo:i Location:[self getEndLocation]];
-
-    [self saveRouteLines];
-    [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager routeFilePath], [self getName]]];
-    [self dumpRouteLines];
+    @try
+    {
+        
+        data  = [[NSFileManager defaultManager] contentsAtPath:fileName];
+        root  = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+        array = [root objectForKey:@"results"];
+        dic = [array objectAtIndex:0];
     
-    [self dumpRouteLineAndPolyLine];
-    mlogInfo(ROUTE, @"%@", [self description]);
+        legs    = [[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"];
+        steps   = [[[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0] objectForKey:@"steps"];
+        speech = [[NSMutableArray alloc] initWithCapacity:steps.count];
+        [self initRouteLines];
+
+        dic = [[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0];
+ 
+        /* add Start Location */
+        [self addLocationToRouteLinesWithStepNo:i Location:[self getStartLocation]];
+    
+        for(i=0; i<steps.count; i++)
+        {
+            Speech* s = [[Speech alloc] init];
+            dic = [steps objectAtIndex:i];
+            s.text = [[NSString stringWithString:[dic objectForKey:@"html_instructions"]] stripHTML];
+            s.coordinate  = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue],
+                                                   [[location objectForKey:@"lng"] doubleValue]);
+            [speech addObject:s];
+            NSArray *stepPolyLine = [self getStepPolyLine:i];
+            /* add points in PolyLie */
+            for(CLLocation *location in stepPolyLine)
+            {
+                [self addLocationToRouteLinesWithStepNo:i Location:location.coordinate];
+            }
+
+        }
+    
+        [self addLocationToRouteLinesWithStepNo:i Location:[self getEndLocation]];
+
+        [self saveRouteLines];
+        [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager routeFilePath], [self getName]]];
+        [self dumpRouteLines];
+    
+        [self dumpRouteLineAndPolyLine];
+        mlogInfo(ROUTE, @"%@", [self description]);
+        return true;
+        
+    }
+    @catch (NSException *exception)
+    {
+        mlogWarning(ROUTE, @"parse json file fail: %@", fileName);
+    }
+    @finally
+    {
+        mlogWarning(ROUTE, @"parse json file fail: %@", fileName);
+    }
+    
+    return false;
 }
 
++(Route*) parseJson:(NSString*) fileName
+{
+    Route* r = [[Route alloc] init];
+    if(![r parseJson:fileName])
+        return nil;
+    return r;
+    
+}
 -(void) initRouteLines
 {
     tmpRouteLines   = [[NSMutableArray alloc] initWithCapacity:0];

@@ -46,6 +46,7 @@ typedef struct LocationCoordinateRect2D
 +(NSString*)getLatLngStr:(CLLocationCoordinate2D)location;
 +(PointD) makePointDFromCLLocationCoordinate2D: (CLLocationCoordinate2D) location;
 +(PointD) makePointDFromX: (double) x Y:(double) y;
++(bool) isCLLocationCoordinate2DEqual:(CLLocationCoordinate2D) c1 To:(CLLocationCoordinate2D) c2;
 @end
 
 

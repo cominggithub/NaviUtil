@@ -11,6 +11,7 @@
 #import "NSDictionary+category.h"
 #import "GoogleJson.h"
 #import "Log.h"
+#import "GeoUtil.h"
 
 typedef enum PlaceType
 {
@@ -45,4 +46,5 @@ typedef enum PlaceRouteType
 +(Place*) parseDictionary:(NSDictionary*) dic;
 -(NSDictionary*) toDictionary;
 -(bool) isPlaceMatched:(NSString*) name;
+-(bool) isCoordinateEqualTo:(Place*) p;
 @end
