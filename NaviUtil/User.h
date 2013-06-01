@@ -18,13 +18,26 @@
 +(void) init;
 +(bool) parseJson:(NSString*) fileName;
 +(void) save;
-+(void) addSearchedPlace:(NSString*) place;
++(void) addHomeLocation:(Place*) p;
++(void) addOfficeLocation:(Place*) p;
++(void) addFavorLocation:(Place*) p;
++(void) addSearchedLocation:(NSString*) location;
++(void) removeHomeLocationAtIndex:(int) index;
++(void) removeOfficeLocationAtIndex:(int) index;
++(void) removeFavorLocationAtIndex:(int) index;
++(void) updateHomeLocationAtIndex:(int) index Location:(Place*) place;
++(void) updateOfficeLocationAtIndex:(int) index Location:(Place*) place;
++(void) updateFavorLocationAtIndex:(int) index Location:(Place*) place;
+
++(Place*) getHomeLocationByIndex:(int) index;
++(Place*) getOfficeLocationByIndex:(int) index;
++(Place*) getFavorLocationByIndex:(int) index;
 +(NSString*) getSearchPlaceByIndex:(int) index;
 +(NSString*) name;
 +(NSString*) email;
-+(Location*) homeLocation;
++(NSArray*) homeLocations;
 +(NSArray*) officeLocations;
 +(NSArray*) favorLocations;
-+(NSArray*) searchedPlaces;
++(NSArray*) searchedLocations;
 
 @end

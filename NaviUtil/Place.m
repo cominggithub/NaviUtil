@@ -12,6 +12,7 @@
 
 @synthesize name=_name;
 @synthesize coordinate=_coordinate;
+@synthesize address=_address;
 
 
 -(id) init
@@ -115,18 +116,25 @@
     return p;
 }
 
--(NSDictionary*) toDictionary
++(Place*) newPlace:(NSString*) name Address:(NSString*) address Location:(CLLocationCoordinate2D) location
 {
+    Place* p        = [[Place alloc] init];
+    p.name          = [NSString stringWithString:name];
+    p.address       = [NSString stringWithString:address];
+    p.coordinate    = CLLocationCoordinate2DMake(location.latitude, location.longitude);
     
-    NSDictionary* result = [NSDictionary dictionaryWithObjectsAndKeys:
-                            self.name, @"name",
-                            self.address, @"address",
-                            self.coordinate.latitude, @"lat",
-                            self.coordinate.longitude, @"lng",
-                            nil];
+    return p;
     
+}
+
+-(void) copyTo:(Place*) p;
+{
+    if (nil == p)
+        return;
+    p.name          = [NSString stringWithString:self.name];
+    p.address       = [NSString stringWithString:self.address];
+    p.coordinate    = CLLocationCoordinate2DMake(self.coordinate.latitude, self.coordinate.longitude);
     
-    return result;
 }
 
 -(NSString*) description
@@ -170,4 +178,22 @@
         return false;
     return [GeoUtil isCLLocationCoordinate2DEqual:self.coordinate To:p.coordinate];
 }
+
+-(NSDictionary*) toDictionary
+{
+    
+    NSMutableDictionary* result;
+    result = [[NSMutableDictionary alloc] init];
+
+    [result setObject:self.name forKey:@"name"];
+    [result setObject:self.address forKey:@"address"];
+    [result setObject:[NSString stringWithFormat:@"%.7f", self.coordinate.latitude] forKey:@"lat"];
+    [result setObject:[NSString stringWithFormat:@"%.7f", self.coordinate.longitude] forKey:@"lng"];
+   
+    
+    
+    return result;
+}
+
+
 @end

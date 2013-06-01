@@ -44,7 +44,9 @@ typedef enum PlaceRouteType
 
 +(NSArray*) parseJson:(NSString*) fileName;
 +(Place*) parseDictionary:(NSDictionary*) dic;
++(Place*) newPlace:(NSString*) name Address:(NSString*) address Location:(CLLocationCoordinate2D) location;
 -(NSDictionary*) toDictionary;
 -(bool) isPlaceMatched:(NSString*) name;
 -(bool) isCoordinateEqualTo:(Place*) p;
+-(void) copyTo:(Place*) p;
 @end
