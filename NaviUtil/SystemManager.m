@@ -127,7 +127,6 @@ static CLLocationCoordinate2D _defaultLocation;
     linmso([self speechFilePath]);
     linmso([self logFilePath]);
     
-
     [self cleanDirectory:_tmpPath];
     [self makeDirectory:[self placeFilePath]];
     [self makeDirectory:[self routeFilePath]];
@@ -142,6 +141,8 @@ static CLLocationCoordinate2D _defaultLocation;
     mlogInfo(SYSTEM_MANAGER, @"Speech File Path: %@", [self speechFilePath]);
     mlogInfo(SYSTEM_MANAGER, @"  User File Path: %@", [self userFilePath]);
     mlogInfo(SYSTEM_MANAGER, @"   Log File Path: %@", [self logFilePath]);
+    
+
 }
 
 +(NSString*) documentPath
@@ -186,6 +187,7 @@ static CLLocationCoordinate2D _defaultLocation;
     if([fileManager fileExistsAtPath:path]) {
         [fileManager removeItemAtPath:path error:nil];
     }
+
 
 }
 

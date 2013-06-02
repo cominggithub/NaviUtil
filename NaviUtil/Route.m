@@ -85,20 +85,20 @@
 
         [self saveRouteLines];
         [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager routeFilePath], [self getName]]];
-        [self dumpRouteLines];
+//        [self dumpRouteLines];
     
-        [self dumpRouteLineAndPolyLine];
-        mlogInfo(ROUTE, @"%@", [self description]);
+//        [self dumpRouteLineAndPolyLine];
+        mlogDebug(ROUTE, @"parse json file done: %@", fileName);
         return true;
         
     }
     @catch (NSException *exception)
     {
-        mlogWarning(ROUTE, @"parse json file fail: %@", fileName);
+        mlogWarning(ROUTE, @"parse json file fail: %@, reason: %@", fileName, [exception reason]);
     }
     @finally
     {
-        mlogWarning(ROUTE, @"parse json file fail: %@", fileName);
+//        mlogWarning(ROUTE, @"parse json file fail: %@", fileName);
     }
     
     return false;
