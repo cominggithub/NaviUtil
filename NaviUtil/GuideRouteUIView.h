@@ -21,9 +21,9 @@
 
 
 
-@interface GuideRouteUIView : UIView<LocationManagerDelegate>
+@interface GuideRouteUIView : UIView<LocationManagerDelegate, DownloadRequestDelegate>
 {
-    Route* route;
+
     NSMutableArray *routePoints;
     NSMutableArray *carFootPrint;
     bool isDrawCarFootPrint;
@@ -72,6 +72,8 @@
     CLLocationCoordinate2D currentCarLocation;
     AVAudioPlayer *audioPlayer;
     double xOffset;
+    Place *routeStartPlace;
+    Place *routeEndPlace;
 }
 
 -(void) initSelf;
@@ -80,6 +82,7 @@
 -(void) timerTimeout;
 -(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
 -(UIImage*) getCarImage;
+-(void) startRouteNavigationFrom:(Place*) s To:(Place*) e;
 
 
 @end

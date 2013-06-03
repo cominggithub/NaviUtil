@@ -19,6 +19,7 @@ typedef enum PlaceType
     kPlaceType_Home,
     kPlaceType_Office,
     kPlaceType_Favor,
+    kPlaceType_CurrentLocation,
     kPlaceType_Max
     
 }PlaceType;
@@ -28,7 +29,7 @@ typedef enum PlaceRouteType
     kPlaceRouteType_None = 0,
     kPlaceRouteType_Start,
     kPlaceRouteType_Middle,
-    kPlaceRouteType_Favor,
+    kPlaceRouteType_End,
     kPlaceRouteType_Max
     
 }PlaceRouteType;

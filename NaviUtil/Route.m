@@ -94,7 +94,7 @@
     }
     @catch (NSException *exception)
     {
-        mlogWarning(ROUTE, @"parse json file fail: %@, reason: %@", fileName, [exception reason]);
+        mlogWarning(ROUTE, @"parse json file fail: %@, reason: %@\n%@", fileName, [exception reason], exception );
     }
     @finally
     {

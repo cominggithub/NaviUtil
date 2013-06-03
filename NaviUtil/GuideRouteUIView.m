@@ -7,158 +7,33 @@
 //
 
 #import "GuideRouteUIView.h"
-
-@implementation GuideRouteUIView
 #define radians(degrees) (degrees * M_PI/180)
--(void) initSelf
+@implementation GuideRouteUIView
 {
-    int routePointCount = 0;
-//    logfn();
-#if 0
-    int i;
-    CLLocation* st = [[CLLocation alloc] initWithLatitude:0.0 longitude:0.0];
-    
-    for(i=0; i<100; i++)
+    Route* route;
+    DownloadRequest *routeDownloadRequest;
+}
+
+
+-(double) adjustAngle:(double)angle
+{
+    if(angle > M_PI)
     {
-        CLLocation* end = [[CLLocation alloc] initWithLatitude:i/100000.0 longitude:i/100000.0];
-        
-        printf("%.5f distance: %.2f\n", i/100000.0, [st distanceFromLocation:end]);
+        angle -= 2*M_PI;
     }
-#endif
-    
-    route = [NaviQueryManager getRoute];
-    margin = 0.0;
-    routeDisplayBound.origin.x = floor(480*margin);
-    routeDisplayBound.origin.y = floor(320*margin);
-    
-    
-    routeDisplayBound.size.width   = floor(480*(1-margin*2));
-    routeDisplayBound.size.height  = floor(320*(1-margin*2));
-
-    msgRect.origin.x = floor(480*0.15);
-    msgRect.origin.y = floor(320*0.15);
-    
-    
-    msgRect.size.width   = floor(480*(1-0.3));
-    msgRect.size.height  = floor(320*(1-0.3));
-    
-    
-    printf("bounds: (%f, %f, %f, %f)\n", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
-    printf("routeDisplayBound: (%f, %f, %f, %f)\n", routeDisplayBound.origin.x, routeDisplayBound.origin.y, routeDisplayBound.size.width, routeDisplayBound.size.height);
-    ratio = 1;
-    [self generateRoutePoints];
-    for (NSValue *v in routePoints)
+    else if(angle <-M_PI)
     {
-        PointD p = [v PointDValue];
-        printf("%3d (%.5f, %.5f)\n", routePointCount, p.x, p.y);
-        routePointCount++;
-    }
- #if 0
-    routePoints= [NSArray arrayWithObjects:
-                  [NSValue valueWithPointD:PointDMake(120.25071, 23.14299)],
-                  [NSValue valueWithPointD:PointDMake(120.24962, 23.14294)],
-                  [NSValue valueWithPointD:PointDMake(120.24877, 23.14299)],
-                  [NSValue valueWithPointD:PointDMake(120.24810, 23.14306)],
-                  nil];
-    
-
-    routePoints= [NSArray arrayWithObjects:
-                  [NSValue valueWithPointD:PointDMake(50, 350)],
-                  [NSValue valueWithPointD:PointDMake(50, 300)],
-                  [NSValue valueWithPointD:PointDMake(100,250)],
-                  [NSValue valueWithPointD:PointDMake(150,250)],
-                  [NSValue valueWithPointD:PointDMake(150,200)],
-                  [NSValue valueWithPointD:PointDMake(100,200)],
-                  [NSValue valueWithPointD:PointDMake(80, 250)],
-                  
-                  [NSValue valueWithPointD:PointDMake(50,50)],
-                  nil];
-#endif
-//    NSTimer *theTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(timerTimeout) userInfo:nil repeats:YES];
-    // Assume a there's a property timer that will retain the created timer for future reference.
-//    timer = theTimer;
-    
-    
-    //oneStep = 0.00013; // for 1 meter
-    oneStep = 0.00013;
-    
-    directionAngle = 0;
-    screenSize.width = 480;
-    screenSize.height = 320;
-    carCenterPoint.x = screenSize.width/2;
-    carCenterPoint.y = (screenSize.height/4)*3;
-    carPoint.x = 0;
-    carPoint.y = 0;
-    locationIndex = 0;
-    routeLineM = 0;
-    routeLineB = 0;
-    isRouteLineMUndefind = false;
-//    ratio = 122000;
-    ratio = 222000;
-    angleRotateStep = 0.1;
-    rotateInterval = 0.1;
-
-    [self nextRouteLine];
-    carPoint = routeStartPoint;
-    [self updateTranslationConstant];
-    printf("car center point (%.5f, %.5f)\n", carCenterPoint.x, carCenterPoint.y);
-    printf("car start at (%.5f, %.5f)\n", carPoint.x, carPoint.y);
-    [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
-    currentStep = 0;
-    
-    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
-    carFootPrint = [NSMutableArray arrayWithCapacity:0];
-    isDrawCarFootPrint = true;
-    
-}
-
-- (id) init
-{
-    self = [super init];
-    if (self) {
-        // Initialization code
-        
-        [self initSelf];
-        
-    }
-    return self;
-}
-
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-        
-        [self initSelf];
-    
-    }
-    return self;
-}
-
--(id)initWithCoder:(NSCoder*)coder
-{
-    
-    self = [super initWithCoder:coder];
-    if (self) {
-        // Initialization code
-        
-        [self initSelf];
-        
+        angle += 2*M_PI;
     }
     
-    return self;
+    return angle;
 }
-
-
-
-
 
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
-
+    
     CGContextRef context = UIGraphicsGetCurrentContext();
     if(currentRouteLine != nil)
     {
@@ -178,23 +53,14 @@
     
 }
 
--(void) playSpeech:(NSString*) text
-{
-    
-    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@.mp3", [SystemManager speechFilePath], text]];
-    
-	NSError *error;
-	audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
-	audioPlayer.numberOfLoops = 0;
-    [audioPlayer play];
-}
+
 -(void) drawTurnMessage:(CGContextRef) context
 {
     RouteLine *nextStepRouteLine;
     if(currentRouteLine != nil)
     {
         nextStepRouteLine = [route getNextStepFirstRouteLineByStepNo:currentRouteLine.stepNo CarLocation:currentCarLocation];
-
+        
         if(nextStepRouteLine != nil)
         {
             NSString* text = [route getStepInstruction:nextStepRouteLine.stepNo];
@@ -219,8 +85,8 @@
     int currentStepNo = -1;
     
     NSMutableArray *stepPoint;
-
-
+    
+    
     [super drawRect:rect];
     routeRect.origin.x -= 200;
     routeRect.origin.y -= 200;
@@ -229,19 +95,19 @@
     stepPoint = [[NSMutableArray alloc] init];
     
     CGContextSetLineWidth(context, 3.0);
-
+    
     CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
     
     // draw screen frame
     CGContextAddRect(context, routeDisplayBound);
     CGContextStrokeRect(context, routeDisplayBound);
-
+    
     // draw route line
     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
     CGContextSetLineWidth(context, 10.0);
-
-
-
+    
+    
+    
     for(RouteLine *rl in route.routeLines)
     {
         startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
@@ -275,7 +141,7 @@
     }
     CGContextFillPath(context);
     
-    // add circle to the edge of step 
+    // add circle to the edge of step
     CGContextSetStrokeColorWithColor(context, [UIColor yellowColor].CGColor);
     for(RouteLine *rl in route.routeLines)
     {
@@ -295,9 +161,9 @@
         
     }
     CGContextStrokePath(context);
-        
-
-
+    
+    
+    
     // mark edge of route line by red circle
     CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
     CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
@@ -363,7 +229,7 @@
         routeLineLabelRect.size.height = 20;
         routeLineLabel = [NSString stringWithFormat:@"%d", rl.routeLineNo];
         [routeLineLabel drawInRect:routeLineLabelRect withFont:[UIFont boldSystemFontOfSize:20.0]];
-
+        
     }
 }
 -(void) drawCarFootPrint:(CGContextRef) context
@@ -382,8 +248,8 @@
         curPoint = [self getDrawPoint:[v PointDValue]];
         curPoint.x += xOffset;
         /* disable check out of bound point */
-
-
+        
+        
         
         rect.origin.x = curPoint.x-size/2;
         rect.origin.y = curPoint.y-size/2;
@@ -400,14 +266,14 @@
 {
     int routeLineNo = currentRouteLine != nil ? currentRouteLine.routeLineNo : -1;
     CGRect endPosText;
-
+    
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
     endPosText.origin.x = 20;
     endPosText.origin.y = 20;
     endPosText.size.width = 350;
     endPosText.size.height = 60;
     
-
+    
     NSString *endText = [NSString stringWithFormat:@"angle:%.2f - %d\n%@", TO_ANGLE(directionAngle), routeLineNo, [SystemManager getUsedMemoryStr]];
     
     [endText drawInRect:endPosText withFont:[UIFont boldSystemFontOfSize:14.0]];
@@ -417,7 +283,7 @@
 {
     CGRect rect = msgRect;
     int radius = 20;
-
+    
     
     CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + radius);
     CGContextAddLineToPoint(context, rect.origin.x, rect.origin.y + rect.size.height - radius);
@@ -433,12 +299,12 @@
     CGContextAddLineToPoint(context, rect.origin.x + radius, rect.origin.y);
     CGContextAddArc(context, rect.origin.x + radius, rect.origin.y + radius, radius,
                     -M_PI / 2, M_PI, 1);
-
+    
     
     CGContextSetBlendMode(context, kCGBlendModeNormal);
     CGContextSetFillColorWithColor(context, [UIColor colorWithWhite:0.0 alpha:0.9].CGColor);
     CGContextFillPath(context);
-
+    
     CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + radius);
     CGContextAddLineToPoint(context, rect.origin.x, rect.origin.y + rect.size.height - radius);
     CGContextAddArc(context, rect.origin.x + radius, rect.origin.y + rect.size.height - radius,
@@ -455,10 +321,10 @@
                     -M_PI / 2, M_PI, 1);
     
     CGContextSetLineWidth(context, 5.0);
-//    CGContextSetBlendMode(context, kCGBlendModeOverlay);
+    //    CGContextSetBlendMode(context, kCGBlendModeOverlay);
     CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
     CGContextStrokePath(context);
-
+    
     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
     
     rect.origin.x += 10;
@@ -470,7 +336,7 @@
 -(void) drawCar:(CGContextRef) context
 {
     int size = 20;
-
+    
     CGRect carRect;
     
     CGContextSetStrokeColorWithColor(context, [UIColor yellowColor].CGColor);
@@ -489,10 +355,10 @@
 -(void) drawCurrentRouteLine:(CGContextRef) context
 {
     PointD curPoint;
-
+    
     if(currentRouteLine == nil)
         return;
-
+    
     CGContextSetStrokeColorWithColor(context, [UIColor purpleColor].CGColor);
     CGContextSetFillColorWithColor(context, [UIColor purpleColor].CGColor);
     CGContextSetLineWidth(context, 5.0);
@@ -508,153 +374,12 @@
     
 }
 
-
--(void) generateRoutePoints
+-(void) dumpCarFootPrint
 {
-    double widthRatio;
-    double heightRatio;
-    if (route.status != RouteStatusCodeOK)
-        return;
-    
-    routePoints = [[NSMutableArray alloc] initWithArray:[route getRoutePolyLinePointD]];
-    
-    distanceWidth   = 0;
-    distanceHeight  = 0;
-    widthRatio      = 0;
-    heightRatio     = 0;
-    
-
-    leftMost = [[routePoints objectAtIndex:0] PointDValue];
-    rightMost = leftMost;
-    topMost = leftMost;
-    bottomMost = leftMost;
-    
-//    for(NSArray *stepPolyPoints in routePoints)
+    for(NSValue* v in carFootPrint)
     {
-        for(NSValue *tmpValue in routePoints)
-        {
-            PointD tmpLocation = [tmpValue PointDValue];
-            if (leftMost.x >= tmpLocation.x)
-            {
-                leftMost = tmpLocation;
-            }
-            
-            if (rightMost.x <= tmpLocation.x)
-            {
-                rightMost = tmpLocation;
-            }
-            
-            if (topMost.y <= tmpLocation.y)
-            {
-                topMost = tmpLocation;
-            }
-            
-            if (bottomMost.y >= tmpLocation.y)
-            {
-                bottomMost = tmpLocation;
-            }
-            
-        }
-    }
-    
-    
-    widthRatio = 320.0/fabs((leftMost.x - rightMost.x));
-    heightRatio = 480.0/fabs((topMost.y - topMost.y));
-    
-    fitRatio = MIN(widthRatio, heightRatio);
-    
-    printf("%.5f\n", fabs(-0.1));
-    printf("%.5f\n", (fabs(topMost.y- bottomMost.y)*1.0));
-    printf("%.5f\n", (fabs(rightMost.x - leftMost.x)*1.0));
-
-    printf("leftMost     %9.5f\n", leftMost.x);
-    printf("rightMost    %9.5f\n", rightMost.x);
-    printf("topMost      %9.5f\n", topMost.y);
-    printf("bottomMost   %9.5f\n", bottomMost.y);
-
-    
-
-//    ratio = fitRatio;
-    printf("fitratio: %.2f\n", fitRatio);
-    printf("   ratio: %.2f\n", ratio);
-    
-}
-
--(PointD) getRawDrawPoint:(PointD) p
-{
-   
-    
-    PointD tmpPoint;
-    PointD translatedPoint;
-    
-    // let carPoint be the origin
-    tmpPoint.x = (p.x - leftMost.x)*ratio;
-    tmpPoint.y = (p.y - topMost.y)*ratio;
-    
-    translatedPoint.y = (-1)*translatedPoint.y;
-    
-    return translatedPoint;
-    
-}
-
--(PointD) getDrawPoint:(PointD)p
-{
-    
-    PointD tmpPoint;
-    PointD translatedPoint;
-
-  
-    // step 1: rotate
-    // let carPoint be the origin
-    tmpPoint.x = (p.x - carPoint.x);
-    tmpPoint.y = (p.y - carPoint.y);
-    
-
-    // rotate and move back
-//    translatedPoint.x = tmpPoint.x*cos(directionAngle) - tmpPoint.y*sin(directionAngle) + carPoint.x;
-//    translatedPoint.y = tmpPoint.x*sin(directionAngle) + tmpPoint.y*cos(directionAngle) + carPoint.y;
-
-    translatedPoint.x = tmpPoint.x*cos(currentAngle) - tmpPoint.y*sin(currentAngle) + carPoint.x;
-    translatedPoint.y = tmpPoint.x*sin(currentAngle) + tmpPoint.y*cos(currentAngle) + carPoint.y;
-
-
-//    printf("translatedPoint (%.8f, %.8f)\n", translatedPoint.x, translatedPoint.y);
-    
-    // step2: scale and move to car screen point.
-    
-    translatedPoint.x = translatedPoint.x*ratio + toScreenOffset.x;
-    translatedPoint.y = translatedPoint.y*ratio + toScreenOffset.y;
-
-//    printf("translatedPoint (%.8f, %.8f)\n", translatedPoint.x, translatedPoint.y);
-    
-    // step3: mirror around the y axis of car center point
-    // 1. move to origin (-carCenterPoint)
-    // 2. mirror, y=-y
-    // 3. move back (+carCenterPoint)
-    translatedPoint.y = carCenterPoint.y - translatedPoint.y + carCenterPoint.y;
-    
-    
-//    printf("     draw point (%.5f, %.5f) - > (%.0f, %.0f)\n\n", p.x, p.y, translatedPoint.x, translatedPoint.y);
-    
-    return translatedPoint;
-}
-
--(void) timerTimeout
-{
-    if(locationIndex < [routePoints count])
-//    if(locationIndex < 1)
-    {
-//        [self nextRouteLine];
-//        carPoint = routeStartPoint;
-
-//        [self updateLocation];
-//        [self updateTranslationConstant];
-//        [self setNeedsDisplay];
-    }
-    else
-    {
-//        [timer invalidate];
-//        timer = nil;
+        PointD p = [v PointDValue];
+        mlogDebug(NONE, @"car foot print (%12.7f, %12.7f)", p.y, p.x);
     }
 }
 
@@ -704,106 +429,281 @@
     return nextCarPoint;
 }
 
-
--(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
+-(void) generateRoutePoints
 {
-    PointD nextCarPoint;
-    currentCarLocation = newCarLocation;
-    nextCarPoint.x = newCarLocation.longitude;
-    nextCarPoint.y = newCarLocation.latitude;
-#if 0
-    if(routeUnitVector.y > 0)
-    {
-        // (1) ++
-        if(routeUnitVector.x > 0)
-        {
-            if (nextCarPoint.x >= routeEndPoint.x &&  nextCarPoint.y >= routeEndPoint.y)
-            {
-                [self nextRouteLine];
-//                nextCarPoint = routeStartPoint;
-            }
-        }
-        // (2) -+
-        else
-        {
-            if (nextCarPoint.x <= routeEndPoint.x &&  nextCarPoint.y >= routeEndPoint.y)
-            {
-                [self nextRouteLine];
-//                nextCarPoint = routeStartPoint;
-            }
-        }
-    }
-    else
-    {
-        // (4) +-
-        if(routeUnitVector.x > 0)
-        {
-            if (nextCarPoint.x >= routeEndPoint.x &&  nextCarPoint.y <= routeEndPoint.y)
-            {
-                [self nextRouteLine];
-//                nextCarPoint = routeStartPoint;
-            }
-        }
-        // (3) --
-        else
-        {
-            if (nextCarPoint.x <= routeEndPoint.x &&  nextCarPoint.y <= routeEndPoint.y)
-            {
-                [self nextRouteLine];
-//                nextCarPoint = routeStartPoint;
-            }
-        }
-    }
-
-/*
-    printf("car (%.8f, %.8f) -> (%.8f, %.8f), distance: %.8f\n",
-          carPoint.x, carPoint.y,
-          nextCarPoint.x, nextCarPoint.y,
-          [GeoUtil getLength:carPoint ToPoint:nextCarPoint]
-        );
-*/
+    double widthRatio;
+    double heightRatio;
+    if (route.status != RouteStatusCodeOK)
+        return;
     
+    routePoints = [[NSMutableArray alloc] initWithArray:[route getRoutePolyLinePointD]];
+    
+    distanceWidth   = 0;
+    distanceHeight  = 0;
+    widthRatio      = 0;
+    heightRatio     = 0;
+    
+    
+    leftMost = [[routePoints objectAtIndex:0] PointDValue];
+    rightMost = leftMost;
+    topMost = leftMost;
+    bottomMost = leftMost;
+    
+    //    for(NSArray *stepPolyPoints in routePoints)
+    {
+        for(NSValue *tmpValue in routePoints)
+        {
+            PointD tmpLocation = [tmpValue PointDValue];
+            if (leftMost.x >= tmpLocation.x)
+            {
+                leftMost = tmpLocation;
+            }
+            
+            if (rightMost.x <= tmpLocation.x)
+            {
+                rightMost = tmpLocation;
+            }
+            
+            if (topMost.y <= tmpLocation.y)
+            {
+                topMost = tmpLocation;
+            }
+            
+            if (bottomMost.y >= tmpLocation.y)
+            {
+                bottomMost = tmpLocation;
+            }
+            
+        }
+    }
+    
+    
+    widthRatio = 320.0/fabs((leftMost.x - rightMost.x));
+    heightRatio = 480.0/fabs((topMost.y - topMost.y));
+    
+    fitRatio = MIN(widthRatio, heightRatio);
+    
+    printf("%.5f\n", fabs(-0.1));
+    printf("%.5f\n", (fabs(topMost.y- bottomMost.y)*1.0));
+    printf("%.5f\n", (fabs(rightMost.x - leftMost.x)*1.0));
+    
+    printf("leftMost     %9.5f\n", leftMost.x);
+    printf("rightMost    %9.5f\n", rightMost.x);
+    printf("topMost      %9.5f\n", topMost.y);
+    printf("bottomMost   %9.5f\n", bottomMost.y);
+    
+    
+    
+    //    ratio = fitRatio;
+    printf("fitratio: %.2f\n", fitRatio);
+    printf("   ratio: %.2f\n", ratio);
+    
+}
+
+-(PointD) getRawDrawPoint:(PointD) p
+{
+    
+    
+    PointD tmpPoint;
+    PointD translatedPoint;
+    
+    // let carPoint be the origin
+    tmpPoint.x = (p.x - leftMost.x)*ratio;
+    tmpPoint.y = (p.y - topMost.y)*ratio;
+    
+    translatedPoint.y = (-1)*translatedPoint.y;
+    
+    return translatedPoint;
+    
+}
+
+-(PointD) getDrawPoint:(PointD)p
+{
+    
+    PointD tmpPoint;
+    PointD translatedPoint;
+    
+    
+    // step 1: rotate
+    // let carPoint be the origin
+    tmpPoint.x = (p.x - carPoint.x);
+    tmpPoint.y = (p.y - carPoint.y);
+    
+    
+    // rotate and move back
+    //    translatedPoint.x = tmpPoint.x*cos(directionAngle) - tmpPoint.y*sin(directionAngle) + carPoint.x;
+    //    translatedPoint.y = tmpPoint.x*sin(directionAngle) + tmpPoint.y*cos(directionAngle) + carPoint.y;
+    
+    translatedPoint.x = tmpPoint.x*cos(currentAngle) - tmpPoint.y*sin(currentAngle) + carPoint.x;
+    translatedPoint.y = tmpPoint.x*sin(currentAngle) + tmpPoint.y*cos(currentAngle) + carPoint.y;
+    
+    
+    //    printf("translatedPoint (%.8f, %.8f)\n", translatedPoint.x, translatedPoint.y);
+    
+    // step2: scale and move to car screen point.
+    
+    translatedPoint.x = translatedPoint.x*ratio + toScreenOffset.x;
+    translatedPoint.y = translatedPoint.y*ratio + toScreenOffset.y;
+    
+    //    printf("translatedPoint (%.8f, %.8f)\n", translatedPoint.x, translatedPoint.y);
+    
+    // step3: mirror around the y axis of car center point
+    // 1. move to origin (-carCenterPoint)
+    // 2. mirror, y=-y
+    // 3. move back (+carCenterPoint)
+    translatedPoint.y = carCenterPoint.y - translatedPoint.y + carCenterPoint.y;
+    
+    
+    //    printf("     draw point (%.5f, %.5f) - > (%.0f, %.0f)\n\n", p.x, p.y, translatedPoint.x, translatedPoint.y);
+    
+    return translatedPoint;
+}
+
+-(id) init
+{
+    self = [super init];
+    if (self) {
+    }
+    return self;
+}
+
+-(id) initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        // Initialization code
+        
+        [self initSelf];
+    
+    }
+    return self;
+}
+
+-(id)initWithCoder:(NSCoder*)coder
+{
+    
+    self = [super initWithCoder:coder];
+    if (self) {
+        // Initialization code
+        
+        [self initSelf];
+        
+    }
+    
+    return self;
+}
+
+-(void) initNewRouteNavigation
+{
+    int routePointCount = 0;
+    //    logfn();
+#if 0
+    int i;
+    CLLocation* st = [[CLLocation alloc] initWithLatitude:0.0 longitude:0.0];
+    
+    for(i=0; i<100; i++)
+    {
+        CLLocation* end = [[CLLocation alloc] initWithLatitude:i/100000.0 longitude:i/100000.0];
+        
+        printf("%.5f distance: %.2f\n", i/100000.0, [st distanceFromLocation:end]);
+    }
 #endif
     
+    route = [NaviQueryManager getRoute];
+    margin = 0.0;
+    routeDisplayBound.origin.x = floor(480*margin);
+    routeDisplayBound.origin.y = floor(320*margin);
     
     
+    routeDisplayBound.size.width   = floor(480*(1-margin*2));
+    routeDisplayBound.size.height  = floor(320*(1-margin*2));
     
-    currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
-    if(currentRouteLine != nil)
-    {
-        routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
-        routeEndPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
-        directionAngle = currentRouteLine.angle;
-    }
-    carPoint = nextCarPoint;
-    [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
-
- 
-    [self updateTranslationConstant];
+    msgRect.origin.x = floor(480*0.15);
+    msgRect.origin.y = floor(320*0.15);
     
-//    [self dumpCarFootPrint];
     
-
-}
-
--(void) dumpCarFootPrint
-{
-    for(NSValue* v in carFootPrint)
+    msgRect.size.width   = floor(480*(1-0.3));
+    msgRect.size.height  = floor(320*(1-0.3));
+    
+    
+    printf("bounds: (%f, %f, %f, %f)\n", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
+    printf("routeDisplayBound: (%f, %f, %f, %f)\n", routeDisplayBound.origin.x, routeDisplayBound.origin.y, routeDisplayBound.size.width, routeDisplayBound.size.height);
+    ratio = 1;
+    [self generateRoutePoints];
+    for (NSValue *v in routePoints)
     {
         PointD p = [v PointDValue];
-        mlogDebug(NONE, @"car foot print (%12.7f, %12.7f)", p.y, p.x);
+        printf("%3d (%.5f, %.5f)\n", routePointCount, p.x, p.y);
+        routePointCount++;
     }
+#if 0
+    routePoints= [NSArray arrayWithObjects:
+                  [NSValue valueWithPointD:PointDMake(120.25071, 23.14299)],
+                  [NSValue valueWithPointD:PointDMake(120.24962, 23.14294)],
+                  [NSValue valueWithPointD:PointDMake(120.24877, 23.14299)],
+                  [NSValue valueWithPointD:PointDMake(120.24810, 23.14306)],
+                  nil];
+    
+    
+    routePoints= [NSArray arrayWithObjects:
+                  [NSValue valueWithPointD:PointDMake(50, 350)],
+                  [NSValue valueWithPointD:PointDMake(50, 300)],
+                  [NSValue valueWithPointD:PointDMake(100,250)],
+                  [NSValue valueWithPointD:PointDMake(150,250)],
+                  [NSValue valueWithPointD:PointDMake(150,200)],
+                  [NSValue valueWithPointD:PointDMake(100,200)],
+                  [NSValue valueWithPointD:PointDMake(80, 250)],
+                  
+                  [NSValue valueWithPointD:PointDMake(50,50)],
+                  nil];
+#endif
+    //    NSTimer *theTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(timerTimeout) userInfo:nil repeats:YES];
+    // Assume a there's a property timer that will retain the created timer for future reference.
+    //    timer = theTimer;
+    
+    
+    //oneStep = 0.00013; // for 1 meter
+    oneStep = 0.00013;
+    
+    directionAngle = 0;
+    screenSize.width = 480;
+    screenSize.height = 320;
+    carCenterPoint.x = screenSize.width/2;
+    carCenterPoint.y = (screenSize.height/4)*3;
+    carPoint.x = 0;
+    carPoint.y = 0;
+    locationIndex = 0;
+    routeLineM = 0;
+    routeLineB = 0;
+    isRouteLineMUndefind = false;
+    //    ratio = 122000;
+    ratio = 222000;
+    angleRotateStep = 0.1;
+    rotateInterval = 0.1;
+    
+    [self nextRouteLine];
+    carPoint = routeStartPoint;
+    [self updateTranslationConstant];
+    printf("car center point (%.5f, %.5f)\n", carCenterPoint.x, carCenterPoint.y);
+    printf("car start at (%.5f, %.5f)\n", carPoint.x, carPoint.y);
+    [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
+    currentStep = 0;
+    
+    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
+    carFootPrint = [NSMutableArray arrayWithCapacity:0];
+    isDrawCarFootPrint = true;
+
 }
 
--(void) updateTranslationConstant
+-(void) locationUpdate:(CLLocationCoordinate2D) location
 {
-    toScreenOffset.x = carCenterPoint.x - carPoint.x*ratio;
-    toScreenOffset.y = carCenterPoint.y - carPoint.y*ratio;
+    currentStep++;
+    mlogInfo(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
-//    printf("toScreenOffset (%.8f, %.8f)\n", toScreenOffset.x, toScreenOffset.y);
+    [self updateCarLocation:location];
+    [self setNeedsDisplay];
+    mlogInfo(GUIDE_ROUTE_UIVIEW, @" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
 }
-    
-
 
 -(void) nextRouteLine
 {
@@ -866,22 +766,39 @@
     
 }
 
--(void) locationUpdate:(CLLocationCoordinate2D) location
-{
-    currentStep++;
-    mlogInfo(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
-    
-    [self updateCarLocation:location];
-    [self setNeedsDisplay];
-    mlogInfo(GUIDE_ROUTE_UIVIEW, @" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
-}
-
--(void) speedUpdate:(int) speed
+-(void) playSpeech:(NSString*) text
 {
     
+    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@.mp3", [SystemManager speechFilePath], text]];
+    
+	NSError *error;
+	audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+	audioPlayer.numberOfLoops = 0;
+    [audioPlayer play];
 }
 
-- (void)rotateAngle:(NSTimer *)theTimer
+-(void) processRouteDownloadRequestStatusChange
+{
+    bool isFail = true;
+    bool updateStatus = false;
+    /* search place finished */
+    if (routeDownloadRequest.status == kDownloadStatus_Finished)
+    {
+        [self startRouteNavigation];
+    }
+    /* search failed */
+    else if(routeDownloadRequest.status == kDownloadStatus_DownloadFail)
+    {
+        updateStatus = true;
+    }
+    
+    if (true == updateStatus && true == isFail)
+    {
+        
+    }
+}
+
+-(void) rotateAngle:(NSTimer *)theTimer
 {
 
     if(true == [self resetCurrentAngle])
@@ -922,18 +839,182 @@
     return true;
 }
 
--(double) adjustAngle:(double)angle
+-(void) startRouteNavigation
 {
-    if(angle > M_PI)
+    GoogleJsonStatus status = [GoogleJson getStatus:routeDownloadRequest.filePath];
+    
+    if ( kGoogleJsonStatus_Ok == status)
     {
-        angle -= 2*M_PI;
+        route = [Route parseJson:routeDownloadRequest.filePath];
+        if (nil != route)
+            [self initNewRouteNavigation];
     }
-    else if(angle <-M_PI)
+
+    return;
+
+}
+
+-(void) startRouteNavigationFrom:(Place*) s To:(Place*) e
+{
+    GoogleJsonStatus status;
+    
+    if (nil == s || nil == e)
+        return;
+    
+    routeStartPlace = s;
+    routeEndPlace   = e;
+    
+    routeDownloadRequest = [NaviQueryManager getRouteDownloadRequestFrom:routeStartPlace.coordinate To:routeEndPlace.coordinate];
+    status = [GoogleJson getStatus:routeDownloadRequest.filePath];
+    
+    if (kGoogleJsonStatus_Ok == status)
     {
-        angle += 2*M_PI;
+        route = [Route parseJson:routeDownloadRequest.filePath];
+        if (nil != route)
+            [self initNewRouteNavigation];
+    }
+    else
+    {
+        [self planRoute];
     }
     
-    return angle;
+}
+
+-(void) planRoute
+{
+    if (nil != routeStartPlace && nil != routeEndPlace)
+    {
+        if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
+        {
+
+            routeDownloadRequest = [NaviQueryManager
+                                    getRouteDownloadRequestFrom:routeStartPlace.coordinate
+                                    To:routeEndPlace.coordinate];
+            routeDownloadRequest.delegate = self;
+                
+            if ([GoogleJson getStatus:routeDownloadRequest.fileName] != kGoogleJsonStatus_Ok)
+            {
+                [NaviQueryManager download:routeDownloadRequest];
+            }
+        }
+    }
+}
+
+-(void) stopRouteNavigation
+{
+    
+}
+
+-(void) speedUpdate:(int) speed
+{
+    
+}
+
+-(void) timerTimeout
+{
+    if(locationIndex < [routePoints count])
+        //    if(locationIndex < 1)
+    {
+        //        [self nextRouteLine];
+        //        carPoint = routeStartPoint;
+        
+        //        [self updateLocation];
+        //        [self updateTranslationConstant];
+        //        [self setNeedsDisplay];
+    }
+    else
+    {
+        //        [timer invalidate];
+        //        timer = nil;
+    }
+}
+
+-(void) updateTranslationConstant
+{
+    toScreenOffset.x = carCenterPoint.x - carPoint.x*ratio;
+    toScreenOffset.y = carCenterPoint.y - carPoint.y*ratio;
+    
+    //    printf("toScreenOffset (%.8f, %.8f)\n", toScreenOffset.x, toScreenOffset.y);
+}
+-(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
+{
+    PointD nextCarPoint;
+    currentCarLocation = newCarLocation;
+    nextCarPoint.x = newCarLocation.longitude;
+    nextCarPoint.y = newCarLocation.latitude;
+#if 0
+    if(routeUnitVector.y > 0)
+    {
+        // (1) ++
+        if(routeUnitVector.x > 0)
+        {
+            if (nextCarPoint.x >= routeEndPoint.x &&  nextCarPoint.y >= routeEndPoint.y)
+            {
+                [self nextRouteLine];
+                //                nextCarPoint = routeStartPoint;
+            }
+        }
+        // (2) -+
+        else
+        {
+            if (nextCarPoint.x <= routeEndPoint.x &&  nextCarPoint.y >= routeEndPoint.y)
+            {
+                [self nextRouteLine];
+                //                nextCarPoint = routeStartPoint;
+            }
+        }
+    }
+    else
+    {
+        // (4) +-
+        if(routeUnitVector.x > 0)
+        {
+            if (nextCarPoint.x >= routeEndPoint.x &&  nextCarPoint.y <= routeEndPoint.y)
+            {
+                [self nextRouteLine];
+                //                nextCarPoint = routeStartPoint;
+            }
+        }
+        // (3) --
+        else
+        {
+            if (nextCarPoint.x <= routeEndPoint.x &&  nextCarPoint.y <= routeEndPoint.y)
+            {
+                [self nextRouteLine];
+                //                nextCarPoint = routeStartPoint;
+            }
+        }
+    }
+    
+    /*
+     printf("car (%.8f, %.8f) -> (%.8f, %.8f), distance: %.8f\n",
+     carPoint.x, carPoint.y,
+     nextCarPoint.x, nextCarPoint.y,
+     [GeoUtil getLength:carPoint ToPoint:nextCarPoint]
+     );
+     */
+    
+#endif
+    
+    
+    
+    
+    currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
+    if(currentRouteLine != nil)
+    {
+        routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
+        routeEndPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
+        directionAngle = currentRouteLine.angle;
+    }
+    carPoint = nextCarPoint;
+    [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
+    
+    
+    [self updateTranslationConstant];
+    
+    //    [self dumpCarFootPrint];
+    
+    
 }
 
 @end

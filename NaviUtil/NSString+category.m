@@ -7,6 +7,7 @@
 //
 
 #import "NSString+category.h"
+#import "Log.h"
 
 @implementation NSString (stringByStrippingHTML)
 
@@ -29,7 +30,6 @@
 
 -(NSMutableArray *) decodePolyLine
 {
-    
     NSMutableString *encoded = [[NSMutableString alloc] initWithCapacity:[self length]];
     [encoded appendString:self];
     [encoded replaceOccurrencesOfString:@"\\\\" withString:@"\\"
@@ -45,19 +45,28 @@
         NSInteger shift = 0;
         NSInteger result = 0;
         do {
-            b = [encoded characterAtIndex:index++] - 63;
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-        } while (b >= 0x20);
+            if (index < encoded.length)
+            {
+                b = [encoded characterAtIndex:index++] - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            }
+        } while (b >= 0x20 && index < encoded.length);
+
         NSInteger dlat = ((result & 1) ? ~(result >> 1) : (result >> 1));
         lat += dlat;
         shift = 0;
         result = 0;
+
         do {
-            b = [encoded characterAtIndex:index++] - 63;
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-        } while (b >= 0x20);
+            if (index < encoded.length)
+            {
+                b = [encoded characterAtIndex:index++] - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            }
+        } while (b >= 0x20 && index < encoded.length);
+
         NSInteger dlng = ((result & 1) ? ~(result >> 1) : (result >> 1));
         lng += dlng;
         NSNumber *latitude = [[NSNumber alloc] initWithFloat:lat * 1e-5];
@@ -86,10 +95,13 @@
         NSInteger shift = 0;
         NSInteger result = 0;
         do {
-            b = [encoded characterAtIndex:index++] - 63;
-            result |= (b & 0x1f) << shift;
-            shift += 5;
-        } while (b >= 0x20);
+            if (index < encoded.length)
+            {
+                b = [encoded characterAtIndex:index++] - 63;
+                result |= (b & 0x1f) << shift;
+                shift += 5;
+            }
+        } while (b >= 0x20 && index < encoded.length);
         NSNumber *level = [[NSNumber alloc] initWithFloat:result];
         [array addObject:level];
     }

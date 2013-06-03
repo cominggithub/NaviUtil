@@ -52,8 +52,8 @@
 +(Place*) getCurrentPlace
 {
     Place *p = [[Place alloc] init];
-    p.name = [SystemManager getLanguageString:@"目前位置"];
-    p.placeType = kPlaceType_Home;
+    p.name = [SystemManager getLanguageString:@"Current Location"];
+    p.placeType = kPlaceType_CurrentLocation;
     p.coordinate = CLLocationCoordinate2DMake(22.9967080, 120.2198480);
     
     return p;

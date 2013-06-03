@@ -365,8 +365,6 @@ static NSMutableArray*  _searchedLocations;
         [searchedLocationsArray addObject:place];
     }
     
-    logo(self.name);
-    logo(self.email);
     [userDic setObject:self.name forKey:@"Name"];
     [userDic setObject:self.email forKey:@"Email"];
     
