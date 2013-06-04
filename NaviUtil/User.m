@@ -12,10 +12,10 @@
 
 static NSString*        _name;
 static NSString*        _email;
-static NSMutableArray*  _homeLocations;
-static NSMutableArray*  _officeLocations;
-static NSMutableArray*  _favorLocations;
-static NSMutableArray*  _searchedLocations;
+static NSMutableArray*  _homePlaces;
+static NSMutableArray*  _officePlaces;
+static NSMutableArray*  _favorPlaces;
+static NSMutableArray*  _searchedPlaces;
 
 +(NSString*) name
 {
@@ -27,138 +27,167 @@ static NSMutableArray*  _searchedLocations;
     return _email;
 }
 
-+(NSArray*) homeLocations
++(NSArray*) homePlaces
 {
     
-    return _homeLocations;
+    return _homePlaces;
 }
 
-+(NSArray*) officeLocations
++(NSArray*) officePlaces
 {
     
-    return _officeLocations;
+    return _officePlaces;
 }
 
-+(NSArray*) favorLocations
++(NSArray*) favorPlaces
 {
-    
-    return _favorLocations;
+    return _favorPlaces;
 }
 
-+(NSArray*) searchedLocations
++(NSArray*) searchedPlaces
 {
     
-    return _searchedLocations;
+    return _searchedPlaces;
 }
 
 +(NSString*) getSearchPlaceByIndex:(int) index
 {
-    if(index < _searchedLocations.count)
+    if(index < _searchedPlaces.count)
     {
-        return [_searchedLocations objectAtIndex:index];
+        return [_searchedPlaces objectAtIndex:index];
     }
 
     return nil;
 }
 
-+(Place*) getHomeLocationByIndex:(int) index
++(Place*) getHomePlaceByIndex:(int) index
 {
-    if(index < _homeLocations.count)
+    if(index < _homePlaces.count)
     {
-        return [_homeLocations objectAtIndex:index];
+        return [_homePlaces objectAtIndex:index];
     }
     
     return nil;
 }
 
-+(Place*) getOfficeLocationByIndex:(int) index
++(Place*) getOfficePlaceByIndex:(int) index
 {
-    if(index < _officeLocations.count)
+    if(index < _officePlaces.count)
     {
-        return [_officeLocations objectAtIndex:index];
+        return [_officePlaces objectAtIndex:index];
     }
     
     return nil;
 }
 
-+(Place*) getFavorLocationByIndex:(int) index
++(Place*) getFavorPlaceByIndex:(int) index
 {
-    if(index < _favorLocations.count)
+    if(index < _favorPlaces.count)
     {
-        return [_favorLocations objectAtIndex:index];
+        return [_favorPlaces objectAtIndex:index];
     }
     
     return nil;
 }
 
-+(void) addHomeLocation:(Place*) p
++(int) getPlaceCountBySection:(int) section
+{
+    switch(section)
+    {
+        case 0:
+            return _homePlaces.count;
+        case 1:
+            return _officePlaces.count;
+        case 2:
+            return _favorPlaces.count;
+    }
+    
+    return 0;
+}
+
++(Place*) getPlaceBySection:(int) section index:(int) index
+{
+    switch(section)
+    {
+        case 0:
+            return [self getHomePlaceByIndex:index];
+        case 1:
+            return [self getOfficePlaceByIndex:index];
+        case 2:
+            return [self getFavorPlaceByIndex:index];
+    }
+    
+    return nil;
+}
+
++(void) addHomePlace:(Place*) p
 {
     p.placeType = kPlaceType_Home;
-    [_homeLocations addObject:p];
+    [_homePlaces addObject:p];
 }
 
 +(void) addOfficeLocation:(Place*) p
 {
     p.placeType = kPlaceType_Office;
-    [_officeLocations addObject:p];
+    [_officePlaces addObject:p];
 }
 
 +(void) addFavorLocation:(Place*) p
 {
     p.placeType = kPlaceType_Favor;
-    [_favorLocations addObject:p];
+    [_favorPlaces addObject:p];
 }
 
 +(void) addSearchedLocation:(NSString*) place
 {
     int i=0;
     NSString* newPlace = [NSString stringWithString:place];
-    for(i=0; i<_searchedLocations.count; i++)
+    for(i=0; i<_searchedPlaces.count; i++)
     {
-        if ([place isEqualToString:[_searchedLocations objectAtIndex:i]])
+        if ([place isEqualToString:[_searchedPlaces objectAtIndex:i]])
         {
-            [_searchedLocations removeObjectAtIndex:i];
+            [_searchedPlaces removeObjectAtIndex:i];
             i--;
         }
     }
     
-    [_searchedLocations insertObject:newPlace atIndex:0];
+    [_searchedPlaces insertObject:newPlace atIndex:0];
     
 }
 
 
-+(void) removeHomeLocationAtIndex:(int) index
++(void) removeHomePlaceAtIndex:(int) index
 {
-    if (index > -1 && index < _homeLocations.count)
+    if (index > -1 && index < _homePlaces.count)
     {
-        [_homeLocations removeObjectAtIndex:index];
+        [_homePlaces removeObjectAtIndex:index];
     }
 }
 
 +(void) removeOfficeLocationAtIndex:(int) index
 {
-    if (index > -1 && index < _officeLocations.count)
+    if (index > -1 && index < _officePlaces.count)
     {
-        [_officeLocations removeObjectAtIndex:index];
+        [_officePlaces removeObjectAtIndex:index];
     }
 }
 
 +(void) removeFavorLocationAtIndex:(int) index
 {
-    if (index > -1 && index < _favorLocations.count)
+    if (index > -1 && index < _favorPlaces.count)
     {
-        [_favorLocations removeObjectAtIndex:index];
+        [_favorPlaces removeObjectAtIndex:index];
     }
 }
 
-+(void) updateHomeLocationAtIndex:(int) index Location:(Place*) place
++(void) updateHomePlaceAtIndex:(int) index Location:(Place*) place
 {
     if (nil == place)
         return;
     
-    if (index > -1 && index < _homeLocations.count)
+    if (index > -1 && index < _homePlaces.count)
     {
-        Place *oldPlace = (Place*) [_homeLocations objectAtIndex:index];
+        Place *oldPlace = (Place*) [_homePlaces objectAtIndex:index];
         [place copyTo:oldPlace];
     }
 }
@@ -168,9 +197,9 @@ static NSMutableArray*  _searchedLocations;
     if (nil == place)
         return;
     
-    if (index > -1 && index < _officeLocations.count)
+    if (index > -1 && index < _officePlaces.count)
     {
-        Place *oldPlace = (Place*) [_officeLocations objectAtIndex:index];
+        Place *oldPlace = (Place*) [_officePlaces objectAtIndex:index];
         [place copyTo:oldPlace];
     }
 }
@@ -180,9 +209,9 @@ static NSMutableArray*  _searchedLocations;
     if (nil == place)
         return;
     
-    if (index > -1 && index < _favorLocations.count)
+    if (index > -1 && index < _favorPlaces.count)
     {
-        Place *oldPlace = (Place*) [_favorLocations objectAtIndex:index];
+        Place *oldPlace = (Place*) [_favorPlaces objectAtIndex:index];
         [place copyTo:oldPlace];
     }
 }
@@ -190,11 +219,11 @@ static NSMutableArray*  _searchedLocations;
 +(void) removeHomePlace:(Place*) place
 {
     int i;
-    for(i=0; i<_homeLocations.count; i++)
+    for(i=0; i<_homePlaces.count; i++)
     {
-        if ([place isEqual:[_homeLocations objectAtIndex:i]])
+        if ([place isEqual:[_homePlaces objectAtIndex:i]])
         {
-            [_homeLocations removeObjectAtIndex:i];
+            [_homePlaces removeObjectAtIndex:i];
             i--;
         }
     }
@@ -203,25 +232,25 @@ static NSMutableArray*  _searchedLocations;
 +(void) removeOfficePlace:(Place*) place
 {
     int i;
-    for(i=0; i<_officeLocations.count; i++)
+    for(i=0; i<_officePlaces.count; i++)
     {
-        if ([place isEqual:[_officeLocations objectAtIndex:i]])
+        if ([place isEqual:[_officePlaces objectAtIndex:i]])
         {
-            [_officeLocations removeObjectAtIndex:i];
+            [_officePlaces removeObjectAtIndex:i];
             i--;
         }
     }
 }
 
-+(void) removeSearchedLocations:(NSString*) place
++(void) removeSearchedPlaces:(NSString*) place
 {
 
     int i=0;
-    for(i=0; i<_searchedLocations.count; i++)
+    for(i=0; i<_searchedPlaces.count; i++)
     {
-        if ([place isEqualToString:[_searchedLocations objectAtIndex:i]])
+        if ([place isEqualToString:[_searchedPlaces objectAtIndex:i]])
         {
-            [_searchedLocations removeObjectAtIndex:i];
+            [_searchedPlaces removeObjectAtIndex:i];
             i--;
         }
     }
@@ -235,22 +264,22 @@ static NSMutableArray*  _searchedLocations;
         Place *p                = [[Place alloc] init];
         _name                   = @"Coming";
         _email                  = @"misscoming@gmail.com";
-        _homeLocations          = [[NSMutableArray alloc] initWithCapacity:0];
-        _officeLocations        = [[NSMutableArray alloc] initWithCapacity:0];
-        _favorLocations         = [[NSMutableArray alloc] initWithCapacity:0];
-        _searchedLocations      = [[NSMutableArray alloc] initWithCapacity:0];
+        _homePlaces          = [[NSMutableArray alloc] initWithCapacity:0];
+        _officePlaces        = [[NSMutableArray alloc] initWithCapacity:0];
+        _favorPlaces         = [[NSMutableArray alloc] initWithCapacity:0];
+        _searchedPlaces      = [[NSMutableArray alloc] initWithCapacity:0];
 
         p               = [[Place alloc] init];
         p.name          = @"永安租房";
         p.address       = @"台南市永康區永安路103巷20號4F-2";
         p.coordinate    = CLLocationCoordinate2DMake(23.042724,120.245876);
-        [self addHomeLocation:p];
+        [self addHomePlace:p];
         
         p               = [[Place alloc] init];
         p.name          = @"宜蘭冬山";
         p.address       = @"宜蘭縣冬山鄉保安二路131巷19號";
         p.coordinate    = CLLocationCoordinate2DMake(24.641790,121.798983);
-        [self addHomeLocation:p];
+        [self addHomePlace:p];
 
         p               = [[Place alloc] init];
         p.name          = @"南科智邦";
@@ -296,20 +325,20 @@ static NSMutableArray*  _searchedLocations;
         if(nil == user)
             return false;
         
-        _name               = [user objectForKey:@"Name"];
-        _email              = [user objectForKey:@"Email"];
-        _searchedLocations  = [NSMutableArray arrayWithArray:[user objectForKey:@"SearchedLocations"]];
+        _name            = [user objectForKey:@"Name"];
+        _email           = [user objectForKey:@"Email"];
+        _searchedPlaces  = [NSMutableArray arrayWithArray:[user objectForKey:@"SearchedPlaces"]];
         
-        _homeLocations      = [[NSMutableArray alloc] initWithCapacity:0];
-        _officeLocations    = [[NSMutableArray alloc] initWithCapacity:0];
-        _favorLocations     = [[NSMutableArray alloc] initWithCapacity:0];
+        _homePlaces      = [[NSMutableArray alloc] initWithCapacity:0];
+        _officePlaces    = [[NSMutableArray alloc] initWithCapacity:0];
+        _favorPlaces     = [[NSMutableArray alloc] initWithCapacity:0];
         
         
         tmpArray = [NSMutableArray arrayWithArray:[user objectForKey:@"Homes"]];
         for(NSDictionary *d in tmpArray)
         {
             Place* p = [Place parseDictionary:d];
-            [self addHomeLocation:p];
+            [self addHomePlace:p];
         }
         
         tmpArray     = [NSMutableArray arrayWithArray:[user objectForKey:@"Offices"]];
@@ -340,38 +369,38 @@ static NSMutableArray*  _searchedLocations;
 {
     NSDictionary *result;
     NSMutableDictionary *userDic            = [[NSMutableDictionary alloc] init];
-    NSMutableArray* homeLocationsArray      = [[NSMutableArray alloc] initWithCapacity:0];
-    NSMutableArray* officeLocationsArray    = [[NSMutableArray alloc] initWithCapacity:0];
-    NSMutableArray* favorLocationsArray     = [[NSMutableArray alloc] initWithCapacity:0];
-    NSMutableArray* searchedLocationsArray  = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray* homePlacesArray      = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray* officePlacesArray    = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray* favorPlacesArray     = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray* SearchedPlacesArray  = [[NSMutableArray alloc] initWithCapacity:0];
 
-    for(Place *p in self.homeLocations)
+    for(Place *p in self.homePlaces)
     {
-        [homeLocationsArray addObject:[p toDictionary]];
+        [homePlacesArray addObject:[p toDictionary]];
     }
     
-    for(Place *p in self.officeLocations)
+    for(Place *p in self.officePlaces)
     {
-        [officeLocationsArray addObject:[p toDictionary]];
+        [officePlacesArray addObject:[p toDictionary]];
     }
 
-    for(Place *p in self.favorLocations)
+    for(Place *p in self.favorPlaces)
     {
-        [favorLocationsArray addObject:[p toDictionary]];
+        [favorPlacesArray addObject:[p toDictionary]];
     }
 
-    for(NSString *place in self.searchedLocations)
+    for(NSString *place in self.searchedPlaces)
     {
-        [searchedLocationsArray addObject:place];
+        [SearchedPlacesArray addObject:place];
     }
     
     [userDic setObject:self.name forKey:@"Name"];
     [userDic setObject:self.email forKey:@"Email"];
     
-    [userDic setObject:homeLocationsArray forKey:@"Homes"];
-    [userDic setObject:officeLocationsArray forKey:@"Offices"];
-    [userDic setObject:favorLocationsArray forKey:@"Favors"];
-    [userDic setObject:searchedLocationsArray forKey:@"SearchedLocations"];
+    [userDic setObject:homePlacesArray forKey:@"Homes"];
+    [userDic setObject:officePlacesArray forKey:@"Offices"];
+    [userDic setObject:favorPlacesArray forKey:@"Favors"];
+    [userDic setObject:SearchedPlacesArray forKey:@"SearchedPlaces"];
     
     result = [NSDictionary dictionaryWithObjectsAndKeys:userDic, @"User", nil];
     return result;

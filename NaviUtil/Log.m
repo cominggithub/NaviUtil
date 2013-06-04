@@ -14,7 +14,7 @@ static NSFileHandle *fileHandle = nil;
 static bool isLogToFile = true;
 static bool isLogToConsole = true;
 //static unsigned long long logModule = (ALL&~DOWNLOAD_MANAGER & ~NAVI_QUERY_MANAGER & ~LOCATION_SIMULATOR & ~GEOUTIL);
-static unsigned long long logModule = (ALL& ~LOCATION_SIMULATOR & ~GEOUTIL);
+static unsigned long long logModule = (ALL& ~LOCATION_SIMULATOR & ~GEOUTIL & ~ROUTE & ~FILE_DOWNLOADER);
 static LogLevel logLevel = kLogAll;
 
 NSDateFormatter *outputFormatter;

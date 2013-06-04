@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "SystemManager.h"
-#import "Location.h"
 #import "Place.h"
 
 @interface User : NSObject
@@ -18,26 +17,29 @@
 +(void) init;
 +(bool) parseJson:(NSString*) fileName;
 +(void) save;
-+(void) addHomeLocation:(Place*) p;
-+(void) addOfficeLocation:(Place*) p;
-+(void) addFavorLocation:(Place*) p;
-+(void) addSearchedLocation:(NSString*) location;
-+(void) removeHomeLocationAtIndex:(int) index;
-+(void) removeOfficeLocationAtIndex:(int) index;
-+(void) removeFavorLocationAtIndex:(int) index;
-+(void) updateHomeLocationAtIndex:(int) index Location:(Place*) place;
-+(void) updateOfficeLocationAtIndex:(int) index Location:(Place*) place;
-+(void) updateFavorLocationAtIndex:(int) index Location:(Place*) place;
++(void) addHomePlace:(Place*) p;
++(void) addOfficePlace:(Place*) p;
++(void) addFavorPlace:(Place*) p;
++(void) addSearchedPlace:(NSString*) Place;
++(void) removeHomePlaceAtIndex:(int) index;
++(void) removeOfficePlaceAtIndex:(int) index;
++(void) removeFavorPlaceAtIndex:(int) index;
++(void) updateHomePlaceAtIndex:(int) index Place:(Place*) place;
++(void) updateOfficePlaceAtIndex:(int) index Place:(Place*) place;
++(void) updateFavorPlaceAtIndex:(int) index Place:(Place*) place;
 
-+(Place*) getHomeLocationByIndex:(int) index;
-+(Place*) getOfficeLocationByIndex:(int) index;
-+(Place*) getFavorLocationByIndex:(int) index;
++(Place*) getHomePlaceByIndex:(int) index;
++(Place*) getOfficePlaceByIndex:(int) index;
++(Place*) getFavorPlaceByIndex:(int) index;
++(int) getPlaceCountBySection:(int) section;
++(Place*) getPlaceBySection:(int) section index:(int) index;
+
 +(NSString*) getSearchPlaceByIndex:(int) index;
 +(NSString*) name;
 +(NSString*) email;
-+(NSArray*) homeLocations;
-+(NSArray*) officeLocations;
-+(NSArray*) favorLocations;
-+(NSArray*) searchedLocations;
++(NSArray*) homePlaces;
++(NSArray*) officePlaces;
++(NSArray*) favorPlaces;
++(NSArray*) searchedPlaces;
 
 @end

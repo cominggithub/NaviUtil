@@ -29,6 +29,12 @@
     return angle;
 }
 
+-(void) downloadRequestStatusChange: (DownloadRequest*) downloadRequest
+{
+    if (downloadRequest == routeDownloadRequest)
+        [self processRouteDownloadRequestStatusChange];
+}
+
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
@@ -572,9 +578,6 @@
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
-        
-        [self initSelf];
-    
     }
     return self;
 }
@@ -585,9 +588,6 @@
     self = [super initWithCoder:coder];
     if (self) {
         // Initialization code
-        
-        [self initSelf];
-        
     }
     
     return self;
