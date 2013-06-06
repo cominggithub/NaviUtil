@@ -14,6 +14,7 @@
 #import "NSValue+category.h"
 #import "Log.h"
 #import "LocationManager.h"
+#import "LocationSimulator.h"
 #import "NaviQueryManager.h"
 #import "RouteLine.h"
 
@@ -74,15 +75,27 @@
     double xOffset;
     Place *routeStartPlace;
     Place *routeEndPlace;
+    
+    LocationManager* locationManager;
+    LocationSimulator *locationSimulator;
+    
+    
 }
+@property (nonatomic) bool isAutoSimulatorLocationUpdateStarted;
 
+-(void) autoSimulatorLocationUpdateStart;
+-(void) autoSimulatorLocationUpdateStop;
 -(void) initSelf;
 -(void) generateRoutePoints;
--(PointD) getDrawPoint:(PointD) location;
--(void) timerTimeout;
--(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
 -(UIImage*) getCarImage;
+-(PointD) getDrawPoint:(PointD) location;
 -(void) startRouteNavigationFrom:(Place*) s To:(Place*) e;
+-(void) timerTimeout;
+-(void) triggerLocationUpdate;
+-(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
+
+
+
 
 
 @end

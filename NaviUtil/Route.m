@@ -20,7 +20,7 @@
         routeLineCount = -1;
     }
     
-    _status = RouteStatusCodeOK;
+    _status = kRouteStatusCodeFail;
     return self;
 }
 
@@ -81,6 +81,7 @@
 
         }
     
+        self.status = kRouteStatusCodeOk;
         [self addLocationToRouteLinesWithStepNo:i Location:[self getEndLocation]];
 
         [self saveRouteLines];

@@ -17,7 +17,7 @@
 @interface LocationSimulator : NSObject
 {
     NSTimer *timer;
-    bool isStart;
+
     int nextLocationIndex;
     CLLocation *currentLocation;
     CLLocation *nextLocation;
@@ -25,6 +25,7 @@
 @property (nonatomic, weak) id<LocationManagerDelegate> delegate;
 @property (nonatomic) NSTimeInterval timeInterval;
 @property (nonatomic, strong) NSArray *locationPoints;
+@property (readonly) bool isStart;
 
 
 -(CLLocationCoordinate2D) getNextLocation;

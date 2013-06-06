@@ -18,8 +18,8 @@
 
 typedef enum
 {
-    RouteStatusCodeOK,
-    RouteStatusCodeFAIL,
+    kRouteStatusCodeOk,
+    kRouteStatusCodeFail,
 }RouteStatusCode;
 
 @interface Route : NSObject
@@ -37,7 +37,7 @@ typedef enum
 }
 
 
-@property (readonly) RouteStatusCode status;
+@property (nonatomic) RouteStatusCode status;
 
 @property (nonatomic) int distanceValue;
 @property (nonatomic) int durationValue;

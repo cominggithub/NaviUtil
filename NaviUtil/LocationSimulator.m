@@ -21,7 +21,7 @@
     {
         self.timeInterval   = 1;
         nextLocationIndex   = 0;
-        isStart             = false;
+        _isStart        = false;
     }
     return self;
 }
@@ -96,18 +96,18 @@
 
 -(void) start
 {
-    if(true == isStart)
+    if(true == _isStart)
     {
         [self stop];
     }
     timer   = [NSTimer scheduledTimerWithTimeInterval:self.timeInterval target:self selector:@selector(timeout:) userInfo:nil repeats:YES];
-    isStart = true;
+    _isStart = true;
 }
 
 -(void) stop
 {
     [timer invalidate];
-    isStart = false;
+    _isStart = false;
 }
 
 @end

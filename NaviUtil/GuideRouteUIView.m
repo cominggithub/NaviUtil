@@ -17,16 +17,48 @@
 
 -(double) adjustAngle:(double)angle
 {
-    if(angle > M_PI)
+    if(angle >= M_PI)
     {
         angle -= 2*M_PI;
     }
-    else if(angle <-M_PI)
+    else if(angle <= -M_PI)
     {
         angle += 2*M_PI;
     }
     
     return angle;
+}
+
+-(void) autoSimulatorLocationUpdateStart
+{
+    logfn();
+    if (nil == route || kRouteStatusCodeOk != route.status)
+    {
+        logfn();
+        _isAutoSimulatorLocationUpdateStarted = false;
+        return;
+    }
+    
+    if (nil == locationSimulator)
+    {
+        logfn();
+        [locationSimulator start];
+    }
+    else if (true != locationSimulator.isStart)
+    {
+        [locationSimulator start];
+    }
+
+    _isAutoSimulatorLocationUpdateStarted = true;
+}
+
+-(void) autoSimulatorLocationUpdateStop
+{
+    if (nil != locationSimulator && true == locationSimulator.isStart)
+    {
+        [locationSimulator stop];
+    }
+    _isAutoSimulatorLocationUpdateStarted = false;
 }
 
 -(void) downloadRequestStatusChange: (DownloadRequest*) downloadRequest
@@ -41,6 +73,8 @@
 {
     
     CGContextRef context = UIGraphicsGetCurrentContext();
+    [super drawRect:rect];
+    
     if(currentRouteLine != nil)
     {
         PointD carDrawPoint = [self getDrawPoint:carPoint];
@@ -93,12 +127,16 @@
     NSMutableArray *stepPoint;
     
     
-    [super drawRect:rect];
+
     routeRect.origin.x -= 200;
     routeRect.origin.y -= 200;
     routeRect.size.width +=400;
     routeRect.size.height +=400;
     stepPoint = [[NSMutableArray alloc] init];
+    
+    // draw blackground
+    CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
+    CGContextFillRect(context, rect);
     
     CGContextSetLineWidth(context, 3.0);
     
@@ -275,7 +313,7 @@
     
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
     endPosText.origin.x = 20;
-    endPosText.origin.y = 20;
+    endPosText.origin.y = 250;
     endPosText.size.width = 350;
     endPosText.size.height = 60;
     
@@ -439,8 +477,19 @@
 {
     double widthRatio;
     double heightRatio;
-    if (route.status != RouteStatusCodeOK)
+    
+    if (nil == route )
+    {
+        mlogWarning(NONE, @"Cannot generate route point, route is nil");
         return;
+    }
+        
+    if ( kGoogleJsonStatus_Ok != route.status )
+    {
+        mlogWarning(NONE, @"Cannot generate route point, route status: %d", route.status);
+        return;
+    }
+    
     
     routePoints = [[NSMutableArray alloc] initWithArray:[route getRoutePolyLinePointD]];
     
@@ -609,7 +658,6 @@
     }
 #endif
     
-    route = [NaviQueryManager getRoute];
     margin = 0.0;
     routeDisplayBound.origin.x = floor(480*margin);
     routeDisplayBound.origin.y = floor(320*margin);
@@ -618,12 +666,11 @@
     routeDisplayBound.size.width   = floor(480*(1-margin*2));
     routeDisplayBound.size.height  = floor(320*(1-margin*2));
     
-    msgRect.origin.x = floor(480*0.15);
-    msgRect.origin.y = floor(320*0.15);
+    msgRect.origin.x = floor(480*0.1);
+    msgRect.origin.y = floor(320*0.05);
     
-    
-    msgRect.size.width   = floor(480*(1-0.3));
-    msgRect.size.height  = floor(320*(1-0.3));
+    msgRect.size.width   = floor(480*0.8);
+    msgRect.size.height  = floor(320*0.2);
     
     
     printf("bounds: (%f, %f, %f, %f)\n", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
@@ -692,7 +739,15 @@
     rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
     carFootPrint = [NSMutableArray arrayWithCapacity:0];
     isDrawCarFootPrint = true;
-
+    
+    
+    _isAutoSimulatorLocationUpdateStarted   = false;
+    locationSimulator                       = [[LocationSimulator alloc] init];
+    locationSimulator.timeInterval          = 1;
+    locationSimulator.locationPoints        = [route getRoutePolyLineCLLocationCoordinate2D];
+    locationSimulator.delegate              = self;
+    
+    
 }
 
 -(void) locationUpdate:(CLLocationCoordinate2D) location
@@ -798,6 +853,11 @@
     }
 }
 
+-(void) triggerLocationUpdate
+{
+    logfn();
+    [self locationUpdate:locationSimulator.getNextLocation];
+}
 -(void) rotateAngle:(NSTimer *)theTimer
 {
 
@@ -814,9 +874,14 @@
     
     /* -PI = PI */
     
+    
     reverseDirection = angleOffset > (M_PI)? (-1):(1);
     
-    if(angleOffset == 0)
+    logf(currentAngle);
+    logf(directionAngle);
+    logf(angleOffset);
+    
+    if(angleOffset == 0 || angleOffset == 2*M_PI)
         return false;
     
     if(angleOffset <= angleRotateStep)
@@ -910,25 +975,6 @@
     
 }
 
--(void) timerTimeout
-{
-    if(locationIndex < [routePoints count])
-        //    if(locationIndex < 1)
-    {
-        //        [self nextRouteLine];
-        //        carPoint = routeStartPoint;
-        
-        //        [self updateLocation];
-        //        [self updateTranslationConstant];
-        //        [self setNeedsDisplay];
-    }
-    else
-    {
-        //        [timer invalidate];
-        //        timer = nil;
-    }
-}
-
 -(void) updateTranslationConstant
 {
     toScreenOffset.x = carCenterPoint.x - carPoint.x*ratio;
@@ -942,62 +988,6 @@
     currentCarLocation = newCarLocation;
     nextCarPoint.x = newCarLocation.longitude;
     nextCarPoint.y = newCarLocation.latitude;
-#if 0
-    if(routeUnitVector.y > 0)
-    {
-        // (1) ++
-        if(routeUnitVector.x > 0)
-        {
-            if (nextCarPoint.x >= routeEndPoint.x &&  nextCarPoint.y >= routeEndPoint.y)
-            {
-                [self nextRouteLine];
-                //                nextCarPoint = routeStartPoint;
-            }
-        }
-        // (2) -+
-        else
-        {
-            if (nextCarPoint.x <= routeEndPoint.x &&  nextCarPoint.y >= routeEndPoint.y)
-            {
-                [self nextRouteLine];
-                //                nextCarPoint = routeStartPoint;
-            }
-        }
-    }
-    else
-    {
-        // (4) +-
-        if(routeUnitVector.x > 0)
-        {
-            if (nextCarPoint.x >= routeEndPoint.x &&  nextCarPoint.y <= routeEndPoint.y)
-            {
-                [self nextRouteLine];
-                //                nextCarPoint = routeStartPoint;
-            }
-        }
-        // (3) --
-        else
-        {
-            if (nextCarPoint.x <= routeEndPoint.x &&  nextCarPoint.y <= routeEndPoint.y)
-            {
-                [self nextRouteLine];
-                //                nextCarPoint = routeStartPoint;
-            }
-        }
-    }
-    
-    /*
-     printf("car (%.8f, %.8f) -> (%.8f, %.8f), distance: %.8f\n",
-     carPoint.x, carPoint.y,
-     nextCarPoint.x, nextCarPoint.y,
-     [GeoUtil getLength:carPoint ToPoint:nextCarPoint]
-     );
-     */
-    
-#endif
-    
-    
-    
     
     currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
     if(currentRouteLine != nil)
@@ -1011,10 +1001,7 @@
     
     
     [self updateTranslationConstant];
-    
-    //    [self dumpCarFootPrint];
-    
-    
+
 }
 
 @end
