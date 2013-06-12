@@ -77,7 +77,8 @@
         self.angle *= -1;
     }
     
-    self.distance = [GeoUtil getLengthFromLocation:self.startLocation ToLocation:self.endLocation];
+    self.distance   = [GeoUtil getLengthFromLocation:self.startLocation ToLocation:self.endLocation];
+    self.mathDistance = [GeoUtil getMathLengthFromLocation:self.startLocation ToLocation:self.endLocation];
     self.unitVector = [GeoUtil makePointDFromX:(self.endLocation.longitude - self.startLocation.longitude)/self.distance
                                              Y:(self.endLocation.latitude  - self.startLocation.latitude )/self.distance];
  
@@ -88,11 +89,12 @@
     /* distance from a point x to a line
      * distance from x to start location * sin(angle(x->startLocation->EndLocation))
      */
+#if 0
     double length = [GeoUtil getLengthFromLocation:location ToLocation:self.startLocation];
     
     double angle = [self getAngleToStartLocation:location];
     double distance = [GeoUtil getLengthFromLocation:location ToLocation:self.startLocation] * sin([self getAngleToStartLocation:location]);
-
+#endif
 //    mlogfns(ROUTELINE, "length: %f, angle: %f, distance: %f", length, angle, distance);
     return [GeoUtil getGeoDistanceFromLocation:location ToLocation:self.startLocation] * sin([self getAngleToStartLocation:location]);
 }
@@ -111,6 +113,10 @@
     
 }
 
+-(double) getAngleToRouteLine:(RouteLine*) routeLine
+{
+    return acos(self.unitVector.x*routeLine.unitVector.x + self.unitVector.y*routeLine.unitVector.y);
+}
 
 -(NSString*) description
 {

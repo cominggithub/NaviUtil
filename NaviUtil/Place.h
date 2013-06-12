@@ -15,10 +15,13 @@
 
 typedef enum PlaceType
 {
-    kPlaceType_None = 0,
+
+    kPlaceType_None,
     kPlaceType_Home,
     kPlaceType_Office,
     kPlaceType_Favor,
+    kPlaceType_SearchedPlace,
+    kPlaceType_SearchedPlaceText,
     kPlaceType_CurrentLocation,
     kPlaceType_Max
     

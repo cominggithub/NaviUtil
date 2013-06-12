@@ -15,6 +15,7 @@ static NSString*        _email;
 static NSMutableArray*  _homePlaces;
 static NSMutableArray*  _officePlaces;
 static NSMutableArray*  _favorPlaces;
+static NSMutableArray*  _searchedPlaceText;
 static NSMutableArray*  _searchedPlaces;
 
 +(NSString*) name
@@ -44,17 +45,23 @@ static NSMutableArray*  _searchedPlaces;
     return _favorPlaces;
 }
 
-+(NSArray*) searchedPlaces
++(NSArray*) searchedPlaceText
+{
+    
+    return _searchedPlaceText;
+}
+
++(NSArray*) _searchedPlaces
 {
     
     return _searchedPlaces;
 }
 
-+(NSString*) getSearchPlaceByIndex:(int) index
++(NSString*) getSearchPlaceTextByIndex:(int) index
 {
-    if(index < _searchedPlaces.count)
+    if(index < _searchedPlaceText.count)
     {
-        return [_searchedPlaces objectAtIndex:index];
+        return [_searchedPlaceText objectAtIndex:index];
     }
 
     return nil;
@@ -90,31 +97,91 @@ static NSMutableArray*  _searchedPlaces;
     return nil;
 }
 
-+(int) getPlaceCountBySection:(int) section
++(Place*) getSearchedPlaceByIndex:(int) index
 {
-    switch(section)
+    if(index < _searchedPlaces.count)
     {
-        case 0:
+        return [_searchedPlaces objectAtIndex:index];
+    }
+    
+    return nil;
+}
+
++(int) getSectionCount:(SectionMode) sectionMode
+{
+    int sectionCount = 0;
+
+    if (_homePlaces.count > 0)
+        sectionCount++;
+    
+    if (_officePlaces.count > 0)
+        sectionCount++;
+    
+    if (_favorPlaces.count > 0)
+        sectionCount++;
+    
+    if (kSectionMode_Home_Office_Favor_Searched == sectionMode)
+    {
+        if (_searchedPlaces.count > 0)
+            sectionCount++;
+    }
+    else
+    {
+        if (_searchedPlaceText.count > 0)
+            sectionCount++;
+    }
+    
+    
+    return sectionCount;
+    
+}
+
+
+
++(int) getPlaceCountBySectionMode:(SectionMode) sectionMode Section:(int) section
+{
+    int placeType;
+    placeType = [self translatSectionIndexIntoPlaceType:sectionMode Section:section];
+
+    switch(placeType)
+    {
+        case kPlaceType_Home:
             return _homePlaces.count;
-        case 1:
+        case kPlaceType_Office:
             return _officePlaces.count;
-        case 2:
+        case kPlaceType_Favor:
             return _favorPlaces.count;
+        case kPlaceType_SearchedPlace:
+            return _searchedPlaces.count;
+        case kPlaceType_SearchedPlaceText:
+            return _searchedPlaceText.count;
     }
     
     return 0;
 }
 
-+(Place*) getPlaceBySection:(int) section index:(int) index
++(Place*) getPlaceBySectionMode:(SectionMode) sectionMode Section:(int) section Index:(int) index
 {
-    switch(section)
+    int placeType;
+    placeType = [self translatSectionIndexIntoPlaceType:sectionMode Section:section];
+    
+    switch(placeType)
     {
-        case 0:
+        case kPlaceType_Home:
             return [self getHomePlaceByIndex:index];
-        case 1:
+        case kPlaceType_Office:
             return [self getOfficePlaceByIndex:index];
-        case 2:
+        case kPlaceType_Favor:
             return [self getFavorPlaceByIndex:index];
+        case kPlaceType_SearchedPlace:
+            return [self getSearchedPlaceByIndex:index];
+        case kPlaceType_SearchedPlaceText:
+        {
+            Place *p = [[Place alloc] init];
+            p.placeType = kPlaceType_SearchedPlaceText;
+            p.name = [NSString stringWithString:[self getSearchPlaceTextByIndex:index]];
+            return p;
+        }
     }
     
     return nil;
@@ -126,35 +193,61 @@ static NSMutableArray*  _searchedPlaces;
     [_homePlaces addObject:p];
 }
 
-+(void) addOfficeLocation:(Place*) p
++(void) addOfficePlace:(Place*) p
 {
     p.placeType = kPlaceType_Office;
     [_officePlaces addObject:p];
 }
 
-+(void) addFavorLocation:(Place*) p
++(void) addFavorPlace:(Place*) p
 {
     p.placeType = kPlaceType_Favor;
     [_favorPlaces addObject:p];
 }
 
-+(void) addSearchedLocation:(NSString*) place
++(void) addSearchedPlace:(Place*) p
+{
+    p.placeType = kPlaceType_SearchedPlace;
+    [_searchedPlaces addObject:p];
+    
+}
+
++(void) addSearchedPlaceText:(NSString*) placeText
 {
     int i=0;
-    NSString* newPlace = [NSString stringWithString:place];
-    for(i=0; i<_searchedPlaces.count; i++)
+    NSString* newPlace = [NSString stringWithString:placeText];
+    for(i=0; i<_searchedPlaceText.count; i++)
     {
-        if ([place isEqualToString:[_searchedPlaces objectAtIndex:i]])
+        if ([placeText isEqualToString:[_searchedPlaceText objectAtIndex:i]])
         {
-            [_searchedPlaces removeObjectAtIndex:i];
+            [_searchedPlaceText removeObjectAtIndex:i];
             i--;
         }
     }
     
-    [_searchedPlaces insertObject:newPlace atIndex:0];
+    [_searchedPlaceText insertObject:newPlace atIndex:0];
     
 }
 
++(void) addPlaceBySectionMode:(SectionMode) sectionMode Section:(int) section Place:(Place*) p
+{
+    int placeType;
+    placeType = [self translatSectionIndexIntoPlaceType:sectionMode Section:section];
+    
+    switch(placeType)
+    {
+        case kPlaceType_Home:
+            [self addHomePlace:p];
+        case kPlaceType_Office:
+            [self addOfficePlace:p];
+        case kPlaceType_Favor:
+            [self addFavorPlace:p];
+        case kPlaceType_SearchedPlace:
+            [self addSearchedPlace:p];
+        case kPlaceType_SearchedPlaceText:
+            [self addSearchedPlaceText:p.name];
+    }
+}
 
 +(void) removeHomePlaceAtIndex:(int) index
 {
@@ -178,6 +271,49 @@ static NSMutableArray*  _searchedPlaces;
     {
         [_favorPlaces removeObjectAtIndex:index];
     }
+}
+
++(void) setPlaceSearchResult:(NSArray*) placeSearchResult
+{
+    _searchedPlaces = [NSMutableArray arrayWithArray: placeSearchResult];
+}
+
++(int) translatSectionIndexIntoPlaceType:(SectionMode) sectionMode Section:(int) section
+{
+
+    if (kSectionMode_Home == sectionMode)
+        return kPlaceType_Home;
+    
+    if (kSectionMode_Office == sectionMode)
+        return kPlaceType_Office;
+    
+    if (kSectionMode_Favor == sectionMode)
+        return kPlaceType_Favor;
+    
+    if (section < 0)
+        return kPlaceRouteType_None;
+
+    if (_homePlaces.count > 0 && --section == -1)
+        return kPlaceType_Home;
+    
+    if (_officePlaces.count > 0 && --section == -1)
+        return kPlaceType_Office;
+    
+    if (_favorPlaces.count > 0 && --section == -1)
+        return kPlaceType_Favor;
+    
+    if (kSectionMode_Home_Office_Favor_Searched == sectionMode)
+    {
+        if (_searchedPlaces.count > 0 && --section == -1)
+            return kPlaceType_SearchedPlace;
+    }
+    else
+    {
+        if (_searchedPlaceText.count > 0 && --section == -1)
+            return kPlaceType_SearchedPlace;
+    }
+    
+    return kPlaceType_None;
 }
 
 +(void) updateHomePlaceAtIndex:(int) index Location:(Place*) place
@@ -246,11 +382,11 @@ static NSMutableArray*  _searchedPlaces;
 {
 
     int i=0;
-    for(i=0; i<_searchedPlaces.count; i++)
+    for(i=0; i<_searchedPlaceText.count; i++)
     {
-        if ([place isEqualToString:[_searchedPlaces objectAtIndex:i]])
+        if ([place isEqualToString:[_searchedPlaceText objectAtIndex:i]])
         {
-            [_searchedPlaces removeObjectAtIndex:i];
+            [_searchedPlaceText removeObjectAtIndex:i];
             i--;
         }
     }
@@ -267,7 +403,7 @@ static NSMutableArray*  _searchedPlaces;
         _homePlaces          = [[NSMutableArray alloc] initWithCapacity:0];
         _officePlaces        = [[NSMutableArray alloc] initWithCapacity:0];
         _favorPlaces         = [[NSMutableArray alloc] initWithCapacity:0];
-        _searchedPlaces      = [[NSMutableArray alloc] initWithCapacity:0];
+        _searchedPlaceText      = [[NSMutableArray alloc] initWithCapacity:0];
 
         p               = [[Place alloc] init];
         p.name          = @"永安租房";
@@ -285,16 +421,16 @@ static NSMutableArray*  _searchedPlaces;
         p.name          = @"南科智邦";
         p.address       = @"台南市新市區南科3路3號3樓";
         p.coordinate    = CLLocationCoordinate2DMake(23.099313,120.284371);
-        [self addOfficeLocation:p];
+        [self addOfficePlace:p];
 
         p               = [[Place alloc] init];
         p.name          = @"成大";
         p.address       = @"台南市東區大學路1號";
         p.coordinate    = CLLocationCoordinate2DMake(22.9967080, 120.2198480);
-        [self addFavorLocation:p];
+        [self addFavorPlace:p];
         
-        [self addSearchedLocation:@"成大"];
-        [self addSearchedLocation:@"宜蘭高中"];
+        [self addSearchedPlaceText:@"成大"];
+        [self addSearchedPlaceText:@"宜蘭高中"];
     }
 
 }
@@ -327,7 +463,7 @@ static NSMutableArray*  _searchedPlaces;
         
         _name            = [user objectForKey:@"Name"];
         _email           = [user objectForKey:@"Email"];
-        _searchedPlaces  = [NSMutableArray arrayWithArray:[user objectForKey:@"SearchedPlaces"]];
+        _searchedPlaceText  = [NSMutableArray arrayWithArray:[user objectForKey:@"SearchedPlaces"]];
         
         _homePlaces      = [[NSMutableArray alloc] initWithCapacity:0];
         _officePlaces    = [[NSMutableArray alloc] initWithCapacity:0];
@@ -345,21 +481,21 @@ static NSMutableArray*  _searchedPlaces;
         for(NSDictionary *d in tmpArray)
         {
             Place* p = [Place parseDictionary:d];
-            [self addOfficeLocation:p];
+            [self addOfficePlace:p];
         }
         
         tmpArray     = [NSMutableArray arrayWithArray:[user objectForKey:@"Favors"]];
         for(NSDictionary *d in tmpArray)
         {
             Place* p = [Place parseDictionary:d];
-            [self addFavorLocation:p];
+            [self addFavorPlace:p];
         }
     }
     @catch (NSException *exception) {
         return false;
     }
     @finally {
-        return false;
+
     }
 
     return true;
@@ -389,7 +525,7 @@ static NSMutableArray*  _searchedPlaces;
         [favorPlacesArray addObject:[p toDictionary]];
     }
 
-    for(NSString *place in self.searchedPlaces)
+    for(NSString *place in self.searchedPlaceText)
     {
         [SearchedPlacesArray addObject:place];
     }

@@ -254,13 +254,20 @@
     PointD endPoint;
     CGRect routeLineLabelRect;
     NSString *routeLineLabel;
+    RouteLine *tmpCurrentRouteLine;
+    RouteLine *nextRouteLine;
     
+    nextRouteLine = nil;
     CGContextSetFillColorWithColor(context, [UIColor cyanColor].CGColor);
     for(i=0; i<route.routeLines.count; i++)
     {
-        RouteLine *rl = [route.routeLines objectAtIndex:i];
-        startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
-        endPoint    = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
+        tmpCurrentRouteLine = [route.routeLines objectAtIndex:i];
+        if (i < route.routeLines.count-1)
+        {
+            nextRouteLine = [route.routeLines objectAtIndex:i+1];
+        }
+        startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpCurrentRouteLine.startLocation]];
+        endPoint    = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpCurrentRouteLine.endLocation]];
         
         startPoint.x    += xOffset;
         endPoint.x      += xOffset;
@@ -269,9 +276,15 @@
         startPoint.y = (startPoint.y + endPoint.y)/2;
         routeLineLabelRect.origin.x = startPoint.x+15;
         routeLineLabelRect.origin.y = startPoint.y;
-        routeLineLabelRect.size.width = 60;
+        routeLineLabelRect.size.width = 180;
         routeLineLabelRect.size.height = 20;
-        routeLineLabel = [NSString stringWithFormat:@"%d", rl.routeLineNo];
+        
+        routeLineLabel = [NSString stringWithFormat:@"%d %.2f",
+                          tmpCurrentRouteLine.routeLineNo,
+                          nextRouteLine == nil ? 0 :TO_ANGLE(tmpCurrentRouteLine.angle-nextRouteLine.angle)
+                        ];
+
+            
         [routeLineLabel drawInRect:routeLineLabelRect withFont:[UIFont boldSystemFontOfSize:20.0]];
         
     }

@@ -24,6 +24,7 @@
 @property double xOffset;
 @property double angle;
 @property double distance;
+@property double mathDistance;
 @property int stepNo;
 @property int routeLineNo;
 @property PointD unitVector;
@@ -41,4 +42,6 @@
 -(double) getGeoDistanceToLocation:(CLLocationCoordinate2D) location;
 -(double) getAngleToStartLocation:(CLLocationCoordinate2D) location;
 -(double) getAngleToEndLocation:(CLLocationCoordinate2D) location;
+-(double) getAngleToRouteLine:(RouteLine*) routeLine;
+
 @end

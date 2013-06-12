@@ -12,6 +12,16 @@
 
 @interface User : NSObject
 
+typedef enum
+{
+    kSectionMode_Home,
+    kSectionMode_Office,
+    kSectionMode_Favor,
+    kSectionMode_Home_Office_Favor,
+    kSectionMode_Home_Office_Favor_Searched,
+    kSectionMode_Home_Office_Favor_SearchedText,
+    kSectionMode_Max
+}SectionMode;
 
 
 +(void) init;
@@ -20,7 +30,8 @@
 +(void) addHomePlace:(Place*) p;
 +(void) addOfficePlace:(Place*) p;
 +(void) addFavorPlace:(Place*) p;
-+(void) addSearchedPlace:(NSString*) Place;
++(void) addSearchedPlace:(Place*) p;
++(void) addSearchedPlaceText:(NSString*) PlaceText;
 +(void) removeHomePlaceAtIndex:(int) index;
 +(void) removeOfficePlaceAtIndex:(int) index;
 +(void) removeFavorPlaceAtIndex:(int) index;
@@ -31,8 +42,12 @@
 +(Place*) getHomePlaceByIndex:(int) index;
 +(Place*) getOfficePlaceByIndex:(int) index;
 +(Place*) getFavorPlaceByIndex:(int) index;
-+(int) getPlaceCountBySection:(int) section;
-+(Place*) getPlaceBySection:(int) section index:(int) index;
+
+
++(int) getSectionCount:(SectionMode) sectionMode;
++(int) getPlaceCountBySectionMode:(SectionMode) sectionMode Section:(int) section;
++(Place*) getPlaceBySectionMode:(SectionMode) sectionMode Section:(int) section Index:(int) index;
++(void) addPlaceBySectionMode:(SectionMode) sectionMode Section:(int) section Place:(Place*) p;
 
 +(NSString*) getSearchPlaceByIndex:(int) index;
 +(NSString*) name;

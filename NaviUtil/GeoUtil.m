@@ -97,6 +97,15 @@
     return [self getLength:tp1 ToPoint:tp2];
 }
 
++(float) getMathLengthFromLocation: (CLLocationCoordinate2D) p1 ToLocation:(CLLocationCoordinate2D) p2
+{
+    float length = 0;
+    float r1 = pow((p1.latitude - p2.latitude), 2);
+    float r2 = pow((p1.longitude - p2.longitude), 2);
+    length = sqrtf((r1+r2));
+    return sqrt(r1+r2);
+}
+
 +(double) getLevelLongitudeOffset:(int) level
 {
     int tmpLevel = level;
