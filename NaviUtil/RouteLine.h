@@ -42,6 +42,6 @@
 -(double) getGeoDistanceToLocation:(CLLocationCoordinate2D) location;
 -(double) getAngleToStartLocation:(CLLocationCoordinate2D) location;
 -(double) getAngleToEndLocation:(CLLocationCoordinate2D) location;
--(double) getAngleToRouteLine:(RouteLine*) routeLine;
+-(double) getTurnAngle:(RouteLine*) routeLine;
 
 @end

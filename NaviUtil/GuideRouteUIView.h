@@ -47,7 +47,7 @@
 
     CGRect routeDisplayBound;
     NSTimer *timer;
-    double directionAngle;
+    double targetAngle;
     UIImage *carImage;
     
 
@@ -67,7 +67,7 @@
     RouteLine *lastRouteLine;
     RouteLine *currentRouteLine;
     NSTimer *rotateTimer;
-    double currentAngle;
+    double currentDrawAngle;
     double angleRotateStep;
     double rotateInterval;
     CLLocationCoordinate2D currentCarLocation;
@@ -79,9 +79,15 @@
     LocationManager* locationManager;
     LocationSimulator *locationSimulator;
     
+
+    
     
 }
 @property (nonatomic) bool isAutoSimulatorLocationUpdateStarted;
+
+@property (nonatomic) bool isDebugDraw;
+@property (nonatomic) bool isDebugNormalLine;
+@property (nonatomic) bool isDebugRouteLineAngle;
 
 -(void) autoSimulatorLocationUpdateStart;
 -(void) autoSimulatorLocationUpdateStop;
@@ -93,9 +99,6 @@
 -(void) timerTimeout;
 -(void) triggerLocationUpdate;
 -(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
-
-
-
 
 
 @end

@@ -674,8 +674,7 @@
 
 -(void) dumpRouteLines
 {
-    logfn();
-    logi(self.routeLines.count);
+    
     for(RouteLine *rl in self.routeLines)
     {
         logObjNoName(rl);

@@ -12,9 +12,13 @@
 {
     Route* route;
     DownloadRequest *routeDownloadRequest;
+    
+    
+
+    
 }
 
-
+#if 1
 -(double) adjustAngle:(double)angle
 {
     if(angle >= M_PI)
@@ -28,6 +32,22 @@
     
     return angle;
 }
+
+#else
+-(double) adjustAngle:(double)angle
+{
+    if(angle >= 2*M_PI)
+    {
+        angle -= 2*M_PI;
+    }
+    else if(angle <= 0)
+    {
+        angle += 2*M_PI;
+    }
+    
+    return angle;
+}
+#endif
 
 -(void) autoSimulatorLocationUpdateStart
 {
@@ -67,6 +87,110 @@
         [self processRouteDownloadRequestStatusChange];
 }
 
+
+-(void) drawBackground:(CGContextRef) context Rectangle:(CGRect) rect
+{
+    
+    CGRect routeRect = rect;
+
+    routeRect.origin.x -= 200;
+    routeRect.origin.y -= 200;
+    routeRect.size.width +=400;
+    routeRect.size.height +=400;
+
+    // draw blackground
+    CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
+    CGContextFillRect(context, rect);
+    
+    CGContextSetLineWidth(context, 3.0);
+
+    CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
+    
+    // draw screen frame
+    CGContextAddRect(context, routeDisplayBound);
+    CGContextStrokeRect(context, routeDisplayBound);
+}
+
+
+-(void) drawCar:(CGContextRef) context
+{
+    int size = 20;
+    PointD normalPointStart;
+    PointD normalPointEnd;
+    PointD carOffset;
+    CGRect carRect;
+    
+    CGContextSetStrokeColorWithColor(context, [UIColor yellowColor].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor yellowColor].CGColor);
+    CGContextSetLineWidth(context, 4.0);
+    
+    carRect.origin.x = carCenterPoint.x - size;
+    carRect.origin.y = carCenterPoint.y - size;
+    carRect.size.width = size*2;
+    carRect.size.height = size*2;
+    CGContextStrokeRect(context, carRect);
+    
+    
+    
+    if (self.isDebugNormalLine)
+    {
+        normalPointStart = routeStartPoint;
+        
+        normalPointEnd = routeStartPoint;
+        normalPointEnd.y = 100;
+        
+        normalPointStart = [self getDrawPoint:normalPointStart];
+        normalPointEnd = [self getDrawPoint:normalPointEnd];
+        
+        carOffset.x = carCenterPoint.x - normalPointStart.x;
+        carOffset.y = carCenterPoint.y - normalPointStart.y;
+        CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
+        
+        CGContextSetLineWidth(context, 2.0);
+        CGContextMoveToPoint(context, normalPointStart.x + xOffset + carOffset.x, normalPointStart.y + carOffset.y);
+        CGContextAddLineToPoint(context, normalPointEnd.x + xOffset + carOffset.x, normalPointEnd.y + carOffset.y);
+        CGContextStrokePath(context);
+        
+        
+        normalPointEnd = routeStartPoint;
+        normalPointEnd.y = -100;
+        
+        normalPointEnd = [self getDrawPoint:normalPointEnd];
+        
+        CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
+        
+        CGContextSetLineWidth(context, 2.0);
+        CGContextMoveToPoint(context, normalPointStart.x + xOffset + carOffset.x, normalPointStart.y + carOffset.y);
+        CGContextAddLineToPoint(context, normalPointEnd.x + xOffset + carOffset.x, normalPointEnd.y + carOffset.y);
+        CGContextStrokePath(context);
+    }
+    
+    
+}
+
+-(void) drawCurrentRouteLine:(CGContextRef) context
+{
+    PointD curPoint;
+    
+    if(currentRouteLine == nil)
+        return;
+    
+    CGContextSetStrokeColorWithColor(context, [UIColor purpleColor].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor purpleColor].CGColor);
+    CGContextSetLineWidth(context, 5.0);
+    
+    curPoint = [self getDrawPoint:routeStartPoint];
+    curPoint.x += xOffset;
+    
+    CGContextMoveToPoint(context, curPoint.x, curPoint.y);
+    curPoint = [self getDrawPoint:routeEndPoint];
+    curPoint.x += xOffset;
+    CGContextAddLineToPoint(context, curPoint.x, curPoint.y);
+    CGContextStrokePath(context);
+    
+}
+
+
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
@@ -74,23 +198,37 @@
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     [super drawRect:rect];
-    
+
     if(currentRouteLine != nil)
     {
-        PointD carDrawPoint = [self getDrawPoint:carPoint];
+        PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
         PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
         
-        xOffset = carDrawPoint.x - startPoint.x;
+        xOffset = tmpCarDrawPoint.x - startPoint.x;
     }
+
+
+    [self drawBackground:context Rectangle:rect];
     
+    
+    if (nil == route || routeDownloadRequest.status != kDownloadStatus_Finished)
+    {
+        [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Route Planning"]];
+        return;
+    }
+
     [self drawRoute:context Rectangle:rect];
     [self drawCar:context];
-    [self drawCurrentRouteLine:context];
-    [self drawDebugMessage:context];
-    [self drawCarFootPrint:context];
-    [self drawRouteLabel:context];
     [self drawTurnMessage:context];
+    [self drawTurnArrow:context];
     
+    if (self.isDebugDraw)
+    {
+        [self drawCurrentRouteLine:context];
+        [self drawCarFootPrint:context];
+        [self drawDebugMessage:context];
+        [self drawRouteLabel:context];
+    }
 }
 
 
@@ -111,8 +249,6 @@
             }
         }
     }
-    
-    
 }
 -(void) drawRoute:(CGContextRef) context Rectangle:(CGRect) rect
 {
@@ -279,14 +415,17 @@
         routeLineLabelRect.size.width = 180;
         routeLineLabelRect.size.height = 20;
         
-        routeLineLabel = [NSString stringWithFormat:@"%d %.2f",
+        if (self.isDebugRouteLineAngle)
+        {
+            routeLineLabel = [NSString stringWithFormat:@"%d %.0f, %.0f",
                           tmpCurrentRouteLine.routeLineNo,
-                          nextRouteLine == nil ? 0 :TO_ANGLE(tmpCurrentRouteLine.angle-nextRouteLine.angle)
+                          nextRouteLine == nil ? 0 :TO_ANGLE(tmpCurrentRouteLine.angle),
+                          nextRouteLine == nil ? 0 :TO_ANGLE([tmpCurrentRouteLine getTurnAngle:nextRouteLine])
                         ];
 
-            
-        [routeLineLabel drawInRect:routeLineLabelRect withFont:[UIFont boldSystemFontOfSize:20.0]];
         
+            [routeLineLabel drawInRect:routeLineLabelRect withFont:[UIFont boldSystemFontOfSize:14.0]];
+        }
     }
 }
 -(void) drawCarFootPrint:(CGContextRef) context
@@ -331,16 +470,26 @@
     endPosText.size.height = 60;
     
     
-    NSString *endText = [NSString stringWithFormat:@"angle:%.2f - %d\n%@", TO_ANGLE(directionAngle), routeLineNo, [SystemManager getUsedMemoryStr]];
+    NSString *endText = [NSString stringWithFormat:@"angle:%.2f - %d\n%@", TO_ANGLE(targetAngle), routeLineNo, [SystemManager getUsedMemoryStr]];
     
     [endText drawInRect:endPosText withFont:[UIFont boldSystemFontOfSize:14.0]];
     
 }
 -(void) drawMessageBox:(CGContextRef) context Message:(NSString*) message
 {
-    CGRect rect = msgRect;
+    CGRect rect                 = msgRect;
+    CGRect actualMessageRect    = msgRect;
     int radius = 20;
+    int fontSize = 32;
     
+    actualMessageRect.origin.x += 5;
+    actualMessageRect.origin.y += 5;
+    actualMessageRect.size.width -= 10;
+    actualMessageRect.size.height -= 10;
+    
+    actualMessageRect = [self getFitSizeRect:actualMessageRect Message:message FontSize:&fontSize];
+    
+    rect.size.height = actualMessageRect.size.height + 10;
     
     CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + radius);
     CGContextAddLineToPoint(context, rect.origin.x, rect.origin.y + rect.size.height - radius);
@@ -384,51 +533,22 @@
     
     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
     
-    rect.origin.x += 10;
-    rect.origin.y += 10;
-    [message drawInRect:rect withFont:[UIFont boldSystemFontOfSize:32.0]];
-    
+    //    [message drawInRect:rect withFont:[UIFont boldSystemFontOfSize:32.0]];
+    [message drawInRect:actualMessageRect
+               withFont:[UIFont boldSystemFontOfSize:[self getFitFontSize:rect Message:message]]
+          lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentCenter];
+
 }
 
--(void) drawCar:(CGContextRef) context
+-(void) drawTurnArrow:(CGContextRef) context
 {
-    int size = 20;
+    UIImage *turnImage;
+    CGSize size;
     
-    CGRect carRect;
-    
-    CGContextSetStrokeColorWithColor(context, [UIColor yellowColor].CGColor);
-    CGContextSetFillColorWithColor(context, [UIColor yellowColor].CGColor);
-    CGContextSetLineWidth(context, 4.0);
-    
-    carRect.origin.x = carCenterPoint.x - size;
-    carRect.origin.y = carCenterPoint.y - size;
-    carRect.size.width = size*2;
-    carRect.size.height = size*2;
-    CGContextStrokeRect(context, carRect);
-    
-    
-}
+    turnImage   = [self getTurnImage];
+    size        = turnImage.size;;
 
--(void) drawCurrentRouteLine:(CGContextRef) context
-{
-    PointD curPoint;
-    
-    if(currentRouteLine == nil)
-        return;
-    
-    CGContextSetStrokeColorWithColor(context, [UIColor purpleColor].CGColor);
-    CGContextSetFillColorWithColor(context, [UIColor purpleColor].CGColor);
-    CGContextSetLineWidth(context, 5.0);
-    
-    curPoint = [self getDrawPoint:routeStartPoint];
-    curPoint.x += xOffset;
-    
-    CGContextMoveToPoint(context, curPoint.x, curPoint.y);
-    curPoint = [self getDrawPoint:routeEndPoint];
-    curPoint.x += xOffset;
-    CGContextAddLineToPoint(context, curPoint.x, curPoint.y);
-    CGContextStrokePath(context);
-    
+    [turnImage drawInRect:CGRectMake(20, 100, size.width, size.height)];
 }
 
 -(void) dumpCarFootPrint
@@ -439,7 +559,6 @@
         mlogDebug(NONE, @"car foot print (%12.7f, %12.7f)", p.y, p.x);
     }
 }
-
 -(UIImage*) getCarImage{
     CGSize size = carImage.size;;
     
@@ -455,6 +574,8 @@
     
     return newImage;
 }
+
+
 
 
 -(PointD) getNextCarPoint
@@ -486,6 +607,58 @@
     return nextCarPoint;
 }
 
+-(UIImage*) getTurnImage
+{
+    UIImage* turnImage;
+    double turnAngle;
+
+    turnAngle = TO_ANGLE([self getTurnAngle]);
+
+    logfns("turn angle: %.0f\n", turnAngle);
+    
+    // left 45: -67.5 ~ 22.5
+    if (-67.5 <= turnAngle && turnAngle <= -22.5)
+    {
+        turnImage = [UIImage imageNamed:@"turn_left45"];
+    }
+    // left 90
+    else if (turnAngle <= -67.5)
+    {
+        turnImage = [UIImage imageNamed:@"turn_left90"];
+    }
+    // right 45: 22.5 ~ 67.5
+    else if (22.5 <= turnAngle && turnAngle <= 67.5)
+    {
+        turnImage = [UIImage imageNamed:@"turn_right45"];
+    }
+    // right 90
+    else if (turnAngle >= 67.5)
+    {
+        turnImage = [UIImage imageNamed:@"turn_right90"];
+    }
+    // straight: -22.5 ~ 22.5
+    else
+    {
+        turnImage = [UIImage imageNamed:@"turn_straight"];
+    }
+    
+    return turnImage;
+}
+
+-(double) getTurnAngle
+{
+    double turnAngle = 0;
+    RouteLine* nextRouteLine;
+    
+    if (nil != currentRouteLine && currentRouteLine.routeLineNo + 1 < route.routeLines.count)
+    {
+        nextRouteLine = [route.routeLines objectAtIndex:currentRouteLine.routeLineNo+1];
+        turnAngle = [currentRouteLine getTurnAngle:nextRouteLine];
+    }
+    
+    return turnAngle;
+
+}
 -(void) generateRoutePoints
 {
     double widthRatio;
@@ -585,6 +758,65 @@
     
 }
 
+-(CGRect) getFitSizeRect:(CGRect) rect Message:(NSString*) message FontSize:(int*) fontSize
+{
+    int tmpFontSize = *fontSize;
+    CGSize actualSize;
+    UIFont *font;
+    NSString* sampleText = @"OK";
+    double oneLineHeight = 0;
+    int currentLineNo = 1;
+    CGRect resultRect;
+    
+    
+    font = [UIFont boldSystemFontOfSize:tmpFontSize];
+    actualSize = [sampleText sizeWithFont:font constrainedToSize:rect.size lineBreakMode:NSLineBreakByClipping];
+    oneLineHeight = actualSize.height;
+    while (tmpFontSize >= 24 && currentLineNo <=2)
+    {
+        font = [UIFont boldSystemFontOfSize:tmpFontSize];
+        actualSize = [message sizeWithFont:font constrainedToSize:rect.size lineBreakMode:NSLineBreakByClipping];
+
+        if (actualSize.width <= rect.size.width && actualSize.height <= oneLineHeight*currentLineNo)
+            break;
+        
+        if (tmpFontSize == 24)
+            currentLineNo++;
+        
+        tmpFontSize--;
+    }
+    
+    *fontSize = tmpFontSize;
+    resultRect = rect;
+    if (currentLineNo > 1)
+        resultRect.size.height += (currentLineNo-1)*oneLineHeight;
+    
+    return resultRect;
+}
+-(int) getFitFontSize:(CGRect) rect Message:(NSString*) message
+{
+    int fontSize = 32;
+    CGSize actualSize;
+    UIFont *font;
+    NSString* sampleText = @"OK";
+    double oneLineHeight = 0;
+
+    font = [UIFont boldSystemFontOfSize:fontSize];
+    actualSize = [sampleText sizeWithFont:font constrainedToSize:rect.size lineBreakMode:NSLineBreakByClipping];
+    oneLineHeight = actualSize.height;
+    while (fontSize > 24)
+    {
+        font = [UIFont boldSystemFontOfSize:fontSize];
+        actualSize = [message sizeWithFont:font constrainedToSize:rect.size lineBreakMode:NSLineBreakByClipping];
+        logfns("fontSize: %d, rect: %.0f, actualSize: %.0f, %.0f, oneLineHeight:%.0f\n", fontSize, rect.size.width, actualSize.width, actualSize.height, oneLineHeight);
+        if (actualSize.width <= rect.size.width && actualSize.height <= oneLineHeight)
+            break;
+        fontSize--;
+    }
+    
+    
+    return fontSize;
+}
 -(PointD) getDrawPoint:(PointD)p
 {
     
@@ -602,8 +834,8 @@
     //    translatedPoint.x = tmpPoint.x*cos(directionAngle) - tmpPoint.y*sin(directionAngle) + carPoint.x;
     //    translatedPoint.y = tmpPoint.x*sin(directionAngle) + tmpPoint.y*cos(directionAngle) + carPoint.y;
     
-    translatedPoint.x = tmpPoint.x*cos(currentAngle) - tmpPoint.y*sin(currentAngle) + carPoint.x;
-    translatedPoint.y = tmpPoint.x*sin(currentAngle) + tmpPoint.y*cos(currentAngle) + carPoint.y;
+    translatedPoint.x = tmpPoint.x*cos(currentDrawAngle) - tmpPoint.y*sin(currentDrawAngle) + carPoint.x;
+    translatedPoint.y = tmpPoint.x*sin(currentDrawAngle) + tmpPoint.y*cos(currentDrawAngle) + carPoint.y;
     
     
     //    printf("translatedPoint (%.8f, %.8f)\n", translatedPoint.x, translatedPoint.y);
@@ -631,34 +863,68 @@
 {
     self = [super init];
     if (self) {
+        [self initSelf];        
     }
     return self;
 }
 
 -(id) initWithFrame:(CGRect)frame
 {
+  
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        [self initSelf];
     }
     return self;
 }
 
 -(id)initWithCoder:(NSCoder*)coder
 {
-    
+  
     self = [super initWithCoder:coder];
     if (self) {
         // Initialization code
+        [self initSelf];
     }
     
     return self;
 }
 
+-(void) initSelf
+{
+    
+    self.isDebugDraw = false;
+    self.isDebugNormalLine = false;
+    self.isDebugRouteLineAngle = false;
+    
+
+    mlogDebug(GUIDE_ROUTE_UIVIEW, @"Frame: (%.0f, %.0f), %.0f X %.0f\n",
+              self.bounds.origin.x,
+              self.bounds.origin.y,
+              self.bounds.size.width,
+              self.bounds.size.height
+              );
+    
+    
+    msgRect.origin.x        = floor(480*0.1);
+    msgRect.origin.y        = floor(320*0.05);
+    msgRect.size.width      = floor(480*0.8);
+    msgRect.size.height     = floor(320*0.2);
+    
+    routeDisplayBound       = self.bounds;
+    routeDisplayBound.origin.x = 0;
+    routeDisplayBound.origin.y = 0;
+    routeDisplayBound.size.width = 480;
+    routeDisplayBound.size.height = 320;
+    
+    carImage = [UIImage imageNamed:@"Blue_car_marker"];
+    
+    
+}
 -(void) initNewRouteNavigation
 {
-    int routePointCount = 0;
-    //    logfn();
+
 #if 0
     int i;
     CLLocation* st = [[CLLocation alloc] initWithLatitude:0.0 longitude:0.0];
@@ -670,32 +936,15 @@
         printf("%.5f distance: %.2f\n", i/100000.0, [st distanceFromLocation:end]);
     }
 #endif
+
     
-    margin = 0.0;
-    routeDisplayBound.origin.x = floor(480*margin);
-    routeDisplayBound.origin.y = floor(320*margin);
-    
-    
-    routeDisplayBound.size.width   = floor(480*(1-margin*2));
-    routeDisplayBound.size.height  = floor(320*(1-margin*2));
-    
-    msgRect.origin.x = floor(480*0.1);
-    msgRect.origin.y = floor(320*0.05);
-    
-    msgRect.size.width   = floor(480*0.8);
-    msgRect.size.height  = floor(320*0.2);
+
     
     
     printf("bounds: (%f, %f, %f, %f)\n", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
     printf("routeDisplayBound: (%f, %f, %f, %f)\n", routeDisplayBound.origin.x, routeDisplayBound.origin.y, routeDisplayBound.size.width, routeDisplayBound.size.height);
     ratio = 1;
     [self generateRoutePoints];
-    for (NSValue *v in routePoints)
-    {
-        PointD p = [v PointDValue];
-        printf("%3d (%.5f, %.5f)\n", routePointCount, p.x, p.y);
-        routePointCount++;
-    }
 #if 0
     routePoints= [NSArray arrayWithObjects:
                   [NSValue valueWithPointD:PointDMake(120.25071, 23.14299)],
@@ -725,7 +974,7 @@
     //oneStep = 0.00013; // for 1 meter
     oneStep = 0.00013;
     
-    directionAngle = 0;
+    targetAngle = 0;
     screenSize.width = 480;
     screenSize.height = 320;
     carCenterPoint.x = screenSize.width/2;
@@ -759,7 +1008,6 @@
     locationSimulator.timeInterval          = 1;
     locationSimulator.locationPoints        = [route getRoutePolyLineCLLocationCoordinate2D];
     locationSimulator.delegate              = self;
-    
     
 }
 
@@ -800,7 +1048,7 @@
     
     if(tmpPoint.x > routeEndPoint.x)
     {
-        directionAngle *= -1;
+        targetAngle *= -1;
     }
     
 //    directionAngle = 0;
@@ -847,6 +1095,7 @@
 
 -(void) processRouteDownloadRequestStatusChange
 {
+    logfn();
     bool isFail = true;
     bool updateStatus = false;
     /* search place finished */
@@ -868,54 +1117,17 @@
 
 -(void) triggerLocationUpdate
 {
-    logfn();
     [self locationUpdate:locationSimulator.getNextLocation];
 }
 -(void) rotateAngle:(NSTimer *)theTimer
 {
 
-    if(true == [self resetCurrentAngle])
+    if(true == [self updateCurrentDrawAngle])
     {
         [self setNeedsDisplay];
     }
 }
 
--(bool) resetCurrentAngle
-{
-    int reverseDirection = 1;
-    double angleOffset = fabs(currentAngle - directionAngle);
-    
-    /* -PI = PI */
-    
-    
-    reverseDirection = angleOffset > (M_PI)? (-1):(1);
-    
-    logf(currentAngle);
-    logf(directionAngle);
-    logf(angleOffset);
-    
-    if(angleOffset == 0 || angleOffset == 2*M_PI)
-        return false;
-    
-    if(angleOffset <= angleRotateStep)
-        currentAngle = directionAngle;
-    else
-    {
-        if(currentAngle < directionAngle)
-        {
-            currentAngle = currentAngle + reverseDirection*angleRotateStep;
-            
-        }
-        else
-        {
-            currentAngle = currentAngle - reverseDirection*angleRotateStep;
-        }
-    }
-    
-    currentAngle = [self adjustAngle:currentAngle];
-
-    return true;
-}
 
 -(void) startRouteNavigation
 {
@@ -934,6 +1146,7 @@
 
 -(void) startRouteNavigationFrom:(Place*) s To:(Place*) e
 {
+    logfn();
     GoogleJsonStatus status;
     
     if (nil == s || nil == e)
@@ -947,12 +1160,14 @@
     
     if (kGoogleJsonStatus_Ok == status)
     {
+        logfn();
         route = [Route parseJson:routeDownloadRequest.filePath];
         if (nil != route)
             [self initNewRouteNavigation];
     }
     else
     {
+        logfn();
         [self planRoute];
     }
     
@@ -1007,7 +1222,7 @@
     {
         routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
         routeEndPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
-        directionAngle = currentRouteLine.angle;
+        targetAngle = currentRouteLine.angle;
     }
     carPoint = nextCarPoint;
     [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
@@ -1016,5 +1231,86 @@
     [self updateTranslationConstant];
 
 }
+
+#if 1
+-(bool) updateCurrentDrawAngle
+{
+    int reverseDirection = 1;
+    double angleOffset = fabs(currentDrawAngle - targetAngle);
+    
+
+    /* if angle offset > 180 || angle offset < -180 
+       then turn right + becomes turn left - and 
+            turn left - becomes turn right +
+     */
+    reverseDirection = angleOffset > (M_PI)? (-1):(1);
+    
+    
+    if(angleOffset == 0 || angleOffset == 2*M_PI)
+        return false;
+    
+    logfns("cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
+    
+    if(angleOffset <= angleRotateStep)
+        currentDrawAngle = targetAngle;
+    else
+    {
+        /* should be turn right + */
+        if(currentDrawAngle < targetAngle)
+        {
+            currentDrawAngle = currentDrawAngle + reverseDirection*angleRotateStep;
+            
+        }
+        /* should be turn left - */
+        else
+        {
+            currentDrawAngle = currentDrawAngle - reverseDirection*angleRotateStep;
+        }
+    }
+    
+    currentDrawAngle = [self adjustAngle:currentDrawAngle];
+    
+    return true;
+}
+
+#else
+-(bool) updateCurrentDrawAngle
+{
+    double angleOffset = fabs(currentDrawAngle - targetAngle);
+    double direction = 1;
+
+    
+    if(angleOffset <= angleRotateStep)
+    {
+        if (currentDrawAngle != targetAngle)
+        {
+            logfns("cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
+        }
+        currentDrawAngle = targetAngle;
+        return false;
+    }
+
+    logfns("cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
+    
+    if (currentDrawAngle >= targetAngle)
+    {
+        direction = -1;
+    }
+    
+    if (angleOffset <= M_PI)
+    {
+        currentDrawAngle += direction*angleRotateStep;
+    }
+    else
+    {
+        currentDrawAngle -= direction*angleRotateStep;
+    }
+    
+    currentDrawAngle = [self adjustAngle:currentDrawAngle];
+    
+    return true;
+}
+#endif
+
 
 @end

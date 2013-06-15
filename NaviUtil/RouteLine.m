@@ -71,11 +71,18 @@
     }
     
     self.angle = [GeoUtil getAngleByLocation1:tmpLocation Location2:self.startLocation Location3:self.endLocation];
-    
+#if 1
     if(tmpLocation.longitude > self.endLocation.longitude)
     {
         self.angle *= -1;
     }
+#else
+
+    if(tmpLocation.longitude > self.endLocation.longitude)
+    {
+        self.angle = 2*M_PI - self.angle;
+    }
+#endif
     
     self.distance   = [GeoUtil getLengthFromLocation:self.startLocation ToLocation:self.endLocation];
     self.mathDistance = [GeoUtil getMathLengthFromLocation:self.startLocation ToLocation:self.endLocation];
@@ -113,9 +120,38 @@
     
 }
 
--(double) getAngleToRouteLine:(RouteLine*) routeLine
+-(double) getTurnAngle:(RouteLine*) routeLine
 {
-    return acos(self.unitVector.x*routeLine.unitVector.x + self.unitVector.y*routeLine.unitVector.y);
+    bool reverseDirection = false;
+    double angleOffset = fabs(self.angle - routeLine.angle);
+    double turnAngle;
+    
+    /* if angle offset > 180 || angle offset < -180
+     then turn right + becomes turn left - and
+     turn left - becomes turn right +
+     */
+    
+    reverseDirection = angleOffset > (M_PI) ? true:false;
+    
+    
+    /* should be turn right + */
+    if(self.angle < routeLine.angle)
+    {
+        turnAngle = angleOffset;
+        /* become turn left - */
+        if (true == reverseDirection)
+            turnAngle = (-1) * (2*M_PI - turnAngle);
+    }
+    /* should be turn left - */
+    else
+    {
+        turnAngle = (-1) * angleOffset;
+        /* becomes turn right + */
+        if (true == reverseDirection)
+            turnAngle = 2*M_PI + turnAngle;
+    }
+    
+    return turnAngle;
 }
 
 -(NSString*) description

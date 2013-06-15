@@ -54,7 +54,7 @@
     [self deleteFile];
     [self createFile];
     self.retryCount++;
-    mlogInfo(FILE_DOWNLOADER, @"%lu starts to download %@ from %@\n", self.downloadId, self.filePath, self.url);
+    mlogDebug(FILE_DOWNLOADER, @"%lu starts to download %@ from %@\n", self.downloadId, self.filePath, self.url);
     [NSURLConnection connectionWithRequest:urlRequest delegate:self];
 }
 
@@ -76,7 +76,7 @@
     [fileHandle seekToEndOfFile];
     [fileHandle writeData:data];
     [fileHandle closeFile];
-    mlogInfo(FILE_DOWNLOADER, @"%lu recv data length %u", self.downloadId, [data length]);
+    mlogDebug(FILE_DOWNLOADER, @"%lu recv data length %u", self.downloadId, [data length]);
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
@@ -90,7 +90,7 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
 {
-    mlogInfo(FILE_DOWNLOADER, @"%lu didReceiveResponse\n", self.downloadId);
+    mlogDebug(FILE_DOWNLOADER, @"%lu didReceiveResponse\n", self.downloadId);
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
