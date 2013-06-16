@@ -88,6 +88,7 @@
 @property (nonatomic) bool isDebugDraw;
 @property (nonatomic) bool isDebugNormalLine;
 @property (nonatomic) bool isDebugRouteLineAngle;
+@property (nonatomic) bool isHUD;
 
 -(void) autoSimulatorLocationUpdateStart;
 -(void) autoSimulatorLocationUpdateStop;
@@ -99,6 +100,7 @@
 -(void) timerTimeout;
 -(void) triggerLocationUpdate;
 -(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
+-(void) setHUD;
 
 
 @end

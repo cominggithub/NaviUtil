@@ -1193,6 +1193,20 @@
     }
 }
 
+-(void) setHUD
+{
+    if(self.isHUD == false)
+    {
+        self.transform = CGAffineTransformMakeScale(1,-1);
+    }
+    else
+    {
+        self.transform = CGAffineTransformMakeScale(1,1);
+    }
+    
+    self.isHUD = !self.isHUD;
+}
+
 -(void) stopRouteNavigation
 {
     
