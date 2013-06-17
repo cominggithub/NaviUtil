@@ -344,7 +344,7 @@
     [content appendString:@"</kml>"];
     
     NSError *err;
-    mlogInfo(ROUTE, @"kml path:%@\n", filePath);
+    mlogDebug(ROUTE, @"kml path:%@\n", filePath);
     
     BOOL ok = [content writeToFile:filePath atomically:YES encoding:NSUnicodeStringEncoding error:&err];
     
@@ -636,7 +636,7 @@
     
     duration = [endTime timeIntervalSinceDate:startTime];
 
-    mlogInfo(ROUTE, @"Matched: %d(%.7f), RouteLine %d searched, in %f seconds",
+    mlogDebug(ROUTE, @"Matched: %d(%.7f), RouteLine %d searched, in %f seconds",
              matchedRouteLine != nil ? matchedRouteLine.routeLineNo : -1,
              distance,
              searchCount,

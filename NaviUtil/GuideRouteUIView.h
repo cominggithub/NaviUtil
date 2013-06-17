@@ -90,6 +90,7 @@
 @property (nonatomic) bool isDebugRouteLineAngle;
 @property (nonatomic) bool isHUD;
 
+
 -(void) autoSimulatorLocationUpdateStart;
 -(void) autoSimulatorLocationUpdateStop;
 -(void) initSelf;

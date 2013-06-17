@@ -12,21 +12,21 @@
 {
     Route* route;
     DownloadRequest *routeDownloadRequest;
-    
-    
-
-    
+    NSMutableArray *drawedRouteLines;
 }
 
 #if 1
 -(double) adjustAngle:(double)angle
 {
-    if(angle >= M_PI)
+    logfns("angle: %f, M_PI:%f\n", angle, M_PI);
+    if(angle > M_PI+0.000001)
     {
+        logfn();
         angle -= 2*M_PI;
     }
-    else if(angle <= -M_PI)
+    else if(angle < -M_PI-0.000001)
     {
+        logfn();
         angle += 2*M_PI;
     }
     
@@ -205,6 +205,11 @@
         PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
         
         xOffset = tmpCarDrawPoint.x - startPoint.x;
+        logfns("xOffset: %.0f\n", xOffset);
+    }
+    else
+    {
+        logfns("!!!! current route line is null");
     }
 
 
@@ -264,28 +269,23 @@
     
     
 
-    routeRect.origin.x -= 200;
-    routeRect.origin.y -= 200;
-    routeRect.size.width +=400;
-    routeRect.size.height +=400;
+//    routeRect.origin.x -= 200;
+//    routeRect.origin.y -= 200;
+//    routeRect.size.width +=400;
+//    routeRect.size.height +=400;
+    routeRect = rect;
     stepPoint = [[NSMutableArray alloc] init];
     
-    // draw blackground
-    CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
-    CGContextFillRect(context, rect);
-    
-    CGContextSetLineWidth(context, 3.0);
-    
-    CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
-    
-    // draw screen frame
-    CGContextAddRect(context, routeDisplayBound);
-    CGContextStrokeRect(context, routeDisplayBound);
     
     // draw route line
     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
     CGContextSetLineWidth(context, 10.0);
-    
+
+    if (nil == drawedRouteLines)
+    {
+        drawedRouteLines = [[NSMutableArray alloc] initWithCapacity:0];
+    }
+    [drawedRouteLines removeAllObjects];
     
     
     for(RouteLine *rl in route.routeLines)
@@ -294,8 +294,14 @@
         endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
         startPoint.x    += xOffset;
         endPoint.x      += xOffset;
-        CGContextMoveToPoint(context, startPoint.x, startPoint.y);
-        CGContextAddLineToPoint(context, endPoint.x, endPoint.y);
+        
+        if (CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:startPoint]) ||
+            CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:endPoint]))
+        {
+            CGContextMoveToPoint(context, startPoint.x, startPoint.y);
+            CGContextAddLineToPoint(context, endPoint.x, endPoint.y);
+            [drawedRouteLines addObject:rl];
+        }
     }
     CGContextStrokePath(context);
     
@@ -303,7 +309,7 @@
     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
     CGContextSetLineWidth(context, 10.0);
     
-    for(RouteLine *rl in route.routeLines)
+    for(RouteLine *rl in drawedRouteLines)
     {
         startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
         endPoint    = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
@@ -323,7 +329,7 @@
     
     // add circle to the edge of step
     CGContextSetStrokeColorWithColor(context, [UIColor yellowColor].CGColor);
-    for(RouteLine *rl in route.routeLines)
+    for(RouteLine *rl in drawedRouteLines)
     {
         startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
         startPoint.x    += xOffset;
@@ -347,7 +353,7 @@
     // mark edge of route line by red circle
     CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
     CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
-    for(RouteLine *rl in route.routeLines)
+    for(RouteLine *rl in drawedRouteLines)
     {
         startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
         endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
@@ -395,10 +401,10 @@
     
     nextRouteLine = nil;
     CGContextSetFillColorWithColor(context, [UIColor cyanColor].CGColor);
-    for(i=0; i<route.routeLines.count; i++)
+    for(i=0; i<drawedRouteLines.count; i++)
     {
-        tmpCurrentRouteLine = [route.routeLines objectAtIndex:i];
-        if (i < route.routeLines.count-1)
+        tmpCurrentRouteLine = [drawedRouteLines objectAtIndex:i];
+        if (i < drawedRouteLines.count-1)
         {
             nextRouteLine = [route.routeLines objectAtIndex:i+1];
         }
@@ -894,7 +900,7 @@
 -(void) initSelf
 {
     
-    self.isDebugDraw = false;
+    self.isDebugDraw = true;
     self.isDebugNormalLine = false;
     self.isDebugRouteLineAngle = false;
     
@@ -998,7 +1004,7 @@
     [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
     currentStep = 0;
     
-    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
+//    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
     carFootPrint = [NSMutableArray arrayWithCapacity:0];
     isDrawCarFootPrint = true;
     
@@ -1014,11 +1020,11 @@
 -(void) locationUpdate:(CLLocationCoordinate2D) location
 {
     currentStep++;
-    mlogInfo(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+    mlogDebug(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
     [self updateCarLocation:location];
     [self setNeedsDisplay];
-    mlogInfo(GUIDE_ROUTE_UIVIEW, @" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
+    mlogDebug(GUIDE_ROUTE_UIVIEW, @" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
 }
 
 -(void) nextRouteLine
@@ -1117,7 +1123,14 @@
 
 -(void) triggerLocationUpdate
 {
-    [self locationUpdate:locationSimulator.getNextLocation];
+    if (currentDrawAngle == targetAngle)
+    {
+        [self locationUpdate:locationSimulator.getNextLocation];
+    }
+    else
+    {
+        [self rotateAngle:nil];
+    }
 }
 -(void) rotateAngle:(NSTimer *)theTimer
 {
@@ -1247,15 +1260,93 @@
 }
 
 #if 1
+
+-(bool) updateCurrentDrawAngle
+{
+    bool isUpdate = true;
+    bool reverseDirection = false;
+    double angleOffset = fabs(currentDrawAngle - targetAngle);
+    double turnAngle;
+    
+    /* if angle offset > 180 || angle offset < -180
+     then turn right + becomes turn left - and
+     turn left - becomes turn right +
+     */
+    
+    angleRotateStep = (10/180.0) *M_PI;
+    
+    reverseDirection = angleOffset > (M_PI) ? true:false;
+    
+    if (currentDrawAngle == targetAngle)
+        return false;
+    
+    /* should be turn right + */
+    if(currentDrawAngle < targetAngle)
+    {
+        turnAngle = angleOffset;
+        /* become turn left - */
+        if (true == reverseDirection)
+            turnAngle = (-1) * (2*M_PI - turnAngle);
+    }
+    /* should be turn left - */
+    else
+    {
+        turnAngle = (-1) * angleOffset;
+        /* becomes turn right + */
+        if (true == reverseDirection)
+            turnAngle = 2*M_PI + turnAngle;
+    }
+    
+    logfns("cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f, step:%.0f\n",
+           TO_ANGLE(currentDrawAngle),
+           TO_ANGLE(targetAngle),
+           TO_ANGLE(turnAngle),
+           TO_ANGLE(angleOffset),
+           TO_ANGLE(angleRotateStep)
+           );
+    
+    
+    if(fabs(turnAngle) <= angleRotateStep)
+    {
+        logfns("force equal\n");
+        currentDrawAngle = targetAngle;
+    }
+    else
+    {
+        if (turnAngle > 0)
+        {
+            currentDrawAngle += angleRotateStep;
+        }
+        else
+        {
+            currentDrawAngle -= angleRotateStep;
+        }
+    }
+    
+    logfns("cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f\n",
+           TO_ANGLE(currentDrawAngle),
+           TO_ANGLE(targetAngle),
+           TO_ANGLE(turnAngle),
+           TO_ANGLE(angleOffset)
+           );
+    
+    
+    currentDrawAngle = [self adjustAngle:currentDrawAngle];
+    
+    
+    return true;
+}
+
+#else
 -(bool) updateCurrentDrawAngle
 {
     int reverseDirection = 1;
     double angleOffset = fabs(currentDrawAngle - targetAngle);
     
-
-    /* if angle offset > 180 || angle offset < -180 
-       then turn right + becomes turn left - and 
-            turn left - becomes turn right +
+    
+    /* if angle offset > 180 || angle offset < -180
+     then turn right + becomes turn left - and
+     turn left - becomes turn right +
      */
     reverseDirection = angleOffset > (M_PI)? (-1):(1);
     
@@ -1287,7 +1378,6 @@
     return true;
 }
 
-#else
 -(bool) updateCurrentDrawAngle
 {
     double angleOffset = fabs(currentDrawAngle - targetAngle);
