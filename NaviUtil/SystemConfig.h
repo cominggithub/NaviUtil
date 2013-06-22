@@ -10,4 +10,14 @@
 
 @interface SystemConfig : NSObject
 
++(BOOL) init;
++(BOOL) isDebug;
++(void) setIsDebug:(BOOL) value;
++(BOOL) isAd;
++(void) setIsAd:(BOOL) value;
++(BOOL) isManualPlace;
++(void) setIsManualPlace:(BOOL) value;
++(BOOL) isDebugRouteDraw;
++(void) setIsDebugRouteDraw:(BOOL) value;
+
 @end
