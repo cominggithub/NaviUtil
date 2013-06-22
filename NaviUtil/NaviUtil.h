@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import "DownloadManager.h"
 #import "DownloadRequest.h"
-#import "Event.h"
 #import "FileDownloader.h"
 #import "GeoUtil.h"
 #import "GuideRouteUIView.h"
@@ -26,6 +25,7 @@
 #import "Route.h"
 #import "RouteInstruction.h"
 #import "Speech.h"
+#import "SystemConfig.h"
 #import "SystemManager.h"
 #import "User.h"
 

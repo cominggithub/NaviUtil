@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2B18AA911748D19700277F52 /* UILabel+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B18AA901748D19700277F52 /* UILabel+category.m */; };
+		2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B61D8661771E64400ACB1AA /* SystemConfig.m */; };
 		2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */; };
 		2B6CBFA716DFA6D90095CBD4 /* NaviUtil.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */; };
 		2B6CBFA916DFA6D90095CBD4 /* NaviUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFA816DFA6D90095CBD4 /* NaviUtil.m */; };
@@ -67,9 +68,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		2B0958A617083B3A00934BAA /* Event.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Event.h; sourceTree = "<group>"; };
 		2B18AA8F1748D19700277F52 /* UILabel+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+category.h"; sourceTree = "<group>"; };
 		2B18AA901748D19700277F52 /* UILabel+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+category.m"; sourceTree = "<group>"; };
+		2B61D8651771E64400ACB1AA /* SystemConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemConfig.h; sourceTree = "<group>"; };
+		2B61D8661771E64400ACB1AA /* SystemConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemConfig.m; sourceTree = "<group>"; };
 		2B6CBF9E16DFA6D90095CBD4 /* libNaviUtil.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNaviUtil.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2B6CBFA516DFA6D90095CBD4 /* NaviUtil-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NaviUtil-Prefix.pch"; sourceTree = "<group>"; };
@@ -229,22 +231,23 @@
 				2B6CBFDE16DFA6FD0095CBD4 /* Route.m */,
 				2B6CBFDF16DFA6FD0095CBD4 /* RouteInstruction.h */,
 				2B6CBFE016DFA6FD0095CBD4 /* RouteInstruction.m */,
+				2BAD7FA817281CA100162D20 /* RouteLine.h */,
+				2BAD7FA917281CA100162D20 /* RouteLine.m */,
 				2B6CBFE116DFA6FD0095CBD4 /* Speech.h */,
 				2B6CBFE216DFA6FD0095CBD4 /* Speech.m */,
-				2B6CBFA416DFA6D90095CBD4 /* Supporting Files */,
+				2B61D8651771E64400ACB1AA /* SystemConfig.h */,
+				2B61D8661771E64400ACB1AA /* SystemConfig.m */,
 				2B6CBFE316DFA6FD0095CBD4 /* SystemManager.h */,
 				2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */,
 				2B98912516EB82D90057A226 /* TextValue.h */,
 				2B98912616EB82D90057A226 /* TextValue.m */,
 				2B70BEDC16F5F0E5002269AB /* User.h */,
 				2B70BEDD16F5F0E5002269AB /* User.m */,
-				2B0958A617083B3A00934BAA /* Event.h */,
-				2BAD7FA817281CA100162D20 /* RouteLine.h */,
-				2BAD7FA917281CA100162D20 /* RouteLine.m */,
 				2BC61A95173E783C00990DA7 /* UIView+category.h */,
 				2BC61A96173E783C00990DA7 /* UIView+category.m */,
 				2B18AA8F1748D19700277F52 /* UILabel+category.h */,
 				2B18AA901748D19700277F52 /* UILabel+category.m */,
+				2B6CBFA416DFA6D90095CBD4 /* Supporting Files */,
 			);
 			path = NaviUtil;
 			sourceTree = "<group>";
@@ -400,6 +403,7 @@
 				2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */,
 				2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */,
 				2B18AA911748D19700277F52 /* UILabel+category.m in Sources */,
+				2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -13,7 +13,6 @@
 #import "DownloadRequest.h"
 #import "Speech.h"
 #import "NSDictionary+category.h"
-#import "Event.h"
 
 
 #define GG_DIRECTION_URL            @"https://maps.googleapis.com/maps/api/directions"

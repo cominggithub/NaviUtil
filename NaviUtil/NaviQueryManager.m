@@ -97,7 +97,6 @@ static CLLocationCoordinate2D _endLocation;
     {
 
         [self startNavigation];
-        [[NSNotificationCenter defaultCenter] postNotificationName:PLAN_ROUTE_DONE object:self];
     }
     else if(downloadRequest == _startLocationDownloadRequest)
     {

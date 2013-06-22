@@ -23,13 +23,20 @@
     CLLocationManager* clLocationManager;
 }
 @property (nonatomic, weak) id<LocationManagerDelegate> delegate;
+
+
+
++(void) init;
++(int) getManualPlaceCount;
++(Place*) getManualPlaceByIndex:(int) index;
++(void) setCurrentManualPlace:(Place*) p;
++(Place*) getCurrentPlace;
+
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
            fromLocation:(CLLocation *)oldLocation;
 
 - (void)locationManager:(CLLocationManager *)manager
      didUpdateLocations:(NSArray *)locations;
-
-+(Place*) getCurrentPlace;
 
 @end
