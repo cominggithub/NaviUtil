@@ -28,6 +28,13 @@
         
     }
 }
+-(void) dumpConstraint
+{
+    for (NSLayoutConstraint *c in self.constraints)
+    {
+        logo(c);
+    }
+}
 -(NSString*) description
 {
     if (self.accessibilityLabel != nil)

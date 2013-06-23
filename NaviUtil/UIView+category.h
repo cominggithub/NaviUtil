@@ -12,4 +12,5 @@
 @interface UIView (category)
 
 -(void) dumpView;
+-(void) dumpConstraint;
 @end

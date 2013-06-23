@@ -30,7 +30,7 @@
 +(int) getManualPlaceCount;
 +(Place*) getManualPlaceByIndex:(int) index;
 +(void) setCurrentManualPlace:(Place*) p;
-+(Place*) getCurrentPlace;
++(Place*) currentPlace;
 
 - (void)locationManager:(CLLocationManager *)manager
     didUpdateToLocation:(CLLocation *)newLocation
