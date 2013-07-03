@@ -15,6 +15,7 @@
     NSMutableArray *drawedRouteLines;
 }
 
+#pragma aaa
 #if 1
 -(double) adjustAngle:(double)angle
 {
@@ -51,17 +52,14 @@
 
 -(void) autoSimulatorLocationUpdateStart
 {
-    logfn();
     if (nil == route || kRouteStatusCodeOk != route.status)
     {
-        logfn();
         _isAutoSimulatorLocationUpdateStarted = false;
         return;
     }
     
     if (nil == locationSimulator)
     {
-        logfn();
         [locationSimulator start];
     }
     else if (true != locationSimulator.isStart)
@@ -88,6 +86,7 @@
 }
 
 
+#pragma drawfunc
 -(void) drawBackground:(CGContextRef) context Rectangle:(CGRect) rect
 {
     
@@ -205,11 +204,10 @@
         PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
         
         xOffset = tmpCarDrawPoint.x - startPoint.x;
-        logfns("xOffset: %.0f\n", xOffset);
     }
     else
     {
-        logfns("!!!! current route line is null");
+        mlogError(GUIDE_ROUTE_UIVIEW, @" currentRouteLine is null\n");
     }
 
 
@@ -930,81 +928,38 @@
 }
 -(void) initNewRouteNavigation
 {
-
-#if 0
-    int i;
-    CLLocation* st = [[CLLocation alloc] initWithLatitude:0.0 longitude:0.0];
-    
-    for(i=0; i<100; i++)
-    {
-        CLLocation* end = [[CLLocation alloc] initWithLatitude:i/100000.0 longitude:i/100000.0];
-        
-        printf("%.5f distance: %.2f\n", i/100000.0, [st distanceFromLocation:end]);
-    }
-#endif
-
-    
-
-    
-    
-    printf("bounds: (%f, %f, %f, %f)\n", self.bounds.origin.x, self.bounds.origin.y, self.bounds.size.width, self.bounds.size.height);
-    printf("routeDisplayBound: (%f, %f, %f, %f)\n", routeDisplayBound.origin.x, routeDisplayBound.origin.y, routeDisplayBound.size.width, routeDisplayBound.size.height);
     ratio = 1;
     [self generateRoutePoints];
-#if 0
-    routePoints= [NSArray arrayWithObjects:
-                  [NSValue valueWithPointD:PointDMake(120.25071, 23.14299)],
-                  [NSValue valueWithPointD:PointDMake(120.24962, 23.14294)],
-                  [NSValue valueWithPointD:PointDMake(120.24877, 23.14299)],
-                  [NSValue valueWithPointD:PointDMake(120.24810, 23.14306)],
-                  nil];
-    
-    
-    routePoints= [NSArray arrayWithObjects:
-                  [NSValue valueWithPointD:PointDMake(50, 350)],
-                  [NSValue valueWithPointD:PointDMake(50, 300)],
-                  [NSValue valueWithPointD:PointDMake(100,250)],
-                  [NSValue valueWithPointD:PointDMake(150,250)],
-                  [NSValue valueWithPointD:PointDMake(150,200)],
-                  [NSValue valueWithPointD:PointDMake(100,200)],
-                  [NSValue valueWithPointD:PointDMake(80, 250)],
-                  
-                  [NSValue valueWithPointD:PointDMake(50,50)],
-                  nil];
-#endif
+
     //    NSTimer *theTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(timerTimeout) userInfo:nil repeats:YES];
     // Assume a there's a property timer that will retain the created timer for future reference.
     //    timer = theTimer;
     
     
     //oneStep = 0.00013; // for 1 meter
-    oneStep = 0.00013;
+    oneStep                 = 0.00013;
     
-    targetAngle = 0;
-    screenSize.width = 480;
-    screenSize.height = 320;
-    carCenterPoint.x = screenSize.width/2;
-    carCenterPoint.y = (screenSize.height/4)*3;
-    carPoint.x = 0;
-    carPoint.y = 0;
-    locationIndex = 0;
-    routeLineM = 0;
-    routeLineB = 0;
-    isRouteLineMUndefind = false;
-    //    ratio = 122000;
-    ratio = 222000;
-    angleRotateStep = 0.1;
-    rotateInterval = 0.1;
+    targetAngle             = 0;
+    screenSize.width        = 480;
+    screenSize.height       = 320;
+    carCenterPoint.x        = screenSize.width/2;
+    carCenterPoint.y        = (screenSize.height/4)*3;
+    carPoint.x              = 0;
+    carPoint.y              = 0;
+    locationIndex           = 0;
+    routeLineM              = 0;
+    routeLineB              = 0;
+    isRouteLineMUndefind    = false;
+    ratio                   = 222000;
+    angleRotateStep         = 0.1;
+    rotateInterval          = 0.1;
     
     [self nextRouteLine];
     carPoint = routeStartPoint;
     [self updateTranslationConstant];
-    printf("car center point (%.5f, %.5f)\n", carCenterPoint.x, carCenterPoint.y);
-    printf("car start at (%.5f, %.5f)\n", carPoint.x, carPoint.y);
     [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
     currentStep = 0;
     
-//    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
     carFootPrint = [NSMutableArray arrayWithCapacity:0];
     isDrawCarFootPrint = true;
     
@@ -1014,18 +969,12 @@
     locationSimulator.timeInterval          = 1;
     locationSimulator.locationPoints        = [route getRoutePolyLineCLLocationCoordinate2D];
     locationSimulator.delegate              = self;
+
+    //    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
+
     
 }
 
--(void) locationUpdate:(CLLocationCoordinate2D) location
-{
-    currentStep++;
-    mlogDebug(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
-    
-    [self updateCarLocation:location];
-    [self setNeedsDisplay];
-    mlogDebug(GUIDE_ROUTE_UIVIEW, @" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
-}
 
 -(void) nextRouteLine
 {
@@ -1057,11 +1006,6 @@
         targetAngle *= -1;
     }
     
-//    directionAngle = 0;
-    
-//    printf("angle: %.5f\n", directionAngle*(180.0/M_PI));
-//    printf("route: (%.5f, %.5f) -> (%.5f, %.5f)\n", routeStartPoint.x, routeStartPoint.y, routeEndPoint.x, routeEndPoint.y);
-
 
 /*
     if(isRouteLineMUndefind == true)
@@ -1079,11 +1023,6 @@
     routeDistance = [GeoUtil getLength:routeStartPoint ToPoint:routeEndPoint];
     routeUnitVector.x = (routeEndPoint.x - routeStartPoint.x)/routeDistance;
     routeUnitVector.y = (routeEndPoint.y - routeStartPoint.y)/routeDistance;
-    
-//    printf("routeUnitVector: (%.8f, %.8f)\n", routeUnitVector.x, routeUnitVector.y);
-   
-//    printf("move distance point: (%.8f, %.8f)\n", routeUnitVector.x*oneStep, routeUnitVector.y*oneStep);
-    
     
     
 }
@@ -1125,7 +1064,7 @@
 {
     if (currentDrawAngle == targetAngle)
     {
-        [self locationUpdate:locationSimulator.getNextLocation];
+        [self locationUpdate:locationSimulator.getNextLocation Speed:0 Distance:0];
     }
     else
     {
@@ -1239,6 +1178,7 @@
 }
 -(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
 {
+    logfns("update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     PointD nextCarPoint;
     currentCarLocation = newCarLocation;
     nextCarPoint.x = newCarLocation.longitude;
@@ -1251,6 +1191,11 @@
         routeEndPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
         targetAngle = currentRouteLine.angle;
     }
+    else
+    {
+        mlogError(GUIDE_ROUTE_UIVIEW, @"Cannot found current route line, car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+    }
+    
     carPoint = nextCarPoint;
     [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
     
@@ -1258,6 +1203,8 @@
     [self updateTranslationConstant];
 
 }
+
+#pragma location update
 
 #if 1
 
@@ -1382,7 +1329,7 @@
 {
     double angleOffset = fabs(currentDrawAngle - targetAngle);
     double direction = 1;
-
+    
     
     if(angleOffset <= angleRotateStep)
     {
@@ -1393,7 +1340,7 @@
         currentDrawAngle = targetAngle;
         return false;
     }
-
+    
     logfns("cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
     
     if (currentDrawAngle >= targetAngle)
@@ -1416,5 +1363,16 @@
 }
 #endif
 
+
+#pragma LOCATION_MANAGER_DELEGATE
+-(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int)speed Distance:(int)distance
+{
+    currentStep++;
+    mlogDebug(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+    
+    [self updateCarLocation:location];
+    [self setNeedsDisplay];
+    mlogDebug(GUIDE_ROUTE_UIVIEW, @" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
+}
 
 @end

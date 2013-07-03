@@ -14,6 +14,7 @@ static BOOL _isDebug;
 static BOOL _isAd;
 static BOOL _isManualPlace;
 static BOOL _isDebugRouteDraw;
+static double _triggerLocationUpdateInterval;
 
 
 #pragma variable
@@ -55,13 +56,24 @@ static BOOL _isDebugRouteDraw;
     _isDebugRouteDraw = value;
 }
 
++(double) triggerLocationInterval
+{
+    return _triggerLocationUpdateInterval;
+}
+
++(void) setTriggerLocationInterval:(double) value
+{
+    _triggerLocationUpdateInterval = value;
+}
+
+
 #pragma function
 +(BOOL) init
 {
     _isDebug            = true;
-    _isAd               = true;
-    _isDebugRouteDraw   = false;
-    _isManualPlace      = false;
+    _isAd               = false;
+    _isDebugRouteDraw   = true;
+    _isManualPlace      = true;
     
     return [self parseJason];
 }

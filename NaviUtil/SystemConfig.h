@@ -20,4 +20,7 @@
 +(BOOL) isDebugRouteDraw;
 +(void) setIsDebugRouteDraw:(BOOL) value;
 
++(double) triggerLocationInterval;
++(void) setTriggerLocationInterval:(double) value;
+
 @end

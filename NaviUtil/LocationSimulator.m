@@ -75,9 +75,15 @@
     CLLocationCoordinate2D locationCoordinate2D = [self getNextLocation];
     if (self.delegate)
     {
-        if([self.delegate respondsToSelector:@selector(locationUpdate:)])
+        if([self.delegate respondsToSelector:@selector(locationUpdate::)])
         {
-            [self.delegate locationUpdate:locationCoordinate2D];
+            [self.delegate locationUpdate:locationCoordinate2D
+                                    Speed:0
+                                 Distance:0
+             ];
+
+
+            
         }
     }
 }

@@ -102,6 +102,8 @@
 -(void) triggerLocationUpdate;
 -(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
 -(void) setHUD;
-
+/* LocationManager delegate */
+-(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int) speed Distance:(int) distance;
+-(void) lostLocationUpdate;
 
 @end

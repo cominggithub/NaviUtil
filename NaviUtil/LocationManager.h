@@ -14,8 +14,8 @@
 
 @protocol LocationManagerDelegate <NSObject>
 
--(void) locationUpdate:(CLLocationCoordinate2D) location;
--(void) speedUpdate:(int) speed;
+-(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int) speed Distance:(int) distance;
+-(void) lostLocationUpdate;
 @end
 
 @interface LocationManager : NSObject<CLLocationManagerDelegate>
@@ -31,10 +31,8 @@
 +(Place*) getManualPlaceByIndex:(int) index;
 +(void) setCurrentManualPlace:(Place*) p;
 +(Place*) currentPlace;
++(void) addUpdatedCLLocations:(NSArray *) clLoctions;
 
-- (void)locationManager:(CLLocationManager *)manager
-    didUpdateToLocation:(CLLocation *)newLocation
-           fromLocation:(CLLocation *)oldLocation;
 
 - (void)locationManager:(CLLocationManager *)manager
      didUpdateLocations:(NSArray *)locations;
