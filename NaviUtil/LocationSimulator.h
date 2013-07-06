@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "LocationManager.h"
-#import "log.h"
 #import "NSValue+category.h"
 
 

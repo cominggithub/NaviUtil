@@ -8,6 +8,9 @@
 
 #import "RouteLine.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation RouteLine
 
 @synthesize startLocation=_startLocation;

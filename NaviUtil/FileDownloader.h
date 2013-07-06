@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <Foundation/NSFileManager.h>
 #import "DownloadRequest.h"
-#import "Log.h"
 #import "SystemManager.h"
 
 @class FileDownloader;

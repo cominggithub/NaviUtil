@@ -8,6 +8,9 @@
 
 #import "Route.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation Route
 
 @synthesize status=_status;
@@ -89,13 +92,13 @@
 //        [self dumpRouteLines];
     
 //        [self dumpRouteLineAndPolyLine];
-        mlogDebug(ROUTE, @"parse json file done: %@", fileName);
+        mlogDebug(@"parse json file done: %@", fileName);
         return true;
         
     }
     @catch (NSException *exception)
     {
-        mlogWarning(ROUTE, @"parse json file fail: %@, reason: %@\n%@", fileName, [exception reason], exception );
+        mlogWarning(@"parse json file fail: %@, reason: %@\n%@", fileName, [exception reason], exception );
     }
     @finally
     {
@@ -121,7 +124,7 @@
 
 -(void) addLocationToRouteLinesWithStepNo:(int) stepNo Location:(CLLocationCoordinate2D) location
 {
-    mlogDebug(ROUTE, @"AddLocationToRouteLinesWithStepNo: %3d, Line: %3d, (%12.7f, %12.7f)", stepNo, routeLineCount, location.latitude, location.longitude);
+    mlogDebug(@"AddLocationToRouteLinesWithStepNo: %3d, Line: %3d, (%12.7f, %12.7f)", stepNo, routeLineCount, location.latitude, location.longitude);
     
     routeLineEndLocation = location;
     
@@ -143,7 +146,7 @@
     }
     else
     {
-        mlogDebug(ROUTE, @"    Skip");
+        mlogDebug(@"    Skip");
     }
 
     routeLineStartLocation = routeLineEndLocation;
@@ -344,13 +347,13 @@
     [content appendString:@"</kml>"];
     
     NSError *err;
-    mlogDebug(ROUTE, @"kml path:%@\n", filePath);
+    mlogDebug(@"kml path:%@\n", filePath);
     
     BOOL ok = [content writeToFile:filePath atomically:YES encoding:NSUnicodeStringEncoding error:&err];
     
     if (!ok)
     {
-        mlogWarning(ROUTE, @"cannot write: %@\n", filePath);
+        mlogWarning(@"cannot write: %@\n", filePath);
     }
     
 }
@@ -517,7 +520,7 @@
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
             
-            mlogDebug(ROUTE, @"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
+            mlogDebug(@"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
                       rl.routeLineNo,
                       angleStart + angleEnd,
                       angleStart,
@@ -561,7 +564,7 @@
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
             
-            mlogDebug(ROUTE, @"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
+            mlogDebug(@"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
                       rl.routeLineNo,
                       angleStart + angleEnd,
                       angleStart,
@@ -636,7 +639,7 @@
     
     duration = [endTime timeIntervalSinceDate:startTime];
 
-    mlogDebug(ROUTE, @"Matched: %d(%.7f), RouteLine %d searched, in %f seconds",
+    mlogDebug(@"Matched: %d(%.7f), RouteLine %d searched, in %f seconds",
              matchedRouteLine != nil ? matchedRouteLine.routeLineNo : -1,
              distance,
              searchCount,

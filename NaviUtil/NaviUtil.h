@@ -14,7 +14,6 @@
 #import "GuideRouteUIView.h"
 #import "LocationManager.h"
 #import "LocationSimulator.h"
-#import "Log.h"
 #import "NaviQueryManager.h"
 #import "NSString+category.h"
 #import "NSValue+category.h"
@@ -28,6 +27,7 @@
 #import "SystemConfig.h"
 #import "SystemManager.h"
 #import "User.h"
+#import "TestFlight.h"
 
 @interface NaviUtil : NSObject
 

@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "Log.h"
 
 @interface UIView (category)
 

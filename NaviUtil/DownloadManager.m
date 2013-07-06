@@ -9,6 +9,9 @@
 #import "DownloadManager.h"
 #import "FileDownloader.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation DownloadManager
 
 @synthesize activeDownload=_activeDownload;
@@ -33,7 +36,6 @@
         self.downloadingQueue   = [[NSMutableArray alloc] initWithCapacity:0];
         self.pendingQueue       = [[NSMutableArray alloc] initWithCapacity:0];
         self.finishedQueue      = [[NSMutableArray alloc] initWithCapacity:0];
-        self.logLevel           = kLogInfo;
 
     }
     
@@ -60,7 +62,7 @@
     [self.finishedQueue addObject:downloadRequest];
 
 
-    mlogDebug(DOWNLOAD_MANAGER, @"%@\n", self);
+    mlogDebug(@"%@\n", self);
 
     [self triggerDownload];
     [NaviQueryManager downloadRequestStatusChange:downloadRequest];
@@ -81,13 +83,13 @@
         [downloadRequest.delegate downloadRequestStatusChange:downloadRequest];
 
 
-        mlogDebug(DOWNLOAD_MANAGER, @"%@\n", downloadRequest);
+        mlogDebug(@"%@\n", downloadRequest);
         
         [self triggerDownload];
     }
 
 
-    mlogDebug(DOWNLOAD_MANAGER, @"%@\n", self);
+    mlogDebug(@"%@\n", self);
 }
 
 -(void) download:(DownloadRequest*) downloadRequest
@@ -97,7 +99,7 @@
     [self.pendingQueue addObject:downloadRequest];
 
 
-    mlogDebug(DOWNLOAD_MANAGER, @"%@\n", self);
+    mlogDebug(@"%@\n", self);
     
     [self triggerDownload];
 }
@@ -113,7 +115,7 @@
         [self startDownload:r];
         
 
-        mlogDebug(DOWNLOAD_MANAGER, @"t %@\n", self);
+        mlogDebug(@"t %@\n", self);
     }
 }
 
@@ -132,7 +134,7 @@
     [fileDownloader start];
 
 
-    mlogDebug(DOWNLOAD_MANAGER, @"%@", downloadRequest);
+    mlogDebug(@"%@", downloadRequest);
 }
 
 -(DownloadRequest*) getDownloadRequest:(int)downloadId

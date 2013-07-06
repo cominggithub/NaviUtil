@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import <CoreGraphics/CoreGraphics.h>
-#import "log.h"
+
 
 #define TO_ANGLE(r) ((r*180.0)/M_PI)
 

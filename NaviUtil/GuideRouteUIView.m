@@ -7,6 +7,10 @@
 //
 
 #import "GuideRouteUIView.h"
+
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 #define radians(degrees) (degrees * M_PI/180)
 @implementation GuideRouteUIView
 {
@@ -19,6 +23,7 @@
 #if 1
 -(double) adjustAngle:(double)angle
 {
+
     logfns("angle: %f, M_PI:%f\n", angle, M_PI);
     if(angle > M_PI+0.000001)
     {
@@ -207,7 +212,7 @@
     }
     else
     {
-        mlogError(GUIDE_ROUTE_UIVIEW, @" currentRouteLine is null\n");
+        mlogError(@" currentRouteLine is null\n");
     }
 
 
@@ -560,7 +565,7 @@
     for(NSValue* v in carFootPrint)
     {
         PointD p = [v PointDValue];
-        mlogDebug(NONE, @"car foot print (%12.7f, %12.7f)", p.y, p.x);
+        mlogDebug(@"car foot print (%12.7f, %12.7f)", p.y, p.x);
     }
 }
 -(UIImage*) getCarImage{
@@ -670,13 +675,13 @@
     
     if (nil == route )
     {
-        mlogWarning(NONE, @"Cannot generate route point, route is nil");
+        mlogWarning(@"Cannot generate route point, route is nil");
         return;
     }
         
     if ( kGoogleJsonStatus_Ok != route.status )
     {
-        mlogWarning(NONE, @"Cannot generate route point, route status: %d", route.status);
+        mlogWarning(@"Cannot generate route point, route status: %d", route.status);
         return;
     }
     
@@ -903,7 +908,7 @@
     self.isDebugRouteLineAngle = false;
     
 
-    mlogDebug(GUIDE_ROUTE_UIVIEW, @"Frame: (%.0f, %.0f), %.0f X %.0f\n",
+    mlogDebug(@"Frame: (%.0f, %.0f), %.0f X %.0f\n",
               self.bounds.origin.x,
               self.bounds.origin.y,
               self.bounds.size.width,
@@ -1193,7 +1198,7 @@
     }
     else
     {
-        mlogError(GUIDE_ROUTE_UIVIEW, @"Cannot found current route line, car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+        mlogError(@"Cannot found current route line, car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     }
     
     carPoint = nextCarPoint;
@@ -1368,11 +1373,11 @@
 -(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int)speed Distance:(int)distance
 {
     currentStep++;
-    mlogDebug(GUIDE_ROUTE_UIVIEW, @"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
     [self updateCarLocation:location];
     [self setNeedsDisplay];
-    mlogDebug(GUIDE_ROUTE_UIVIEW, @" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
+    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
 }
 
 @end

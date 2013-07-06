@@ -8,6 +8,9 @@
 
 #import "UIView+category.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation UIView (category)
 
 -(void) dumpView

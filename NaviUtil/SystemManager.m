@@ -11,6 +11,9 @@
 #import "NaviQueryManager.h"
 #import <mach/mach.h>
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 
 static bool isInit = false;
 static NSString *_documentPath=@"";
@@ -30,6 +33,7 @@ static CLLocationCoordinate2D _defaultLocation;
 
 +(void) init
 {
+    mlogCheckPoint(@"SystemManager Init");
     [self initSupportedLanguage];
     [self initDirectory];
     [self initOS];
@@ -43,14 +47,22 @@ static CLLocationCoordinate2D _defaultLocation;
     CGFloat screenScale = [[UIScreen mainScreen] scale];
 //    CGSize screenSize = CGSizeMake(screenBounds.size.width * screenScale, screenBounds.size.height * screenScale);
 
-    logo(device.localizedModel);
-    logo(device.model);
-    logo(device.name);
-    logi(device.orientation);
-    logo(device.systemName);
-    logns(device.systemVersion);
-    logi(device.userInterfaceIdiom);
-    mlogInfo(SYSTEM_MANAGER, @"screen %.0f X %.0f %s\n", screenBounds.size.width, screenBounds.size.height, screenScale > 1.0 ? "Retina":"");
+    mlogInfo(@"%@: %@",
+             [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"],
+             [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]);
+    
+    mlogInfo(@"localizedModel: %@", device.localizedModel);
+    mlogInfo(@"model: %@", device.model);
+    mlogInfo(@"name: %@", device.name);
+    mlogInfo(@"systemName: %@", device.systemName);
+    
+    mlogInfo(@"orientation: %d", device.orientation);
+    mlogInfo(@"systemVersion: %@", device.systemVersion);
+    mlogInfo(@"userInterfaceIdiom: %d", device.userInterfaceIdiom);
+    
+
+    
+    mlogInfo(@"screen %.0f X %.0f %s", screenBounds.size.width, screenBounds.size.height, screenScale > 1.0 ? "Retina":"");
     
     Reachability* networkStatus = [Reachability reachabilityWithHostName:@"tw.yahoo.com"];
     NetworkStatus netStatus = [networkStatus currentReachabilityStatus];
@@ -82,7 +94,6 @@ static CLLocationCoordinate2D _defaultLocation;
         statusString= [NSString stringWithFormat: @"%@, Connection Required", statusString];
     }
 
-    logns(statusString);
 }
 +(void) initSupportedLanguage
 {
@@ -120,27 +131,18 @@ static CLLocationCoordinate2D _defaultLocation;
     {
         printf("%s\n", [path UTF8String]);
     }
-
-    linmso([self documentPath]);
-    linmso([self placeFilePath]);
-    linmso([self routeFilePath]);
-    linmso([self speechFilePath]);
-    linmso([self logFilePath]);
     
     [self cleanDirectory:_tmpPath];
     [self makeDirectory:[self placeFilePath]];
     [self makeDirectory:[self routeFilePath]];
     [self makeDirectory:[self speechFilePath]];
   
-
-
-    mlogInfo(SYSTEM_MANAGER, @"System Init");
-    mlogInfo(SYSTEM_MANAGER, @"   Document Path: %@", [self documentPath]);
-    mlogInfo(SYSTEM_MANAGER, @" Place File Path: %@", [self placeFilePath]);
-    mlogInfo(SYSTEM_MANAGER, @" Route File Path: %@", [self routeFilePath]);
-    mlogInfo(SYSTEM_MANAGER, @"Speech File Path: %@", [self speechFilePath]);
-    mlogInfo(SYSTEM_MANAGER, @"  User File Path: %@", [self userFilePath]);
-    mlogInfo(SYSTEM_MANAGER, @"   Log File Path: %@", [self logFilePath]);
+    mlogInfo(@"   Document Path: %@", [self documentPath]);
+    mlogInfo(@" Place File Path: %@", [self placeFilePath]);
+    mlogInfo(@" Route File Path: %@", [self routeFilePath]);
+    mlogInfo(@"Speech File Path: %@", [self speechFilePath]);
+    mlogInfo(@"  User File Path: %@", [self userFilePath]);
+    mlogInfo(@"   Log File Path: %@", [self logFilePath]);
     
 
 }

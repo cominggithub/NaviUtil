@@ -8,6 +8,9 @@
 
 #import "NaviUtil.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation NaviUtil
 
 static bool _isInit = false;
@@ -43,6 +46,7 @@ static NSString* _googlePlaceAPIKey=@"";
     [LocationManager init];
     
     _isInit = true;
+
 }
 
 +(void) close

@@ -9,7 +9,6 @@
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "GeoUtil.h"
-#import "log.h"
 
 
 @interface RouteLine : NSObject

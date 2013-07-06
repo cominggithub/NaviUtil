@@ -9,7 +9,8 @@
 #import "DownloadRequest.h"
 #import "DownloadManager.h"
 
-
+#define FILE_DEBUG FALSE
+#include "Log.h"
 
 @implementation DownloadRequest
 

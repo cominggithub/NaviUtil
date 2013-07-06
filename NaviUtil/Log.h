@@ -14,23 +14,6 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 
-
-
-
-#define ALL                         (0xFFFFFFFFFFFFFFFFULL)
-#define SYSTEM_MANAGER              (1ULL<<1)
-#define DOWNLOAD_MANAGER            (1ULL<<2)
-#define ROUTE                       (1ULL<<3)
-#define NAVI_QUERY_MANAGER          (1ULL<<4)
-#define LOCATION_SIMULATOR          (1ULL<<5)
-#define GUIDE_ROUTE_UIVIEW          (1ULL<<6)
-#define GEOUTIL                     (1ULL<<7)
-#define ROUTELINE                   (1ULL<<8)
-#define FILE_DOWNLOADER             (1ULL<<9)
-#define PLACE                       (1ULL<<10)
-#define GOOGLE_MAP_UIVIEWCONTROLLER (1ULL<<10)
-#define NONE                        (1ULL<<63)
-
 #define logfn() printf("%s(%d)\n", __FUNCTION__, __LINE__)
 #define logfns(args...) do{printf("%s(%d): ", __FUNCTION__, __LINE__); printf(args);}while(0)
 #define logo(o) printf("%s: %s\n",#o, [[o description] UTF8String])
@@ -46,19 +29,38 @@
 #define getObjectName(oo) #oo
 #define logClass(o) printf("%s: %s\n", getObjectName(o), (char*)class_getName([o class]))
 
-#define mlogInfo(module, args...)     do{logInfo(#module, args);}while(0)
-#define mlogWarning(module, args...)  do{logWarning(#module, args);}while(0)
-#define mlogError(module, args...)    do{logError(#module, args);}while(0)
-#define mlogDebug(module, args...)    do{if (isLogModule(module)) {logDebug(#module, args);}}while(0)
-#define mlogfn(module)                do{if (isLogModule(module)) {printf("[DEBUG] %s ", #module); logfn();printf("\n");}}while(0)
-#define mlogfns(module, args...)      do{if(isLogModule(module) && isDebug()) {printf("[DEBUG] %s: %s(%d): ", #module, __FUNCTION__, __LINE__); printf(args);printf("\n");}}while(0)
+#define mlogAssertNotNil(o)      do{if(nil == o){mlogError(@"%s is nil", #o); return;}}while(0)
+#define mlogAssertNotNilR(o)     do{if(nil == o){mlogError(@"%s is nil", #o); return FALSE;}}while(0)
+
+#define mlogAssertStrNotEmpty(o)      do{if(nil == o || [o length] < 1){mlogError(@"%s is nil or empty", #o); return;}}while(0)
+#define mlogAssertStrNotEmptyR(o)     do{if(nil == o || [o length] < 1){mlogError(@"%s is nil or empty", #o); return FALSE;}}while(0)
+
+
+#define mlogAssertInRange(o, min, max)      do{if(min > o || max < o){mlogError(@"%s is out of range", #o); return;}}while(0)
+#define mlogAssertInRangeR(o, min, max)      do{if(min > o || max < o){mlogError(@"%s is out of range", #o); return FALSE;}}while(0)
+
+#define mlogInfo(args...)     do{logOut(kLogInfo, __FUNCTION__, __LINE__, args);}while(0)
+#define mlogWarning(args...)  do{logOut(kLogWarning, __FUNCTION__, __LINE__, args);}while(0)
+#define mlogError(args...)    do{logOut(kLogError, __FUNCTION__, __LINE__, args);}while(0)
+#define mlogCheckPoint(args...)    do{logOut(kLogCheckPoint, __FUNCTION__, __LINE__, args);}while(0)
+
+
+#if (FILE_DEBUG == TRUE)
+#warning FILE_DEBUG_ENABLED
+#define mlogDebug(args...)    do{logOut(kLogDebug, __FUNCTION__, __LINE__, args);}while(0)
+#else
+#warning FILE_DEBUG_DISABLED
+#define mlogDebug(args...)
+#endif
+
 
 
 typedef enum
 {
+    kLogCheckPoint = 0,
     kLogError,
-    kLogWarning,
     kLogInfo,
+    kLogWarning,
     kLogDebug,
     kLogAll,
 }LogLevel;
@@ -72,5 +74,6 @@ void logInfo(const char* moduleName, id formatString, ...);
 void logDebug(const char* moduleName, id formatString, ...);
 bool isDebug();
 
+void logOut(int level, const char* func_name, int lineNo, id formatString, ...);
 #endif
 

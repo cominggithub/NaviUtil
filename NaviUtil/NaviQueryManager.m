@@ -9,6 +9,9 @@
 #import "NaviQueryManager.h"
 #import "NaviUtil.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation NaviQueryManager
 
 
@@ -63,13 +66,13 @@ static CLLocationCoordinate2D _endLocation;
     DownloadRequest *downloadRequest;
     _currentRoute = [Route parseJson:_currentRouteDownloadRequest.filePath];
 
-    mlogDebug(NAVI_QUERY_MANAGER, @"Num of speech %d\n", [_currentRoute getSpeech].count);
+    mlogDebug(@"Num of speech %d\n", [_currentRoute getSpeech].count);
     
     for(Speech *speech in [_currentRoute getSpeech])
     {
         downloadRequest = [self getSpeechDownloadRequest:speech.text];
         
-        mlogDebug(NAVI_QUERY_MANAGER, @"%@\n", speech.text);
+        mlogDebug(@"%@\n", speech.text);
         
         [_downloadManager download:downloadRequest];
     }

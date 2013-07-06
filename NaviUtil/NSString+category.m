@@ -7,7 +7,9 @@
 //
 
 #import "NSString+category.h"
-#import "Log.h"
+
+#define FILE_DEBUG FALSE
+#include "Log.h"
 
 @implementation NSString (stringByStrippingHTML)
 

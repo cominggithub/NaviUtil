@@ -6,8 +6,11 @@
 //  Copyright (c) 2012年 Coming. All rights reserved.
 //
 
+
 #import "FileDownloader.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
 
 @implementation FileDownloader
 @synthesize delegate=_delegate;
@@ -54,7 +57,7 @@
     [self deleteFile];
     [self createFile];
     self.retryCount++;
-    mlogDebug(FILE_DOWNLOADER, @"%lu starts to download %@ from %@\n", self.downloadId, self.filePath, self.url);
+    mlogDebug(@"%lu starts to download %@ from %@\n", self.downloadId, self.filePath, self.url);
     [NSURLConnection connectionWithRequest:urlRequest delegate:self];
 }
 
@@ -76,12 +79,12 @@
     [fileHandle seekToEndOfFile];
     [fileHandle writeData:data];
     [fileHandle closeFile];
-    mlogDebug(FILE_DOWNLOADER, @"%lu recv data length %u", self.downloadId, [data length]);
+    mlogDebug(@"%lu recv data length %u", self.downloadId, [data length]);
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    mlogInfo(FILE_DOWNLOADER, @"%lu didFailWithError %@\n", self.downloadId, error);
+    mlogInfo(@"%lu didFailWithError %@\n", self.downloadId, error);
     
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFail:)])
         [self.delegate downloadFail: self];
@@ -90,12 +93,12 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSHTTPURLResponse *)response
 {
-    mlogDebug(FILE_DOWNLOADER, @"%lu didReceiveResponse\n", self.downloadId);
+    mlogDebug(@"%lu didReceiveResponse\n", self.downloadId);
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    mlogInfo(FILE_DOWNLOADER, @"FileDownloader %lu finish download\n", self.downloadId);
+    mlogInfo(@"FileDownloader %lu finish download\n", self.downloadId);
     
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFinish:)])
     {

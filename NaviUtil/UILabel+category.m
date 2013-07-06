@@ -8,6 +8,9 @@
 
 #import "UILabel+category.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation UILabel (category)
 -(void)resizeToStretch{
     float width = [self expectedWidth];

@@ -8,6 +8,9 @@
 
 #import "NSDictionary+category.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation NSDictionary (category)
 
 -(TextValue*) textValue

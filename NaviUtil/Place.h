@@ -10,7 +10,6 @@
 #import <CoreLocation/CoreLocation.h>
 #import "NSDictionary+category.h"
 #import "GoogleJson.h"
-#import "Log.h"
 #import "GeoUtil.h"
 
 typedef enum PlaceType

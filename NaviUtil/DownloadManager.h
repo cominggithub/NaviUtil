@@ -31,7 +31,6 @@ enum FileType {
 @property (nonatomic, strong) NSMutableArray* pendingQueue;
 @property (nonatomic, strong) NSMutableArray* finishedQueue;
 @property (nonatomic) CLLocationCoordinate2D currentLocation;
-@property (nonatomic) LogLevel logLevel;
 
 
 

@@ -8,6 +8,9 @@
 
 #import "RouteInstruction.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 
 @implementation RouteInstruction
 

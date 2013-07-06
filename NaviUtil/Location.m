@@ -8,6 +8,8 @@
 
 #import "Location.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
 @implementation Location
 
 @synthesize name = _name;

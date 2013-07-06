@@ -8,6 +8,9 @@
 
 #import "GeoUtil.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation GeoUtil
 
 +(CGPoint) getCGPoint:(PointD) p
@@ -52,7 +55,6 @@
         angle = 0;
     }
     
-    mlogDebug(GEOUTIL, @"angle: %8.4f, cosValue: %11.7f, (%11.7f, %11.7f, %11.7f)", TO_ANGLE(angle), cosValue, length12, length23, length13);
     return angle;
 }
 #if 0
@@ -81,7 +83,7 @@
     float r2 = pow((p1.y - p2.y), 2);
     length = sqrtf((r1+r2));
     //    printf("p1(%.2f, %.2f), p2(%.2f, %.2f)", p1.x, p1.y, p2.x, p2.y);
-    //    printf("r1: %.2f, r2: %.2f, r1+r2: %.2f", r1, r2, r1+r2);
+    //    printf("r1: %.2f, r2: % .2f, r1+r2: %.2f", r1, r2, r1+r2);
     return sqrt(r1+r2);
 }
 

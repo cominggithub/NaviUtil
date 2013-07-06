@@ -8,6 +8,9 @@
 
 #import "Place.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation Place
 
 @synthesize name=_name;
@@ -71,11 +74,11 @@
     }
     @catch (NSException *exception)
     {
-        mlogWarning(PLACE, @"parse json file fail: %@", fileName);
+        mlogWarning(@"parse json file fail: %@", fileName);
     }
     @finally
     {
-        mlogWarning(PLACE, @"parse json file fail: %@", fileName);            
+        mlogWarning(@"parse json file fail: %@", fileName);            
     }
     
     return nil;
@@ -166,7 +169,7 @@
     }
     
     matchedRate = matchedCount/name.length;
-    mlogDebug(PLACE, @"matchedRate: (%@ - %@) = %.0f\%", self.name, name, matchedRate*100);
+    mlogDebug(@"matchedRate: (%@ - %@) = %.0f\%", self.name, name, matchedRate*100);
     
     return matchedRate > 0.6;
     

@@ -8,6 +8,9 @@
 
 #import "TextValue.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation TextValue
 
 @synthesize text=_text;

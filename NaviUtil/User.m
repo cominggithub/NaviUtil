@@ -7,6 +7,10 @@
 //
 
 #import "User.h"
+#import "TestFlight.h"
+
+#define FILE_DEBUG FALSE
+#include "Log.h"
 
 @implementation User
 
@@ -189,24 +193,32 @@ static NSMutableArray*  _searchedPlaces;
 
 +(void) addHomePlace:(Place*) p
 {
+    mlogAssertNotNil(p);
+    
     p.placeType = kPlaceType_Home;
     [_homePlaces addObject:p];
 }
 
 +(void) addOfficePlace:(Place*) p
 {
+    mlogAssertNotNil(p);
+    
     p.placeType = kPlaceType_Office;
     [_officePlaces addObject:p];
 }
 
 +(void) addFavorPlace:(Place*) p
 {
+    mlogAssertNotNil(p);
+    
     p.placeType = kPlaceType_Favor;
     [_favorPlaces addObject:p];
 }
 
 +(void) addSearchedPlace:(Place*) p
 {
+    mlogAssertNotNil(p);
+    
     p.placeType = kPlaceType_SearchedPlace;
     [_searchedPlaces addObject:p];
     
@@ -215,6 +227,9 @@ static NSMutableArray*  _searchedPlaces;
 +(void) addSearchedPlaceText:(NSString*) placeText
 {
     int i=0;
+    
+    mlogAssertStrNotEmpty(placeText);
+    
     NSString* newPlace = [NSString stringWithString:placeText];
     for(i=0; i<_searchedPlaceText.count; i++)
     {
@@ -232,6 +247,9 @@ static NSMutableArray*  _searchedPlaces;
 +(void) addPlaceBySectionMode:(SectionMode) sectionMode Section:(int) section Place:(Place*) p
 {
     int placeType;
+    
+    mlogAssertNotNil(p);
+    
     placeType = [self translatSectionIndexIntoPlaceType:sectionMode Section:section];
     
     switch(placeType)
@@ -251,30 +269,28 @@ static NSMutableArray*  _searchedPlaces;
 
 +(void) removeHomePlaceAtIndex:(int) index
 {
-    if (index > -1 && index < _homePlaces.count)
-    {
-        [_homePlaces removeObjectAtIndex:index];
-    }
+    mlogAssertInRange(index, 0, _homePlaces.count-1);
+    [_homePlaces removeObjectAtIndex:index];
+
 }
 
 +(void) removeOfficeLocationAtIndex:(int) index
 {
-    if (index > -1 && index < _officePlaces.count)
-    {
-        [_officePlaces removeObjectAtIndex:index];
-    }
+    mlogAssertInRange(index, 0, _officePlaces.count-1);
+    [_officePlaces removeObjectAtIndex:index];
+
 }
 
 +(void) removeFavorLocationAtIndex:(int) index
 {
-    if (index > -1 && index < _favorPlaces.count)
-    {
-        [_favorPlaces removeObjectAtIndex:index];
-    }
+    mlogAssertInRange(index, 0, _favorPlaces.count-1);
+    [_favorPlaces removeObjectAtIndex:index];
+
 }
 
 +(void) setPlaceSearchResult:(NSArray*) placeSearchResult
 {
+    mlogAssertNotNil(placeSearchResult);
     _searchedPlaces = [NSMutableArray arrayWithArray: placeSearchResult];
 }
 
@@ -318,43 +334,39 @@ static NSMutableArray*  _searchedPlaces;
 
 +(void) updateHomePlaceAtIndex:(int) index Location:(Place*) place
 {
-    if (nil == place)
-        return;
+    mlogAssertNotNil(place);
+    mlogAssertInRange(index, 0, _homePlaces.count-1);
     
-    if (index > -1 && index < _homePlaces.count)
-    {
-        Place *oldPlace = (Place*) [_homePlaces objectAtIndex:index];
-        [place copyTo:oldPlace];
-    }
+    Place *oldPlace = (Place*) [_homePlaces objectAtIndex:index];
+    [place copyTo:oldPlace];
+
 }
 
 +(void) updateOfficeLocationAtIndex:(int) index Location:(Place*) place
 {
-    if (nil == place)
-        return;
+    mlogAssertNotNil(place);
+    mlogAssertInRange(index, 0, _officePlaces.count-1);
     
-    if (index > -1 && index < _officePlaces.count)
-    {
-        Place *oldPlace = (Place*) [_officePlaces objectAtIndex:index];
-        [place copyTo:oldPlace];
-    }
+    Place *oldPlace = (Place*) [_officePlaces objectAtIndex:index];
+    [place copyTo:oldPlace];
+    
 }
 
 +(void) updateFavorLocationAtIndex:(int) index Location:(Place*) place
 {
-    if (nil == place)
-        return;
+    mlogAssertNotNil(place);
+    mlogAssertInRange(index, 0, _favorPlaces.count-1);
     
-    if (index > -1 && index < _favorPlaces.count)
-    {
-        Place *oldPlace = (Place*) [_favorPlaces objectAtIndex:index];
-        [place copyTo:oldPlace];
-    }
+    Place *oldPlace = (Place*) [_favorPlaces objectAtIndex:index];
+    [place copyTo:oldPlace];
 }
 
 +(void) removeHomePlace:(Place*) place
 {
     int i;
+    
+    mlogAssertNotNil(place);
+    
     for(i=0; i<_homePlaces.count; i++)
     {
         if ([place isEqual:[_homePlaces objectAtIndex:i]])
@@ -368,6 +380,9 @@ static NSMutableArray*  _searchedPlaces;
 +(void) removeOfficePlace:(Place*) place
 {
     int i;
+    
+    mlogAssertNotNil(place);
+    
     for(i=0; i<_officePlaces.count; i++)
     {
         if ([place isEqual:[_officePlaces objectAtIndex:i]])
@@ -380,8 +395,10 @@ static NSMutableArray*  _searchedPlaces;
 
 +(void) removeSearchedPlaces:(NSString*) place
 {
-
     int i=0;
+    
+    mlogAssertStrNotEmpty(place);
+    
     for(i=0; i<_searchedPlaceText.count; i++)
     {
         if ([place isEqualToString:[_searchedPlaceText objectAtIndex:i]])
@@ -394,7 +411,7 @@ static NSMutableArray*  _searchedPlaces;
 
 +(void) init
 {
-
+    mlogCheckPoint(@"User Init");
     if(false == [User parseJson:[SystemManager userFilePath]])
     {
         Place *p                = [[Place alloc] init];
@@ -544,12 +561,13 @@ static NSMutableArray*  _searchedPlaces;
 
 +(void) save
 {
+    [TestFlight passCheckpoint:@"User Saved Start"];
     NSError* error;
     
     //convert object to data
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self.toDictionary
                                                        options:NSJSONWritingPrettyPrinted error:&error];
     [jsonData writeToFile:[SystemManager userFilePath] atomically:true];
-    
+    [TestFlight passCheckpoint:@"User Saved"];
 }
 @end

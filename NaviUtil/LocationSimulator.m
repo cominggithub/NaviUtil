@@ -8,6 +8,9 @@
 
 #import "LocationSimulator.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation LocationSimulator
 
 @synthesize delegate=_delegate;
@@ -54,7 +57,7 @@
         nextLocationIndex = i+1;
     }
     
-    mlogInfo(LOCATION_SIMULATOR, @"%.7f, %.7f +- (%.7f, %.7f)\n",
+    mlogInfo(@"%.7f, %.7f +- (%.7f, %.7f)\n",
              currentLocation.coordinate.latitude,
              currentLocation.coordinate.longitude,
              latOffset,

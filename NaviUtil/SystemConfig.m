@@ -8,6 +8,9 @@
 
 #import "SystemConfig.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation SystemConfig
 
 static BOOL _isDebug;

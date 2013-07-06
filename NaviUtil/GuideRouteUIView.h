@@ -12,7 +12,6 @@
 #import "Route.h"
 #import "GeoUtil.h"
 #import "NSValue+category.h"
-#import "Log.h"
 #import "LocationManager.h"
 #import "LocationSimulator.h"
 #import "NaviQueryManager.h"

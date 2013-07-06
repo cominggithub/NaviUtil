@@ -8,6 +8,9 @@
 
 #import "NSValue+category.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation NSValue (NSValue_category)
 
 + (id)valueWithPointD:(PointD)v

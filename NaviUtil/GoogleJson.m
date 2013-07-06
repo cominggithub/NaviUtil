@@ -8,6 +8,9 @@
 
 #import "GoogleJson.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 @implementation GoogleJson
 
 +(GoogleJsonStatus) getStatus:(NSString*) fileName

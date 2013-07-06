@@ -8,6 +8,11 @@
 
 #import "LocationManager.h"
 #import "SystemConfig.h"
+#import "SystemManager.h"
+
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 #define LOCATION_UPDATE_DISTANCE_THRESHOLD 30 /* 30 meter */ 
 
 static NSMutableArray* _manualPlaces;
