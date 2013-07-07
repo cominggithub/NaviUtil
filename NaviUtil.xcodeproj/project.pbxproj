@@ -108,7 +108,6 @@
 		2B6CBFD016DFA6FD0095CBD4 /* GeoUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeoUtil.m; sourceTree = "<group>"; };
 		2B6CBFD116DFA6FD0095CBD4 /* GuideRouteUIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GuideRouteUIView.h; sourceTree = "<group>"; };
 		2B6CBFD216DFA6FD0095CBD4 /* GuideRouteUIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GuideRouteUIView.m; sourceTree = "<group>"; };
-		2B6CBFD316DFA6FD0095CBD4 /* linmsdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = linmsdebug.h; sourceTree = "<group>"; };
 		2B6CBFD416DFA6FD0095CBD4 /* NaviQueryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NaviQueryManager.h; sourceTree = "<group>"; };
 		2B6CBFD516DFA6FD0095CBD4 /* NaviQueryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NaviQueryManager.m; sourceTree = "<group>"; };
 		2B6CBFD616DFA6FD0095CBD4 /* NavUtil-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NavUtil-Prefix.pch"; sourceTree = "<group>"; };
@@ -190,6 +189,77 @@
 			name = CarPanel;
 			sourceTree = "<group>";
 		};
+		2B3D573B178969F800437464 /* GeoNavigation */ = {
+			isa = PBXGroup;
+			children = (
+				2B6CBFD116DFA6FD0095CBD4 /* GuideRouteUIView.h */,
+				2B6CBFD216DFA6FD0095CBD4 /* GuideRouteUIView.m */,
+				2B6CBFCF16DFA6FD0095CBD4 /* GeoUtil.h */,
+				2B6CBFD016DFA6FD0095CBD4 /* GeoUtil.m */,
+				2BBA453D16E8CB6500C0B7FC /* GoogleJson.h */,
+				2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */,
+				2B92164B16F757A40072E44F /* Location.h */,
+				2B92164C16F757A40072E44F /* Location.m */,
+				2BE3A80E17046D92007621EC /* LocationManager.h */,
+				2BE3A80F17046D92007621EC /* LocationManager.m */,
+				2BE3A81117046DD5007621EC /* LocationSimulator.h */,
+				2BE3A81217046DD5007621EC /* LocationSimulator.m */,
+				2B6CBFD416DFA6FD0095CBD4 /* NaviQueryManager.h */,
+				2B6CBFD516DFA6FD0095CBD4 /* NaviQueryManager.m */,
+				2B6CBFDB16DFA6FD0095CBD4 /* Place.h */,
+				2B6CBFDC16DFA6FD0095CBD4 /* Place.m */,
+				2B6CBFDD16DFA6FD0095CBD4 /* Route.h */,
+				2B6CBFDE16DFA6FD0095CBD4 /* Route.m */,
+				2B6CBFDF16DFA6FD0095CBD4 /* RouteInstruction.h */,
+				2B6CBFE016DFA6FD0095CBD4 /* RouteInstruction.m */,
+				2BAD7FA817281CA100162D20 /* RouteLine.h */,
+				2BAD7FA917281CA100162D20 /* RouteLine.m */,
+				2B6CBFE116DFA6FD0095CBD4 /* Speech.h */,
+				2B6CBFE216DFA6FD0095CBD4 /* Speech.m */,
+				2B98912516EB82D90057A226 /* TextValue.h */,
+				2B98912616EB82D90057A226 /* TextValue.m */,
+			);
+			name = GeoNavigation;
+			sourceTree = "<group>";
+		};
+		2B3D573C17896A0E00437464 /* System */ = {
+			isa = PBXGroup;
+			children = (
+				2B6CBFC916DFA6FD0095CBD4 /* DownloadManager.h */,
+				2B6CBFCA16DFA6FD0095CBD4 /* DownloadManager.m */,
+				2B6CBFCB16DFA6FD0095CBD4 /* DownloadRequest.h */,
+				2B6CBFCC16DFA6FD0095CBD4 /* DownloadRequest.m */,
+				2B6CBFCD16DFA6FD0095CBD4 /* FileDownloader.h */,
+				2B6CBFCE16DFA6FD0095CBD4 /* FileDownloader.m */,
+				2B61D8651771E64400ACB1AA /* SystemConfig.h */,
+				2B61D8661771E64400ACB1AA /* SystemConfig.m */,
+				2B6CBFE316DFA6FD0095CBD4 /* SystemManager.h */,
+				2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */,
+				2B70BEDC16F5F0E5002269AB /* User.h */,
+				2B70BEDD16F5F0E5002269AB /* User.m */,
+			);
+			name = System;
+			sourceTree = "<group>";
+		};
+		2B3D573E17896A5100437464 /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				2B98912816EB89C10057A226 /* NSDictionary+category.h */,
+				2B98912916EB89C10057A226 /* NSDictionary+category.m */,
+				2B6CBFD716DFA6FD0095CBD4 /* NSString+category.h */,
+				2B6CBFD816DFA6FD0095CBD4 /* NSString+category.m */,
+				2B6CBFD916DFA6FD0095CBD4 /* NSValue+category.h */,
+				2B6CBFDA16DFA6FD0095CBD4 /* NSValue+category.m */,
+				2BDC6B8F17859E9C003E61E9 /* UIImage+category.h */,
+				2BDC6B9017859E9C003E61E9 /* UIImage+category.m */,
+				2BC61A95173E783C00990DA7 /* UIView+category.h */,
+				2BC61A96173E783C00990DA7 /* UIView+category.m */,
+				2B18AA8F1748D19700277F52 /* UILabel+category.h */,
+				2B18AA901748D19700277F52 /* UILabel+category.m */,
+			);
+			name = Category;
+			sourceTree = "<group>";
+		};
 		2B6CBF9516DFA6D90095CBD4 = {
 			isa = PBXGroup;
 			children = (
@@ -222,66 +292,18 @@
 		2B6CBFA316DFA6D90095CBD4 /* NaviUtil */ = {
 			isa = PBXGroup;
 			children = (
+				2B3D573E17896A5100437464 /* Category */,
+				2B3D573C17896A0E00437464 /* System */,
+				2B3D573B178969F800437464 /* GeoNavigation */,
 				2B1C471517884C6E00ED6D98 /* CarPanel */,
 				2B6A6BF0178718B7005FC851 /* TestFlight.h */,
 				2B995CD61706F27500991700 /* Reachability.h */,
 				2B995CD71706F27500991700 /* Reachability.m */,
-				2B6CBFC916DFA6FD0095CBD4 /* DownloadManager.h */,
-				2B6CBFCA16DFA6FD0095CBD4 /* DownloadManager.m */,
-				2B6CBFCB16DFA6FD0095CBD4 /* DownloadRequest.h */,
-				2B6CBFCC16DFA6FD0095CBD4 /* DownloadRequest.m */,
-				2B6CBFCD16DFA6FD0095CBD4 /* FileDownloader.h */,
-				2B6CBFCE16DFA6FD0095CBD4 /* FileDownloader.m */,
-				2B6CBFCF16DFA6FD0095CBD4 /* GeoUtil.h */,
-				2B6CBFD016DFA6FD0095CBD4 /* GeoUtil.m */,
-				2BBA453D16E8CB6500C0B7FC /* GoogleJson.h */,
-				2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */,
-				2B6CBFD116DFA6FD0095CBD4 /* GuideRouteUIView.h */,
-				2B6CBFD216DFA6FD0095CBD4 /* GuideRouteUIView.m */,
-				2B6CBFD316DFA6FD0095CBD4 /* linmsdebug.h */,
-				2B92164B16F757A40072E44F /* Location.h */,
-				2B92164C16F757A40072E44F /* Location.m */,
-				2BE3A80E17046D92007621EC /* LocationManager.h */,
-				2BE3A80F17046D92007621EC /* LocationManager.m */,
-				2BE3A81117046DD5007621EC /* LocationSimulator.h */,
-				2BE3A81217046DD5007621EC /* LocationSimulator.m */,
 				2B7ADCAA16E4E5DE00F8A182 /* Log.h */,
 				2B7ADCAB16E4E5DE00F8A182 /* Log.m */,
-				2B6CBFD416DFA6FD0095CBD4 /* NaviQueryManager.h */,
-				2B6CBFD516DFA6FD0095CBD4 /* NaviQueryManager.m */,
 				2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */,
 				2B6CBFA816DFA6D90095CBD4 /* NaviUtil.m */,
 				2B6CBFD616DFA6FD0095CBD4 /* NavUtil-Prefix.pch */,
-				2B98912816EB89C10057A226 /* NSDictionary+category.h */,
-				2B98912916EB89C10057A226 /* NSDictionary+category.m */,
-				2B6CBFD716DFA6FD0095CBD4 /* NSString+category.h */,
-				2B6CBFD816DFA6FD0095CBD4 /* NSString+category.m */,
-				2B6CBFD916DFA6FD0095CBD4 /* NSValue+category.h */,
-				2B6CBFDA16DFA6FD0095CBD4 /* NSValue+category.m */,
-				2B6CBFDB16DFA6FD0095CBD4 /* Place.h */,
-				2B6CBFDC16DFA6FD0095CBD4 /* Place.m */,
-				2B6CBFDD16DFA6FD0095CBD4 /* Route.h */,
-				2B6CBFDE16DFA6FD0095CBD4 /* Route.m */,
-				2B6CBFDF16DFA6FD0095CBD4 /* RouteInstruction.h */,
-				2B6CBFE016DFA6FD0095CBD4 /* RouteInstruction.m */,
-				2BAD7FA817281CA100162D20 /* RouteLine.h */,
-				2BAD7FA917281CA100162D20 /* RouteLine.m */,
-				2B6CBFE116DFA6FD0095CBD4 /* Speech.h */,
-				2B6CBFE216DFA6FD0095CBD4 /* Speech.m */,
-				2B61D8651771E64400ACB1AA /* SystemConfig.h */,
-				2B61D8661771E64400ACB1AA /* SystemConfig.m */,
-				2B6CBFE316DFA6FD0095CBD4 /* SystemManager.h */,
-				2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */,
-				2B98912516EB82D90057A226 /* TextValue.h */,
-				2B98912616EB82D90057A226 /* TextValue.m */,
-				2B70BEDC16F5F0E5002269AB /* User.h */,
-				2B70BEDD16F5F0E5002269AB /* User.m */,
-				2BDC6B8F17859E9C003E61E9 /* UIImage+category.h */,
-				2BDC6B9017859E9C003E61E9 /* UIImage+category.m */,
-				2BC61A95173E783C00990DA7 /* UIView+category.h */,
-				2BC61A96173E783C00990DA7 /* UIView+category.m */,
-				2B18AA8F1748D19700277F52 /* UILabel+category.h */,
-				2B18AA901748D19700277F52 /* UILabel+category.m */,
 				2B6CBFA416DFA6D90095CBD4 /* Supporting Files */,
 			);
 			path = NaviUtil;

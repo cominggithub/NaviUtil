@@ -20,7 +20,7 @@
     //  diameter = diameter*2;
     //    NSLog(@"diameter:%.1f, width:%.1f, height:%.1f\n", diameter, self.size.width, self.size.height);
     
-    NSLog(@"width:%.1f, height:%.1f\n", self.size.width, self.size.height);
+
     // calculate the size of the rotated view's containing box for our drawing space
     UIView *rotatedViewBox = [[UIView alloc] initWithFrame:CGRectMake(0,0,self.size.width, self.size.height)];
     //    UIView *rotatedViewBox = [[UIView alloc] initWithFrame:CGRectMake(0,0,diameter, diameter)];
@@ -28,7 +28,7 @@
     rotatedViewBox.transform = t;
     //    CGSize rotatedSize = rotatedViewBox.frame.size;
     CGSize rotatedSize = self.size;
-    NSLog(@"rotatedSize width:%.1f, height:%.1f\n", rotatedSize.width, rotatedSize.height);
+
     // Create the bitmap context
     UIGraphicsBeginImageContext(rotatedSize);
     CGContextRef bitmap = UIGraphicsGetCurrentContext();
@@ -54,7 +54,7 @@
     
     UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
-    NSLog(@"new img width:%.1f, height:%.1f\n", newImage.size.width, newImage.size.height);
+
     return newImage;
 }
 

@@ -11,4 +11,8 @@
 @interface CarPanel1UIView : UIView
 
 
+-(void) autoRedrawStart;
+-(void) autoRedrawStop;
+-(void) update;
+
 @end

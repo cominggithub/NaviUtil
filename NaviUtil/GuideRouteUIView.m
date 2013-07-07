@@ -1045,7 +1045,6 @@
 
 -(void) processRouteDownloadRequestStatusChange
 {
-    logfn();
     bool isFail = true;
     bool updateStatus = false;
     /* search place finished */
@@ -1103,7 +1102,6 @@
 
 -(void) startRouteNavigationFrom:(Place*) s To:(Place*) e
 {
-    logfn();
     GoogleJsonStatus status;
     
     if (nil == s || nil == e)

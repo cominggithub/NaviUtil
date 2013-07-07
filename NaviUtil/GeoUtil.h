@@ -10,7 +10,7 @@
 #import <CoreLocation/CoreLocation.h>
 #import <CoreGraphics/CoreGraphics.h>
 
-
+#define M_2PI (2*M_PI)
 #define TO_ANGLE(r) ((r*180.0)/M_PI)
 
 #define MAX_LEVEL 20

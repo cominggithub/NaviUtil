@@ -7,8 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "CarPanel1UIView.h"
+#import "DigitalNumDrawBlock.h"
 #import "DownloadManager.h"
 #import "DownloadRequest.h"
+#import "DrawBlock.h"
 #import "FileDownloader.h"
 #import "GeoUtil.h"
 #import "GuideRouteUIView.h"
@@ -28,6 +31,7 @@
 #import "SystemManager.h"
 #import "User.h"
 #import "TestFlight.h"
+#import "TimeDrawBlock.h"
 
 @interface NaviUtil : NSObject
 
