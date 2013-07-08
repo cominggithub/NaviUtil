@@ -30,6 +30,7 @@
 @property (nonatomic) float rotateSpeed; // radius/s
 @property (nonatomic) NSDate* lastUpdateTime;
 @property (strong, nonatomic) UIColor *color;
+@property (strong, nonatomic) NSString* name;
 
 
 +(DrawBlock*) drawBlockWithImageName:(NSString*) name origin:(CGPoint) origin size:(CGSize) size;

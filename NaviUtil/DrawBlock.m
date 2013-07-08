@@ -50,23 +50,38 @@
     _flashVisible   = TRUE;
     _flashInterval  = -1;
     _flashTimeout   = 0;
-    _color          = [UIColor greenColor];
+    _color          = [UIColor cyanColor];
     _currentAngle   = 0;
-    _targetAngle    = 2;
-    _rotateSpeed    = 0.1;
-    _rotateInfinite = TRUE;
+    _targetAngle    = 0;
+    _rotateSpeed    = 0;
+    _rotateInfinite = FALSE;
     
+}
+
+-(void) setColor:(UIColor *)color
+{
+    _color = color;
+
+    if (nil != _image)
+    {
+        _image = [_image imageTintedWithColor:_color];
+    }
+}
+
+-(void) setImage:(UIImage *)image
+{
+    _image = image;
+    _image = [_image imageTintedWithColor:_color];
 }
 
 -(void) drawRect:(CGRect) rect
 {
+    NSDate* start = [NSDate date];
     CGRect drawRect = CGRectMake(_origin.x + rect.origin.x,
                                  _origin.y + rect.origin.y,
                                  _size.width,
                                  _size.height
                                  );
-    
-    mlogDebug(@"drawRect: (%.0f, %.f) (%.0f%, %.0f)\n", drawRect.origin.x, drawRect.origin.y, drawRect.size.width, drawRect.size.height);
     
     if (FALSE == [self isDrawable])
         return;
@@ -80,6 +95,9 @@
 
     [_imgToDraw drawInRect:drawRect];
     
+    NSDate* end = [NSDate date];
+//    mlogDebug(@"%4.4f, %@ ", [end timeIntervalSinceDate:start], _name);
+    
     return;
 }
 
@@ -90,12 +108,12 @@
 
 -(void) preDrawImage
 {
-    logfn();
     _preDrawImage = _image;
 }
 
 -(void) update
 {
+
     NSDate* now = [NSDate date];
     
     if (nil == _lastUpdateTime)
@@ -105,12 +123,12 @@
     
     NSTimeInterval timePassed = [now timeIntervalSinceDate:_lastUpdateTime] * 1000;
 
-    logfn();
     [self preDrawImage];
-
+    
+    _imgToDraw = _preDrawImage;
     if (nil != _preDrawImage)
     {
-        _imgToDraw = [_preDrawImage imageTintedWithColor:_color];
+
         if (FALSE == _rotateInfinite)
         {
             if (_currentAngle != _targetAngle)
@@ -158,8 +176,11 @@
     {
         mlogDebug(@"predraw image is null\n");
     }
+
+    
     
     _lastUpdateTime = now;
+    
 }
 
 @end

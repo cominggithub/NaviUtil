@@ -13,6 +13,11 @@
 
 @implementation UIImage (category)
 
++(UIImage*) imageNamed:(NSString *)name color:(UIColor*) color
+{
+    UIImage *img = [UIImage imageNamed:name];
+    return [img imageTintedWithColor:color];
+}
 - (UIImage *)imageRotatedByRadians:(CGFloat)radians
 {
     //    float diameter;

@@ -9,6 +9,7 @@
 #import "DigitalNumDrawBlock.h"
 #import "UIImage+category.h"
 
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 @implementation DigitalNumDrawBlock
@@ -60,18 +61,17 @@
 
     _numImagePrefix = value;
 
-    _num0 = [UIImage imageNamed:[NSString stringWithFormat:@"%@0.png", _numImagePrefix]];
-    _num1 = [UIImage imageNamed:[NSString stringWithFormat:@"%@1.png", _numImagePrefix]];
-    _num2 = [UIImage imageNamed:[NSString stringWithFormat:@"%@2.png", _numImagePrefix]];
-    _num3 = [UIImage imageNamed:[NSString stringWithFormat:@"%@3.png", _numImagePrefix]];
-    _num4 = [UIImage imageNamed:[NSString stringWithFormat:@"%@4.png", _numImagePrefix]];
-    _num5 = [UIImage imageNamed:[NSString stringWithFormat:@"%@5.png", _numImagePrefix]];
-    _num6 = [UIImage imageNamed:[NSString stringWithFormat:@"%@6.png", _numImagePrefix]];
-    _num7 = [UIImage imageNamed:[NSString stringWithFormat:@"%@7.png", _numImagePrefix]];
-    _num8 = [UIImage imageNamed:[NSString stringWithFormat:@"%@8.png", _numImagePrefix]];
-    _num9 = [UIImage imageNamed:[NSString stringWithFormat:@"%@9.png", _numImagePrefix]];
+    _num0 = [UIImage imageNamed:[NSString stringWithFormat:@"%@0.png", _numImagePrefix] color:self.color];
+    _num1 = [UIImage imageNamed:[NSString stringWithFormat:@"%@1.png", _numImagePrefix] color:self.color];
+    _num2 = [UIImage imageNamed:[NSString stringWithFormat:@"%@2.png", _numImagePrefix] color:self.color];
+    _num3 = [UIImage imageNamed:[NSString stringWithFormat:@"%@3.png", _numImagePrefix] color:self.color];
+    _num4 = [UIImage imageNamed:[NSString stringWithFormat:@"%@4.png", _numImagePrefix] color:self.color];
+    _num5 = [UIImage imageNamed:[NSString stringWithFormat:@"%@5.png", _numImagePrefix] color:self.color];
+    _num6 = [UIImage imageNamed:[NSString stringWithFormat:@"%@6.png", _numImagePrefix] color:self.color];
+    _num7 = [UIImage imageNamed:[NSString stringWithFormat:@"%@7.png", _numImagePrefix] color:self.color];
+    _num8 = [UIImage imageNamed:[NSString stringWithFormat:@"%@8.png", _numImagePrefix] color:self.color];
+    _num9 = [UIImage imageNamed:[NSString stringWithFormat:@"%@9.png", _numImagePrefix] color:self.color];
 
-    logfns("number0 :%s\n", [[NSString stringWithFormat:@"%@0.png", self.numImagePrefix] UTF8String]);
     mlogAssertNotNil(_num0);
     mlogAssertNotNil(_num1);
     mlogAssertNotNil(_num2);
@@ -118,8 +118,6 @@
 
     }
 
-    mlogError(@"Wrong number: %d\n", number);
-    
     return nil;
 }
 
@@ -128,10 +126,12 @@
     int number;
     int tmpValue;
     
+    if (self.value >= 1000)
+        self.value = self.value % 1000;
+    
     tmpValue    = self.value/100;
     number      = tmpValue;
 
-    logfns("number3: %d\n", number);
     if (number > 0 || (number == 0 && TRUE == _isPaddingZero))
     {
         _image3ToDraw = [self getImageByNumber:number];
@@ -140,7 +140,6 @@
     tmpValue = self.value - number * 100;
     number = tmpValue/10;
 
-    logfns("number2: %d\n", number);
     if (number > 0 || (number == 0 && TRUE == _isPaddingZero))
     {
         _image2ToDraw = [self getImageByNumber:number];
@@ -149,7 +148,6 @@
     tmpValue = tmpValue - number * 10;
     number = tmpValue;
     
-    logfns("number1: %d\n", number);
     _image1ToDraw = [self getImageByNumber:number];
     
 
@@ -162,7 +160,6 @@
 
 -(void) preDrawImage
 {
-
     [self updateDigitNumImageToDraw];
 
     UIGraphicsBeginImageContext(contentSize);

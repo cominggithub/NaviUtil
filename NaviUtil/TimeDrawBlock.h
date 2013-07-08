@@ -10,4 +10,9 @@
 
 @interface TimeDrawBlock : DrawBlock
 
+@property (strong, nonatomic) NSString* numImagePrefix;
+@property (strong, nonatomic) NSDate* value;
+
++(TimeDrawBlock*) timeDrawBlockWithNumImagePrefix:(NSString*) numPrefix origin:(CGPoint) origin size:(CGSize) size;
+
 @end

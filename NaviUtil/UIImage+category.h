@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface UIImage (category)
++(UIImage*) imageNamed:(NSString *)name color:(UIColor*) color;
 - (UIImage *) imageRotatedByRadians:(CGFloat)radians;
 - (UIImage *) changeColorForImage:(UIImage *)image toColor:(UIColor*)color;
 
