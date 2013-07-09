@@ -37,6 +37,9 @@
 		2B6CBFF116DFA6FD0095CBD4 /* SystemManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */; };
 		2B70BEDE16F5F0E5002269AB /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B70BEDD16F5F0E5002269AB /* User.m */; };
 		2B7ADCAC16E4E5DE00F8A182 /* Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B7ADCAB16E4E5DE00F8A182 /* Log.m */; };
+		2B8B71B2178C32E7005E460F /* UIImage+simple-image-processing.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B8B71B1178C32E7005E460F /* UIImage+simple-image-processing.mm */; };
+		2B8B71C7178C35B6005E460F /* Image.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B8B71C6178C35B6005E460F /* Image.mm */; };
+		2B8B7218178C46F8005E460F /* BatteryNormalDrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8B7217178C46F8005E460F /* BatteryNormalDrawBlock.m */; };
 		2B92164D16F757A40072E44F /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92164C16F757A40072E44F /* Location.m */; };
 		2B98912716EB82D90057A226 /* TextValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912616EB82D90057A226 /* TextValue.m */; };
 		2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912916EB89C10057A226 /* NSDictionary+category.m */; };
@@ -129,6 +132,12 @@
 		2B70BEDD16F5F0E5002269AB /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		2B7ADCAA16E4E5DE00F8A182 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		2B7ADCAB16E4E5DE00F8A182 /* Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Log.m; sourceTree = "<group>"; };
+		2B8B71B0178C32E7005E460F /* UIImage+simple-image-processing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+simple-image-processing.h"; sourceTree = "<group>"; };
+		2B8B71B1178C32E7005E460F /* UIImage+simple-image-processing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UIImage+simple-image-processing.mm"; sourceTree = "<group>"; };
+		2B8B71C5178C35B6005E460F /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
+		2B8B71C6178C35B6005E460F /* Image.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Image.mm; sourceTree = "<group>"; };
+		2B8B7216178C46F8005E460F /* BatteryNormalDrawBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatteryNormalDrawBlock.h; sourceTree = "<group>"; };
+		2B8B7217178C46F8005E460F /* BatteryNormalDrawBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BatteryNormalDrawBlock.m; sourceTree = "<group>"; };
 		2B92164B16F757A40072E44F /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
 		2B92164C16F757A40072E44F /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
 		2B98912516EB82D90057A226 /* TextValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextValue.h; sourceTree = "<group>"; };
@@ -183,6 +192,8 @@
 				2B1C471717884D0400ED6D98 /* TimeDrawBlock.m */,
 				2B1C4719178851DC00ED6D98 /* DigitalNumDrawBlock.h */,
 				2B1C471A178851DC00ED6D98 /* DigitalNumDrawBlock.m */,
+				2B8B7216178C46F8005E460F /* BatteryNormalDrawBlock.h */,
+				2B8B7217178C46F8005E460F /* BatteryNormalDrawBlock.m */,
 				2B1C471F17885ECC00ED6D98 /* CarPanel1UIView.h */,
 				2B1C472017885ECC00ED6D98 /* CarPanel1UIView.m */,
 			);
@@ -244,6 +255,8 @@
 		2B3D573E17896A5100437464 /* Category */ = {
 			isa = PBXGroup;
 			children = (
+				2B8B71B0178C32E7005E460F /* UIImage+simple-image-processing.h */,
+				2B8B71B1178C32E7005E460F /* UIImage+simple-image-processing.mm */,
 				2B98912816EB89C10057A226 /* NSDictionary+category.h */,
 				2B98912916EB89C10057A226 /* NSDictionary+category.m */,
 				2B6CBFD716DFA6FD0095CBD4 /* NSString+category.h */,
@@ -292,6 +305,7 @@
 		2B6CBFA316DFA6D90095CBD4 /* NaviUtil */ = {
 			isa = PBXGroup;
 			children = (
+				2B8B71B4178C3587005E460F /* Third Party */,
 				2B3D573E17896A5100437464 /* Category */,
 				2B3D573C17896A0E00437464 /* System */,
 				2B3D573B178969F800437464 /* GeoNavigation */,
@@ -334,6 +348,15 @@
 				2B6CBFBB16DFA6DA0095CBD4 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		2B8B71B4178C3587005E460F /* Third Party */ = {
+			isa = PBXGroup;
+			children = (
+				2B8B71C5178C35B6005E460F /* Image.h */,
+				2B8B71C6178C35B6005E460F /* Image.mm */,
+			);
+			name = "Third Party";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -466,6 +489,9 @@
 				2B1C471817884D0400ED6D98 /* TimeDrawBlock.m in Sources */,
 				2B1C471B178851DC00ED6D98 /* DigitalNumDrawBlock.m in Sources */,
 				2B1C472117885ECC00ED6D98 /* CarPanel1UIView.m in Sources */,
+				2B8B71B2178C32E7005E460F /* UIImage+simple-image-processing.mm in Sources */,
+				2B8B71C7178C35B6005E460F /* Image.mm in Sources */,
+				2B8B7218178C46F8005E460F /* BatteryNormalDrawBlock.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

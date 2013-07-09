@@ -12,6 +12,7 @@
 @interface DrawBlock : NSObject
 {
     BOOL _flashVisible;
+    float _flashInterval;
     UIImage *_preDrawImage;
     UIImage *_imgToDraw;
     float _flashTimeout;
@@ -21,7 +22,8 @@
 @property (nonatomic) CGPoint origin;
 @property (nonatomic) CGSize size;
 @property (strong, nonatomic) NSMutableArray* drawBlocks;
-@property (nonatomic) int flashInterval;
+@property (nonatomic) float flashShowInterval;
+@property (nonatomic) float flashHideInterval;
 @property (nonatomic) BOOL visible;
 @property (strong, nonatomic) UIImage *image;
 @property (nonatomic) BOOL rotateInfinite;
@@ -36,4 +38,7 @@
 +(DrawBlock*) drawBlockWithImageName:(NSString*) name origin:(CGPoint) origin size:(CGSize) size;
 -(void) drawRect:(CGRect) rect;
 -(void) update;
+-(void) initSelf;
+-(void) enableFlash;
+-(void) disableFlash;
 @end
