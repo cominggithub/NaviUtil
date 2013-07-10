@@ -11,6 +11,8 @@
 #import "DigitalNumDrawBlock.h"
 #import "TimeDrawBlock.h"
 #import "BatteryNormalDrawBlock.h"
+#import "UIAnimation.h"
+#import "UIImage+category.h"
 
 #define FILE_DEBUG TRUE
 
@@ -29,6 +31,13 @@
     NSTimer *_redrawTimer;
     int _redrawInterval;
     
+
+    
+    CGSize _contentSize;
+    BOOL _isPreDraw;
+    dispatch_queue_t _backgroundQueue;
+    
+
 }
 
 
@@ -67,6 +76,39 @@
     return self;
 }
 
+
+-(void) initSelf
+{
+    _car_panel1_direction_panel_inner_circle = (UIImageView *) [self viewWithTag:1  ];
+    _car_panel1_direction_panel_outer_circle = (UIImageView *) [self viewWithTag:2  ];
+
+    self.backgroundColor = [UIColor blackColor];
+    self.color = [UIColor cyanColor];
+}
+
+
+-(void) setColor:(UIColor *)color
+{
+    _color = color;
+    if (nil != _car_panel1_direction_panel_inner_circle)
+    {
+        _car_panel1_direction_panel_inner_circle.image =
+            [_car_panel1_direction_panel_inner_circle.image imageTintedWithColor:_color];
+    }
+    
+    if (nil != _car_panel1_direction_panel_outer_circle)
+    {
+        _car_panel1_direction_panel_outer_circle.image =
+        [_car_panel1_direction_panel_outer_circle.image imageTintedWithColor:_color];
+    }
+    
+}
+-(void) start
+{
+    [UIAnimation runSpinAnimationOnView:_car_panel1_direction_panel_inner_circle duration:100 rotations:0.1 repeat:100];
+    [UIAnimation runSpinAnimationOnView:_car_panel1_direction_panel_outer_circle duration:100 rotations:-0.1 repeat:100];
+}
+#if 0
 -(void) initSelf
 {
 
@@ -117,20 +159,43 @@
     
     
     _redrawInterval = 0.5;
+    _preDrawImage = nil;
+    _backgroundQueue = dispatch_queue_create("pre-draw thread", NULL);
+    
+    _contentSize = CGSizeMake(480, 320);
+    
+    
+
 }
 
-- (void)drawRect:(CGRect)rect
+#endif
+- (void) preDrawRect
 {
-
-    [super drawRect:rect];
+    UIGraphicsBeginImageContext(_contentSize);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGRect preDrawRect = CGRectMake(0, 0, _contentSize.width, _contentSize.height);
     
     for(DrawBlock* db in _drawBlocks)
     {
-        [db drawRect:rect];
+        [db drawRect:preDrawRect context:context];
     }
+    
+    _preDrawImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
 
 }
 
+#if 0
+- (void)drawRect:(CGRect)rect
+{
+    NSLog(@"draw\n");
+    [super drawRect:rect];
+    [_preDrawImage drawInRect:rect];
+}
+
+#endif
+
+#if 0
 -(void) autoRedrawStart
 {
     logfn();
@@ -147,6 +212,34 @@
     {
         [_redrawTimer invalidate];
         _redrawTimer = nil;
+    }
+}
+
+-(void) startPreDraw
+{
+    _isPreDraw = TRUE;
+    logfn();
+#if 0
+    dispatch_async(_backgroundQueue, ^(void) {
+        [self preDrawThread];
+    });
+#endif
+}
+
+-(void) stopPreDraw
+{
+    logfn();
+    _isPreDraw = FALSE;
+}
+
+-(void) preDrawThread
+{
+    while (TRUE == _isPreDraw)
+    {
+    
+        [self preDrawRect];
+        NSLog(@"predraw\n");
+        usleep(50);
     }
 }
 
@@ -172,6 +265,7 @@
     }
 }
 
+#endif
 -(void) monitorBattery
 {
     [[UIDevice currentDevice] setBatteryMonitoringEnabled:YES];

@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface DrawBlock : NSObject
+@interface DrawBlock : UIView
 {
     BOOL _flashVisible;
     float _flashInterval;
@@ -37,6 +37,7 @@
 
 +(DrawBlock*) drawBlockWithImageName:(NSString*) name origin:(CGPoint) origin size:(CGSize) size;
 -(void) drawRect:(CGRect) rect;
+-(void) drawRect:(CGRect) rect context:(CGContextRef) context;
 -(void) update;
 -(void) initSelf;
 -(void) enableFlash;

@@ -76,7 +76,7 @@
     _image = [_image imageTintedWithColor:_color];
 }
 
--(void) drawRect:(CGRect) rect;
+-(void) drawRect:(CGRect) rect context:(CGContextRef) context
 {
     NSDate* start = [NSDate date];
     CGRect drawRect = CGRectMake(_origin.x + rect.origin.x,
@@ -85,24 +85,29 @@
                                  _size.height
                                  );
     
-//    mlogDebug(@"%@ rect: (%.0f, %.0f) (%.0f, %.0f)", _name, drawRect.origin.x, drawRect.origin.y, drawRect.size.width, drawRect.size.height);
+    //    mlogDebug(@"%@ rect: (%.0f, %.0f) (%.0f, %.0f)", _name, drawRect.origin.x, drawRect.origin.y, drawRect.size.width, drawRect.size.height);
     if (FALSE == [self isDrawable])
         return;
-
+    
     [self update];
     if (FALSE == _flashVisible)
     {
         mlogDebug(@"%@ flash invisible", _name);
         return;
     }
-
-
+    
+    
     [_imgToDraw drawInRect:drawRect];
     
     NSDate* end = [NSDate date];
-//    mlogDebug(@"%4.4f, %@ ", [end timeIntervalSinceDate:start], _name);
+    //    mlogDebug(@"%4.4f, %@ ", [end timeIntervalSinceDate:start], _name);
     
     return;
+}
+
+-(void) drawRect:(CGRect) rect;
+{
+    [self drawRect:rect context:UIGraphicsGetCurrentContext()];
 }
 
 -(BOOL) isDrawable

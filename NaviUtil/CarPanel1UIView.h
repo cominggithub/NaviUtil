@@ -11,8 +11,15 @@
 @interface CarPanel1UIView : UIView
 
 
+@property (strong, nonatomic) UIImage *preDrawImage;
+
+@property (strong, nonatomic) UIImageView* car_panel1_direction_panel_inner_circle;
+@property (strong, nonatomic) UIImageView* car_panel1_direction_panel_outer_circle;
+
+@property (strong, nonatomic) UIColor* color;
 -(void) autoRedrawStart;
 -(void) autoRedrawStop;
 -(void) update;
+-(void) start;
 
 @end
