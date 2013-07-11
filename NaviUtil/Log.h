@@ -29,11 +29,11 @@
 #define getObjectName(oo) #oo
 #define logClass(o) printf("%s: %s\n", getObjectName(o), (char*)class_getName([o class]))
 
-#define mlogAssertNotNil(o)      do{if(nil == o){mlogError(@"%s is nil", #o); return;}}while(0)
-#define mlogAssertNotNilR(o, r)     do{if(nil == o){mlogError(@"%s is nil", #o); return r;}}while(0)
+#define mlogAssertNotNil(o)      do{if(nil == o || NULL == o){mlogError(@"%s is nil", #o); return;}}while(0)
+#define mlogAssertNotNilR(o, r)     do{if(nil == o || NULL == o){mlogError(@"%s is nil", #o); return r;}}while(0)
 
-#define mlogAssertStrNotEmpty(o)      do{if(nil == o || [o length] < 1){mlogError(@"%s is nil or empty", #o); return;}}while(0)
-#define mlogAssertStrNotEmptyR(o, r)     do{if(nil == o || [o length] < 1){mlogError(@"%s is nil or empty", #o); return r;}}while(0)
+#define mlogAssertStrNotEmpty(o)      do{if(nil == o  || NULL == o || [o length] < 1){mlogError(@"%s is nil or empty", #o); return;}}while(0)
+#define mlogAssertStrNotEmptyR(o, r)     do{if(nil == o  || NULL == o || [o length] < 1){mlogError(@"%s is nil or empty", #o); return r;}}while(0)
 
 
 #define mlogAssertInRange(o, min, max)      do{if(min > o || max < o){mlogError(@"%s is out of range", #o); return;}}while(0)

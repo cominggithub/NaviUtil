@@ -14,5 +14,9 @@
 @property (nonatomic) BOOL isPaddingZero;
 @property (nonatomic) int value;
 
-+(DigitalNumDrawBlock*) digitalNumDrawBlockWithNumImagePrefix:(NSString*) numPrefix origin:(CGPoint) origin size:(CGSize) size;
+@property (strong, nonatomic) UIImage *num_0;
+@property (strong, nonatomic) UIImage *num_1;
+@property (strong, nonatomic) UIImage *num_2;
+
++(DigitalNumDrawBlock*) digitalNumDrawBlockWithNumImagePrefix:(NSString*) numPrefix;
 @end

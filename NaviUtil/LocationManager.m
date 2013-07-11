@@ -9,6 +9,7 @@
 #import "LocationManager.h"
 #import "SystemConfig.h"
 #import "SystemManager.h"
+#import "LocationSimulator.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
@@ -19,6 +20,7 @@ static NSMutableArray* _manualPlaces;
 static Place* _currentManualPlace;
 static Place* _currentPlace;
 static LocationManager *_locationManager;
+static LocationSimulator *_locationSimulator;
 
 static NSMutableArray* _delegates;
 static int _currentSpeed; /* meter/s */
@@ -28,10 +30,10 @@ static int _locationLostCount;
 static BOOL _hasLocation;
 static NSDate* _lastUpdateTime;
 static NSDate* _lastTriggerLocationUpdateTime;
-
+static int setLocationUpdateInterval; // in milliseconds
 @implementation LocationManager
 {
-
+    CLLocationManager *_locationManager;
 }
 
 
@@ -42,22 +44,32 @@ static NSDate* _lastTriggerLocationUpdateTime;
     self = [super init];
     if (self)
     {
-        [self startMonitorLocationChange];
+        [self initSelf];
     }
     
     return self;
 }
 
--(void)startMonitorLocationChange
+-(void) initSelf
 {
-    CLLocationManager *locationManager = [[CLLocationManager alloc] init];
-    locationManager.delegate=self;
-    locationManager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;
-    [locationManager startUpdatingLocation];
+    _locationManager = [[CLLocationManager alloc] init];
+    _locationManager.delegate=self;
+    _locationManager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;
+
 }
 
-- (void)locationManager:(CLLocationManager *)manager
-	 didUpdateLocations:(NSArray *)locations
+-(void)startMonitorLocationChange
+{
+    [_locationManager startUpdatingLocation];
+}
+
+-(void) stopMonitorLocationChange
+{
+    [_locationManager stopUpdatingLocation];
+}
+
+
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     [LocationManager addUpdatedCLLocations:locations];
 }
@@ -104,7 +116,9 @@ static NSDate* _lastTriggerLocationUpdateTime;
     
     
     
-    _locationManager = [[LocationManager alloc] init];
+    _locationManager    = [[LocationManager alloc] init];
+    _locationSimulator  = [[LocationSimulator alloc] init];
+    _locationSimulator.delegate = _locationManager;
     _delegates = [[NSMutableArray alloc] initWithCapacity:0];
 
     
@@ -113,6 +127,7 @@ static NSDate* _lastTriggerLocationUpdateTime;
 
 +(void) addUpdatedCLLocations:(NSArray *) clLocations
 {
+    logfn();
     int distance = 0;
     CLLocationCoordinate2D nextLocation = _currentCLLocationCoordinate2D;
     NSDate *updateTime = [NSDate date];
@@ -174,8 +189,11 @@ static NSDate* _lastTriggerLocationUpdateTime;
 +(BOOL) isLocationDifferenceReasonable:(CLLocationCoordinate2D) fromLocation To:(CLLocationCoordinate2D) toLocation
 {
     int distance = [GeoUtil getGeoDistanceFromLocation:fromLocation ToLocation:toLocation];
+    mlogDebug(@"from: %")
     if (distance > LOCATION_UPDATE_DISTANCE_THRESHOLD)
+    {
         return FALSE;
+    }
     
     return TRUE;
 }
@@ -209,6 +227,9 @@ static NSDate* _lastTriggerLocationUpdateTime;
 {
     NSDate *updateTime = [NSDate date];
     NSTimeInterval timeInterval = [updateTime timeIntervalSinceDate:_lastTriggerLocationUpdateTime];
+
+    logfn();
+    _lastTriggerLocationUpdateTime = updateTime;
     
     if ( SystemConfig.triggerLocationInterval > timeInterval)
         return;
@@ -216,7 +237,7 @@ static NSDate* _lastTriggerLocationUpdateTime;
 
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
-        if ([delegate respondsToSelector:@selector(locationUpdate::)])
+        if ([delegate respondsToSelector:@selector(locationUpdate:Speed:Distance:)])
         {
             [delegate locationUpdate:_currentCLLocationCoordinate2D
                                Speed:_currentSpeed
@@ -230,6 +251,7 @@ static NSDate* _lastTriggerLocationUpdateTime;
 
 +(void) triggerLostLocationUpdateNotify
 {
+    logfn();
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(lostLocationUpdate)])
@@ -243,6 +265,30 @@ static NSDate* _lastTriggerLocationUpdateTime;
 {
    
     return _currentCLLocationCoordinate2D;
+}
+
++(void) startMonitorLocation
+{
+    [_locationSimulator stop];
+    [_locationManager startMonitorLocationChange];
+
+}
+
++(void) stopMonitorLocation
+{
+    [_locationManager stopMonitorLocationChange];
+}
+
++(void) startLocationSimulation
+{
+    [_locationManager stopMonitorLocationChange];
+    [_locationSimulator start];
+}
+
++(void) stopLocationSimulation
+{
+    [_locationSimulator stop];
+    
 }
 
 @end

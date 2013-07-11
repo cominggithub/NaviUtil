@@ -11,20 +11,25 @@
 #import "LocationManager.h"
 #import "NSValue+category.h"
 
-
+typedef enum
+{
+    kLocationSimulator_Route,
+    kLocationSimulator_Line
+}LocationSimulator_Type;
 
 @interface LocationSimulator : NSObject
 {
-    NSTimer *timer;
+    NSTimer *_timer;
 
-    int nextLocationIndex;
-    CLLocation *currentLocation;
-    CLLocation *nextLocation;
+    int _nextLocationIndex;
+    CLLocation *_currentLocation;
+    CLLocation *_nextLocation;
 }
-@property (nonatomic, weak) id<LocationManagerDelegate> delegate;
+@property (nonatomic, weak) id<CLLocationManagerDelegate> delegate;
 @property (nonatomic) NSTimeInterval timeInterval;
 @property (nonatomic, strong) NSArray *locationPoints;
 @property (readonly) bool isStart;
+@property (nonatomic) LocationSimulator_Type type;
 
 
 -(CLLocationCoordinate2D) getNextLocation;

@@ -31,9 +31,16 @@
 +(void) setCurrentManualPlace:(Place*) p;
 +(Place*) currentPlace;
 +(void) addUpdatedCLLocations:(NSArray *) clLoctions;
++(void) addDelegate: (id<LocationManagerDelegate>) delegate;
 
++(void) startMonitorLocation;
++(void) stopMonitorLocation;
++(void) startLocationSimulation;
++(void) stopLocationSimulation;
++(void) setLocationUpdateInterval;
 
-- (void)locationManager:(CLLocationManager *)manager
-     didUpdateLocations:(NSArray *)locations;
+-(void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations;
+-(void) startMonitorLocationChange;
+-(void) stopMonitorLocationChange;
 
 @end

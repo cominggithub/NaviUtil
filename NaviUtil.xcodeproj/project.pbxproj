@@ -49,6 +49,7 @@
 		2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */; };
 		2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC61A96173E783C00990DA7 /* UIView+category.m */; };
 		2BDC6B9117859E9C003E61E9 /* UIImage+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDC6B9017859E9C003E61E9 /* UIImage+category.m */; };
+		2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE15360178ED92600C55363 /* UIImageView+category.m */; };
 		2BE3A81017046D92007621EC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A80F17046D92007621EC /* LocationManager.m */; };
 		2BE3A81317046DD5007621EC /* LocationSimulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A81217046DD5007621EC /* LocationSimulator.m */; };
 /* End PBXBuildFile section */
@@ -157,6 +158,8 @@
 		2BC61A96173E783C00990DA7 /* UIView+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+category.m"; sourceTree = "<group>"; };
 		2BDC6B8F17859E9C003E61E9 /* UIImage+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+category.h"; sourceTree = "<group>"; };
 		2BDC6B9017859E9C003E61E9 /* UIImage+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+category.m"; sourceTree = "<group>"; };
+		2BE1535F178ED92600C55363 /* UIImageView+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+category.h"; sourceTree = "<group>"; };
+		2BE15360178ED92600C55363 /* UIImageView+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+category.m"; sourceTree = "<group>"; };
 		2BE3A80E17046D92007621EC /* LocationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationManager.h; sourceTree = "<group>"; };
 		2BE3A80F17046D92007621EC /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		2BE3A81117046DD5007621EC /* LocationSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationSimulator.h; sourceTree = "<group>"; };
@@ -197,10 +200,10 @@
 				2B1C471A178851DC00ED6D98 /* DigitalNumDrawBlock.m */,
 				2B8B7216178C46F8005E460F /* BatteryNormalDrawBlock.h */,
 				2B8B7217178C46F8005E460F /* BatteryNormalDrawBlock.m */,
-				2B1C471F17885ECC00ED6D98 /* CarPanel1UIView.h */,
-				2B1C472017885ECC00ED6D98 /* CarPanel1UIView.m */,
 				2B6FCDC1178DA10F00DCFAAF /* UIAnimation.h */,
 				2B6FCDC2178DA10F00DCFAAF /* UIAnimation.m */,
+				2B1C471F17885ECC00ED6D98 /* CarPanel1UIView.h */,
+				2B1C472017885ECC00ED6D98 /* CarPanel1UIView.m */,
 			);
 			name = CarPanel;
 			sourceTree = "<group>";
@@ -274,6 +277,8 @@
 				2BC61A96173E783C00990DA7 /* UIView+category.m */,
 				2B18AA8F1748D19700277F52 /* UILabel+category.h */,
 				2B18AA901748D19700277F52 /* UILabel+category.m */,
+				2BE1535F178ED92600C55363 /* UIImageView+category.h */,
+				2BE15360178ED92600C55363 /* UIImageView+category.m */,
 			);
 			name = Category;
 			sourceTree = "<group>";
@@ -498,6 +503,7 @@
 				2B8B71C7178C35B6005E460F /* Image.mm in Sources */,
 				2B8B7218178C46F8005E460F /* BatteryNormalDrawBlock.m in Sources */,
 				2B6FCDC3178DA10F00DCFAAF /* UIAnimation.m in Sources */,
+				2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

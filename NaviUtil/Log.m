@@ -84,9 +84,13 @@ void _logOut(int level, const char* func_name, int lineNo, NSString* msg)
         logToConsole(outputStr);
     }
     
-    if (level == kLogCheckPoint || level == kLogInfo || level == kLogError)
+    if (level == kLogCheckPoint)
     {
         [TestFlight passCheckpoint:outputStr];
+    }
+    else if (level == kLogInfo || level == kLogError)
+    {
+        TFLog(@"%@", outputStr);
     }
 }
 

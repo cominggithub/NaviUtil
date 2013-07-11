@@ -14,32 +14,28 @@
 
 @implementation DigitalNumDrawBlock
 {
-    UIImage *_num0;
-    UIImage *_num1;
-    UIImage *_num2;
-    UIImage *_num3;
-    UIImage *_num4;
-    UIImage *_num5;
-    UIImage *_num6;
-    UIImage *_num7;
-    UIImage *_num8;
-    UIImage *_num9;
+    UIImage *_image_num0;
+    UIImage *_image_num1;
+    UIImage *_image_num2;
+    UIImage *_image_num3;
+    UIImage *_image_num4;
+    UIImage *_image_num5;
+    UIImage *_image_num6;
+    UIImage *_image_num7;
+    UIImage *_image_num8;
+    UIImage *_image_num9;
     
-    UIImage *_image1ToDraw;
-    UIImage *_image2ToDraw;
-    UIImage *_image3ToDraw;
+
     
     CGSize contentSize;
     
     float _xOffset;
 }
 
-+(DigitalNumDrawBlock*) digitalNumDrawBlockWithNumImagePrefix:(NSString*) numPrefix origin:(CGPoint) origin size:(CGSize) size;
++(DigitalNumDrawBlock*) digitalNumDrawBlockWithNumImagePrefix:(NSString*) numPrefix;
 {
     DigitalNumDrawBlock *digitalNumDrawBlock    = [[DigitalNumDrawBlock alloc] init];
     
-    digitalNumDrawBlock.origin                  = origin;
-    digitalNumDrawBlock.size                    = size;
     digitalNumDrawBlock.numImagePrefix          = numPrefix;
     return digitalNumDrawBlock;
 }
@@ -61,33 +57,28 @@
 
     _numImagePrefix = value;
 
-    _num0 = [UIImage imageNamed:[NSString stringWithFormat:@"%@0.png", _numImagePrefix] color:self.color];
-    _num1 = [UIImage imageNamed:[NSString stringWithFormat:@"%@1.png", _numImagePrefix] color:self.color];
-    _num2 = [UIImage imageNamed:[NSString stringWithFormat:@"%@2.png", _numImagePrefix] color:self.color];
-    _num3 = [UIImage imageNamed:[NSString stringWithFormat:@"%@3.png", _numImagePrefix] color:self.color];
-    _num4 = [UIImage imageNamed:[NSString stringWithFormat:@"%@4.png", _numImagePrefix] color:self.color];
-    _num5 = [UIImage imageNamed:[NSString stringWithFormat:@"%@5.png", _numImagePrefix] color:self.color];
-    _num6 = [UIImage imageNamed:[NSString stringWithFormat:@"%@6.png", _numImagePrefix] color:self.color];
-    _num7 = [UIImage imageNamed:[NSString stringWithFormat:@"%@7.png", _numImagePrefix] color:self.color];
-    _num8 = [UIImage imageNamed:[NSString stringWithFormat:@"%@8.png", _numImagePrefix] color:self.color];
-    _num9 = [UIImage imageNamed:[NSString stringWithFormat:@"%@9.png", _numImagePrefix] color:self.color];
+    _image_num0 = [UIImage imageNamed:[NSString stringWithFormat:@"%@0", _numImagePrefix] color:self.color];
+    _image_num1 = [UIImage imageNamed:[NSString stringWithFormat:@"%@1", _numImagePrefix] color:self.color];
+    _image_num2 = [UIImage imageNamed:[NSString stringWithFormat:@"%@2", _numImagePrefix] color:self.color];
+    _image_num3 = [UIImage imageNamed:[NSString stringWithFormat:@"%@3", _numImagePrefix] color:self.color];
+    _image_num4 = [UIImage imageNamed:[NSString stringWithFormat:@"%@4", _numImagePrefix] color:self.color];
+    _image_num5 = [UIImage imageNamed:[NSString stringWithFormat:@"%@5", _numImagePrefix] color:self.color];
+    _image_num6 = [UIImage imageNamed:[NSString stringWithFormat:@"%@6", _numImagePrefix] color:self.color];
+    _image_num7 = [UIImage imageNamed:[NSString stringWithFormat:@"%@7", _numImagePrefix] color:self.color];
+    _image_num8 = [UIImage imageNamed:[NSString stringWithFormat:@"%@8", _numImagePrefix] color:self.color];
+    _image_num9 = [UIImage imageNamed:[NSString stringWithFormat:@"%@9", _numImagePrefix] color:self.color];
 
-    mlogAssertNotNil(_num0);
-    mlogAssertNotNil(_num1);
-    mlogAssertNotNil(_num2);
-    mlogAssertNotNil(_num3);
-    mlogAssertNotNil(_num4);
-    mlogAssertNotNil(_num5);
-    mlogAssertNotNil(_num6);
-    mlogAssertNotNil(_num7);
-    mlogAssertNotNil(_num8);
-    mlogAssertNotNil(_num9);
+    mlogAssertNotNil(_image_num0);
+    mlogAssertNotNil(_image_num1);
+    mlogAssertNotNil(_image_num2);
+    mlogAssertNotNil(_image_num3);
+    mlogAssertNotNil(_image_num4);
+    mlogAssertNotNil(_image_num5);
+    mlogAssertNotNil(_image_num6);
+    mlogAssertNotNil(_image_num7);
+    mlogAssertNotNil(_image_num8);
+    mlogAssertNotNil(_image_num9);
     
-    _xOffset = _num0.size.width;
-    
-    contentSize = CGSizeMake(_xOffset*3, _num0.size.height);
-    
-
 }
 
 
@@ -96,32 +87,32 @@
     switch(number)
     {
         case 0:
-            return _num0;
+            return _image_num0;
         case 1:
-            return _num1;
+            return _image_num1;
         case 2:
-            return _num2;
+            return _image_num2;
         case 3:
-            return _num3;
+            return _image_num3;
         case 4:
-            return _num4;
+            return _image_num4;
         case 5:
-            return _num5;
+            return _image_num5;
         case 6:
-            return _num6;
+            return _image_num6;
         case 7:
-            return _num7;
+            return _image_num7;
         case 8:
-            return _num8;
+            return _image_num8;
         case 9:
-            return _num9;
+            return _image_num9;
 
     }
 
     return nil;
 }
 
--(void) updateDigitNumImageToDraw
+-(void) updateDigitNumImage
 {
     int number;
     int tmpValue;
@@ -134,7 +125,7 @@
 
     if (number > 0 || (number == 0 && TRUE == _isPaddingZero))
     {
-        _image3ToDraw = [self getImageByNumber:number];
+        _num_2 = [[self getImageByNumber:number] imageTintedWithColor:self.color];
     }
     
     tmpValue = self.value - number * 100;
@@ -142,46 +133,26 @@
 
     if (number > 0 || (number == 0 && TRUE == _isPaddingZero))
     {
-        _image2ToDraw = [self getImageByNumber:number];
+        _num_1 = [[self getImageByNumber:number] imageTintedWithColor:self.color];
     }
 
     tmpValue = tmpValue - number * 10;
     number = tmpValue;
     
-    _image1ToDraw = [self getImageByNumber:number];
+    _num_0 = [[self getImageByNumber:number] imageTintedWithColor:self.color];
     
-
 }
 
--(BOOL) isDrawable
+-(void) setValue:(int)value
 {
-    return self.visible;
+    _value = value;
+    [self updateDigitNumImage];
+    
 }
 
--(void) preDrawImage
+-(void) setColor:(UIColor *)color
 {
-    [self updateDigitNumImageToDraw];
-
-    UIGraphicsBeginImageContext(contentSize);
-    CGContextRef bitmap = UIGraphicsGetCurrentContext();
-
-
-    CGContextTranslateCTM(bitmap, 0, _num0.size.height);
-    
-    CGContextScaleCTM(bitmap, 1.0, -1.0);
-    
-    if (nil != _image3ToDraw)
-        CGContextDrawImage(bitmap, CGRectMake(0, 0, _image3ToDraw.size.width, _image3ToDraw.size.height), _image3ToDraw.CGImage);
-
-    if (nil != _image2ToDraw)
-        CGContextDrawImage(bitmap, CGRectMake(_xOffset, 0, _image2ToDraw.size.width, _image2ToDraw.size.height), _image2ToDraw.CGImage);
-    
-    if (nil != _image1ToDraw)
-        CGContextDrawImage(bitmap, CGRectMake(_xOffset*2, 0, _image1ToDraw.size.width, _image1ToDraw.size.height), _image1ToDraw.CGImage);
-
-    _preDrawImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
+    super.color = color;
+    [self updateDigitNumImage];
 }
-
 @end

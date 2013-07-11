@@ -12,7 +12,10 @@
 #include "Log.h"
 
 @implementation LocationSimulator
-
+{
+    CLLocationCoordinate2D _lastLocationCoordinate2D;
+    float _locationCoordinate2DChangeStep;
+}
 @synthesize delegate=_delegate;
 @synthesize timeInterval=_timeInterval;
 
@@ -22,48 +25,65 @@
     self = [super init];
     if(self)
     {
-        self.timeInterval   = 1;
-        nextLocationIndex   = 0;
-        _isStart        = false;
+        _timeInterval                   = 0.1;
+        _nextLocationIndex              = 0;
+        _isStart                        = false;
+        _type                           = kLocationSimulator_Line;
+        _lastLocationCoordinate2D       = CLLocationCoordinate2DMake(0, 0);
+        _locationCoordinate2DChangeStep = 0.00005;
+        
     }
     return self;
 }
 
--(CLLocationCoordinate2D) getNextLocation
+
+-(CLLocationCoordinate2D) getNextLineLocation
 {
-    int i = nextLocationIndex;
+    double lngOffset = (arc4random() % 30)/10000.0;
+    
+    _lastLocationCoordinate2D.longitude += _locationCoordinate2DChangeStep + lngOffset;
+    
+    return _lastLocationCoordinate2D;
+    
+}
+
+-(CLLocationCoordinate2D) getNextRouteLocation
+{
+    int i = _nextLocationIndex;
     double lngOffset = [self GetRandomDouble];
     double latOffset = [self GetRandomDouble];
 
     CLLocationCoordinate2D tmpLocationCoordinate2D = CLLocationCoordinate2DMake(0, 0);
-    if(nextLocationIndex == 0)
+    if(_nextLocationIndex == 0)
     {
         tmpLocationCoordinate2D = [[self.locationPoints objectAtIndex:0] CLLocationCoordinate2DValue];
-        currentLocation = [[CLLocation alloc] initWithLatitude:tmpLocationCoordinate2D.latitude + latOffset
+        _currentLocation = [[CLLocation alloc] initWithLatitude:tmpLocationCoordinate2D.latitude + latOffset
                                                      longitude:tmpLocationCoordinate2D.longitude + lngOffset];
-        nextLocationIndex++;
+        _nextLocationIndex++;
     }
-    else if(nextLocationIndex < self.locationPoints.count)
+    else if(_nextLocationIndex < self.locationPoints.count)
     {
-        for(i = nextLocationIndex; i<self.locationPoints.count; i++)
+        for(i = _nextLocationIndex; i<self.locationPoints.count; i++)
         {
             tmpLocationCoordinate2D = [[self.locationPoints objectAtIndex:i] CLLocationCoordinate2DValue];
-            nextLocation = [[CLLocation alloc] initWithLatitude:tmpLocationCoordinate2D.latitude + latOffset
+            _nextLocation = [[CLLocation alloc] initWithLatitude:tmpLocationCoordinate2D.latitude + latOffset
                                                       longitude:tmpLocationCoordinate2D.longitude + lngOffset];
-            if([nextLocation distanceFromLocation:currentLocation] > 10.0)
+            if([_nextLocation distanceFromLocation:_currentLocation] > 10.0)
                 break;
         }
-        currentLocation = nextLocation;
-        nextLocationIndex = i+1;
+        _currentLocation = _nextLocation;
+        _nextLocationIndex = i+1;
     }
     
     mlogInfo(@"%.7f, %.7f +- (%.7f, %.7f)\n",
-             currentLocation.coordinate.latitude,
-             currentLocation.coordinate.longitude,
+             _currentLocation.coordinate.latitude,
+             _currentLocation.coordinate.longitude,
              latOffset,
              lngOffset
              );
-    return currentLocation.coordinate;
+    
+    _lastLocationCoordinate2D = _currentLocation.coordinate;
+    return _currentLocation.coordinate;
 }
 
 -(double) GetRandomDouble
@@ -75,48 +95,63 @@
 
 -(void) updateLocation
 {
-    CLLocationCoordinate2D locationCoordinate2D = [self getNextLocation];
+    CLLocationCoordinate2D locationCoordinate2D;
+    switch (self.type)
+    {
+        case kLocationSimulator_Line:
+            locationCoordinate2D = [self getNextLineLocation];
+            break;
+        case kLocationSimulator_Route:
+            locationCoordinate2D = [self getNextRouteLocation];
+            break;
+            
+    }
+    CLLocation* location = [[CLLocation alloc] initWithCoordinate:locationCoordinate2D altitude:0.0 horizontalAccuracy:1.0 verticalAccuracy:1.0 timestamp:[NSDate date]];
+
     if (self.delegate)
     {
-        if([self.delegate respondsToSelector:@selector(locationUpdate::)])
+        if([self.delegate respondsToSelector:@selector(locationManager:didUpdateLocations:)])
         {
-            [self.delegate locationUpdate:locationCoordinate2D
-                                    Speed:0
-                                 Distance:0
-             ];
-
-
-            
+            [self.delegate locationManager:nil
+                        didUpdateLocations:[NSArray arrayWithObject:location]];
         }
     }
+    
+
 }
 
 -(void) timeout:(NSTimer *)theTimer
 {
-    if (nextLocationIndex >= self.locationPoints.count)
+    if (_type == kLocationSimulator_Route && _nextLocationIndex >= self.locationPoints.count)
     {
         [self stop];
     }
     else
     {
+
        [self updateLocation];
     }
 }
 
 -(void) start
 {
+
     if(true == _isStart)
     {
         [self stop];
     }
-    timer   = [NSTimer scheduledTimerWithTimeInterval:self.timeInterval target:self selector:@selector(timeout:) userInfo:nil repeats:YES];
+    _timer   = [NSTimer scheduledTimerWithTimeInterval:self.timeInterval target:self selector:@selector(timeout:) userInfo:nil repeats:YES];
     _isStart = true;
 }
 
 -(void) stop
 {
-    [timer invalidate];
-    _isStart = false;
+    if (nil != _timer)
+    {
+        [_timer invalidate];
+        _timer      = nil;
+    }
+    _isStart    = false;
 }
 
 @end

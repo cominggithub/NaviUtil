@@ -13,30 +13,21 @@
 #import "BatteryNormalDrawBlock.h"
 #import "UIAnimation.h"
 #import "UIImage+category.h"
+#import "UIImageView+category.h"
 
 #define FILE_DEBUG TRUE
 
 #include "Log.h"
 @implementation CarPanel1UIView
 {
-    NSMutableArray* _drawBlocks;
-    DrawBlock *_compassOutterCircyle;
-    DrawBlock *_compassInnerCircyle;
-    BatteryNormalDrawBlock *_battery;
-    DrawBlock *_signal;
-    DrawBlock *_gps;
-    
-    DigitalNumDrawBlock *_speedNumDigitalNumDrawBlock;
-    TimeDrawBlock *_currentTime;
+
     NSTimer *_redrawTimer;
     int _redrawInterval;
-    
-
     
     CGSize _contentSize;
     BOOL _isPreDraw;
     dispatch_queue_t _backgroundQueue;
-    
+    DigitalNumDrawBlock* _speedNum;
 
 }
 
@@ -79,34 +70,48 @@
 
 -(void) initSelf
 {
-    _car_panel1_direction_panel_inner_circle = (UIImageView *) [self viewWithTag:1  ];
-    _car_panel1_direction_panel_outer_circle = (UIImageView *) [self viewWithTag:2  ];
-
     self.backgroundColor = [UIColor blackColor];
-    self.color = [UIColor cyanColor];
+    
+    _speedNum = [DigitalNumDrawBlock digitalNumDrawBlockWithNumImagePrefix:@"car_panel_1_num_"];
+    _speedNum.isPaddingZero = TRUE;
+    
+    _speed_num_0                    = (UIImageView *) [self viewWithTag:100];
+    _speed_num_1                    = (UIImageView *) [self viewWithTag:101];
+    _speed_num_2                    = (UIImageView *) [self viewWithTag:102];
+    
+    _direction_panel_outer_circle   = (UIImageView *) [self viewWithTag:200];
+    _direction_panel_inner_circle   = (UIImageView *) [self viewWithTag:201];
+    
+    _battery                        = (UIImageView *) [self viewWithTag:300];
+    _signal                         = (UIImageView *) [self viewWithTag:301];
+    _gps                            = (UIImageView *) [self viewWithTag:302];
+
+    self.color                      = [UIColor cyanColor];
+    [LocationManager addDelegate:self];
+
 }
 
 
 -(void) setColor:(UIColor *)color
 {
     _color = color;
-    if (nil != _car_panel1_direction_panel_inner_circle)
-    {
-        _car_panel1_direction_panel_inner_circle.image =
-            [_car_panel1_direction_panel_inner_circle.image imageTintedWithColor:_color];
-    }
-    
-    if (nil != _car_panel1_direction_panel_outer_circle)
-    {
-        _car_panel1_direction_panel_outer_circle.image =
-        [_car_panel1_direction_panel_outer_circle.image imageTintedWithColor:_color];
-    }
-    
+
+    _speedNum.color = _color;
+    [self updateSpeed:_speedNum.value];
+  
+    [_speed_num_2 setImageTintColor:_color];
+    [_direction_panel_inner_circle setImageTintColor:_color];
+    [_direction_panel_outer_circle setImageTintColor:_color];
+    [_battery setImageTintColor:_color];
+    [_signal setImageTintColor:_color];
+    [_gps setImageTintColor:_color];
+
 }
+
 -(void) start
 {
-    [UIAnimation runSpinAnimationOnView:_car_panel1_direction_panel_inner_circle duration:100 rotations:0.1 repeat:100];
-    [UIAnimation runSpinAnimationOnView:_car_panel1_direction_panel_outer_circle duration:100 rotations:-0.1 repeat:100];
+    [UIAnimation runSpinAnimationOnView:_direction_panel_inner_circle duration:100 rotations:0.1 repeat:100];
+    [UIAnimation runSpinAnimationOnView:_direction_panel_outer_circle duration:100 rotations:-0.1 repeat:100];
 }
 #if 0
 -(void) initSelf
@@ -169,21 +174,7 @@
 }
 
 #endif
-- (void) preDrawRect
-{
-    UIGraphicsBeginImageContext(_contentSize);
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    CGRect preDrawRect = CGRectMake(0, 0, _contentSize.width, _contentSize.height);
-    
-    for(DrawBlock* db in _drawBlocks)
-    {
-        [db drawRect:preDrawRect context:context];
-    }
-    
-    _preDrawImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
 
-}
 
 #if 0
 - (void)drawRect:(CGRect)rect
@@ -278,7 +269,26 @@
 
 - (void)batteryLevelUpdate:(NSNotification *)notification
 {
-    _battery.life = [[UIDevice currentDevice] batteryLevel];
+
+}
+
+-(void) updateSpeed:(int) value
+{
+    _speedNum.value = value;
+    _speed_num_0.image = _speedNum.num_0;
+    _speed_num_1.image = _speedNum.num_1;
+    _speed_num_2.image = _speedNum.num_2;
+    
+}
+
+-(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int) speed Distance:(int) distance
+{
+    [self updateSpeed:speed];
+}
+
+-(void) lostLocationUpdate
+{
+    
 }
 
 @end
