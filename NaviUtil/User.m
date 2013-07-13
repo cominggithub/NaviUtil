@@ -12,6 +12,17 @@
 #define FILE_DEBUG FALSE
 #include "Log.h"
 
+#define USERJSON_USER @"Usuer"
+#define USERJSON_NAME @"Name"
+#define USERJSON_EMAIL @"Email"
+#define USERJSON_HOMES @"Homes"
+#define USERJSON_OFFICES @"Offices"
+#define USERJSON_FAVORS @"Favors"
+#define USERJSON_SEARCHED_PLACE_TEXT @"SearchedPlaceText"
+
+#define USERJONS_SEARCHED_PLACE_TEXT_MAX 20
+
+
 @implementation User
 
 static NSString*        _name;
@@ -61,7 +72,7 @@ static NSMutableArray*  _searchedPlaces;
     return _searchedPlaces;
 }
 
-+(NSString*) getSearchPlaceTextByIndex:(int) index
++(NSString*) getSearchedPlaceTextByIndex:(int) index
 {
     if(index < _searchedPlaceText.count)
     {
@@ -111,6 +122,18 @@ static NSMutableArray*  _searchedPlaces;
     return nil;
 }
 
+/* Mode 1: kSectionMode_Home_Office_Favor_Searched
+      home
+      office
+      favor
+      searched place
+   Mode 2:
+      home
+      office
+      favor
+      searched place text
+ */
+
 +(int) getSectionCount:(SectionMode) sectionMode
 {
     int sectionCount = 0;
@@ -126,11 +149,13 @@ static NSMutableArray*  _searchedPlaces;
     
     if (kSectionMode_Home_Office_Favor_Searched == sectionMode)
     {
+        // for searched places
         if (_searchedPlaces.count > 0)
             sectionCount++;
     }
     else
     {
+        // for searched places text
         if (_searchedPlaceText.count > 0)
             sectionCount++;
     }
@@ -142,10 +167,10 @@ static NSMutableArray*  _searchedPlaces;
 
 
 
-+(int) getPlaceCountBySectionMode:(SectionMode) sectionMode Section:(int) section
++(int) getPlaceCountBySectionMode:(SectionMode) sectionMode section:(int) section
 {
     int placeType;
-    placeType = [self translatSectionIndexIntoPlaceType:sectionMode Section:section];
+    placeType = [self translatSectionIndexIntoPlaceType:sectionMode section:section];
 
     switch(placeType)
     {
@@ -161,13 +186,14 @@ static NSMutableArray*  _searchedPlaces;
             return _searchedPlaceText.count;
     }
     
+    mlogError(@"unknown place type %d at SectionMode:%d section:%d\n", placeType, sectionMode, section);
     return 0;
 }
 
-+(Place*) getPlaceBySectionMode:(SectionMode) sectionMode Section:(int) section Index:(int) index
++(Place*) getPlaceBySectionMode:(SectionMode) sectionMode section:(int) section index:(int) index
 {
     int placeType;
-    placeType = [self translatSectionIndexIntoPlaceType:sectionMode Section:section];
+    placeType = [self translatSectionIndexIntoPlaceType:sectionMode section:section];
     
     switch(placeType)
     {
@@ -183,11 +209,12 @@ static NSMutableArray*  _searchedPlaces;
         {
             Place *p = [[Place alloc] init];
             p.placeType = kPlaceType_SearchedPlaceText;
-            p.name = [NSString stringWithString:[self getSearchPlaceTextByIndex:index]];
+            p.name = [NSString stringWithString:[self getSearchedPlaceTextByIndex:index]];
             return p;
         }
     }
     
+    mlogError(@"unknown place type %d at SectionMode:%d section:%d\n", placeType, sectionMode, section);
     return nil;
 }
 
@@ -227,43 +254,58 @@ static NSMutableArray*  _searchedPlaces;
 +(void) addSearchedPlaceText:(NSString*) placeText
 {
     int i=0;
-    
+    NSString* newPlaceText;
+
     mlogAssertStrNotEmpty(placeText);
     
-    NSString* newPlace = [NSString stringWithString:placeText];
+    if (_searchedPlaceText.count >= USERJONS_SEARCHED_PLACE_TEXT_MAX)
+    {
+        NSIndexSet *range = [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(0, USERJONS_SEARCHED_PLACE_TEXT_MAX-1)];
+        _searchedPlaceText = [NSMutableArray arrayWithArray:[_searchedPlaceText objectsAtIndexes:range]];
+    }
+    
+    newPlaceText = [NSString stringWithString:placeText];
     for(i=0; i<_searchedPlaceText.count; i++)
     {
-        if ([placeText isEqualToString:[_searchedPlaceText objectAtIndex:i]])
+        if ([newPlaceText isEqualToString:[_searchedPlaceText objectAtIndex:i]])
         {
             [_searchedPlaceText removeObjectAtIndex:i];
             i--;
         }
     }
     
-    [_searchedPlaceText insertObject:newPlace atIndex:0];
+    [_searchedPlaceText insertObject:newPlaceText atIndex:0];
     
 }
 
-+(void) addPlaceBySectionMode:(SectionMode) sectionMode Section:(int) section Place:(Place*) p
++(void) addPlaceBySectionMode:(SectionMode) sectionMode section:(int) section place:(Place*) p
 {
     int placeType;
     
     mlogAssertNotNil(p);
     
-    placeType = [self translatSectionIndexIntoPlaceType:sectionMode Section:section];
+    placeType = [self translatSectionIndexIntoPlaceType:sectionMode section:section];
     
     switch(placeType)
     {
         case kPlaceType_Home:
             [self addHomePlace:p];
+            break;
         case kPlaceType_Office:
             [self addOfficePlace:p];
+            break;
         case kPlaceType_Favor:
             [self addFavorPlace:p];
+            break;
         case kPlaceType_SearchedPlace:
             [self addSearchedPlace:p];
+            break;
         case kPlaceType_SearchedPlaceText:
             [self addSearchedPlaceText:p.name];
+            break;
+        default:
+            mlogError(@"unknown place type:%d, sectionMode:%d, Section: %d\n", placeType, sectionMode, section);
+            break;
     }
 }
 
@@ -288,15 +330,23 @@ static NSMutableArray*  _searchedPlaces;
 
 }
 
-+(void) setPlaceSearchResult:(NSArray*) placeSearchResult
++(void) addPlaceSearchResult:(NSArray*) placeSearchResult
 {
     mlogAssertNotNil(placeSearchResult);
-    _searchedPlaces = [NSMutableArray arrayWithArray: placeSearchResult];
+    if (placeSearchResult.count > 0)
+    {
+        [_searchedPlaces addObjectsFromArray:placeSearchResult];
+    }
 }
 
-+(int) translatSectionIndexIntoPlaceType:(SectionMode) sectionMode Section:(int) section
++(int) translatSectionIndexIntoPlaceType:(SectionMode) sectionMode section:(int) section
 {
-
+    if (section < 0)
+    {
+        mlogError(@"unkonwn place type, sectionMode: %d, section: %d\n");
+        return kPlaceRouteType_None;
+    }
+    
     if (kSectionMode_Home == sectionMode)
         return kPlaceType_Home;
     
@@ -305,34 +355,32 @@ static NSMutableArray*  _searchedPlaces;
     
     if (kSectionMode_Favor == sectionMode)
         return kPlaceType_Favor;
-    
-    if (section < 0)
-        return kPlaceRouteType_None;
 
-    if (_homePlaces.count > 0 && --section == -1)
+    if (_homePlaces.count > 0 && section-- == 0)
         return kPlaceType_Home;
     
-    if (_officePlaces.count > 0 && --section == -1)
+    if (_officePlaces.count > 0 && section-- == 0)
         return kPlaceType_Office;
     
-    if (_favorPlaces.count > 0 && --section == -1)
+    if (_favorPlaces.count > 0 && section-- == 0)
         return kPlaceType_Favor;
     
     if (kSectionMode_Home_Office_Favor_Searched == sectionMode)
     {
-        if (_searchedPlaces.count > 0 && --section == -1)
+        if (_searchedPlaces.count > 0 && section-- == 0)
             return kPlaceType_SearchedPlace;
     }
     else
     {
-        if (_searchedPlaceText.count > 0 && --section == -1)
+        if (_searchedPlaceText.count > 0 && section-- == 0)
             return kPlaceType_SearchedPlace;
     }
     
+    mlogError(@"unkonwn place type, sectionMode: %d, section: %d\n");
     return kPlaceType_None;
 }
 
-+(void) updateHomePlaceAtIndex:(int) index Location:(Place*) place
++(void) updateHomePlaceAtIndex:(int) index location:(Place*) place
 {
     mlogAssertNotNil(place);
     mlogAssertInRange(index, 0, _homePlaces.count-1);
@@ -342,7 +390,7 @@ static NSMutableArray*  _searchedPlaces;
 
 }
 
-+(void) updateOfficeLocationAtIndex:(int) index Location:(Place*) place
++(void) updateOfficeLocationAtIndex:(int) index location:(Place*) place
 {
     mlogAssertNotNil(place);
     mlogAssertInRange(index, 0, _officePlaces.count-1);
@@ -352,7 +400,7 @@ static NSMutableArray*  _searchedPlaces;
     
 }
 
-+(void) updateFavorLocationAtIndex:(int) index Location:(Place*) place
++(void) updateFavorLocationAtIndex:(int) index location:(Place*) place
 {
     mlogAssertNotNil(place);
     mlogAssertInRange(index, 0, _favorPlaces.count-1);
@@ -372,7 +420,7 @@ static NSMutableArray*  _searchedPlaces;
         if ([place isEqual:[_homePlaces objectAtIndex:i]])
         {
             [_homePlaces removeObjectAtIndex:i];
-            i--;
+            break;
         }
     }
 }
@@ -388,7 +436,7 @@ static NSMutableArray*  _searchedPlaces;
         if ([place isEqual:[_officePlaces objectAtIndex:i]])
         {
             [_officePlaces removeObjectAtIndex:i];
-            i--;
+            break;
         }
     }
 }
@@ -404,22 +452,23 @@ static NSMutableArray*  _searchedPlaces;
         if ([place isEqualToString:[_searchedPlaceText objectAtIndex:i]])
         {
             [_searchedPlaceText removeObjectAtIndex:i];
-            i--;
+            break;
         }
     }
 }
 
 +(void) init
 {
-    mlogCheckPoint(@"User Init");
+    mlogInfo(@"User Init");
     if(false == [User parseJson:[SystemManager userFilePath]])
     {
+        mlogInfo(@"Create new user profile");
         Place *p                = [[Place alloc] init];
         _name                   = @"Coming";
         _email                  = @"misscoming@gmail.com";
-        _homePlaces          = [[NSMutableArray alloc] initWithCapacity:0];
-        _officePlaces        = [[NSMutableArray alloc] initWithCapacity:0];
-        _favorPlaces         = [[NSMutableArray alloc] initWithCapacity:0];
+        _homePlaces             = [[NSMutableArray alloc] initWithCapacity:0];
+        _officePlaces           = [[NSMutableArray alloc] initWithCapacity:0];
+        _favorPlaces            = [[NSMutableArray alloc] initWithCapacity:0];
         _searchedPlaceText      = [[NSMutableArray alloc] initWithCapacity:0];
 
         p               = [[Place alloc] init];
@@ -460,59 +509,84 @@ static NSMutableArray*  _searchedPlaces;
     NSData *data;
     NSArray *tmpArray;
     
+    mlogInfo(@"Parse user.json %@", fileName);
+    
     @try
     {
         data = [[NSFileManager defaultManager] contentsAtPath:fileName];
+
         if(nil == data)
+        {
+            mlogInfo(@"cannot open: %@", fileName);
             return false;
+        }
+        
         root = [NSJSONSerialization
                 JSONObjectWithData:data //1
                 options:kNilOptions
                 error:&error];
         
         if(nil == root)
+        {
+            mlogError(@"cannot get root of %@", fileName);
             return false;
+        }
         
-        user = [root objectForKey:@"User"];
+        user = [root objectForKey:USERJSON_USER];
         
         if(nil == user)
+        {
+            mlogError(@"cannot get user of %@", fileName);
             return false;
+        }
         
-        _name            = [user objectForKey:@"Name"];
-        _email           = [user objectForKey:@"Email"];
-        _searchedPlaceText  = [NSMutableArray arrayWithArray:[user objectForKey:@"SearchedPlaces"]];
+        _name               = [user objectForKey:USERJSON_NAME];
+        _email              = [user objectForKey:USERJSON_EMAIL];
+        _searchedPlaceText  = [NSMutableArray arrayWithArray:[user objectForKey:USERJSON_SEARCHED_PLACE_TEXT]];
         
-        _homePlaces      = [[NSMutableArray alloc] initWithCapacity:0];
-        _officePlaces    = [[NSMutableArray alloc] initWithCapacity:0];
-        _favorPlaces     = [[NSMutableArray alloc] initWithCapacity:0];
+        _homePlaces         = [[NSMutableArray alloc] initWithCapacity:0];
+        _officePlaces       = [[NSMutableArray alloc] initWithCapacity:0];
+        _favorPlaces        = [[NSMutableArray alloc] initWithCapacity:0];
         
+        if (nil == _name)
+        {
+            _name = @"";
+        }
         
-        tmpArray = [NSMutableArray arrayWithArray:[user objectForKey:@"Homes"]];
+        if (nil == _email)
+        {
+            _email = @"";
+        }
+        
+        tmpArray = [NSMutableArray arrayWithArray:[user objectForKey:USERJSON_HOMES]];
         for(NSDictionary *d in tmpArray)
         {
             Place* p = [Place parseDictionary:d];
             [self addHomePlace:p];
+
         }
         
-        tmpArray     = [NSMutableArray arrayWithArray:[user objectForKey:@"Offices"]];
+        tmpArray     = [NSMutableArray arrayWithArray:[user objectForKey:USERJSON_OFFICES]];
         for(NSDictionary *d in tmpArray)
         {
             Place* p = [Place parseDictionary:d];
             [self addOfficePlace:p];
+
         }
         
-        tmpArray     = [NSMutableArray arrayWithArray:[user objectForKey:@"Favors"]];
+        tmpArray     = [NSMutableArray arrayWithArray:[user objectForKey:USERJSON_FAVORS]];
         for(NSDictionary *d in tmpArray)
         {
             Place* p = [Place parseDictionary:d];
             [self addFavorPlace:p];
         }
     }
-    @catch (NSException *exception) {
+    @catch (NSException *exception)
+    {
+        mlogError(@"Parse user json fail\n");
+        mlogError(@"CRASH: %@", exception);
+        mlogError(@"Stack Trace: %@", [exception callStackSymbols]);
         return false;
-    }
-    @finally {
-
     }
 
     return true;
@@ -521,11 +595,11 @@ static NSMutableArray*  _searchedPlaces;
 +(NSDictionary*) toDictionary
 {
     NSDictionary *result;
-    NSMutableDictionary *userDic            = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *userDic         = [[NSMutableDictionary alloc] init];
     NSMutableArray* homePlacesArray      = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray* officePlacesArray    = [[NSMutableArray alloc] initWithCapacity:0];
     NSMutableArray* favorPlacesArray     = [[NSMutableArray alloc] initWithCapacity:0];
-    NSMutableArray* SearchedPlacesArray  = [[NSMutableArray alloc] initWithCapacity:0];
+    NSMutableArray* searchedPlaceTextArray  = [[NSMutableArray alloc] initWithCapacity:0];
 
     for(Place *p in self.homePlaces)
     {
@@ -544,30 +618,29 @@ static NSMutableArray*  _searchedPlaces;
 
     for(NSString *place in self.searchedPlaceText)
     {
-        [SearchedPlacesArray addObject:place];
+        [searchedPlaceTextArray addObject:place];
     }
     
-    [userDic setObject:self.name forKey:@"Name"];
-    [userDic setObject:self.email forKey:@"Email"];
+    [userDic setObject:self.name forKey:USERJSON_NAME];
+    [userDic setObject:self.email forKey:USERJSON_EMAIL];
     
-    [userDic setObject:homePlacesArray forKey:@"Homes"];
-    [userDic setObject:officePlacesArray forKey:@"Offices"];
-    [userDic setObject:favorPlacesArray forKey:@"Favors"];
-    [userDic setObject:SearchedPlacesArray forKey:@"SearchedPlaces"];
+    [userDic setObject:homePlacesArray forKey:USERJSON_HOMES];
+    [userDic setObject:officePlacesArray forKey:USERJSON_OFFICES];
+    [userDic setObject:favorPlacesArray forKey:USERJSON_FAVORS];
+    [userDic setObject:searchedPlaceTextArray forKey:USERJSON_SEARCHED_PLACE_TEXT];
     
-    result = [NSDictionary dictionaryWithObjectsAndKeys:userDic, @"User", nil];
+    result = [NSDictionary dictionaryWithObjectsAndKeys:userDic, USERJSON_USER, nil];
     return result;
 }
 
 +(void) save
 {
-    [TestFlight passCheckpoint:@"User Saved Start"];
+    mlogInfo(@"Save user.json %@", [SystemManager userFilePath]);
     NSError* error;
     
     //convert object to data
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self.toDictionary
                                                        options:NSJSONWritingPrettyPrinted error:&error];
     [jsonData writeToFile:[SystemManager userFilePath] atomically:true];
-    [TestFlight passCheckpoint:@"User Saved"];
 }
 @end

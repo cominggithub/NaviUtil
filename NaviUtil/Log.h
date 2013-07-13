@@ -25,12 +25,20 @@
 #define loglc(o) printf("%s: (%f, %f)\n",#o, o.latitude, o.longitude)
 #define logpd(o) printf("%s: (%f, %f)\n",#o, o.x, o.y)
 #define logns(o) printf("%s: %s\n",#o, [o UTF8String])
-
+#define logbool(o) do{printf("%s: %s\n", #o, o == TRUE ? "TRUE":"FALSE");}while(0)
 #define getObjectName(oo) #oo
 #define logClass(o) printf("%s: %s\n", getObjectName(o), (char*)class_getName([o class]))
 
-#define mlogAssertNotNil(o)      do{if(nil == o || NULL == o){mlogError(@"%s is nil", #o); return;}}while(0)
-#define mlogAssertNotNilR(o, r)     do{if(nil == o || NULL == o){mlogError(@"%s is nil", #o); return r;}}while(0)
+
+#define mlogInfo(args...)     do{logOut(kLogInfo, __FUNCTION__, __LINE__, args);}while(0)
+#define mlogWarning(args...)  do{logOut(kLogWarning, __FUNCTION__, __LINE__, args);}while(0)
+#define mlogError(args...)    do{logOut(kLogError, __FUNCTION__, __LINE__, args);}while(0)
+#define mlogCheckPoint(args...)    do{logOut(kLogCheckPoint, __FUNCTION__, __LINE__, args);}while(0)
+#define mlogStackTrace(reason)        do{mlogError(@"%@\n%@", reason, [NSThread callStackSymbols]);}while(0)
+
+
+#define mlogAssertNotNil(o)      do{if(nil == o || NULL == o){mlogError(@"%s is nil", #o); mlogStackTrace(@""); return;}}while(0)
+#define mlogAssertNotNilR(o, r)     do{if(nil == o || NULL == o){mlogError(@"%s is nil", #o); mlogStackTrace(@""); return r;}}while(0)
 
 #define mlogAssertStrNotEmpty(o)      do{if(nil == o  || NULL == o || [o length] < 1){mlogError(@"%s is nil or empty", #o); return;}}while(0)
 #define mlogAssertStrNotEmptyR(o, r)     do{if(nil == o  || NULL == o || [o length] < 1){mlogError(@"%s is nil or empty", #o); return r;}}while(0)
@@ -39,17 +47,10 @@
 #define mlogAssertInRange(o, min, max)      do{if(min > o || max < o){mlogError(@"%s is out of range", #o); return;}}while(0)
 #define mlogAssertInRangeR(o, min, max, r)      do{if(min > o || max < o){mlogError(@"%s is out of range", #o); return r;}}while(0)
 
-#define mlogInfo(args...)     do{logOut(kLogInfo, __FUNCTION__, __LINE__, args);}while(0)
-#define mlogWarning(args...)  do{logOut(kLogWarning, __FUNCTION__, __LINE__, args);}while(0)
-#define mlogError(args...)    do{logOut(kLogError, __FUNCTION__, __LINE__, args);}while(0)
-#define mlogCheckPoint(args...)    do{logOut(kLogCheckPoint, __FUNCTION__, __LINE__, args);}while(0)
-
 
 #if (FILE_DEBUG == TRUE)
-#warning FILE_DEBUG_ENABLED
 #define mlogDebug(args...)    do{logOut(kLogDebug, __FUNCTION__, __LINE__, args);}while(0)
 #else
-#warning FILE_DEBUG_DISABLED
 #define mlogDebug(args...)
 #endif
 

@@ -75,12 +75,6 @@
     Place *routeStartPlace;
     Place *routeEndPlace;
     
-    LocationManager* locationManager;
-    LocationSimulator *locationSimulator;
-    
-
-    
-    
 }
 @property (nonatomic) bool isAutoSimulatorLocationUpdateStarted;
 

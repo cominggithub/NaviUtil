@@ -11,4 +11,5 @@
 @interface UILabel (category)
 -(void)resizeToStretch;
 -(float)expectedWidth;
+-(void) autoFontSize:(int) minFontSize maxWidth:(int)maxWidth;
 @end

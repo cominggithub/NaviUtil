@@ -229,7 +229,6 @@
     {
     
         [self preDrawRect];
-        NSLog(@"predraw\n");
         usleep(50);
     }
 }

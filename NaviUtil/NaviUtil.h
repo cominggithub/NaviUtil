@@ -23,15 +23,17 @@
 #import "NSDictionary+category.h"
 #import "UIView+category.h"
 #import "UILabel+category.h"
+#import "UIImageView+category.h"
 #import "Place.h"
 #import "Route.h"
 #import "RouteInstruction.h"
 #import "Speech.h"
 #import "SystemConfig.h"
 #import "SystemManager.h"
-#import "User.h"
 #import "TestFlight.h"
 #import "TimeDrawBlock.h"
+#import "User.h"
+#import "UIAnimation.h"
 
 @interface NaviUtil : NSObject
 

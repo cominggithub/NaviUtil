@@ -127,7 +127,6 @@ static int setLocationUpdateInterval; // in milliseconds
 
 +(void) addUpdatedCLLocations:(NSArray *) clLocations
 {
-    logfn();
     int distance = 0;
     CLLocationCoordinate2D nextLocation = _currentCLLocationCoordinate2D;
     NSDate *updateTime = [NSDate date];
@@ -189,7 +188,6 @@ static int setLocationUpdateInterval; // in milliseconds
 +(BOOL) isLocationDifferenceReasonable:(CLLocationCoordinate2D) fromLocation To:(CLLocationCoordinate2D) toLocation
 {
     int distance = [GeoUtil getGeoDistanceFromLocation:fromLocation ToLocation:toLocation];
-    mlogDebug(@"from: %")
     if (distance > LOCATION_UPDATE_DISTANCE_THRESHOLD)
     {
         return FALSE;
@@ -228,7 +226,6 @@ static int setLocationUpdateInterval; // in milliseconds
     NSDate *updateTime = [NSDate date];
     NSTimeInterval timeInterval = [updateTime timeIntervalSinceDate:_lastTriggerLocationUpdateTime];
 
-    logfn();
     _lastTriggerLocationUpdateTime = updateTime;
     
     if ( SystemConfig.triggerLocationInterval > timeInterval)
@@ -251,7 +248,6 @@ static int setLocationUpdateInterval; // in milliseconds
 
 +(void) triggerLostLocationUpdateNotify
 {
-    logfn();
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(lostLocationUpdate)])

@@ -12,24 +12,34 @@
 #include "Log.h"
 
 @implementation UILabel (category)
--(void)resizeToStretch{
+-(void) resizeToStretch
+{
     float width = [self expectedWidth];
     CGRect newFrame = [self frame];
-    logf(width);
-    logf(newFrame.size.width);
     newFrame.size.width = width;
     [self setFrame:newFrame];
 }
 
--(float)expectedWidth{
+-(float) expectedWidth
+{
     [self setNumberOfLines:1];
-    logf(self.frame.size.height);
-    logf(self.frame.size.width);
     CGSize maximumLabelSize = CGSizeMake(9999, self.frame.size.height);
     
     CGSize expectedLabelSize = [[self text] sizeWithFont:[self font]
                                        constrainedToSize:maximumLabelSize
                                            lineBreakMode:[self lineBreakMode]];
     return expectedLabelSize.width;
+}
+
+-(void) autoFontSize:(int) minFontSize maxWidth:(int)maxWidth
+{
+    [self setNumberOfLines:1];
+    float expectedWidth = [self expectedWidth];
+    
+    while (expectedWidth > maxWidth && self.font.pointSize > minFontSize)
+    {
+        UIFont *f = [UIFont fontWithName:self.font.fontName size:self.font.pointSize-1];
+        self.font = f;
+    }
 }
 @end

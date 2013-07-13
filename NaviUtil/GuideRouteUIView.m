@@ -63,24 +63,12 @@
         return;
     }
     
-    if (nil == locationSimulator)
-    {
-        [locationSimulator start];
-    }
-    else if (true != locationSimulator.isStart)
-    {
-        [locationSimulator start];
-    }
-
     _isAutoSimulatorLocationUpdateStarted = true;
 }
 
 -(void) autoSimulatorLocationUpdateStop
 {
-    if (nil != locationSimulator && true == locationSimulator.isStart)
-    {
-        [locationSimulator stop];
-    }
+
     _isAutoSimulatorLocationUpdateStarted = false;
 }
 
@@ -870,6 +858,7 @@
 
 -(id) init
 {
+    logfn();
     self = [super init];
     if (self) {
         [self initSelf];        
@@ -879,7 +868,7 @@
 
 -(id) initWithFrame:(CGRect)frame
 {
-  
+    logfn();
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
@@ -890,11 +879,13 @@
 
 -(id)initWithCoder:(NSCoder*)coder
 {
-  
+    logfn();
+
     self = [super initWithCoder:coder];
     if (self) {
         // Initialization code
         [self initSelf];
+        
     }
     
     return self;
@@ -902,6 +893,7 @@
 
 -(void) initSelf
 {
+    logfn();
     
     self.isDebugDraw = true;
     self.isDebugNormalLine = false;
@@ -970,10 +962,6 @@
     
     
     _isAutoSimulatorLocationUpdateStarted   = false;
-    locationSimulator                       = [[LocationSimulator alloc] init];
-    locationSimulator.timeInterval          = 1;
-    locationSimulator.locationPoints        = [route getRoutePolyLineCLLocationCoordinate2D];
-    locationSimulator.delegate              = self;
 
     //    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
 
@@ -1068,7 +1056,7 @@
 {
     if (currentDrawAngle == targetAngle)
     {
-        [self locationUpdate:locationSimulator.getNextLocation Speed:0 Distance:0];
+
     }
     else
     {
@@ -1102,14 +1090,20 @@
 
 -(void) startRouteNavigationFrom:(Place*) s To:(Place*) e
 {
+    logfn();
+    mlogInfo(@"Start: %@, To: %@", s, e);
+    
     GoogleJsonStatus status;
     
     if (nil == s || nil == e)
+    {
+        mlogError(@"No start or end place");
         return;
+    }
     
     routeStartPlace = s;
     routeEndPlace   = e;
-    
+
     routeDownloadRequest = [NaviQueryManager getRouteDownloadRequestFrom:routeStartPlace.coordinate To:routeEndPlace.coordinate];
     status = [GoogleJson getStatus:routeDownloadRequest.filePath];
     

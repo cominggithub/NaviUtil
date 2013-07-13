@@ -35,9 +35,9 @@ typedef enum
 +(void) removeHomePlaceAtIndex:(int) index;
 +(void) removeOfficePlaceAtIndex:(int) index;
 +(void) removeFavorPlaceAtIndex:(int) index;
-+(void) updateHomePlaceAtIndex:(int) index Place:(Place*) place;
-+(void) updateOfficePlaceAtIndex:(int) index Place:(Place*) place;
-+(void) updateFavorPlaceAtIndex:(int) index Place:(Place*) place;
++(void) updateHomePlaceAtIndex:(int) index place:(Place*) place;
++(void) updateOfficePlaceAtIndex:(int) index place:(Place*) place;
++(void) updateFavorPlaceAtIndex:(int) index place:(Place*) place;
 
 +(Place*) getHomePlaceByIndex:(int) index;
 +(Place*) getOfficePlaceByIndex:(int) index;
@@ -45,16 +45,17 @@ typedef enum
 
 
 +(int) getSectionCount:(SectionMode) sectionMode;
-+(int) getPlaceCountBySectionMode:(SectionMode) sectionMode Section:(int) section;
-+(Place*) getPlaceBySectionMode:(SectionMode) sectionMode Section:(int) section Index:(int) index;
-+(void) addPlaceBySectionMode:(SectionMode) sectionMode Section:(int) section Place:(Place*) p;
++(int) getPlaceCountBySectionMode:(SectionMode) sectionMode section:(int) section;
++(Place*) getPlaceBySectionMode:(SectionMode) sectionMode section:(int) section index:(int) index;
++(void) addPlaceBySectionMode:(SectionMode) sectionMode section:(int) section place:(Place*) p;
 
-+(NSString*) getSearchPlaceByIndex:(int) index;
++(NSString*) getSearchedPlaceTextByIndex:(int) index;
 +(NSString*) name;
 +(NSString*) email;
 +(NSArray*) homePlaces;
 +(NSArray*) officePlaces;
 +(NSArray*) favorPlaces;
 +(NSArray*) searchedPlaces;
++(NSArray*) searchedPlaceText;
 
 @end
