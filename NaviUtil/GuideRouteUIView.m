@@ -8,7 +8,7 @@
 
 #import "GuideRouteUIView.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 #define radians(degrees) (degrees * M_PI/180)
@@ -19,7 +19,64 @@
     NSMutableArray *drawedRouteLines;
 }
 
-#pragma aaa
+#pragma mark - Main
+
+
+-(id) init
+{
+    self = [super init];
+    if (self) {
+        [self initSelf];
+    }
+    return self;
+}
+
+-(id) initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        // Initialization code
+        [self initSelf];
+    }
+    return self;
+}
+
+-(id)initWithCoder:(NSCoder*)coder
+{
+    self = [super initWithCoder:coder];
+    if (self) {
+        // Initialization code
+        [self initSelf];
+        
+    }
+    
+    return self;
+}
+
+-(void) initSelf
+{
+    
+    self.isDebugDraw = true;
+    self.isDebugNormalLine = false;
+    self.isDebugRouteLineAngle = false;
+    
+    
+    msgRect.origin.x        = floor(480*0.1);
+    msgRect.origin.y        = floor(320*0.05);
+    msgRect.size.width      = floor(480*0.8);
+    msgRect.size.height     = floor(320*0.2);
+    
+    routeDisplayBound       = self.bounds;
+    routeDisplayBound.origin.x = 0;
+    routeDisplayBound.origin.y = 0;
+    routeDisplayBound.size.width = 480;
+    routeDisplayBound.size.height = 320;
+    
+    carImage = [UIImage imageNamed:@"Blue_car_marker"];
+    [LocationManager addDelegate:self];
+}
+
+#pragma mark - Geo Calculation
 #if 1
 -(double) adjustAngle:(double)angle
 {
@@ -79,7 +136,7 @@
 }
 
 
-#pragma drawfunc
+#pragma mark - Draw Functions
 -(void) drawBackground:(CGContextRef) context Rectangle:(CGRect) rect
 {
     
@@ -187,6 +244,7 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
+    logfn();
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     [super drawRect:rect];
@@ -207,8 +265,10 @@
     [self drawBackground:context Rectangle:rect];
     
     
-    if (nil == route || routeDownloadRequest.status != kDownloadStatus_Finished)
+    if (nil == route || (nil != routeDownloadRequest && routeDownloadRequest.status != kDownloadStatus_Finished))
     {
+        logo(route);
+        logo(routeDownloadRequest);
         [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Route Planning"]];
         return;
     }
@@ -610,8 +670,6 @@
     double turnAngle;
 
     turnAngle = TO_ANGLE([self getTurnAngle]);
-
-    logfns("turn angle: %.0f\n", turnAngle);
     
     // left 45: -67.5 ~ 22.5
     if (-67.5 <= turnAngle && turnAngle <= -22.5)
@@ -720,21 +778,22 @@
     heightRatio = 480.0/fabs((topMost.y - topMost.y));
     
     fitRatio = MIN(widthRatio, heightRatio);
+#if 0
+    logfns("%.5f\n", fabs(-0.1));
+    logfns("%.5f\n", (fabs(topMost.y- bottomMost.y)*1.0));
+    logfns("%.5f\n", (fabs(rightMost.x - leftMost.x)*1.0));
     
-    printf("%.5f\n", fabs(-0.1));
-    printf("%.5f\n", (fabs(topMost.y- bottomMost.y)*1.0));
-    printf("%.5f\n", (fabs(rightMost.x - leftMost.x)*1.0));
-    
-    printf("leftMost     %9.5f\n", leftMost.x);
-    printf("rightMost    %9.5f\n", rightMost.x);
-    printf("topMost      %9.5f\n", topMost.y);
-    printf("bottomMost   %9.5f\n", bottomMost.y);
+    logfns("leftMost     %9.5f\n", leftMost.x);
+    logfns("rightMost    %9.5f\n", rightMost.x);
+    logfns("topMost      %9.5f\n", topMost.y);
+    logfns("bottomMost   %9.5f\n", bottomMost.y);
     
     
     
     //    ratio = fitRatio;
-    printf("fitratio: %.2f\n", fitRatio);
-    printf("   ratio: %.2f\n", ratio);
+    logfns("fitratio: %.2f\n", fitRatio);
+    logfns("   ratio: %.2f\n", ratio);
+#endif
     
 }
 
@@ -790,6 +849,7 @@
     
     return resultRect;
 }
+
 -(int) getFitFontSize:(CGRect) rect Message:(NSString*) message
 {
     int fontSize = 32;
@@ -805,7 +865,6 @@
     {
         font = [UIFont boldSystemFontOfSize:fontSize];
         actualSize = [message sizeWithFont:font constrainedToSize:rect.size lineBreakMode:NSLineBreakByClipping];
-        logfns("fontSize: %d, rect: %.0f, actualSize: %.0f, %.0f, oneLineHeight:%.0f\n", fontSize, rect.size.width, actualSize.width, actualSize.height, oneLineHeight);
         if (actualSize.width <= rect.size.width && actualSize.height <= oneLineHeight)
             break;
         fontSize--;
@@ -856,84 +915,12 @@
     return translatedPoint;
 }
 
--(id) init
-{
-    logfn();
-    self = [super init];
-    if (self) {
-        [self initSelf];        
-    }
-    return self;
-}
-
--(id) initWithFrame:(CGRect)frame
-{
-    logfn();
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-        [self initSelf];
-    }
-    return self;
-}
-
--(id)initWithCoder:(NSCoder*)coder
-{
-    logfn();
-
-    self = [super initWithCoder:coder];
-    if (self) {
-        // Initialization code
-        [self initSelf];
-        
-    }
-    
-    return self;
-}
-
--(void) initSelf
-{
-    logfn();
-    
-    self.isDebugDraw = true;
-    self.isDebugNormalLine = false;
-    self.isDebugRouteLineAngle = false;
-    
-
-    mlogDebug(@"Frame: (%.0f, %.0f), %.0f X %.0f\n",
-              self.bounds.origin.x,
-              self.bounds.origin.y,
-              self.bounds.size.width,
-              self.bounds.size.height
-              );
-    
-    
-    msgRect.origin.x        = floor(480*0.1);
-    msgRect.origin.y        = floor(320*0.05);
-    msgRect.size.width      = floor(480*0.8);
-    msgRect.size.height     = floor(320*0.2);
-    
-    routeDisplayBound       = self.bounds;
-    routeDisplayBound.origin.x = 0;
-    routeDisplayBound.origin.y = 0;
-    routeDisplayBound.size.width = 480;
-    routeDisplayBound.size.height = 320;
-    
-    carImage = [UIImage imageNamed:@"Blue_car_marker"];
-    
-    
-}
+#pragma mark - Navigation
 -(void) initNewRouteNavigation
 {
     ratio = 1;
     [self generateRoutePoints];
-
-    //    NSTimer *theTimer = [NSTimer scheduledTimerWithTimeInterval:0.3 target:self selector:@selector(timerTimeout) userInfo:nil repeats:YES];
-    // Assume a there's a property timer that will retain the created timer for future reference.
-    //    timer = theTimer;
     
-    
-    //oneStep = 0.00013; // for 1 meter
     oneStep                 = 0.00013;
     
     targetAngle             = 0;
@@ -956,16 +943,15 @@
     [self updateTranslationConstant];
     [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
     currentStep = 0;
-    
     carFootPrint = [NSMutableArray arrayWithCapacity:0];
     isDrawCarFootPrint = true;
-    
-    
     _isAutoSimulatorLocationUpdateStarted   = false;
-
-    //    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
-
     
+    [LocationManager setRoute:route];
+    
+    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
+    [self setNeedsDisplay];
+
 }
 
 
@@ -992,23 +978,13 @@
     tmpPoint.x = routeStartPoint.x;
     tmpPoint.y = routeStartPoint.y;
     tmpPoint.y++;
-//    directionAngle = [GeoUtil getAngleByPointD:routeStartPoint Point1:tmpPoint Point2:routeEndPoint];
+
     
     if(tmpPoint.x > routeEndPoint.x)
     {
         targetAngle *= -1;
     }
-    
 
-/*
-    if(isRouteLineMUndefind == true)
-        printf("x = %.8f\n", routeStartPoint.x);
-    else if(routeLineM == 0)
-        printf("y = %.8f\n", routeLineB);
-    else
-        printf("y = %.8fx + %.8f\n", routeLineM, routeLineB);
-
-*/
     locationIndex++;
     if(locationIndex >= routePoints.count -1)
         locationIndex = 0;
@@ -1016,8 +992,6 @@
     routeDistance = [GeoUtil getLength:routeStartPoint ToPoint:routeEndPoint];
     routeUnitVector.x = (routeEndPoint.x - routeStartPoint.x)/routeDistance;
     routeUnitVector.y = (routeEndPoint.y - routeStartPoint.y)/routeDistance;
-    
-    
 }
 
 -(void) playSpeech:(NSString*) text
@@ -1063,9 +1037,9 @@
         [self rotateAngle:nil];
     }
 }
+
 -(void) rotateAngle:(NSTimer *)theTimer
 {
-
     if(true == [self updateCurrentDrawAngle])
     {
         [self setNeedsDisplay];
@@ -1076,21 +1050,20 @@
 -(void) startRouteNavigation
 {
     GoogleJsonStatus status = [GoogleJson getStatus:routeDownloadRequest.filePath];
-    
     if ( kGoogleJsonStatus_Ok == status)
     {
         route = [Route parseJson:routeDownloadRequest.filePath];
         if (nil != route)
+        {
             [self initNewRouteNavigation];
+        }
     }
 
     return;
-
 }
 
 -(void) startRouteNavigationFrom:(Place*) s To:(Place*) e
 {
-    logfn();
     mlogInfo(@"Start: %@, To: %@", s, e);
     
     GoogleJsonStatus status;
@@ -1105,18 +1078,21 @@
     routeEndPlace   = e;
 
     routeDownloadRequest = [NaviQueryManager getRouteDownloadRequestFrom:routeStartPlace.coordinate To:routeEndPlace.coordinate];
+    mlogDebug(@"route download request file: %@", routeDownloadRequest.filePath);
     status = [GoogleJson getStatus:routeDownloadRequest.filePath];
     
     if (kGoogleJsonStatus_Ok == status)
     {
-        logfn();
-        route = [Route parseJson:routeDownloadRequest.filePath];
+        route                   = [Route parseJson:routeDownloadRequest.filePath];
+        routeDownloadRequest    = nil;
         if (nil != route)
+        {
+
             [self initNewRouteNavigation];
+        }
     }
     else
     {
-        logfn();
         [self planRoute];
     }
     
@@ -1128,7 +1104,6 @@
     {
         if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
         {
-
             routeDownloadRequest = [NaviQueryManager
                                     getRouteDownloadRequestFrom:routeStartPlace.coordinate
                                     To:routeEndPlace.coordinate];
@@ -1166,6 +1141,8 @@
     
 }
 
+
+#pragma mark - Location Update
 -(void) updateTranslationConstant
 {
     toScreenOffset.x = carCenterPoint.x - carPoint.x*ratio;
@@ -1175,7 +1152,7 @@
 }
 -(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
 {
-    logfns("update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     PointD nextCarPoint;
     currentCarLocation = newCarLocation;
     nextCarPoint.x = newCarLocation.longitude;
@@ -1241,18 +1218,17 @@
             turnAngle = 2*M_PI + turnAngle;
     }
     
-    logfns("cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f, step:%.0f\n",
-           TO_ANGLE(currentDrawAngle),
-           TO_ANGLE(targetAngle),
-           TO_ANGLE(turnAngle),
-           TO_ANGLE(angleOffset),
-           TO_ANGLE(angleRotateStep)
-           );
+//    mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f, step:%.0f\n",
+//           TO_ANGLE(currentDrawAngle),
+//           TO_ANGLE(targetAngle),
+//           TO_ANGLE(turnAngle),
+//           TO_ANGLE(angleOffset),
+//           TO_ANGLE(angleRotateStep)
+//           );
     
     
     if(fabs(turnAngle) <= angleRotateStep)
     {
-        logfns("force equal\n");
         currentDrawAngle = targetAngle;
     }
     else
@@ -1267,12 +1243,12 @@
         }
     }
     
-    logfns("cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f\n",
-           TO_ANGLE(currentDrawAngle),
-           TO_ANGLE(targetAngle),
-           TO_ANGLE(turnAngle),
-           TO_ANGLE(angleOffset)
-           );
+//    mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f\n",
+//           TO_ANGLE(currentDrawAngle),
+//           TO_ANGLE(targetAngle),
+//           TO_ANGLE(turnAngle),
+//           TO_ANGLE(angleOffset)
+//           );
     
     
     currentDrawAngle = [self adjustAngle:currentDrawAngle];
@@ -1298,7 +1274,7 @@
     if(angleOffset == 0 || angleOffset == 2*M_PI)
         return false;
     
-    logfns("cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
+    mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
     
     if(angleOffset <= angleRotateStep)
         currentDrawAngle = targetAngle;
@@ -1332,13 +1308,13 @@
     {
         if (currentDrawAngle != targetAngle)
         {
-            logfns("cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
+            mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
         }
         currentDrawAngle = targetAngle;
         return false;
     }
     
-    logfns("cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
+    mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
     
     if (currentDrawAngle >= targetAngle)
     {
@@ -1361,7 +1337,6 @@
 #endif
 
 
-#pragma LOCATION_MANAGER_DELEGATE
 -(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int)speed Distance:(int)distance
 {
     currentStep++;

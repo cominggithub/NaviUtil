@@ -17,7 +17,10 @@ static BOOL _isDebug;
 static BOOL _isAd;
 static BOOL _isManualPlace;
 static BOOL _isDebugRouteDraw;
-static double _triggerLocationUpdateInterval;
+static double _triggerLocationUpdateInterval; // in millisecond
+static BOOL _isSpeech;
+static BOOL _isLocationUpdateFilter;
+
 
 
 #pragma variable
@@ -70,14 +73,36 @@ static double _triggerLocationUpdateInterval;
 }
 
 
++(BOOL) isSpeech
+{
+    return _isSpeech;
+}
+
++(void) setIsSpeech:(BOOL) value
+{
+    _isSpeech = value;
+}
+
++(BOOL) isLocationUpdateFilter
+{
+    return _isLocationUpdateFilter;
+}
+
++(void) setLocationUpdateFilter:(BOOL) value
+{
+    _isLocationUpdateFilter = value;
+}
+
 #pragma function
 +(BOOL) init
 {
-    _isDebug            = true;
-    _isAd               = false;
-    _isDebugRouteDraw   = true;
-    _isManualPlace      = true;
-    
+    _isDebug                        = TRUE;
+    _isAd                           = FALSE;
+    _isDebugRouteDraw               = TRUE;
+    _isManualPlace                  = TRUE;
+    _isLocationUpdateFilter         = FALSE;
+    _isSpeech                       = FALSE;
+    _triggerLocationUpdateInterval  = 500;
     return [self parseJason];
 }
 

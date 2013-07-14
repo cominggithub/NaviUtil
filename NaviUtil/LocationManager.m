@@ -11,7 +11,7 @@
 #import "SystemManager.h"
 #import "LocationSimulator.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 #define LOCATION_UPDATE_DISTANCE_THRESHOLD 30 /* 30 meter */ 
@@ -30,7 +30,11 @@ static int _locationLostCount;
 static BOOL _hasLocation;
 static NSDate* _lastUpdateTime;
 static NSDate* _lastTriggerLocationUpdateTime;
-static int setLocationUpdateInterval; // in milliseconds
+static int _setLocationUpdateInterval; // in milliseconds
+static int _skipLostDetectionCount;
+static LocationManagerLocationUpdateType _locationUpdateType;
+
+
 @implementation LocationManager
 {
     CLLocationManager *_locationManager;
@@ -55,6 +59,7 @@ static int setLocationUpdateInterval; // in milliseconds
     _locationManager = [[CLLocationManager alloc] init];
     _locationManager.delegate=self;
     _locationManager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;
+    
 
 }
 
@@ -113,16 +118,25 @@ static int setLocationUpdateInterval; // in milliseconds
     _hasLocation                                = NO;
     _lastUpdateTime                             = [NSDate date];
     _lastTriggerLocationUpdateTime              = [NSDate date];
-    
-    
+    _locationUpdateType                         = kLocationManagerLocationUpdateType_RealLocation;
+
     
     _locationManager    = [[LocationManager alloc] init];
     _locationSimulator  = [[LocationSimulator alloc] init];
     _locationSimulator.delegate = _locationManager;
     _delegates = [[NSMutableArray alloc] initWithCapacity:0];
 
+
+    [LocationManager reprobeLocation];
     
-    
+}
+
++(void) reprobeLocation
+{
+    mlogWarning(@"reprobe location\n");
+    _hasLocation            = NO;
+    _locationLostCount      = 0;
+    _skipLostDetectionCount = 20;
 }
 
 +(void) addUpdatedCLLocations:(NSArray *) clLocations
@@ -131,30 +145,27 @@ static int setLocationUpdateInterval; // in milliseconds
     CLLocationCoordinate2D nextLocation = _currentCLLocationCoordinate2D;
     NSDate *updateTime = [NSDate date];
     NSTimeInterval timeDiff;
+    BOOL isLocationUpdate = FALSE;
+    
+    _skipLostDetectionCount = _skipLostDetectionCount > 0 ? (_skipLostDetectionCount-1):0;
     
     for (CLLocation* c in clLocations)
     {
         nextLocation.latitude = nextLocation.latitude*0.75 + c.coordinate.latitude*0.25;
         nextLocation.longitude = nextLocation.longitude*0.75 + c.coordinate.longitude*0.25;
+        
+        nextLocation.latitude   = c.coordinate.latitude;
+        nextLocation.longitude  = c.coordinate.longitude;
+        
     }
     
-    
-    if (_hasLocation)
+
+    if (_hasLocation && _skipLostDetectionCount == 0)
     {
         if ([self isLocationDifferenceReasonable:_currentCLLocationCoordinate2D To:nextLocation])
         {
 
-            distance = [GeoUtil getGeoDistanceFromLocation:_currentCLLocationCoordinate2D ToLocation:nextLocation];
-            timeDiff = [updateTime timeIntervalSinceDate:_lastUpdateTime];
-            
-            _currentSpeed                   = 0.75*_currentSpeed + 0.25*(distance/timeDiff);
-            _currentDistance                += distance;
-            _currentCLLocationCoordinate2D  = nextLocation;
-            _locationLostCount              = 0;
-            _hasLocation                    = YES;
-            _lastUpdateTime                 = updateTime;
-            [self triggerLocationUpdateNotify];
-            
+            isLocationUpdate = TRUE;
         }
         else
         {
@@ -163,15 +174,36 @@ static int setLocationUpdateInterval; // in milliseconds
     }
     else
     {
+        isLocationUpdate   = TRUE;
+    }
+
+    
+    if (YES == isLocationUpdate)
+    {
+        // calculate location update parameter
+        
+        distance = [GeoUtil getGeoDistanceFromLocation:_currentCLLocationCoordinate2D ToLocation:nextLocation];
+        timeDiff = [updateTime timeIntervalSinceDate:_lastUpdateTime];
+        
+        _currentSpeed                   = 0.75*_currentSpeed + 0.25*(distance/timeDiff);
+        _currentDistance                += distance;
         _currentCLLocationCoordinate2D  = nextLocation;
+        _locationLostCount              = 0;
         _hasLocation                    = YES;
+        _lastUpdateTime                 = updateTime;
+        [self triggerLocationUpdateNotify];
     }
     
     if (YES == _hasLocation && _locationLostCount > 3)
     {
-        _hasLocation        = NO;
-        _locationLostCount  = 0;
+        logfn();
+
         [self triggerLostLocationUpdateNotify];
+        [self reprobeLocation];
+    }
+    else
+    {
+        
     }
 }
 
@@ -187,12 +219,17 @@ static int setLocationUpdateInterval; // in milliseconds
 
 +(BOOL) isLocationDifferenceReasonable:(CLLocationCoordinate2D) fromLocation To:(CLLocationCoordinate2D) toLocation
 {
-    int distance = [GeoUtil getGeoDistanceFromLocation:fromLocation ToLocation:toLocation];
-    if (distance > LOCATION_UPDATE_DISTANCE_THRESHOLD)
+    logfn();
+    if (TRUE == SystemConfig.isLocationUpdateFilter)
     {
-        return FALSE;
+        int distance = [GeoUtil getGeoDistanceFromLocation:fromLocation ToLocation:toLocation];
+        if (distance > LOCATION_UPDATE_DISTANCE_THRESHOLD)
+        {
+            logfn();
+            return FALSE;
+        }
     }
-    
+    logfn();
     return TRUE;
 }
 
@@ -224,13 +261,15 @@ static int setLocationUpdateInterval; // in milliseconds
 +(void) triggerLocationUpdateNotify
 {
     NSDate *updateTime = [NSDate date];
-    NSTimeInterval timeInterval = [updateTime timeIntervalSinceDate:_lastTriggerLocationUpdateTime];
+    NSTimeInterval timeInterval = [updateTime timeIntervalSinceDate:_lastTriggerLocationUpdateTime]*1000;
 
-    _lastTriggerLocationUpdateTime = updateTime;
+
     
-    if ( SystemConfig.triggerLocationInterval > timeInterval)
+    if ( SystemConfig.triggerLocationInterval > timeInterval && _lastTriggerLocationUpdateTime != nil)
+    {
+        mlogDebug(@"skip location update notify %.0fms > %.0fms", SystemConfig.triggerLocationInterval, timeInterval);
         return;
-    
+    }
 
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
@@ -287,4 +326,30 @@ static int setLocationUpdateInterval; // in milliseconds
     
 }
 
++(void) triggerLocationUpdate
+{
+    [_locationSimulator triggerLocationUpdate];
+}
+
++(void) setRoute:(Route*) route
+{
+    [_locationSimulator setRoute:route];
+}
+
++(void) setLocationUpdateType:(LocationManagerLocationUpdateType) locationUpdateType
+{
+    _locationUpdateType = locationUpdateType;
+    switch (_locationUpdateType)
+    {
+        case kLocationManagerLocationUpdateType_Line:
+            _locationSimulator.type = kLocationSimulator_Line;
+            break;
+        case kLocationManagerLocationUpdateType_ManualRoute:
+            _locationSimulator.type = kLocationManagerLocationUpdateType_ManualRoute;
+            break;
+        default:
+            _locationSimulator.type = kLocationManagerLocationUpdateType_ManualRoute;
+            break;
+    }
+}
 @end

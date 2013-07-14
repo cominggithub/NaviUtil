@@ -28,6 +28,7 @@
     BOOL _isPreDraw;
     dispatch_queue_t _backgroundQueue;
     DigitalNumDrawBlock* _speedNum;
+    UIColor* _offColor;
 
 }
 
@@ -95,6 +96,31 @@
 -(void) setColor:(UIColor *)color
 {
     _color = color;
+    
+    int numComponents = CGColorGetNumberOfComponents([_color CGColor]);
+    
+    if (numComponents == 4)
+    {
+        const CGFloat *components = CGColorGetComponents([_color CGColor]);
+        CGFloat red = components[0];
+        CGFloat green = components[1];
+        CGFloat blue = components[2];
+        CGFloat alpha = components[3];
+        
+        logf(red);
+        logf(green);
+        logf(blue);
+        logf(alpha);
+        
+        _offColor = [UIColor colorWithRed:red+1 green:green+1 blue:blue+1 alpha:alpha];
+        
+    }
+    else
+    {
+        _offColor = [UIColor redColor];
+        
+    }
+    
 
     _speedNum.color = _color;
     [self updateSpeed:_speedNum.value];
@@ -112,6 +138,7 @@
 {
     [UIAnimation runSpinAnimationOnView:_direction_panel_inner_circle duration:100 rotations:0.1 repeat:100];
     [UIAnimation runSpinAnimationOnView:_direction_panel_outer_circle duration:100 rotations:-0.1 repeat:100];
+
 }
 #if 0
 -(void) initSelf

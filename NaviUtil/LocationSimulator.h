@@ -13,7 +13,7 @@
 
 typedef enum
 {
-    kLocationSimulator_Route,
+    kLocationSimulator_ManualRoute,
     kLocationSimulator_Line
 }LocationSimulator_Type;
 
@@ -35,5 +35,6 @@ typedef enum
 -(CLLocationCoordinate2D) getNextLocation;
 -(void) start;
 -(void) stop;
-
+-(void) triggerLocationUpdate;
+-(void) setRoute:(Route*) route;
 @end

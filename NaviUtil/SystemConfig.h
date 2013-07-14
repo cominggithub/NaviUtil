@@ -20,7 +20,14 @@
 +(BOOL) isDebugRouteDraw;
 +(void) setIsDebugRouteDraw:(BOOL) value;
 
-+(double) triggerLocationInterval;
++(BOOL) isSpeech;
++(void) setIsSpeech:(BOOL) value;
+
++(BOOL) isLocationUpdateFilter;
++(void) setLocationUpdateFilter:(BOOL) value;
+
+
++(double) triggerLocationInterval;// in millisecond
 +(void) setTriggerLocationInterval:(double) value;
 
 @end

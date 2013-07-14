@@ -16,7 +16,7 @@
 
 #define logfn() printf("%s(%d)\n", __FUNCTION__, __LINE__)
 #define logfns(args...) do{printf("%s(%d): ", __FUNCTION__, __LINE__); printf(args);}while(0)
-#define logo(o) printf("%s: %s\n",#o, [[o description] UTF8String])
+#define logo(o) printf("%s: %s(0x%X)\n",#o, [[o description] UTF8String], (int)o)
 #define logObjNoName(o) printf("%s\n",[[o description] UTF8String])
 #define logos(o, args...) do{printf("%s", #o); printf(args);}while(0)
 #define logi(o) printf("%s: %d\n",#o, o)

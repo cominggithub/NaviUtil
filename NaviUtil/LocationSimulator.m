@@ -25,10 +25,10 @@
     self = [super init];
     if(self)
     {
-        _timeInterval                   = 0.1;
+        _timeInterval                   = 2000; // in millisecond
         _nextLocationIndex              = 0;
         _isStart                        = false;
-        _type                           = kLocationSimulator_Line;
+        _type                           = kLocationSimulator_ManualRoute;
         _lastLocationCoordinate2D       = CLLocationCoordinate2DMake(0, 0);
         _locationCoordinate2DChangeStep = 0.00005;
         
@@ -101,7 +101,7 @@
         case kLocationSimulator_Line:
             locationCoordinate2D = [self getNextLineLocation];
             break;
-        case kLocationSimulator_Route:
+        case kLocationSimulator_ManualRoute:
             locationCoordinate2D = [self getNextRouteLocation];
             break;
             
@@ -117,12 +117,11 @@
         }
     }
     
-
 }
 
 -(void) timeout:(NSTimer *)theTimer
 {
-    if (_type == kLocationSimulator_Route && _nextLocationIndex >= self.locationPoints.count)
+    if (_type == kLocationSimulator_ManualRoute && _nextLocationIndex >= self.locationPoints.count)
     {
         [self stop];
     }
@@ -140,7 +139,7 @@
     {
         [self stop];
     }
-    _timer   = [NSTimer scheduledTimerWithTimeInterval:self.timeInterval target:self selector:@selector(timeout:) userInfo:nil repeats:YES];
+    _timer   = [NSTimer scheduledTimerWithTimeInterval:self.timeInterval/1000.0 target:self selector:@selector(timeout:) userInfo:nil repeats:YES];
     _isStart = true;
 }
 
@@ -154,4 +153,13 @@
     _isStart    = false;
 }
 
+-(void) triggerLocationUpdate
+{
+    [self updateLocation];
+}
+
+-(void) setRoute:(Route*) route;
+{
+    self.locationPoints = [route getRoutePolyLineCLLocationCoordinate2D];
+}
 @end

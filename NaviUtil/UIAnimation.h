@@ -11,5 +11,6 @@
 #import <QuartzCore/QuartzCore.h>
 
 @interface UIAnimation : NSObject
-+ (void) runSpinAnimationOnView:(UIView*)view duration:(CGFloat)duration rotations:(CGFloat)rotations repeat:(float)repeat;
++(void) runSpinAnimationOnView:(UIView*)view duration:(CGFloat)duration rotations:(CGFloat)rotations repeat:(float)repeat;
++(void) flash:(UIView*) view;
 @end

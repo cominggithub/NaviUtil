@@ -23,4 +23,14 @@
     [view.layer addAnimation:rotationAnimation forKey:@"rotationAnimation"];
 }
 
++(void) flash:(UIView*) view
+{
+    [UIView animateWithDuration:1.0 delay:0.f options:(UIViewAnimationOptionAutoreverse| UIViewAnimationOptionRepeat)
+                 animations:^{
+                     view.alpha=1.f;
+                 } completion:^(BOOL finished){
+                     view.alpha=0.f;
+                 }];
+
+}
 @end
