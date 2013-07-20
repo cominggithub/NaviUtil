@@ -66,13 +66,13 @@
     msgRect.origin.x        = floor(480*0.1);
     msgRect.origin.y        = floor(320*0.05);
     msgRect.size.width      = floor(480*0.8);
-    msgRect.size.height     = floor(320*0.2);
+    msgRect.size.height     = floor(320*0.4);
     
     routeDisplayBound       = self.bounds;
-    routeDisplayBound.origin.x = 0;
-    routeDisplayBound.origin.y = 0;
-    routeDisplayBound.size.width = 480;
-    routeDisplayBound.size.height = 320;
+    routeDisplayBound.origin.x      = 0;
+    routeDisplayBound.origin.y      = 0;
+    routeDisplayBound.size.width    = 480;
+    routeDisplayBound.size.height   = 320;
     
     carImage = [UIImage imageNamed:@"Blue_car_marker"];
     [LocationManager addDelegate:self];
@@ -538,9 +538,9 @@
     int radius = 20;
     int fontSize = 32;
     
-    actualMessageRect.origin.x += 5;
+    actualMessageRect.origin.x += 10;
     actualMessageRect.origin.y += 5;
-    actualMessageRect.size.width -= 10;
+    actualMessageRect.size.width -= 20;
     actualMessageRect.size.height -= 10;
     
     actualMessageRect = [self getFitSizeRect:actualMessageRect Message:message FontSize:&fontSize];
@@ -583,17 +583,16 @@
                     -M_PI / 2, M_PI, 1);
     
     CGContextSetLineWidth(context, 5.0);
-    //    CGContextSetBlendMode(context, kCGBlendModeOverlay);
+
     CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
     CGContextStrokePath(context);
     
     CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
     
-    //    [message drawInRect:rect withFont:[UIFont boldSystemFontOfSize:32.0]];
     [message drawInRect:actualMessageRect
-               withFont:[UIFont boldSystemFontOfSize:[self getFitFontSize:rect Message:message]]
+               withFont:[UIFont boldSystemFontOfSize:fontSize]
           lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentCenter];
-
+    
 }
 
 -(void) drawTurnArrow:(CGContextRef) context
@@ -818,7 +817,7 @@
     {
         font = [UIFont boldSystemFontOfSize:tmpFontSize];
         actualSize = [message sizeWithFont:font constrainedToSize:rect.size lineBreakMode:NSLineBreakByClipping];
-
+        mlogDebug(@"actualSize: %.0f X %.0f, msg box: %.0f X %.0f\n", actualSize.width, actualSize.height, rect.size.width, rect.size.height);
         if (actualSize.width <= rect.size.width && actualSize.height <= oneLineHeight*currentLineNo)
             break;
         
@@ -828,11 +827,13 @@
         tmpFontSize--;
     }
     
-    *fontSize = tmpFontSize;
-    resultRect = rect;
+    *fontSize   = tmpFontSize;
+    resultRect  = rect;
+    resultRect.size = actualSize;
+    
     if (currentLineNo > 1)
         resultRect.size.height += (currentLineNo-1)*oneLineHeight;
-    
+
     return resultRect;
 }
 
@@ -849,6 +850,7 @@
     oneLineHeight = actualSize.height;
     while (fontSize > 24)
     {
+        
         font = [UIFont boldSystemFontOfSize:fontSize];
         actualSize = [message sizeWithFont:font constrainedToSize:rect.size lineBreakMode:NSLineBreakByClipping];
         if (actualSize.width <= rect.size.width && actualSize.height <= oneLineHeight)
@@ -856,7 +858,7 @@
         fontSize--;
     }
     
-    
+    mlogDebug(@"font size: %d\n", fontSize);
     return fontSize;
 }
 -(PointD) getDrawPoint:(PointD)p
