@@ -21,7 +21,7 @@
 @synthesize angle=_angle;
 @synthesize distance=_distance;
 @synthesize stepNo=_stepNo;
-@synthesize routeLineNo=_routeLineNo;
+@synthesize no=_no;
 @synthesize unitVector=_unitVector;
 
 +(RouteLine*) getRouteLineWithStartLocation:(CLLocationCoordinate2D) startLocation
@@ -36,7 +36,7 @@
 -(id) initWithStartLocation:(CLLocationCoordinate2D) startLocation
                   EndLocation:(CLLocationCoordinate2D) endLocation
                      stepNo:(int) stepNo
-                     routeLineNo:(int) routeLineNo
+                     routeLineNo:(int) no
 {
     self = [super init];
     if(self)
@@ -44,9 +44,12 @@
         self.startLocation      = startLocation;
         self.endLocation        = endLocation;
         self.stepNo             = stepNo;
-        self.routeLineNo        = routeLineNo;
+        self.no        = no;
         self.slope              = 0.0;
         self.isSlopeUndefined   = false;
+        self.distance           = 0;
+        self.cumulativeDistance = 0;
+        
         [self calculateLineEquation];
     }
     
@@ -164,7 +167,7 @@
     {
         return [NSString stringWithFormat:@"Step:%2d, Line:%3d, angle:%4.0f, slope:    Undefine, x:%13.7f, (%11.7f, %11.7f) -> (%11.7f, %11.7f)",
                 self.stepNo,
-                self.routeLineNo,
+                self.no,
                 TO_ANGLE(self.angle),
                 self.xOffset,
                 self.startLocation.latitude,
@@ -176,7 +179,7 @@
     
     return [NSString stringWithFormat:@"Step:%2d, Line:%3d, angle:%4.0f, slope:%12.7f, x:%13.7f, (%11.7f, %11.7f) -> (%11.7f, %11.7f)",
         self.stepNo,
-        self.routeLineNo,
+        self.no,
         TO_ANGLE(self.angle),
         self.slope,
         self.xOffset,

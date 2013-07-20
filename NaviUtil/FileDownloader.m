@@ -98,7 +98,7 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    mlogInfo(@"FileDownloader %lu finish download\n", self.downloadId);
+    mlogDebug(@"FileDownloader %lu finish download\n", self.downloadId);
     
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFinish:)])
     {

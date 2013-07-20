@@ -23,9 +23,10 @@
 @property double xOffset;
 @property double angle;
 @property double distance;
+@property double cumulativeDistance;
 @property double mathDistance;
 @property int stepNo;
-@property int routeLineNo;
+@property int no;
 @property PointD unitVector;
 
 +(RouteLine*) getRouteLineWithStartLocation:(CLLocationCoordinate2D) startLocation

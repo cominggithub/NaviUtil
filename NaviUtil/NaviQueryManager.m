@@ -94,6 +94,19 @@ static CLLocationCoordinate2D _endLocation;
     
 }
 
++(void) downloadSpeech:(Route*) route
+{
+    DownloadRequest *downloadRequest;
+    for(Speech *speech in [route getSpeech])
+    {
+        downloadRequest = [self getSpeechDownloadRequest:speech.text];
+        
+        mlogDebug(@"%@\n", speech.text);
+        
+        [_downloadManager download:downloadRequest];
+    }
+}
+
 +(void) downloadRequestStatusChange:(DownloadRequest*) downloadRequest
 {
     if(downloadRequest == _currentRouteDownloadRequest)

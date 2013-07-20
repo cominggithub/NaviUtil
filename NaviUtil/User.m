@@ -316,20 +316,43 @@ static NSMutableArray*  _searchedPlaces;
 
 }
 
-+(void) removeOfficeLocationAtIndex:(int) index
++(void) removeOfficePlaceAtIndex:(int) index
 {
     mlogAssertInRange(index, 0, _officePlaces.count-1);
     [_officePlaces removeObjectAtIndex:index];
 
 }
 
-+(void) removeFavorLocationAtIndex:(int) index
++(void) removeFavorPlaceAtIndex:(int) index
 {
     mlogAssertInRange(index, 0, _favorPlaces.count-1);
     [_favorPlaces removeObjectAtIndex:index];
 
 }
 
++(void) removePlaceBySectionMode:(SectionMode) sectionMode section:(int) section index:(int) index
+{
+    int placeType;
+    
+    placeType = [self translatSectionIndexIntoPlaceType:sectionMode section:section];
+    
+    switch(placeType)
+    {
+        case kPlaceType_Home:
+            [self removeHomePlaceAtIndex:index];
+            break;
+        case kPlaceType_Office:
+            [self removeOfficePlaceAtIndex:index];
+            break;
+        case kPlaceType_Favor:
+            [self removeFavorPlaceAtIndex:index];
+            break;
+        default:
+            mlogError(@"unknown place type:%d, sectionMode:%d, Section: %d\n", placeType, sectionMode, section);
+            break;
+    }
+}
+    
 +(void) addPlaceSearchResult:(NSArray*) placeSearchResult
 {
     mlogAssertNotNil(placeSearchResult);

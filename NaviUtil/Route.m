@@ -7,12 +7,15 @@
 //
 
 #import "Route.h"
+#import "SystemConfig.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 @implementation Route
-
+{
+    double _cumulativeDistance;
+}
 @synthesize status=_status;
 @synthesize routeLines=_routeLines;
 -(id) init
@@ -118,13 +121,14 @@
 }
 -(void) initRouteLines
 {
-    tmpRouteLines   = [[NSMutableArray alloc] initWithCapacity:0];
-    routeLineCount  = -1;
+    tmpRouteLines       = [[NSMutableArray alloc] initWithCapacity:0];
+    routeLineCount      = -1;
+    _cumulativeDistance = 0;
 }
 
 -(void) addLocationToRouteLinesWithStepNo:(int) stepNo Location:(CLLocationCoordinate2D) location
 {
-    mlogDebug(@"AddLocationToRouteLinesWithStepNo: %3d, Line: %3d, (%12.7f, %12.7f)", stepNo, routeLineCount, location.latitude, location.longitude);
+//    mlogDebug(@"AddLocationToRouteLinesWithStepNo: %3d, Line: %3d, (%12.7f, %12.7f)", stepNo, routeLineCount, location.latitude, location.longitude);
     
     routeLineEndLocation = location;
     
@@ -141,6 +145,10 @@
                                                             EndLocation: routeLineEndLocation
                                                                  stepNo: stepNo
                                                             routeLineNo:routeLineCount];
+        routeLine.distance = [GeoUtil getGeoDistanceFromLocation:routeLineStartLocation ToLocation:routeLineEndLocation];
+        routeLine.cumulativeDistance = _cumulativeDistance;
+        
+        _cumulativeDistance += routeLine.distance;
         [tmpRouteLines addObject:routeLine];
         routeLineCount++;
     }
@@ -488,10 +496,10 @@
     if(lastRouteLine == nil)
         i = 0;
     else
-        i = lastRouteLine.routeLineNo;
+        i = lastRouteLine.no;
     
         /* look forward */
-        for(; i<lastRouteLine.routeLineNo+radius && i<routeLineCount; i++)
+        for(; i<lastRouteLine.no+radius && i<routeLineCount; i++)
         {
 
             RouteLine *rl = [self.routeLines objectAtIndex:i];
@@ -519,9 +527,9 @@
                 distanceFromEndPoint = tmpStartDistance;
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
-            
+/*
             mlogDebug(@"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
-                      rl.routeLineNo,
+                      rl.no,
                       angleStart + angleEnd,
                       angleStart,
                       angleEnd,
@@ -529,14 +537,14 @@
                       tmpStartDistance,
                       matchFlag
                       );
-            
+ */           
             searchCount++;
         }
         
         /* look backward */
         if(lastRouteLine == nil)
             i = -1;
-        for(i=lastRouteLine.routeLineNo-1; i>=0 && i>=lastRouteLine.routeLineNo-radius && i<routeLineCount; i--)
+        for(i=lastRouteLine.no-1; i>=0 && i>=lastRouteLine.no-radius && i<routeLineCount; i--)
         {
             RouteLine *rl = [self.routeLines objectAtIndex:i];
             [self calculateDistanceFromLocation:location
@@ -565,7 +573,7 @@
             }
             
             mlogDebug(@"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
-                      rl.routeLineNo,
+                      rl.no,
                       angleStart + angleEnd,
                       angleStart,
                       angleEnd,
@@ -640,7 +648,7 @@
     duration = [endTime timeIntervalSinceDate:startTime];
 
     mlogDebug(@"Matched: %d(%.7f), RouteLine %d searched, in %f seconds",
-             matchedRouteLine != nil ? matchedRouteLine.routeLineNo : -1,
+             matchedRouteLine != nil ? matchedRouteLine.no : -1,
              distance,
              searchCount,
              duration
@@ -667,7 +675,7 @@
         if(rl.stepNo == stepNo+1)
         {
             double distance = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:carLocation];
-            if(distance < 100)
+            if(distance < SystemConfig.turnAngleDistance)
                 return rl;
         }
     }
@@ -701,9 +709,47 @@
         {
             printf("!");
         }
-        printf("step:%4d, line: %4d, (%12.7f, %12.7f), (%12.7f, %12.7f)\n", rl.stepNo, rl.routeLineNo, p.y, rl.startLocation.latitude, p.x, rl.startLocation.longitude);
+        printf("step:%4d, line: %4d, (%12.7f, %12.7f), (%12.7f, %12.7f)\n",
+               rl.stepNo, rl.no,
+               p.y, rl.startLocation.latitude,
+               p.x, rl.startLocation.longitude);
     }
     
 }
+
+
+-(double) getAngleFromCLLocationCoordinate2D:(CLLocationCoordinate2D) location routeLineNo:(int) routeLineNo withInDistance:(double) distance;
+{
+    int i;
+
+    double cumulativeDistance   = 0;
+    double startAngle           = 0;
+    double endAngle             = 0;
+    RouteLine *r;
+    
+    for (i=routeLineNo; i<self.routeLines.count && cumulativeDistance < distance; i++)
+    {
+        r = [self.routeLines objectAtIndex:i];
+        if (i == routeLineNo)
+        {
+            startAngle           = r.angle;
+            endAngle             = r.angle;            
+            cumulativeDistance  += [GeoUtil getGeoDistanceFromLocation:location ToLocation:r.endLocation];
+            mlogDebug(@"Start Angle: %.2f, cdistance: %.2f", startAngle, cumulativeDistance);
+        }
+        else if (r.distance > 2)
+        {
+            endAngle                = r.angle;
+            cumulativeDistance      += r.distance;
+            mlogDebug(@"End Angle: %.2f, cdistance: %.2f\n", endAngle, cumulativeDistance);
+        }
+        
+
+    }
+    
+    return [GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle];
+    
+}
+
 
 @end

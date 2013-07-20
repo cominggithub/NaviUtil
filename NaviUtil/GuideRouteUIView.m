@@ -7,6 +7,7 @@
 //
 
 #import "GuideRouteUIView.h"
+#import "SystemConfig.h"
 
 #define FILE_DEBUG TRUE
 #include "Log.h"
@@ -17,6 +18,7 @@
     Route* route;
     DownloadRequest *routeDownloadRequest;
     NSMutableArray *drawedRouteLines;
+    double _turnAngle;
 }
 
 #pragma mark - Main
@@ -80,8 +82,6 @@
 #if 1
 -(double) adjustAngle:(double)angle
 {
-
-    logfns("angle: %f, M_PI:%f\n", angle, M_PI);
     if(angle > M_PI+0.000001)
     {
         logfn();
@@ -244,7 +244,6 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
-    logfn();
     
     CGContextRef context = UIGraphicsGetCurrentContext();
     [super drawRect:rect];
@@ -299,7 +298,7 @@
         {
             NSString* text = [route getStepInstruction:nextStepRouteLine.stepNo];
             [self drawMessageBox:context Message:[route getStepInstruction:nextStepRouteLine.stepNo]];
-            if(false == [audioPlayer isPlaying])
+            if(YES == SystemConfig.isSpeech && FALSE == [audioPlayer isPlaying] )
             {
                 [self playSpeech:text];
             }
@@ -475,7 +474,7 @@
         if (self.isDebugRouteLineAngle)
         {
             routeLineLabel = [NSString stringWithFormat:@"%d %.0f, %.0f",
-                          tmpCurrentRouteLine.routeLineNo,
+                          tmpCurrentRouteLine.no,
                           nextRouteLine == nil ? 0 :TO_ANGLE(tmpCurrentRouteLine.angle),
                           nextRouteLine == nil ? 0 :TO_ANGLE([tmpCurrentRouteLine getTurnAngle:nextRouteLine])
                         ];
@@ -517,7 +516,7 @@
 
 -(void) drawDebugMessage:(CGContextRef) context
 {
-    int routeLineNo = currentRouteLine != nil ? currentRouteLine.routeLineNo : -1;
+    int routeLineNo = currentRouteLine != nil ? currentRouteLine.no : -1;
     CGRect endPosText;
     
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
@@ -527,7 +526,7 @@
     endPosText.size.height = 60;
     
     
-    NSString *endText = [NSString stringWithFormat:@"angle:%.2f - %d\n%@", TO_ANGLE(targetAngle), routeLineNo, [SystemManager getUsedMemoryStr]];
+    NSString *endText = [NSString stringWithFormat:@"Target:%.2f, Turn:%.2f\n%d\n%@", TO_ANGLE(targetAngle), TO_ANGLE(_turnAngle), routeLineNo, [SystemManager getUsedMemoryStr]];
     
     [endText drawInRect:endPosText withFont:[UIFont boldSystemFontOfSize:14.0]];
     
@@ -669,7 +668,7 @@
     UIImage* turnImage;
     double turnAngle;
 
-    turnAngle = TO_ANGLE([self getTurnAngle]);
+    turnAngle = TO_ANGLE(_turnAngle);
     
     // left 45: -67.5 ~ 22.5
     if (-67.5 <= turnAngle && turnAngle <= -22.5)
@@ -700,20 +699,7 @@
     return turnImage;
 }
 
--(double) getTurnAngle
-{
-    double turnAngle = 0;
-    RouteLine* nextRouteLine;
-    
-    if (nil != currentRouteLine && currentRouteLine.routeLineNo + 1 < route.routeLines.count)
-    {
-        nextRouteLine = [route.routeLines objectAtIndex:currentRouteLine.routeLineNo+1];
-        turnAngle = [currentRouteLine getTurnAngle:nextRouteLine];
-    }
-    
-    return turnAngle;
 
-}
 -(void) generateRoutePoints
 {
     double widthRatio;
@@ -950,6 +936,11 @@
     [LocationManager setRoute:route];
     
     rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
+    
+    if (YES == SystemConfig.isSpeech)
+    {
+        [NaviQueryManager downloadSpeech:route];
+    }
     [self setNeedsDisplay];
 
 }
@@ -997,12 +988,22 @@
 -(void) playSpeech:(NSString*) text
 {
     
-    NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@.mp3", [SystemManager speechFilePath], text]];
-    
-	NSError *error;
-	audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
-	audioPlayer.numberOfLoops = 0;
-    [audioPlayer play];
+    @try {
+        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@.mp3", [SystemManager speechFilePath], text]];
+        NSError *error;
+        
+        mlogDebug(@"play %@, %@\n", text, [NSString stringWithFormat:@"%@/%@.mp3", [SystemManager speechFilePath], text]);
+        audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+        audioPlayer.numberOfLoops = 0;
+        [audioPlayer prepareToPlay];
+        [audioPlayer play];
+    }
+    @catch (NSException *exception)
+    {
+        mlogException(exception);
+    }
+
+
 }
 
 -(void) processRouteDownloadRequestStatusChange
@@ -1152,7 +1153,7 @@
 }
 -(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
 {
-    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+//    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     PointD nextCarPoint;
     currentCarLocation = newCarLocation;
     nextCarPoint.x = newCarLocation.longitude;
@@ -1162,16 +1163,20 @@
     if(currentRouteLine != nil)
     {
         routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
-        routeEndPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
-        targetAngle = currentRouteLine.angle;
+        routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
+        targetAngle     = currentRouteLine.angle;
+        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig turnAngleDistance]];
+
     }
     else
     {
+        _turnAngle      = 0;
         mlogError(@"Cannot found current route line, car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     }
     
     carPoint = nextCarPoint;
     [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
+    
     
     
     [self updateTranslationConstant];
@@ -1340,11 +1345,11 @@
 -(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int)speed Distance:(int)distance
 {
     currentStep++;
-    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+//    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
     [self updateCarLocation:location];
     [self setNeedsDisplay];
-    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
+//    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
 }
 
 @end

@@ -30,4 +30,6 @@
 +(double) triggerLocationInterval;// in millisecond
 +(void) setTriggerLocationInterval:(double) value;
 
++(double) turnAngleDistance;
++(void) setTurnAngleDistance;
 @end

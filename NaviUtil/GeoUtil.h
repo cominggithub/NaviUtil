@@ -42,7 +42,7 @@ typedef struct LocationCoordinateRect2D
 +(float) getLengthFromLocation: (CLLocationCoordinate2D) p1 ToLocation:(CLLocationCoordinate2D) p2;
 +(float) getMathLengthFromLocation: (CLLocationCoordinate2D) p1 ToLocation:(CLLocationCoordinate2D) p2;
 +(float) getGeoDistanceFromLocation: (CLLocationCoordinate2D) p1 ToLocation:(CLLocationCoordinate2D) p2;
-
++(float) getTurnAngleFrom:(double) fromAngle toAngle:(double) toAngle;
 
 +(LocationCoordinateRect2D) getRectByLocation:(CLLocationCoordinate2D)location level:(int)level;
 +(NSString*)getLatLngStr:(CLLocationCoordinate2D)location;

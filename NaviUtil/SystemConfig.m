@@ -20,6 +20,7 @@ static BOOL _isDebugRouteDraw;
 static double _triggerLocationUpdateInterval; // in millisecond
 static BOOL _isSpeech;
 static BOOL _isLocationUpdateFilter;
+static BOOL _turnAngleDistance;
 
 
 
@@ -93,6 +94,16 @@ static BOOL _isLocationUpdateFilter;
     _isLocationUpdateFilter = value;
 }
 
++(double) turnAngleDistance
+{
+    return _turnAngleDistance;
+}
+
++(void) setTurnAngleDistance:(double) value
+{
+    _turnAngleDistance = value;
+}
+
 #pragma function
 +(BOOL) init
 {
@@ -101,7 +112,8 @@ static BOOL _isLocationUpdateFilter;
     _isDebugRouteDraw               = TRUE;
     _isManualPlace                  = TRUE;
     _isLocationUpdateFilter         = FALSE;
-    _isSpeech                       = FALSE;
+    _isSpeech                       = TRUE;
+    _turnAngleDistance              = 50.0; // 50 meters
     _triggerLocationUpdateInterval  = 500;
     return [self parseJason];
 }

@@ -48,6 +48,7 @@ typedef enum
 
 
 
+
 +(Route*) parseJson:(NSString*) fileName;
 
 -(id) initWithJsonRouteFile: (NSString*) fileName;
@@ -67,10 +68,10 @@ typedef enum
 -(NSString*) getDurationString;
 -(NSString*) getDistanceString;
 -(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine;
-
 -(CLLocationCoordinate2D) getStartLocation;
 -(CLLocationCoordinate2D) getEndLocation;
 -(RouteLine*) getNextStepFirstRouteLineByStepNo:(int)stepNo CarLocation:(CLLocationCoordinate2D) carLocation;
-
+-(double) getAngleFromCLLocationCoordinate2D:(CLLocationCoordinate2D) location routeLineNo:(int) routeLineNo withInDistance:(double) distance;
+-(double) downloadSpeech;
 
 @end

@@ -75,13 +75,14 @@
         _nextLocationIndex = i+1;
     }
     
-    mlogInfo(@"%.7f, %.7f +- (%.7f, %.7f)\n",
+/*
+    mlogDebug(@"%.7f, %.7f +- (%.7f, %.7f)\n",
              _currentLocation.coordinate.latitude,
              _currentLocation.coordinate.longitude,
              latOffset,
              lngOffset
              );
-    
+*/    
     _lastLocationCoordinate2D = _currentLocation.coordinate;
     return _currentLocation.coordinate;
 }

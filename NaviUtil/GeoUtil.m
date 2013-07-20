@@ -198,4 +198,39 @@
     return c1.latitude == c2.latitude && c1.longitude == c2.longitude;
 }
 
++(float) getTurnAngleFrom:(double) fromAngle toAngle:(double) toAngle
+{
+    bool reverseDirection = false;
+    double angleOffset = fabs(fromAngle - toAngle);
+    double turnAngle;
+    
+    /* if angle offset > 180 || angle offset < -180
+     then turn right + becomes turn left - and
+     turn left - becomes turn right +
+     */
+    
+    reverseDirection = angleOffset > (M_PI) ? true:false;
+    
+    if (fromAngle == toAngle)
+        return false;
+    
+    /* should be turn right + */
+    if(fromAngle < toAngle)
+    {
+        turnAngle = angleOffset;
+        /* become turn left - */
+        if (true == reverseDirection)
+            turnAngle = (-1) * (2*M_PI - turnAngle);
+    }
+    /* should be turn left - */
+    else
+    {
+        turnAngle = (-1) * angleOffset;
+        /* becomes turn right + */
+        if (true == reverseDirection)
+            turnAngle = 2*M_PI + turnAngle;
+    }
+    
+    return turnAngle;
+}
 @end
