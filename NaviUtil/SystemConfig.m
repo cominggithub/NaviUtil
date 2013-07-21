@@ -108,7 +108,7 @@ static BOOL _turnAngleDistance;
 +(BOOL) init
 {
     _isDebug                        = TRUE;
-    _isAd                           = FALSE;
+    _isAd                           = TRUE;
     _isDebugRouteDraw               = TRUE;
     _isManualPlace                  = TRUE;
     _isLocationUpdateFilter         = FALSE;

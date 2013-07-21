@@ -38,12 +38,21 @@
         logo(c);
     }
 }
+
 -(NSString*) description
 {
     if (self.accessibilityLabel != nil)
-        return [NSString stringWithFormat:@"%s - %s", (char*)class_getName([self class]), [self.accessibilityLabel UTF8String]];
-    return [NSString stringWithFormat:@"%s", (char*)class_getName([self class])];
+        return [NSString stringWithFormat:@"%s(%s): (%.0f, %.0f) %.0f X %.0f",
+                [self.accessibilityLabel UTF8String], (char*)class_getName([self class]),
+                self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height
+                ];
+    return [NSString stringWithFormat:@"%s:  (%.0f, %.0f) %.0f X %.0f",
+            (char*)class_getName([self class]), self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height];
 }
 
+-(void) dumpFrame:(NSString*) name
+{
+    printf("%s: (%.0f, %.0f) %.0f X %.0f\n", [name UTF8String], self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height);
+}
 
 @end

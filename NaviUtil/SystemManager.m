@@ -25,6 +25,8 @@ static NSString *_userFilePath=@"";
 static NSString *_defaultLanguage=@"zh-TW";
 static NSDictionary *_supportedLanguage;
 static CLLocationCoordinate2D _defaultLocation;
+static CGRect _screenRect;
+static CGRect _lanscapeScreenRect;
 
 
 @implementation SystemManager
@@ -62,6 +64,12 @@ static CLLocationCoordinate2D _defaultLocation;
 
     
     mlogInfo(@"screen %.0f X %.0f %s", screenBounds.size.width, screenBounds.size.height, screenScale > 1.0 ? "Retina":"");
+    
+    _screenRect                         = screenBounds;
+    _lanscapeScreenRect.origin.x        = 0;
+    _lanscapeScreenRect.origin.y        = 0;
+    _lanscapeScreenRect.size.width      = _screenRect.size.height;
+    _lanscapeScreenRect.size.height     = _screenRect.size.width;
     
     Reachability* networkStatus = [Reachability reachabilityWithHostName:@"tw.yahoo.com"];
     NetworkStatus netStatus = [networkStatus currentReachabilityStatus];
@@ -179,6 +187,16 @@ static CLLocationCoordinate2D _defaultLocation;
 +(NSString *) userFilePath
 {
     return _userFilePath;
+}
+
++(CGRect) screenRect;
+{
+    return _screenRect;
+}
+
++(CGRect) lanscapeScreenRect;
+{
+    return _lanscapeScreenRect;
 }
 
 +(void) cleanDirectory:(NSString*) path

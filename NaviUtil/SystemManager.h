@@ -19,6 +19,8 @@
 +(NSString *) speechFilePath;
 +(NSString *) logFilePath;
 +(NSString *) userFilePath;
++(CGRect) lanscapeScreenRect;
++(CGRect) screenRect;
 +(void) init;
 +(void) initDirectory;
 +(NSString *) getSystemLanguage;

@@ -12,4 +12,5 @@
 
 -(void) dumpView;
 -(void) dumpConstraint;
+-(void) dumpFrame:(NSString*) name;
 @end
