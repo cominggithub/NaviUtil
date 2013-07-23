@@ -19,6 +19,7 @@
     DownloadRequest *routeDownloadRequest;
     NSMutableArray *drawedRouteLines;
     double _turnAngle;
+    double _routeComponentXOffset;
 }
 
 #pragma mark - Main
@@ -73,6 +74,7 @@
     routeDisplayBound.origin.y      = 0;
     routeDisplayBound.size.width    = 480;
     routeDisplayBound.size.height   = 320;
+    _routeComponentXOffset          = 100;
     
     carImage = [UIImage imageNamed:@"Blue_car_marker"];
     [LocationManager addDelegate:self];
@@ -173,7 +175,7 @@
     CGContextSetFillColorWithColor(context, [UIColor yellowColor].CGColor);
     CGContextSetLineWidth(context, 4.0);
     
-    carRect.origin.x = carCenterPoint.x - size;
+    carRect.origin.x = carCenterPoint.x - size + _routeComponentXOffset;
     carRect.origin.y = carCenterPoint.y - size;
     carRect.size.width = size*2;
     carRect.size.height = size*2;
@@ -248,12 +250,13 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     [super drawRect:rect];
 
+    
     if(currentRouteLine != nil)
     {
         PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
         PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
         
-        xOffset = tmpCarDrawPoint.x - startPoint.x;
+        xOffset = tmpCarDrawPoint.x - startPoint.x + _routeComponentXOffset;
     }
     else
     {
@@ -266,8 +269,6 @@
     
     if (nil == route || (nil != routeDownloadRequest && routeDownloadRequest.status != kDownloadStatus_Finished))
     {
-        logo(route);
-        logo(routeDownloadRequest);
         [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Route Planning"]];
         return;
     }
@@ -943,6 +944,7 @@
     {
         [NaviQueryManager downloadSpeech:route];
     }
+    [self updateCarLocation:((RouteLine*)[route.routeLines objectAtIndex:0]).startLocation];
     [self setNeedsDisplay];
 
 }
@@ -1166,7 +1168,7 @@
     {
         routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
         routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
-        targetAngle     = currentRouteLine.angle;
+        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig targetAngleDistance]];
         _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig turnAngleDistance]];
 
     }

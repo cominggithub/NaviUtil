@@ -165,21 +165,24 @@
     
     if( self.isSlopeUndefined )
     {
-        return [NSString stringWithFormat:@"Step:%2d, Line:%3d, angle:%4.0f, slope:    Undefine, x:%13.7f, (%11.7f, %11.7f) -> (%11.7f, %11.7f)",
+        return [NSString stringWithFormat:@"Step:%2d, Line:%3d, distance: %.2f, angle:%4.0f, slope:    Undefine, x:%13.7f, (%11.7f, %11.7f) -> (%11.7f, %11.7f)",
                 self.stepNo,
                 self.no,
+                self.distance,
                 TO_ANGLE(self.angle),
                 self.xOffset,
                 self.startLocation.latitude,
                 self.startLocation.longitude,
                 self.endLocation.latitude,
                 self.endLocation.longitude
+
                 ];
     }
     
-    return [NSString stringWithFormat:@"Step:%2d, Line:%3d, angle:%4.0f, slope:%12.7f, x:%13.7f, (%11.7f, %11.7f) -> (%11.7f, %11.7f)",
+    return [NSString stringWithFormat:@"Step:%2d, Line:%3d, distance: %.2f, angle:%4.0f, slope:%12.7f, x:%13.7f, (%11.7f, %11.7f) -> (%11.7f, %11.7f)",
         self.stepNo,
         self.no,
+        self.distance,            
         TO_ANGLE(self.angle),
         self.slope,
         self.xOffset,

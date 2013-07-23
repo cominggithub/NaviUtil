@@ -154,7 +154,7 @@
     }
     else
     {
-        mlogDebug(@"    Skip");
+//        mlogDebug(@"    Skip");
     }
 
     routeLineStartLocation = routeLineEndLocation;
@@ -725,20 +725,37 @@
     double cumulativeDistance   = 0;
     double startAngle           = 0;
     double endAngle             = 0;
+    bool isStartAngleUndfined   = TRUE;
     RouteLine *r;
+    
+    if (routeLineNo < 0 || routeLineNo > self.routeLines.count)
+        return 0;
+    
+    for (i=routeLineNo; i >= 0 && cumulativeDistance < distance; i--)
+    {
+        r = (RouteLine*) [self.routeLines objectAtIndex:routeLineNo];
+        if (r.distance > 2)
+        {
+            startAngle           = r.angle;
+            endAngle             = r.angle;
+            cumulativeDistance  += [GeoUtil getGeoDistanceFromLocation:location ToLocation:r.endLocation];
+            isStartAngleUndfined = FALSE;
+            mlogDebug(@"Start Angle: %.2f, cdistance: %.2f", startAngle, cumulativeDistance);
+            break;
+        }
+    }
     
     for (i=routeLineNo; i<self.routeLines.count && cumulativeDistance < distance; i++)
     {
         r = [self.routeLines objectAtIndex:i];
-        if (i == routeLineNo)
+ 
+        if (r.distance > 2)
         {
-            startAngle           = r.angle;
-            endAngle             = r.angle;            
-            cumulativeDistance  += [GeoUtil getGeoDistanceFromLocation:location ToLocation:r.endLocation];
-            mlogDebug(@"Start Angle: %.2f, cdistance: %.2f", startAngle, cumulativeDistance);
-        }
-        else if (r.distance > 2)
-        {
+            if (TRUE == isStartAngleUndfined)
+            {
+                startAngle = r.angle;
+                mlogDebug(@"Start Angle: %.2f, cdistance: %.2f", startAngle, cumulativeDistance);
+            }
             endAngle                = r.angle;
             cumulativeDistance      += r.distance;
             mlogDebug(@"End Angle: %.2f, cdistance: %.2f\n", endAngle, cumulativeDistance);
@@ -751,5 +768,39 @@
     
 }
 
+-(double) getCorrectedTargetAngle:(int) routeLineNo distance:(int) distance
+{
+    int i;
+    
+    double cumulativeDistance   = 0;
+
+    RouteLine *r;
+    
+    if (routeLineNo < 0 || routeLineNo > self.routeLines.count)
+        return 0;
+    
+    // look backward
+    for (i=routeLineNo; i >= 0 && cumulativeDistance < distance; i--)
+    {
+        r = (RouteLine*) [self.routeLines objectAtIndex:routeLineNo];
+        if (r.distance > 2)
+        {
+            return r.angle;
+        }
+    }
+    
+    // look forward
+    for (i=routeLineNo; i<self.routeLines.count && cumulativeDistance < distance; i++)
+    {
+        r = [self.routeLines objectAtIndex:i];
+        
+        if (r.distance > 2)
+        {
+            return r.angle;
+        }
+    }
+    
+    return 0;
+}
 
 @end

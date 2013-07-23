@@ -31,5 +31,9 @@
 +(void) setTriggerLocationInterval:(double) value;
 
 +(double) turnAngleDistance;
-+(void) setTurnAngleDistance;
++(void) setTurnAngleDistance:(double) value;
+
++(double) targetAngleDistance;
++(void) setTargetAngleDistance:(double) value;
+
 @end
