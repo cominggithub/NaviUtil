@@ -29,7 +29,6 @@
     dispatch_queue_t _backgroundQueue;
     DigitalNumDrawBlock* _speedNum;
     UIColor* _offColor;
-
 }
 
 
@@ -80,6 +79,8 @@
     _speed_num_1                    = (UIImageView *) [self viewWithTag:101];
     _speed_num_2                    = (UIImageView *) [self viewWithTag:102];
     
+    _speedLabel                     = (UILabel *)   [self viewWithTag:110];
+    
     _direction_panel_outer_circle   = (UIImageView *) [self viewWithTag:200];
     _direction_panel_inner_circle   = (UIImageView *) [self viewWithTag:201];
     
@@ -88,6 +89,10 @@
     _gps                            = (UIImageView *) [self viewWithTag:302];
 
     self.color                      = [UIColor cyanColor];
+    
+    
+
+
     [LocationManager addDelegate:self];
 
 }
@@ -107,12 +112,7 @@
         CGFloat blue = components[2];
         CGFloat alpha = components[3];
         
-        logf(red);
-        logf(green);
-        logf(blue);
-        logf(alpha);
-        
-        _offColor = [UIColor colorWithRed:red+1 green:green+1 blue:blue+1 alpha:alpha];
+        _offColor = [UIColor colorWithRed:red*0.5 green:green*0.5 blue:blue*0.5 alpha:alpha];
         
     }
     else
@@ -131,6 +131,7 @@
     [_battery setImageTintColor:_color];
     [_signal setImageTintColor:_color];
     [_gps setImageTintColor:_color];
+//    _speedLabel.textColor = _color;
 
 }
 

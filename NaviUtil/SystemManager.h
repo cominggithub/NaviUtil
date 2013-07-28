@@ -11,14 +11,22 @@
 #import <UIKit/UIKit.h>
 #import "Reachability.h"
 
+typedef enum
+{
+    kSystemManager_Path_Document,
+    kSystemManager_Path_Route,
+    kSystemManager_Path_Track,
+    kSystemManager_Path_Place,
+    kSystemManager_Path_Log,
+    kSystemManager_Path_User,
+    kSystemManager_Path_Speech,
+    kSystemManager_Path_Config,
+    kSystemManager_Path_Max
+}SystemManagerPathType;
+
 @interface SystemManager : NSObject
 
 +(NSString *) documentPath;
-+(NSString *) routeFilePath;
-+(NSString *) placeFilePath;
-+(NSString *) speechFilePath;
-+(NSString *) logFilePath;
-+(NSString *) userFilePath;
 +(CGRect) lanscapeScreenRect;
 +(CGRect) screenRect;
 +(void) init;
@@ -28,7 +36,7 @@
 +(CLLocationCoordinate2D) getDefaultLocation;
 +(NSString*) getUsedMemoryStr;
 +(NSString *) getLanguageString:(NSString*) stringIndex;
-
++(NSString *) getPath:(SystemManagerPathType) pathType;
 
 @end
 

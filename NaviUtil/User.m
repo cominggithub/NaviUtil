@@ -483,7 +483,7 @@ static NSMutableArray*  _searchedPlaces;
 +(void) init
 {
     mlogInfo(@"User Init");
-    if(false == [User parseJson:[SystemManager userFilePath]])
+    if(false == [User parseJson:[SystemManager getPath:kSystemManager_Path_User]])
     {
         mlogInfo(@"Create new user profile");
         Place *p                = [[Place alloc] init];
@@ -658,12 +658,12 @@ static NSMutableArray*  _searchedPlaces;
 
 +(void) save
 {
-    mlogInfo(@"Save user.json %@", [SystemManager userFilePath]);
+    mlogInfo(@"Save user.json %@", [SystemManager getPath:kSystemManager_Path_User]);
     NSError* error;
     
     //convert object to data
     NSData* jsonData = [NSJSONSerialization dataWithJSONObject:self.toDictionary
                                                        options:NSJSONWritingPrettyPrinted error:&error];
-    [jsonData writeToFile:[SystemManager userFilePath] atomically:true];
+    [jsonData writeToFile:[SystemManager getPath:kSystemManager_Path_User] atomically:true];
 }
 @end

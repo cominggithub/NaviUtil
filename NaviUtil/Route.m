@@ -91,7 +91,7 @@
         [self addLocationToRouteLinesWithStepNo:i Location:[self getEndLocation]];
 
         [self saveRouteLines];
-        [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager routeFilePath], [self getName]]];
+        [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager getPath:kSystemManager_Path_Route], [self getName]]];
 //        [self dumpRouteLines];
     
 //        [self dumpRouteLineAndPolyLine];
@@ -675,7 +675,7 @@
         if(rl.stepNo == stepNo+1)
         {
             double distance = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:carLocation];
-            if(distance < SystemConfig.turnAngleDistance)
+            if(distance < [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE])
                 return rl;
         }
     }

@@ -273,7 +273,7 @@ static CLLocationCoordinate2D _endLocation;
      * origin, destination, sensor
      */
     NSDictionary* param = [self getRouteQueryParamStartLocation:startLocation endLocation:endLocation];
-    NSString *filePath = [NSString stringWithFormat:@"%@/%@", [SystemManager routeFilePath], [self getFileNameParameters:param downloadFileFormat:GOOGLE_JSON]];
+    NSString *filePath = [NSString stringWithFormat:@"%@/%@", [SystemManager getPath:kSystemManager_Path_Route], [self getFileNameParameters:param downloadFileFormat:GOOGLE_JSON]];
     
     return filePath;
 }
@@ -283,7 +283,7 @@ static CLLocationCoordinate2D _endLocation;
 {
     NSDictionary* param = [self getPlaceQueryParam:locationName];
     
-    NSString *filePath = [NSString stringWithFormat:@"%@/%@", [SystemManager placeFilePath], [self getFileNameParameters:param downloadFileFormat:GOOGLE_JSON]];
+    NSString *filePath = [NSString stringWithFormat:@"%@/%@", [SystemManager getPath:kSystemManager_Path_Route], [self getFileNameParameters:param downloadFileFormat:GOOGLE_JSON]];
     
     return filePath;
 }
@@ -293,7 +293,7 @@ static CLLocationCoordinate2D _endLocation;
 //    NSDictionary* param = [self getSpeechQueryParam:text];
     
 //    NSString *filePath = [NSString stringWithFormat:@"%@/%@", [SystemManager speechFilePath], [self getFileNameParameters:param downloadFileFormat:GOOGLE_SPEECH]];
-    NSString *filePath = [NSString stringWithFormat:@"%@/%@.mp3", [SystemManager speechFilePath], text];
+    NSString *filePath = [NSString stringWithFormat:@"%@/%@.mp3", [SystemManager getPath:kSystemManager_Path_Speech], text];
     
     return filePath;
 }

@@ -33,13 +33,18 @@ static NSDate* _lastTriggerLocationUpdateTime;
 static int _setLocationUpdateInterval; // in milliseconds
 static int _skipLostDetectionCount;
 static LocationManagerLocationUpdateType _locationUpdateType;
-
+static BOOL _isTracking;
+static NSDateFormatter *_dateFormatter1;
+static NSDateFormatter *_dateFormatter2;
+static NSString* _fileName;
+static NSString* _kmlFileName;
+static NSFileHandle *_fileHandle;
+static NSMutableArray *_savedLocations;
 
 @implementation LocationManager
 {
     CLLocationManager *_locationManager;
 }
-
 
 @synthesize delegate=_delegate;
 
@@ -60,10 +65,12 @@ static LocationManagerLocationUpdateType _locationUpdateType;
     _locationManager.delegate=self;
     _locationManager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;
     
+    
 
+    
 }
 
--(void)startMonitorLocationChange
+-(void) startMonitorLocationChange
 {
     [_locationManager startUpdatingLocation];
 }
@@ -126,7 +133,21 @@ static LocationManagerLocationUpdateType _locationUpdateType;
     _locationSimulator.delegate = _locationManager;
     _delegates = [[NSMutableArray alloc] initWithCapacity:0];
 
-
+    
+    _dateFormatter1 = [[NSDateFormatter alloc] init];
+    [_dateFormatter1 setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    
+    _dateFormatter2 = [[NSDateFormatter alloc] init];
+    [_dateFormatter2 setDateFormat:@"yyyy-MM-dd HH-mm"];
+    
+    NSDateFormatter *dateFormattor = [[NSDateFormatter alloc] init];
+    NSFileManager *filemanager;
+    NSString *currentPath;
+    
+    [dateFormattor setDateFormat:@"HHMM"];
+    filemanager =[NSFileManager defaultManager];
+    currentPath = [filemanager currentDirectoryPath];
+    
     [LocationManager reprobeLocation];
     
 }
@@ -147,6 +168,12 @@ static LocationManagerLocationUpdateType _locationUpdateType;
     NSTimeInterval timeDiff;
     BOOL isLocationUpdate = FALSE;
     
+    if (YES == _isTracking)
+    {
+        [_savedLocations addObjectsFromArray:clLocations];
+        [self writeLocationToFile:clLocations];
+    }
+    
     _skipLostDetectionCount = _skipLostDetectionCount > 0 ? (_skipLostDetectionCount-1):0;
     
     for (CLLocation* c in clLocations)
@@ -156,7 +183,6 @@ static LocationManagerLocationUpdateType _locationUpdateType;
         
         nextLocation.latitude   = c.coordinate.latitude;
         nextLocation.longitude  = c.coordinate.longitude;
-        
     }
     
 
@@ -196,8 +222,6 @@ static LocationManagerLocationUpdateType _locationUpdateType;
     
     if (YES == _hasLocation && _locationLostCount > 3)
     {
-        logfn();
-
         [self triggerLostLocationUpdateNotify];
         [self reprobeLocation];
     }
@@ -219,17 +243,14 @@ static LocationManagerLocationUpdateType _locationUpdateType;
 
 +(BOOL) isLocationDifferenceReasonable:(CLLocationCoordinate2D) fromLocation To:(CLLocationCoordinate2D) toLocation
 {
-    logfn();
-    if (TRUE == SystemConfig.isLocationUpdateFilter)
+    if (TRUE == [SystemConfig getBOOLValue:CONFIG_IS_LOCATION_UPDATE_FILTER])
     {
         int distance = [GeoUtil getGeoDistanceFromLocation:fromLocation ToLocation:toLocation];
         if (distance > LOCATION_UPDATE_DISTANCE_THRESHOLD)
         {
-            logfn();
             return FALSE;
         }
     }
-    logfn();
     return TRUE;
 }
 
@@ -237,14 +258,14 @@ static LocationManagerLocationUpdateType _locationUpdateType;
 {
     Place *p = _currentPlace;
     
-    if (SystemConfig.isManualPlace)
+    if (TRUE == [SystemConfig getBOOLValue:CONFIG_IS_MANUAL_PLACE])
         p = _currentManualPlace;
     else
     {
         p = [Place newPlace:[SystemManager getLanguageString:@"Current Place"] Address:[SystemManager getLanguageString:@"Current Place"] Location:_currentCLLocationCoordinate2D];
     }
 
-    
+    p.placeRouteType = kPlaceType_CurrentPlace;
     return p;
 }
 
@@ -254,7 +275,7 @@ static LocationManagerLocationUpdateType _locationUpdateType;
     {
         _currentManualPlace.placeType = kPlaceType_None;
     }
-    _currentManualPlace.placeType = kPlaceType_CurrentLocation;
+    _currentManualPlace.placeType = kPlaceType_CurrentPlace;
     _currentManualPlace = p;
 }
 
@@ -263,11 +284,9 @@ static LocationManagerLocationUpdateType _locationUpdateType;
     NSDate *updateTime = [NSDate date];
     NSTimeInterval timeInterval = [updateTime timeIntervalSinceDate:_lastTriggerLocationUpdateTime]*1000;
 
-
-    
-    if ( SystemConfig.triggerLocationInterval > timeInterval && _lastTriggerLocationUpdateTime != nil)
+    if ( [SystemConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL] > timeInterval && _lastTriggerLocationUpdateTime != nil)
     {
-        mlogDebug(@"skip location update notify %.0fms > %.0fms", SystemConfig.triggerLocationInterval, timeInterval);
+        mlogDebug(@"skip location update notify %.0fms > %.0fms", [SystemConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL], timeInterval);
         return;
     }
 
@@ -351,5 +370,127 @@ static LocationManagerLocationUpdateType _locationUpdateType;
             _locationSimulator.type = kLocationManagerLocationUpdateType_ManualRoute;
             break;
     }
+}
+
++(void) startLocationTracking
+{
+    _isTracking = TRUE;
+    [self newFile];
+}
+
++(void) stopLocationTracking
+{
+    _isTracking = FALSE;
+    [self saveFile];
+}
+
++(void) writeLocationToFile:(NSArray *)locations
+{
+    logfn();
+    NSString *msg;
+    NSDateFormatter *formater = [[NSDateFormatter alloc] init];
+    [formater setDateFormat:@"HH:mm:ss"];
+
+    if (nil == locations)
+    {
+        mlogDebug(@"AAAAA");
+        return;
+    }
+        
+    for(CLLocation *location in locations)
+    {
+        msg = [NSString stringWithFormat:@"%@ %.8f, %.8f, %.8f, %.8f, %.8f\n",
+               [formater stringFromDate:[NSDate date]],
+               location.coordinate.latitude,
+               location.coordinate.longitude,
+               location.altitude,
+               location.horizontalAccuracy,
+               location.verticalAccuracy
+               ];
+    }
+    
+    if (nil != _fileHandle)
+    {
+        [_fileHandle writeData:[msg dataUsingEncoding:NSUTF8StringEncoding]];
+        [_fileHandle synchronizeFile];
+    }
+}
+
++(void) saveToKml
+{
+    logfn();
+    NSMutableString *content = [[NSMutableString alloc] init];
+    NSMutableString *coordinates = [[NSMutableString alloc] init];
+    NSError *err;
+    
+    
+    for(CLLocation* cl in _savedLocations)
+    {
+        [coordinates appendFormat:@"%f,%f,0 \n", cl.coordinate.longitude, cl.coordinate.latitude];
+    }
+    
+    [content appendString:@"<?xml version=\"1.0\" standalone=\"yes\"?>\n"];
+    [content appendString:@"<kml xmlns=\"http://earth.google.com/kml/2.2\">\n"];
+    [content appendString:@"<Document>\n"];
+    [content appendFormat:@"<name>KK</name>\n"];
+    [content appendString:@"<Placemark>\n"];
+    [content appendString:@"<Style>\n"];
+    [content appendString:@"<LineStyle>\n"];
+    [content appendString:@"<color>FF00FF00</color>\n"];
+    [content appendString:@"<width>10</width>\n"];
+    [content appendString:@"</LineStyle>\n"];
+    [content appendString:@"</Style>\n"];
+    [content appendString:@"<MultiGeometry>\n"];
+    [content appendString:@"<LineString>\n"];
+    [content appendString:@"<tessellate>1</tessellate>\n"];
+    [content appendString:@"<altitudeMode>clampToGround</altitudeMode>\n"];
+    [content appendString:@"<coordinates>\n"];
+    [content appendString:coordinates];
+    
+    [content appendString:@"</coordinates>\n"];
+    [content appendString:@"</LineString>\n"];
+    [content appendString:@"</MultiGeometry>\n"];
+    [content appendString:@"</Placemark>\n"];
+    [content appendString:@"</Document>\n"];
+    [content appendString:@"</kml>"];
+    
+    
+    
+    [content writeToFile:_kmlFileName atomically:YES encoding:NSUnicodeStringEncoding error:&err];
+    
+}
+
++(void) newFile
+{
+    logfn();
+    _fileName = [NSString stringWithFormat:@"%@/GT_%@.txt", [SystemManager documentPath], [_dateFormatter2 stringFromDate:[NSDate date]]];
+    
+    _kmlFileName = [NSString stringWithFormat:@"%@/GT_%@.kml", [SystemManager documentPath], [_dateFormatter2 stringFromDate:[NSDate date]]];
+    
+    mlogDebug(@"%s", _fileName);
+    mlogDebug(@"%s", _kmlFileName);
+    @try
+    {
+        _fileHandle = [NSFileHandle fileHandleForWritingAtPath:_fileName];
+        if(_fileHandle == nil) {
+            [[NSFileManager defaultManager] createFileAtPath:_fileName contents:nil attributes:nil];
+            _fileHandle = [NSFileHandle fileHandleForWritingAtPath:_fileName];
+        }
+    }
+    @catch (NSException *exception)
+    {
+
+    }
+}
+
++(void) saveFile
+{
+    logfn();
+    if (nil != _fileHandle)
+    {
+        [_fileHandle closeFile];
+    }
+    
+    [self saveToKml];
 }
 @end

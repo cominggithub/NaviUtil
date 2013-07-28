@@ -7,33 +7,34 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+
+#define CONFIG_IS_DEBUG                         @"isDebug"
+#define CONFIG_IS_AD                         @"isAd"
+#define CONFIG_IS_MANUAL_PLACE               @"isManualPlace"
+#define CONFIG_IS_DEBUG_ROUTE_DRAW           @"isDebugRouteDraw"
+#define CONFIG_IS_SPEECH                     @"isSpeech"
+#define CONFIG_IS_LOCATION_UPDATE_FILTER     @"isLocationUpdateFilter"
+#define CONFIG_TRIGGER_LOCATION_INTERVAL     @"TriggerLocationUpdateInterval"
+#define CONFIG_TURN_ANGLE_DISTANCE           @"TurnAngleDistance"
+#define CONFIG_TARGET_ANGLE_DISTANCE         @"TargetAngleDistance"
+#define CONFIG_DEFAULT_COLOR                 @"DefaultColor"
 
 @interface SystemConfig : NSObject
 
 +(BOOL) init;
-+(BOOL) isDebug;
-+(void) setIsDebug:(BOOL) value;
-+(BOOL) isAd;
-+(void) setIsAd:(BOOL) value;
-+(BOOL) isManualPlace;
-+(void) setIsManualPlace:(BOOL) value;
-+(BOOL) isDebugRouteDraw;
-+(void) setIsDebugRouteDraw:(BOOL) value;
 
-+(BOOL) isSpeech;
-+(void) setIsSpeech:(BOOL) value;
++(int) getIntValue:(NSString*) key;
++(double) getDoubleValue:(NSString*) key;
++(float) getFloatValue:(NSString*) key;
++(BOOL) getBOOLValue:(NSString*) key;
++(void) setValue:(NSString*) key int:(int) value;
++(void) setValue:(NSString*) key double:(double) value;
++(void) setValue:(NSString*) key float:(float) value;
++(void) setValue:(NSString*) key BOOL:(BOOL) value;
 
-+(BOOL) isLocationUpdateFilter;
-+(void) setLocationUpdateFilter:(BOOL) value;
-
-
-+(double) triggerLocationInterval;// in millisecond
-+(void) setTriggerLocationInterval:(double) value;
-
-+(double) turnAngleDistance;
-+(void) setTurnAngleDistance:(double) value;
-
-+(double) targetAngleDistance;
-+(void) setTargetAngleDistance:(double) value;
++(UIColor*) defaultColor;
++(void) setDefaultColor:(UIColor*) value;
++(void) save;
 
 @end

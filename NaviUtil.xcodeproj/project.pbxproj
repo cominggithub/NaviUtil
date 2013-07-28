@@ -42,6 +42,7 @@
 		2B8B71C7178C35B6005E460F /* Image.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B8B71C6178C35B6005E460F /* Image.mm */; };
 		2B8B7218178C46F8005E460F /* BatteryNormalDrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8B7217178C46F8005E460F /* BatteryNormalDrawBlock.m */; };
 		2B92164D16F757A40072E44F /* Location.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B92164C16F757A40072E44F /* Location.m */; };
+		2B94C8E217A4C8B3002581F3 /* JsonFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B94C8E117A4C8B3002581F3 /* JsonFile.m */; };
 		2B98912716EB82D90057A226 /* TextValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912616EB82D90057A226 /* TextValue.m */; };
 		2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912916EB89C10057A226 /* NSDictionary+category.m */; };
 		2B995CD81706F27500991700 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B995CD71706F27500991700 /* Reachability.m */; };
@@ -144,6 +145,8 @@
 		2B8B7217178C46F8005E460F /* BatteryNormalDrawBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BatteryNormalDrawBlock.m; sourceTree = "<group>"; };
 		2B92164B16F757A40072E44F /* Location.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Location.h; sourceTree = "<group>"; };
 		2B92164C16F757A40072E44F /* Location.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Location.m; sourceTree = "<group>"; };
+		2B94C8E017A4C8B3002581F3 /* JsonFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JsonFile.h; sourceTree = "<group>"; };
+		2B94C8E117A4C8B3002581F3 /* JsonFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JsonFile.m; sourceTree = "<group>"; };
 		2B98912516EB82D90057A226 /* TextValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextValue.h; sourceTree = "<group>"; };
 		2B98912616EB82D90057A226 /* TextValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextValue.m; sourceTree = "<group>"; };
 		2B98912816EB89C10057A226 /* NSDictionary+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+category.h"; sourceTree = "<group>"; };
@@ -256,6 +259,8 @@
 				2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */,
 				2B70BEDC16F5F0E5002269AB /* User.h */,
 				2B70BEDD16F5F0E5002269AB /* User.m */,
+				2B94C8E017A4C8B3002581F3 /* JsonFile.h */,
+				2B94C8E117A4C8B3002581F3 /* JsonFile.m */,
 			);
 			name = System;
 			sourceTree = "<group>";
@@ -286,6 +291,7 @@
 		2B6CBF9516DFA6D90095CBD4 = {
 			isa = PBXGroup;
 			children = (
+				2B94C8E317A5404F002581F3 /* Resource */,
 				2B6CBFA316DFA6D90095CBD4 /* NaviUtil */,
 				2B6CBFB816DFA6DA0095CBD4 /* NaviUtilTests */,
 				2B6CBFA016DFA6D90095CBD4 /* Frameworks */,
@@ -367,6 +373,13 @@
 				2B8B71C6178C35B6005E460F /* Image.mm */,
 			);
 			name = "Third Party";
+			sourceTree = "<group>";
+		};
+		2B94C8E317A5404F002581F3 /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resource;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -504,6 +517,7 @@
 				2B8B7218178C46F8005E460F /* BatteryNormalDrawBlock.m in Sources */,
 				2B6FCDC3178DA10F00DCFAAF /* UIAnimation.m in Sources */,
 				2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */,
+				2B94C8E217A4C8B3002581F3 /* JsonFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

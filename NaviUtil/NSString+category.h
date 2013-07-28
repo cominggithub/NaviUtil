@@ -15,4 +15,8 @@
 -(NSMutableArray *) decodePolyLineLevel;
 -(NSString*) trim;
 + (NSString *)encodeStringWithCoordinate:(CLLocationCoordinate2D )coordinate;
++(NSString*) stringFromInt:(int) value;
++(NSString*) stringFromDouble:(double) value;
++(NSString*) stringFromFloat:(float) value;
++(NSString*) stringFromBOOL:(BOOL) value;
 @end

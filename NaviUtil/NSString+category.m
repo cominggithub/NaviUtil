@@ -178,4 +178,27 @@
 }
 
 #endif
+
++(NSString*) stringFromInt:(int) value
+{
+    return [NSString stringWithFormat:@"%d", value];
+}
++(NSString*) stringFromDouble:(double) value
+{
+    return [NSString stringWithFormat:@"%f", value];
+}
+
++(NSString*) stringFromFloat:(float) value
+{
+    return [NSString stringWithFormat:@"%f", value];
+}
+
++(NSString*) stringFromBOOL:(BOOL) value
+{
+    return [NSString stringWithFormat:@"%@", TRUE == value ? @"true":@"false"];
+}
+
+
+
+
 @end

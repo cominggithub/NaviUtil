@@ -19,7 +19,7 @@
 -(NSString*) filePath
 {
     
-    return [NSString stringWithFormat:@"%@%@.mp3", [SystemManager speechFilePath], self.text];
+    return [NSString stringWithFormat:@"%@%@.mp3", [SystemManager getPath:kSystemManager_Path_Speech], self.text];
 }
 
 @end

@@ -8,6 +8,7 @@
 
 #import "GuideRouteUIView.h"
 #import "SystemConfig.h"
+#import "UIImage+category.h"
 
 #define FILE_DEBUG TRUE
 #include "Log.h"
@@ -19,7 +20,9 @@
     DownloadRequest *routeDownloadRequest;
     NSMutableArray *drawedRouteLines;
     double _turnAngle;
-    double _routeComponentXOffset;
+    CGRect _routeComponentRect;
+    CGRect _speedComponentRect;
+
 }
 
 #pragma mark - Main
@@ -69,14 +72,21 @@
     msgRect.size.width      = floor(480*0.8);
     msgRect.size.height     = floor(320*0.4);
     
-    routeDisplayBound       = self.bounds;
-    routeDisplayBound.origin.x      = 0;
-    routeDisplayBound.origin.y      = 0;
-    routeDisplayBound.size.width    = 480;
-    routeDisplayBound.size.height   = 320;
-    _routeComponentXOffset          = 100;
+    routeDisplayBound               = [SystemManager lanscapeScreenRect];
     
     carImage = [UIImage imageNamed:@"Blue_car_marker"];
+    
+    _speedComponentRect.origin.x    = 0;
+    _speedComponentRect.origin.y    = 0;
+    _speedComponentRect.size.width  = 240;
+    _speedComponentRect.size.height = [SystemManager lanscapeScreenRect].size.height;
+    
+    _routeComponentRect.origin.x    = _speedComponentRect.size.width;
+    _routeComponentRect.origin.y    = 0;
+    _routeComponentRect.size.width  = [SystemManager lanscapeScreenRect].size.width - _speedComponentRect.size.width;
+    _routeComponentRect.size.height = [SystemManager lanscapeScreenRect].size.height;
+    
+    _color                          = [SystemConfig defaultColor];
     [LocationManager addDelegate:self];
 }
 
@@ -139,23 +149,24 @@
 
 
 #pragma mark - Draw Functions
+
+-(void) setColor:(UIColor *)color
+{
+    logfn();
+    _color = color;
+    [self setNeedsDisplay];
+}
+
 -(void) drawBackground:(CGContextRef) context Rectangle:(CGRect) rect
 {
     
-    CGRect routeRect = rect;
-
-    routeRect.origin.x -= 200;
-    routeRect.origin.y -= 200;
-    routeRect.size.width +=400;
-    routeRect.size.height +=400;
-
     // draw blackground
     CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
     CGContextFillRect(context, rect);
     
     CGContextSetLineWidth(context, 3.0);
 
-    CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
+    CGContextSetStrokeColorWithColor(context, self.color.CGColor);
     
     // draw screen frame
     CGContextAddRect(context, routeDisplayBound);
@@ -175,7 +186,7 @@
     CGContextSetFillColorWithColor(context, [UIColor yellowColor].CGColor);
     CGContextSetLineWidth(context, 4.0);
     
-    carRect.origin.x = carCenterPoint.x - size + _routeComponentXOffset;
+    carRect.origin.x = carCenterPoint.x - size + _routeComponentRect.origin.x;
     carRect.origin.y = carCenterPoint.y - size;
     carRect.size.width = size*2;
     carRect.size.height = size*2;
@@ -208,7 +219,7 @@
         
         normalPointEnd = [self getDrawPoint:normalPointEnd];
         
-        CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
+        CGContextSetStrokeColorWithColor(context, self.color.CGColor);
         
         CGContextSetLineWidth(context, 2.0);
         CGContextMoveToPoint(context, normalPointStart.x + xOffset + carOffset.x, normalPointStart.y + carOffset.y);
@@ -251,17 +262,6 @@
     [super drawRect:rect];
 
     
-    if(currentRouteLine != nil)
-    {
-        PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
-        PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
-        
-        xOffset = tmpCarDrawPoint.x - startPoint.x + _routeComponentXOffset;
-    }
-    else
-    {
-        mlogError(@" currentRouteLine is null\n");
-    }
 
 
     [self drawBackground:context Rectangle:rect];
@@ -269,10 +269,24 @@
     
     if (nil == route || (nil != routeDownloadRequest && routeDownloadRequest.status != kDownloadStatus_Finished))
     {
-        [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Route Planning"]];
+        [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Route Planning..."]];
         return;
     }
 
+    if(currentRouteLine != nil)
+    {
+        PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
+        PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
+        
+        xOffset = tmpCarDrawPoint.x - startPoint.x + _routeComponentRect.origin.x;
+    }
+    else
+    {
+        [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Find our location now..."]];
+        mlogError(@" currentRouteLine is null\n");
+    }
+
+    
     [self drawRoute:context Rectangle:rect];
     [self drawCar:context];
     [self drawTurnMessage:context];
@@ -299,7 +313,7 @@
         {
             NSString* text = [route getStepInstruction:nextStepRouteLine.stepNo];
             [self drawMessageBox:context Message:[route getStepInstruction:nextStepRouteLine.stepNo]];
-            if(YES == SystemConfig.isSpeech && FALSE == [audioPlayer isPlaying] )
+            if(YES == [SystemConfig getBOOLValue:CONFIG_IS_SPEECH] && FALSE == [audioPlayer isPlaying] )
             {
                 [self playSpeech:text];
             }
@@ -308,7 +322,7 @@
 }
 -(void) drawRoute:(CGContextRef) context Rectangle:(CGRect) rect
 {
-    
+    BOOL hasStartPoint;
     PointD startPoint;
     PointD endPoint;
     CGRect roundRect;
@@ -318,7 +332,7 @@
     
     NSMutableArray *stepPoint;
     
-    
+    hasStartPoint = FALSE;
 
 //    routeRect.origin.x -= 200;
 //    routeRect.origin.y -= 200;
@@ -329,8 +343,9 @@
     
     
     // draw route line
-    CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
+    CGContextSetFillColorWithColor(context, self.color.CGColor);
     CGContextSetLineWidth(context, 10.0);
+    CGContextSetLineJoin(context, kCGLineJoinRound);
 
     if (nil == drawedRouteLines)
     {
@@ -349,34 +364,17 @@
         if (CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:startPoint]) ||
             CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:endPoint]))
         {
-            CGContextMoveToPoint(context, startPoint.x, startPoint.y);
+            if (FALSE == hasStartPoint)
+            {
+                CGContextMoveToPoint(context, startPoint.x, startPoint.y);
+                hasStartPoint = TRUE;
+            }
+            
             CGContextAddLineToPoint(context, endPoint.x, endPoint.y);
             [drawedRouteLines addObject:rl];
         }
     }
     CGContextStrokePath(context);
-    
-    // add circle to the edge of route line
-    CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
-    CGContextSetLineWidth(context, 10.0);
-    
-    for(RouteLine *rl in drawedRouteLines)
-    {
-        startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
-        endPoint    = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
-        
-        startPoint.x    += xOffset;
-        endPoint.x      += xOffset;
-        
-        roundRect.origin.x = startPoint.x-roundRectSize/2;
-        roundRect.origin.y = startPoint.y-roundRectSize/2;
-        roundRect.size.width = roundRectSize;
-        roundRect.size.height = roundRectSize;
-        
-        CGContextAddEllipseInRect(context, roundRect);
-        
-    }
-    CGContextFillPath(context);
     
     // add circle to the edge of step
     CGContextSetStrokeColorWithColor(context, [UIColor yellowColor].CGColor);
@@ -400,43 +398,29 @@
     CGContextStrokePath(context);
     
     
-    
-    // mark edge of route line by red circle
-    CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
-    CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
-    for(RouteLine *rl in drawedRouteLines)
+    if (YES == [SystemConfig getBOOLValue:CONFIG_IS_DEBUG])
     {
-        startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
-        endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
-        startPoint.x    += xOffset;
-        endPoint.x      += xOffset;
+    
+        // mark edge of route line by red circle
+        CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
+        CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
+        for(RouteLine *rl in drawedRouteLines)
+        {
+            startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
+            endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
+            startPoint.x    += xOffset;
+            endPoint.x      += xOffset;
         
-        roundRect.origin.x = startPoint.x-roundRectSize/2;
-        roundRect.origin.y = startPoint.y-roundRectSize/2;
-        roundRect.size.width = roundRectSize;
-        roundRect.size.height = roundRectSize;
+            roundRect.origin.x = startPoint.x-roundRectSize/2;
+            roundRect.origin.y = startPoint.y-roundRectSize/2;
+            roundRect.size.width = roundRectSize;
+            roundRect.size.height = roundRectSize;
         
-        CGContextAddEllipseInRect(context, roundRect);
+            CGContextAddEllipseInRect(context, roundRect);
         
+        }
+        CGContextFillPath(context);
     }
-    CGContextFillPath(context);
-#if 0
-    // draw the last route line
-    CGContextSetFillColorWithColor(context, [UIColor cyanColor].CGColor);
-    if(currentRouteLine == nil)
-        return;
-    
-    CGContextSetStrokeColorWithColor(context, [UIColor purpleColor].CGColor);
-    CGContextSetFillColorWithColor(context, [UIColor purpleColor].CGColor);
-    CGContextSetLineWidth(context, 5.0);
-    
-    curPoint = [self getDrawPoint:routeStartPoint];
-    
-    CGContextMoveToPoint(context, curPoint.x, curPoint.y);
-    curPoint = [self getDrawPoint:routeEndPoint];
-    CGContextAddLineToPoint(context, curPoint.x, curPoint.y);
-    CGContextStrokePath(context);
-#endif
 }
 
 -(void) drawRouteLabel:(CGContextRef) context
@@ -451,7 +435,7 @@
     RouteLine *nextRouteLine;
     
     nextRouteLine = nil;
-    CGContextSetFillColorWithColor(context, [UIColor cyanColor].CGColor);
+    CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
     for(i=0; i<drawedRouteLines.count; i++)
     {
         tmpCurrentRouteLine = [drawedRouteLines objectAtIndex:i];
@@ -696,7 +680,7 @@
         turnImage = [UIImage imageNamed:@"turn_straight"];
     }
     
-    return turnImage;
+    return [turnImage imageTintedWithColor:self.color];
 }
 
 
@@ -785,8 +769,6 @@
 
 -(PointD) getRawDrawPoint:(PointD) p
 {
-    
-    
     PointD tmpPoint;
     PointD translatedPoint;
     
@@ -915,8 +897,9 @@
     targetAngle             = 0;
     screenSize.width        = 480;
     screenSize.height       = 320;
-    carCenterPoint.x        = screenSize.width/2;
-    carCenterPoint.y        = (screenSize.height/4)*3;
+    carCenterPoint.x        = _routeComponentRect.size.width/2;
+    carCenterPoint.y        = (_routeComponentRect.size.height/4)*3;
+    
     carPoint.x              = 0;
     carPoint.y              = 0;
     locationIndex           = 0;
@@ -940,7 +923,7 @@
     
     rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
     
-    if (YES == SystemConfig.isSpeech)
+    if (YES == [SystemConfig getBOOLValue:CONFIG_IS_SPEECH])
     {
         [NaviQueryManager downloadSpeech:route];
     }
@@ -992,11 +975,12 @@
 -(void) playSpeech:(NSString*) text
 {
     
-    @try {
-        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@.mp3", [SystemManager speechFilePath], text]];
+    @try
+    {
+        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@.mp3", [SystemManager getPath:kSystemManager_Path_Speech], text]];
         NSError *error;
         
-        mlogDebug(@"play %@, %@\n", text, [NSString stringWithFormat:@"%@/%@.mp3", [SystemManager speechFilePath], text]);
+        mlogDebug(@"play %@, %@\n", text, [NSString stringWithFormat:@"%@/%@.mp3", [SystemManager getPath:kSystemManager_Path_Speech], text]);
         audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
         audioPlayer.numberOfLoops = 0;
         [audioPlayer prepareToPlay];
@@ -1168,8 +1152,8 @@
     {
         routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
         routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
-        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig targetAngleDistance]];
-        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig turnAngleDistance]];
+        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
+        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
 
     }
     else

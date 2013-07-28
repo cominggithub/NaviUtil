@@ -21,7 +21,7 @@ typedef enum PlaceType
     kPlaceType_Favor,
     kPlaceType_SearchedPlace,
     kPlaceType_SearchedPlaceText,
-    kPlaceType_CurrentLocation,
+    kPlaceType_CurrentPlace,
     kPlaceType_Max
     
 }PlaceType;

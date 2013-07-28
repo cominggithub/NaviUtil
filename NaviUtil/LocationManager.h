@@ -50,6 +50,8 @@ typedef enum
 +(void) triggerLocationUpdate;
 +(void) setRoute:(Route*) route;
 +(void) setLocationUpdateType:(LocationManagerLocationUpdateType) locationUpdateType;
++(void) startLocationTracking;
++(void) stopLocationTracking;
 
 -(void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations;
 -(void) startMonitorLocationChange;

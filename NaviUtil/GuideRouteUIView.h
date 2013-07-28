@@ -82,6 +82,7 @@
 @property (nonatomic) bool isDebugNormalLine;
 @property (nonatomic) bool isDebugRouteLineAngle;
 @property (nonatomic) bool isHUD;
+@property (strong, nonatomic) UIColor *color;
 
 
 -(void) autoSimulatorLocationUpdateStart;

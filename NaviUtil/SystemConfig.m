@@ -7,141 +7,101 @@
 //
 
 #import "SystemConfig.h"
+#import "JsonFile.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
 
 @implementation SystemConfig
 
-static BOOL _isDebug;
-static BOOL _isAd;
-static BOOL _isManualPlace;
-static BOOL _isDebugRouteDraw;
-static double _triggerLocationUpdateInterval; // in millisecond
-static BOOL _isSpeech;
-static BOOL _isLocationUpdateFilter;
-static BOOL _turnAngleDistance;
-static BOOL _targetAngleDistance;
-
-
+static UIColor *_defaultColor;
+static JsonFile *_configFile;
 
 #pragma variable
-+(BOOL) isDebug
+
++(int) getIntValue:(NSString*) key
 {
-    return _isDebug;
+    return [[_configFile objectForKey:key] intValue];
 }
 
-+(void) setIsDebug:(BOOL) value
++(double) getDoubleValue:(NSString*) key
 {
-    _isDebug = value;
+    return [[_configFile objectForKey:key] doubleValue];
 }
 
-+(BOOL) isAd
++(float) getFloatValue:(NSString*) key
 {
-    return _isAd;
+    return [[_configFile objectForKey:key] floatValue];
 }
 
-+(void) setIsAd:(BOOL) value
++(BOOL) getBOOLValue:(NSString*) key
 {
-    _isAd = value;
+    return [[_configFile objectForKey:key] boolValue];
 }
 
-+(BOOL) isManualPlace
++(void) setValue:(NSString*) key int:(int) value
 {
-    return _isManualPlace;
-}
-+(void) setIsManualPlace:(BOOL) value
-{
-    _isManualPlace = value;
-}
-+(BOOL) isDebugRouteDraw
-{
-    return _isDebugRouteDraw;
+    [_configFile setObjectForKey:key object:[NSString stringFromInt:value]];
+    [self save];
 }
 
-+(void) setIsDebugRouteDraw:(BOOL) value
++(void) setValue:(NSString*) key double:(double) value
 {
-    _isDebugRouteDraw = value;
+    [_configFile setObjectForKey:key object:[NSString stringFromDouble:value]];
+    [self save];
 }
 
-+(double) triggerLocationInterval
++(void) setValue:(NSString*) key float:(float) value
 {
-    return _triggerLocationUpdateInterval;
+    [_configFile setObjectForKey:key object:[NSString stringFromFloat:value]];
+    [self save];
 }
 
-+(void) setTriggerLocationInterval:(double) value
++(void) setValue:(NSString*) key BOOL:(BOOL) value
 {
-    _triggerLocationUpdateInterval = value;
+    [_configFile setObjectForKey:key object:[NSString stringFromBOOL:value]];
+    [self save];
+}
+
++(UIColor*) defaultColor
+{
+    return _defaultColor;
+}
+
++(void) setDefaultColor:(UIColor*) value
+{
+    _defaultColor = value;
 }
 
 
-+(BOOL) isSpeech
-{
-    return _isSpeech;
-}
-
-+(void) setIsSpeech:(BOOL) value
-{
-    _isSpeech = value;
-}
-
-+(BOOL) isLocationUpdateFilter
-{
-    return _isLocationUpdateFilter;
-}
-
-+(void) setLocationUpdateFilter:(BOOL) value
-{
-    _isLocationUpdateFilter = value;
-}
-
-+(double) turnAngleDistance
-{
-    return _turnAngleDistance;
-}
-
-+(void) setTurnAngleDistance:(double) value
-{
-    _turnAngleDistance = value;
-}
-
-+(double) targetAngleDistance
-{
-    return _targetAngleDistance;
-}
-
-+(void) setTargetAngleDistance:(double) value
-{
-    _targetAngleDistance = value;
-}
-
-#pragma function
+#pragma mark - function
 +(BOOL) init
 {
-    _isDebug                        = TRUE;
-    _isAd                           = TRUE;
-    _isDebugRouteDraw               = TRUE;
-    _isManualPlace                  = TRUE;
-    _isLocationUpdateFilter         = FALSE;
-    _isSpeech                       = TRUE;
-    _turnAngleDistance              = 50.0; // 50 meters
-    _targetAngleDistance              = 5.0; // 5 meters
-    _triggerLocationUpdateInterval  = 500;
-    return [self parseJason];
+    _defaultColor                   = [UIColor greenColor];
+    _configFile                     = [JsonFile jsonFileWithFileName:[SystemManager getPath:kSystemManager_Path_Config]];
+
+    /* initialization System Config */
+    if ( 0 == _configFile.root.count)
+    {
+        logfn();
+        [_configFile setBOOLForKey:CONFIG_IS_DEBUG                      value:TRUE];
+        [_configFile setBOOLForKey:CONFIG_IS_AD                         value:TRUE];
+        [_configFile setBOOLForKey:CONFIG_IS_DEBUG_ROUTE_DRAW           value:TRUE];
+        [_configFile setBOOLForKey:CONFIG_IS_MANUAL_PLACE               value:FALSE];
+        [_configFile setBOOLForKey:CONFIG_IS_LOCATION_UPDATE_FILTER     value:FALSE];
+        [_configFile setBOOLForKey:CONFIG_IS_SPEECH                     value:TRUE];
+        [_configFile setFloatForKey:CONFIG_TURN_ANGLE_DISTANCE          value:50.0]; // meters
+        [_configFile setFloatForKey:CONFIG_TARGET_ANGLE_DISTANCE        value:5.0]; // meters
+        [_configFile setFloatForKey:CONFIG_TRIGGER_LOCATION_INTERVAL    value:500]; // 200 millisecond
+        [self save];
+    }
+    
+    return TRUE;
 }
 
-+(BOOL) parseJason
++(void) save
 {
-    BOOL result = true;
-    @try {
-        
-    }
-    @catch (NSException *exception) {
-        result = false;
-    }
-
-    return result;
+    [_configFile save];
 }
-
 
 @end

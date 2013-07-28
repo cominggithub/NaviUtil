@@ -17,12 +17,13 @@
 @property (strong, nonatomic) UIImageView* direction_panel_inner_circle;
 @property (strong, nonatomic) UIImageView* direction_panel_outer_circle;
 
-@property (strong, nonatomic) UIImageView* signal;
-@property (strong, nonatomic) UIImageView* gps;
-@property (strong, nonatomic) UIImageView* battery;
-@property (strong, nonatomic) UIImageView* speed_num_0;
-@property (strong, nonatomic) UIImageView* speed_num_1;
-@property (strong, nonatomic) UIImageView* speed_num_2;
+@property (weak, nonatomic) UIImageView* signal;
+@property (weak, nonatomic) UIImageView* gps;
+@property (weak, nonatomic) UIImageView* battery;
+@property (weak, nonatomic) UIImageView* speed_num_0;
+@property (weak, nonatomic) UIImageView* speed_num_1;
+@property (weak, nonatomic) UIImageView* speed_num_2;
+@property (weak, nonatomic) UILabel *speedLabel;
 
 
 @property (strong, nonatomic) UIColor* color;

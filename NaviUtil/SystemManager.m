@@ -17,16 +17,12 @@
 static bool isInit = false;
 static NSString *_documentPath=@"";
 static NSString *_tmpPath=@"";
-static NSString *_routeFilePath=@"";
-static NSString *_placeFilePath=@"";
-static NSString *_speechFilePath=@"";
-static NSString *_logFilePath=@"";
-static NSString *_userFilePath=@"";
 static NSString *_defaultLanguage=@"zh-TW";
 static NSDictionary *_supportedLanguage;
 static CLLocationCoordinate2D _defaultLocation;
 static CGRect _screenRect;
 static CGRect _lanscapeScreenRect;
+static NSMutableArray* _pathArray;
 
 
 @implementation SystemManager
@@ -113,26 +109,58 @@ static CGRect _lanscapeScreenRect;
 
 +(void) initDirectory
 {
+    int i;
     NSDateFormatter *dateFormattor = [[NSDateFormatter alloc] init];
     NSFileManager *filemanager;
     NSString *currentPath;
+    NSArray *dirPaths;
+    NSString *tmpStr;
+
     
     [dateFormattor setDateFormat:@"HHMM"];
+
     filemanager =[NSFileManager defaultManager];
     currentPath = [filemanager currentDirectoryPath];
     
-    NSArray *dirPaths;
+
     
     
     dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
-    _tmpPath = NSTemporaryDirectory();
     
+    _pathArray = [NSMutableArray arrayWithCapacity:kSystemManager_Path_Max];
+    for(i=0; i<kSystemManager_Path_Max; i++)
+    {
+        [_pathArray addObject:@""];
+    }
+    
+    _tmpPath = NSTemporaryDirectory();
     _documentPath   = [dirPaths objectAtIndex:0];
-    _placeFilePath  = [NSString stringWithFormat:@"%@place", _tmpPath];
-    _routeFilePath  = [NSString stringWithFormat:@"%@route", _tmpPath];
-    _speechFilePath = [NSString stringWithFormat:@"%@speech", _tmpPath];
-    _userFilePath   = [NSString stringWithFormat:@"%@/user.json", _documentPath];
-    _logFilePath    = [NSString stringWithFormat:@"%@log.txt", _tmpPath];
+    
+    tmpStr = [NSString stringWithFormat:@"%@", _documentPath];
+    [_pathArray replaceObjectAtIndex:kSystemManager_Path_Document   withObject:tmpStr];
+
+    tmpStr = [NSString stringWithFormat:@"%@/user.json", _documentPath];
+    [_pathArray replaceObjectAtIndex:kSystemManager_Path_User       withObject:tmpStr];
+
+    tmpStr = [NSString stringWithFormat:@"%@/config.json", _documentPath];
+    [_pathArray replaceObjectAtIndex:kSystemManager_Path_Config       withObject:tmpStr];
+    
+    tmpStr = [NSString stringWithFormat:@"%@log.txt", _tmpPath];
+    [_pathArray replaceObjectAtIndex:kSystemManager_Path_Log        withObject:tmpStr];
+
+    tmpStr = [NSString stringWithFormat:@"%@place", _tmpPath];
+    [_pathArray replaceObjectAtIndex:kSystemManager_Path_Place      withObject:tmpStr];
+
+    tmpStr = [NSString stringWithFormat:@"%@route", _tmpPath];
+    [_pathArray replaceObjectAtIndex:kSystemManager_Path_Route      withObject:tmpStr];
+
+    tmpStr = [NSString stringWithFormat:@"%@/track", _documentPath];
+    [_pathArray replaceObjectAtIndex:kSystemManager_Path_Track      withObject:tmpStr];
+    
+    
+    tmpStr = [NSString stringWithFormat:@"%@speech", _tmpPath];
+    [_pathArray replaceObjectAtIndex:kSystemManager_Path_Speech     withObject:tmpStr];
+
     
     for(NSString *path in dirPaths)
     {
@@ -140,16 +168,18 @@ static CGRect _lanscapeScreenRect;
     }
     
     [self cleanDirectory:_tmpPath];
-    [self makeDirectory:[self placeFilePath]];
-    [self makeDirectory:[self routeFilePath]];
-    [self makeDirectory:[self speechFilePath]];
+    [self makeDirectory:[self getPath:kSystemManager_Path_Place]];
+    [self makeDirectory:[self getPath:kSystemManager_Path_Route]];
+    [self makeDirectory:[self getPath:kSystemManager_Path_Speech]];
   
     mlogInfo(@"   Document Path: %@", [self documentPath]);
-    mlogInfo(@" Place File Path: %@", [self placeFilePath]);
-    mlogInfo(@" Route File Path: %@", [self routeFilePath]);
-    mlogInfo(@"Speech File Path: %@", [self speechFilePath]);
-    mlogInfo(@"  User File Path: %@", [self userFilePath]);
-    mlogInfo(@"   Log File Path: %@", [self logFilePath]);
+    mlogInfo(@" Place File Path: %@", [self getPath:kSystemManager_Path_Place]);
+    mlogInfo(@" Route File Path: %@", [self getPath:kSystemManager_Path_Route]);
+    mlogInfo(@" Track File Path: %@", [self getPath:kSystemManager_Path_Track]);
+    mlogInfo(@"Speech File Path: %@", [self getPath:kSystemManager_Path_Speech]);
+    mlogInfo(@"Config File Path: %@", [self getPath:kSystemManager_Path_Config]);
+    mlogInfo(@"  User File Path: %@", [self getPath:kSystemManager_Path_User]);
+    mlogInfo(@"   Log File Path: %@", [self getPath:kSystemManager_Path_Log]);
     
 
 }
@@ -164,30 +194,7 @@ static CGRect _lanscapeScreenRect;
     return _tmpPath;
     
 }
-+(NSString*) placeFilePath
-{
-    return _placeFilePath;
-}
 
-+(NSString*) routeFilePath
-{
-    return _routeFilePath;
-}
-
-+(NSString*) speechFilePath
-{
-    return _speechFilePath;
-}
-
-+(NSString *) logFilePath
-{
-    return _logFilePath;
-}
-
-+(NSString *) userFilePath
-{
-    return _userFilePath;
-}
 
 +(CGRect) screenRect;
 {
@@ -283,6 +290,11 @@ static CGRect _lanscapeScreenRect;
     return stringIndex;
 }
 
++(NSString *) getPath:(SystemManagerPathType) pathType
+{
+    return [_pathArray objectAtIndex:pathType];
+
+}
 @end
 
 
