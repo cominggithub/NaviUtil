@@ -24,6 +24,7 @@
 #import "UIView+category.h"
 #import "UILabel+category.h"
 #import "UIImageView+category.h"
+#import "UIColor+category.h"
 #import "Place.h"
 #import "Route.h"
 #import "RouteInstruction.h"

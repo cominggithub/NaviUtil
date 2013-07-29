@@ -179,6 +179,16 @@
 
 #endif
 
++(UIColor*) uicolorValue:(NSString*) value
+{
+    NSArray *fields = [value componentsSeparatedByString:@","];
+    return [UIColor colorWithRed:[fields[0] intValue]/255.0
+                           green:[fields[1] intValue]/255.0
+                            blue:[fields[2] intValue]/255.0
+                           alpha:[fields[3] intValue]/255.0
+            ];
+}
+
 +(NSString*) stringFromInt:(int) value
 {
     return [NSString stringWithFormat:@"%d", value];
@@ -198,7 +208,24 @@
     return [NSString stringWithFormat:@"%@", TRUE == value ? @"true":@"false"];
 }
 
++(NSString *) stringFromInt:(int)value numOfDigits:(int) numOfDigits
+{
+    NSString *format = [NSString stringWithFormat:@"%%0%dd", numOfDigits];
+    return [NSString stringWithFormat:format,value];
+}
 
-
++(NSString*) stringFromUIColor:(UIColor*) color
+{
+    float red, green, blue, alpha;
+    [color getRed:&red green:&green blue:&blue alpha:&alpha];
+    
+    return [NSString stringWithFormat:@"%d, %d, %d, %d",
+            (int)(red*255.0),
+            (int)(green*255.0),
+            (int)(blue*255.0),
+            (int)(alpha*255.0)
+            ];
+    
+}
 
 @end

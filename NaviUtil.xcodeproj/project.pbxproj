@@ -48,6 +48,7 @@
 		2B995CD81706F27500991700 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B995CD71706F27500991700 /* Reachability.m */; };
 		2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD7FA917281CA100162D20 /* RouteLine.m */; };
 		2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */; };
+		2BC2C3C317A6AE9F00A9AEE0 /* UIColor+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC2C3C217A6AE9F00A9AEE0 /* UIColor+category.m */; };
 		2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC61A96173E783C00990DA7 /* UIView+category.m */; };
 		2BDC6B9117859E9C003E61E9 /* UIImage+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDC6B9017859E9C003E61E9 /* UIImage+category.m */; };
 		2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE15360178ED92600C55363 /* UIImageView+category.m */; };
@@ -157,6 +158,8 @@
 		2BAD7FA917281CA100162D20 /* RouteLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RouteLine.m; sourceTree = "<group>"; };
 		2BBA453D16E8CB6500C0B7FC /* GoogleJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleJson.h; sourceTree = "<group>"; };
 		2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleJson.m; sourceTree = "<group>"; };
+		2BC2C3C117A6AE9F00A9AEE0 /* UIColor+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+category.h"; sourceTree = "<group>"; };
+		2BC2C3C217A6AE9F00A9AEE0 /* UIColor+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+category.m"; sourceTree = "<group>"; };
 		2BC61A95173E783C00990DA7 /* UIView+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+category.h"; sourceTree = "<group>"; };
 		2BC61A96173E783C00990DA7 /* UIView+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+category.m"; sourceTree = "<group>"; };
 		2BDC6B8F17859E9C003E61E9 /* UIImage+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+category.h"; sourceTree = "<group>"; };
@@ -284,6 +287,8 @@
 				2B18AA901748D19700277F52 /* UILabel+category.m */,
 				2BE1535F178ED92600C55363 /* UIImageView+category.h */,
 				2BE15360178ED92600C55363 /* UIImageView+category.m */,
+				2BC2C3C117A6AE9F00A9AEE0 /* UIColor+category.h */,
+				2BC2C3C217A6AE9F00A9AEE0 /* UIColor+category.m */,
 			);
 			name = Category;
 			sourceTree = "<group>";
@@ -518,6 +523,7 @@
 				2B6FCDC3178DA10F00DCFAAF /* UIAnimation.m in Sources */,
 				2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */,
 				2B94C8E217A4C8B3002581F3 /* JsonFile.m in Sources */,
+				2BC2C3C317A6AE9F00A9AEE0 /* UIColor+category.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

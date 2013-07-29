@@ -65,9 +65,6 @@ static NSMutableArray *_savedLocations;
     _locationManager.delegate=self;
     _locationManager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;
     
-    
-
-    
 }
 
 -(void) startMonitorLocationChange

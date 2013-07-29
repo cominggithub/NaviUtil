@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
+#import <UIKit/UIKit.h>
 
 @interface NSString (stringByStrippingHTML)
 -(NSString *) stripHTML;
@@ -19,4 +20,6 @@
 +(NSString*) stringFromDouble:(double) value;
 +(NSString*) stringFromFloat:(float) value;
 +(NSString*) stringFromBOOL:(BOOL) value;
++(NSString*) stringFromUIColor:(UIColor*) color;
++(NSString *) stringFromInt:(int)value numOfDigits:(int) numOfDigits;
 @end
