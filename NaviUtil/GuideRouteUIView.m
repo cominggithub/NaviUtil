@@ -1330,7 +1330,7 @@
 #endif
 
 
--(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int)speed Distance:(int)distance
+-(void) locationUpdate:(CLLocationCoordinate2D) location speed:(int) speed distance:(int) distance heading:(double)heading;
 {
     currentStep++;
 //    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);

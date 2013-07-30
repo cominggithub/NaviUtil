@@ -14,7 +14,7 @@
 
 @protocol LocationManagerDelegate <NSObject>
 
--(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int) speed Distance:(int) distance;
+-(void) locationUpdate:(CLLocationCoordinate2D) location speed:(int) speed distance:(int) distance heading:(double) heading;
 -(void) lostLocationUpdate;
 @end
 
@@ -54,6 +54,7 @@ typedef enum
 +(void) stopLocationTracking;
 
 -(void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations;
+-(void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading;
 -(void) startMonitorLocationChange;
 -(void) stopMonitorLocationChange;
 

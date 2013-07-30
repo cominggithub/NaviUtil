@@ -97,7 +97,7 @@
 -(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
 -(void) setHUD;
 /* LocationManager delegate */
--(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int) speed Distance:(int) distance;
+-(void) locationUpdate:(CLLocationCoordinate2D) location speed:(int) speed distance:(int) distance heading:(double)heading;
 -(void) lostLocationUpdate;
 
 @end

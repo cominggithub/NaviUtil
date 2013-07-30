@@ -25,6 +25,7 @@ static LocationSimulator *_locationSimulator;
 static NSMutableArray* _delegates;
 static int _currentSpeed; /* meter/s */
 static int _currentDistance;
+static CLLocationDirection _currentHeading;
 static CLLocationCoordinate2D _currentCLLocationCoordinate2D;
 static int _locationLostCount;
 static BOOL _hasLocation;
@@ -40,6 +41,7 @@ static NSString* _fileName;
 static NSString* _kmlFileName;
 static NSFileHandle *_fileHandle;
 static NSMutableArray *_savedLocations;
+
 
 @implementation LocationManager
 {
@@ -70,17 +72,29 @@ static NSMutableArray *_savedLocations;
 -(void) startMonitorLocationChange
 {
     [_locationManager startUpdatingLocation];
+    [_locationManager startUpdatingHeading];
 }
 
 -(void) stopMonitorLocationChange
 {
     [_locationManager stopUpdatingLocation];
+    [_locationManager stopUpdatingHeading];
 }
 
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
     [LocationManager addUpdatedCLLocations:locations];
+}
+
+-(void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
+{
+    if (newHeading.headingAccuracy < 0)
+        return;
+    
+    // Use the true heading if it is valid.
+    _currentHeading = ((newHeading.trueHeading > 0) ? newHeading.trueHeading : newHeading.magneticHeading);
+    
 }
 
 + (void) addDelegate: (id<LocationManagerDelegate>) delegate
@@ -160,10 +174,13 @@ static NSMutableArray *_savedLocations;
 +(void) addUpdatedCLLocations:(NSArray *) clLocations
 {
     int distance = 0;
+    int updateLocationCount = 0;
     CLLocationCoordinate2D nextLocation = _currentCLLocationCoordinate2D;
     NSDate *updateTime = [NSDate date];
     NSTimeInterval timeDiff;
-    BOOL isLocationUpdate = FALSE;
+    BOOL isLocationUpdated = FALSE;
+    BOOL hasNewLocationInThisUpdate   = FALSE;
+    CLLocationSpeed speed = 0;
     
     if (YES == _isTracking)
     {
@@ -175,20 +192,31 @@ static NSMutableArray *_savedLocations;
     
     for (CLLocation* c in clLocations)
     {
-        nextLocation.latitude = nextLocation.latitude*0.75 + c.coordinate.latitude*0.25;
-        nextLocation.longitude = nextLocation.longitude*0.75 + c.coordinate.longitude*0.25;
-        
-        nextLocation.latitude   = c.coordinate.latitude;
-        nextLocation.longitude  = c.coordinate.longitude;
+        if (c.horizontalAccuracy >=0 )
+        {
+            nextLocation.latitude       = c.coordinate.latitude;
+            nextLocation.longitude      = c.coordinate.longitude;
+            if (c.speed > 0)
+            {
+                speed += c.speed;
+                updateLocationCount++;
+            }
+            hasNewLocationInThisUpdate  = TRUE;
+            
+        }
+    }
+
+    if ( NO == hasNewLocationInThisUpdate )
+    {
+        return;
     }
     
-
     if (_hasLocation && _skipLostDetectionCount == 0)
     {
         if ([self isLocationDifferenceReasonable:_currentCLLocationCoordinate2D To:nextLocation])
         {
 
-            isLocationUpdate = TRUE;
+            isLocationUpdated = TRUE;
         }
         else
         {
@@ -197,18 +225,18 @@ static NSMutableArray *_savedLocations;
     }
     else
     {
-        isLocationUpdate   = TRUE;
+        isLocationUpdated   = TRUE;
     }
 
     
-    if (YES == isLocationUpdate)
+    if (YES == isLocationUpdated)
     {
         // calculate location update parameter
         
         distance = [GeoUtil getGeoDistanceFromLocation:_currentCLLocationCoordinate2D ToLocation:nextLocation];
         timeDiff = [updateTime timeIntervalSinceDate:_lastUpdateTime];
-        
-        _currentSpeed                   = 0.75*_currentSpeed + 0.25*(distance/timeDiff);
+        speed /= updateLocationCount;
+        _currentSpeed                   = 0.75*_currentSpeed + 0.25*speed;
         _currentDistance                += distance;
         _currentCLLocationCoordinate2D  = nextLocation;
         _locationLostCount              = 0;
@@ -292,8 +320,9 @@ static NSMutableArray *_savedLocations;
         if ([delegate respondsToSelector:@selector(locationUpdate:Speed:Distance:)])
         {
             [delegate locationUpdate:_currentCLLocationCoordinate2D
-                               Speed:_currentSpeed
-                            Distance:_currentDistance
+                               speed:_currentSpeed
+                            distance:_currentDistance
+                             heading:_currentHeading
              ];
         }
     }
