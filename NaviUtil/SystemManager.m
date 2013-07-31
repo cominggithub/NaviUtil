@@ -23,7 +23,12 @@ static CLLocationCoordinate2D _defaultLocation;
 static CGRect _screenRect;
 static CGRect _lanscapeScreenRect;
 static NSMutableArray* _pathArray;
-
+static Reachability *_reachiability;
+static NSMutableArray* _delegates;
+static float _wifiStatus;
+static float _threeGStatus;
+static float _batteryLife;
+static float _gpsStatus;
 
 @implementation SystemManager
 
@@ -31,15 +36,18 @@ static NSMutableArray* _pathArray;
 +(void) init
 {
     mlogCheckPoint(@"SystemManager Init");
+    _delegates = [[NSMutableArray alloc] initWithCapacity:0];
+    
     [self initSupportedLanguage];
     [self initDirectory];
     [self initOS];
 
     isInit = true;
 }
+
 +(void) initOS
 {
-    UIDevice* device = [UIDevice currentDevice];
+    UIDevice* device    = [UIDevice currentDevice];
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
     CGFloat screenScale = [[UIScreen mainScreen] scale];
 //    CGSize screenSize = CGSizeMake(screenBounds.size.width * screenScale, screenBounds.size.height * screenScale);
@@ -67,9 +75,70 @@ static NSMutableArray* _pathArray;
     _lanscapeScreenRect.size.width      = _screenRect.size.height;
     _lanscapeScreenRect.size.height     = _screenRect.size.width;
     
-    Reachability* networkStatus = [Reachability reachabilityWithHostName:@"tw.yahoo.com"];
-    NetworkStatus netStatus = [networkStatus currentReachabilityStatus];
-    BOOL connectionRequired= [networkStatus connectionRequired];
+    
+    [device setBatteryMonitoringEnabled:YES];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(batteryLevelUpdate)
+                                                 name:UIDeviceBatteryLevelDidChangeNotification
+                                            object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateNetworkStatus:)
+                                                 name:kReachabilityChangedNotification object:nil];
+    
+}
+
+
+
++(void) addDelegate: (id<SystemManagerDelegate>) delegate
+{
+    // Additional code
+    if (NO == [_delegates containsObject:delegate])
+    {
+        [_delegates addObject: delegate];
+    }
+}
+
++(void) triggerBatterStatusChangeNotify
+{
+    for (id<SystemManagerDelegate> delegate in _delegates)
+    {
+        if ([delegate respondsToSelector:@selector(batteryStatusChange:)])
+        {
+            [delegate batteryStatusChange:_batteryLife];
+        }
+    }
+}
+
++(void) triggerNetworkChangeStatusNotify
+{
+    for (id<SystemManagerDelegate> delegate in _delegates)
+    {
+        if ([delegate respondsToSelector:@selector( networkStatusChangeWifi:threeG:)])
+        {
+            [delegate networkStatusChangeWifi:_wifiStatus threeG:_threeGStatus];
+        }
+    }
+}
+
++(void) triggerGpsStatusChangeNotify
+{
+    for (id<SystemManagerDelegate> delegate in _delegates)
+    {
+        if ([delegate respondsToSelector:@selector(gpsStatusChange:)])
+        {
+            [delegate gpsStatusChange:_gpsStatus];
+        }
+    }
+}
+
++(void) updateNetworkStatus:(Reachability*) reachiability
+{
+    logfn();
+    Reachability* networkStatus = _reachiability;
+    NetworkStatus netStatus     = [networkStatus currentReachabilityStatus];
+    BOOL connectionRequired     = [networkStatus connectionRequired];
     NSString* statusString= @"";
     switch (netStatus)
     {
@@ -92,12 +161,25 @@ static NSMutableArray* _pathArray;
             break;
         }
     }
+    
     if(connectionRequired)
     {
         statusString= [NSString stringWithFormat: @"%@, Connection Required", statusString];
     }
-
+    
+    mlogInfo(@"%@\n", statusString);
+    [self triggerNetworkChangeStatusNotify];
 }
+
++(void) batteryLevelUpdate:(NSNotification *)notification
+{
+    logfn();
+    _batteryLife = [[UIDevice currentDevice] batteryLevel];
+    [self triggerBatterStatusChangeNotify];
+}
+
+
+
 +(void) initSupportedLanguage
 {
     _supportedLanguage = [[NSDictionary alloc] initWithObjectsAndKeys:

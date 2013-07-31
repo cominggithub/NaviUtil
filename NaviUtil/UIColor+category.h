@@ -10,4 +10,5 @@
 
 @interface UIColor (category)
 -(void) getRGBA:(float*) red green:(float*) green blue:(float*) blue alpha:(float*) alpha;
+-(UIColor*) getOffColor;
 @end

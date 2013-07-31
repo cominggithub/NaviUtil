@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "BatteryLifeView.h"
 #import "CarPanel1UIView.h"
 #import "DigitalNumDrawBlock.h"
 #import "DownloadManager.h"

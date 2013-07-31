@@ -54,6 +54,7 @@
 		2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE15360178ED92600C55363 /* UIImageView+category.m */; };
 		2BE3A81017046D92007621EC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A80F17046D92007621EC /* LocationManager.m */; };
 		2BE3A81317046DD5007621EC /* LocationSimulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A81217046DD5007621EC /* LocationSimulator.m */; };
+		2BEF697317A954D6005EC74A /* BatteryLifeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEF697217A954D6005EC74A /* BatteryLifeView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -170,6 +171,8 @@
 		2BE3A80F17046D92007621EC /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		2BE3A81117046DD5007621EC /* LocationSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationSimulator.h; sourceTree = "<group>"; };
 		2BE3A81217046DD5007621EC /* LocationSimulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationSimulator.m; sourceTree = "<group>"; };
+		2BEF697117A954D6005EC74A /* BatteryLifeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BatteryLifeView.h; sourceTree = "<group>"; };
+		2BEF697217A954D6005EC74A /* BatteryLifeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BatteryLifeView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +201,8 @@
 		2B1C471517884C6E00ED6D98 /* CarPanel */ = {
 			isa = PBXGroup;
 			children = (
+				2BEF697117A954D6005EC74A /* BatteryLifeView.h */,
+				2BEF697217A954D6005EC74A /* BatteryLifeView.m */,
 				2B1C47121788474600ED6D98 /* DrawBlock.h */,
 				2B1C47131788474600ED6D98 /* DrawBlock.m */,
 				2B1C471617884D0400ED6D98 /* TimeDrawBlock.h */,
@@ -264,6 +269,8 @@
 				2B70BEDD16F5F0E5002269AB /* User.m */,
 				2B94C8E017A4C8B3002581F3 /* JsonFile.h */,
 				2B94C8E117A4C8B3002581F3 /* JsonFile.m */,
+				2B995CD61706F27500991700 /* Reachability.h */,
+				2B995CD71706F27500991700 /* Reachability.m */,
 			);
 			name = System;
 			sourceTree = "<group>";
@@ -332,8 +339,6 @@
 				2B3D573B178969F800437464 /* GeoNavigation */,
 				2B1C471517884C6E00ED6D98 /* CarPanel */,
 				2B6A6BF0178718B7005FC851 /* TestFlight.h */,
-				2B995CD61706F27500991700 /* Reachability.h */,
-				2B995CD71706F27500991700 /* Reachability.m */,
 				2B7ADCAA16E4E5DE00F8A182 /* Log.h */,
 				2B7ADCAB16E4E5DE00F8A182 /* Log.m */,
 				2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */,
@@ -524,6 +529,7 @@
 				2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */,
 				2B94C8E217A4C8B3002581F3 /* JsonFile.m in Sources */,
 				2BC2C3C317A6AE9F00A9AEE0 /* UIColor+category.m in Sources */,
+				2BEF697317A954D6005EC74A /* BatteryLifeView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

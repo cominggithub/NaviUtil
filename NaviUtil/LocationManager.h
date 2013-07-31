@@ -23,7 +23,6 @@ typedef enum
     kLocationManagerLocationUpdateType_ManualRoute,
     kLocationManagerLocationUpdateType_RealLocation,
     kLocationManagerLocationUpdateType_Line
-    
 }LocationManagerLocationUpdateType;
 
 @interface LocationManager : NSObject<CLLocationManagerDelegate>
@@ -31,8 +30,6 @@ typedef enum
     CLLocationManager* clLocationManager;
 }
 @property (nonatomic, weak) id<LocationManagerDelegate> delegate;
-
-
 
 +(void) init;
 +(int) getManualPlaceCount;
@@ -57,6 +54,5 @@ typedef enum
 -(void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading;
 -(void) startMonitorLocationChange;
 -(void) stopMonitorLocationChange;
-
 
 @end

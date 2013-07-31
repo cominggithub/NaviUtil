@@ -56,6 +56,9 @@
 
 #import "Reachability.h"
 
+#define FILE_DEBUG FALSE
+#include "Log.h"
+
 #define kShouldPrintReachabilityFlags 0
 
 static void PrintReachabilityFlags(SCNetworkReachabilityFlags    flags, const char* comment)
@@ -82,6 +85,7 @@ static void PrintReachabilityFlags(SCNetworkReachabilityFlags    flags, const ch
 @implementation Reachability
 static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void* info)
 {
+    logfn();
 	#pragma unused (target, flags)
 //	NSCAssert(info != NULL, @"info was NULL in ReachabilityCallback");
 //	NSCAssert([(NSObject*) CFBridgingRelease(info isKindOfClass: [Reachability class]], @"info was wrong class in ReachabilityCallback");
@@ -92,7 +96,7 @@ static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReach
 	Reachability* noteObject = (__bridge Reachability*) info;
 	// Post a notification to notify the client that the network reachability changed.
 	[[NSNotificationCenter defaultCenter] postNotificationName: kReachabilityChangedNotification object: noteObject];
-	
+
 
 }
 

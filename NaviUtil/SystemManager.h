@@ -24,7 +24,16 @@ typedef enum
     kSystemManager_Path_Max
 }SystemManagerPathType;
 
+@protocol SystemManagerDelegate <NSObject>
+-(void) networkStatusChangeWifi:(float) status threeG:(float) status;
+-(void) gpsStatusChange:(float) status;
+-(void) batteryStatusChange:(float) status;
+@end
+
 @interface SystemManager : NSObject
+{
+
+}
 
 +(NSString *) documentPath;
 +(CGRect) lanscapeScreenRect;
@@ -37,6 +46,8 @@ typedef enum
 +(NSString*) getUsedMemoryStr;
 +(NSString *) getLanguageString:(NSString*) stringIndex;
 +(NSString *) getPath:(SystemManagerPathType) pathType;
++(void) updateNetworkStatus:(Reachability*) reachibility;
++(void) addDelegate: (id<SystemManagerDelegate>) delegate;
 
 @end
 

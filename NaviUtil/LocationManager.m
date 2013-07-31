@@ -100,7 +100,10 @@ static NSMutableArray *_savedLocations;
 + (void) addDelegate: (id<LocationManagerDelegate>) delegate
 {
     // Additional code
-    [_delegates addObject: delegate];
+    if (NO == [_delegates containsObject:delegate])
+    {
+        [_delegates addObject: delegate];
+    }
 }
 
 + (void) removeDelegate: (id<LocationManagerDelegate>) delegate
@@ -139,8 +142,8 @@ static NSMutableArray *_savedLocations;
     _locationUpdateType                         = kLocationManagerLocationUpdateType_RealLocation;
 
     
-    _locationManager    = [[LocationManager alloc] init];
-    _locationSimulator  = [[LocationSimulator alloc] init];
+    _locationManager            = [[LocationManager alloc] init];
+    _locationSimulator          = [[LocationSimulator alloc] init];
     _locationSimulator.delegate = _locationManager;
     _delegates = [[NSMutableArray alloc] initWithCapacity:0];
 
@@ -317,7 +320,7 @@ static NSMutableArray *_savedLocations;
 
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
-        if ([delegate respondsToSelector:@selector(locationUpdate:Speed:Distance:)])
+        if ([delegate respondsToSelector:@selector(locationUpdate:speed:distance:heading:)])
         {
             [delegate locationUpdate:_currentCLLocationCoordinate2D
                                speed:_currentSpeed

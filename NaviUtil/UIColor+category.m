@@ -23,4 +23,13 @@
         *alpha = components[3];
     }
 }
+
+-(UIColor*) getOffColor
+{
+    float r,g,b, a;
+    
+    [self getRed:&r green:&g blue:&b alpha:&a];
+        
+    return [UIColor colorWithRed:r green:g blue:b alpha:a*0.5];
+}
 @end
