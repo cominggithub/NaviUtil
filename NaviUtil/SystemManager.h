@@ -25,7 +25,7 @@ typedef enum
 }SystemManagerPathType;
 
 @protocol SystemManagerDelegate <NSObject>
--(void) networkStatusChangeWifi:(float) status threeG:(float) status;
+-(void) networkStatusChangeWifi:(float) wifiStatus threeG:(float) threeGStatus;
 -(void) gpsStatusChange:(float) status;
 -(void) batteryStatusChange:(float) status;
 @end
@@ -48,6 +48,13 @@ typedef enum
 +(NSString *) getPath:(SystemManagerPathType) pathType;
 +(void) updateNetworkStatus:(Reachability*) reachibility;
 +(void) addDelegate: (id<SystemManagerDelegate>) delegate;
++(void) removeDelegate: (id<SystemManagerDelegate>) delegate;
+
++(float) getWifiStatus;
++(float) getThreeGStatus;
++(float) getBatteryLife;
++(float) getGpsStatus;
++(float) getNetworkStatus;
 
 @end
 

@@ -68,15 +68,15 @@
     
     CGContextSetLineJoin(context, kCGLineJoinRound);
     
-    CGRect mainBody = CGRectMake(lineWidth, lineWidth, rect.size.width - lineWidth - headSize.width, rect.size.height - lineWidth);
+    CGRect mainBody = CGRectMake(lineWidth, lineWidth, rect.size.width - lineWidth - headSize.width, rect.size.height - lineWidth*2);
     CGRect head = CGRectMake(
-                             mainBody.origin.x + mainBody.size.width,
+                             mainBody.origin.x + mainBody.size.width+0.5,
                              mainBody.origin.y + mainBody.size.height/4,
                              rect.size.width - mainBody.origin.x - mainBody.size.width - lineWidth,
                              mainBody.size.height/2
                              );
     
-    CGRect batterLife = CGRectMake(lineWidth*2, lineWidth*2, _life * (mainBody.size.width - lineWidth*2), mainBody.size.height - lineWidth*2);
+    CGRect batterLife = CGRectMake(lineWidth*2-1, lineWidth*2-1, _life * (mainBody.size.width - lineWidth*2)+2, mainBody.size.height - lineWidth*2+2);
     
 
     CGContextSetFillColorWithColor(context, _color.CGColor);
@@ -84,13 +84,58 @@
 
     
     CGContextSetLineWidth(context, lineWidth);
-    CGContextStrokeRect(context, mainBody);
+//    CGContextStrokeRect(context, mainBody);
+
+    [self drawRoundRect:context rect:mainBody radius:3];
     CGContextStrokeRect(context, head);
 
     CGContextSetFillColorWithColor(context, [_color getOffColor].CGColor);
     CGContextFillRect(context, batterLife);
-    
 
+
+
+}
+
+-(void) drawRoundRect:(CGContextRef) context rect:(CGRect) rect radius:(int) radius
+{
+    CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + radius);
+    CGContextAddLineToPoint(context, rect.origin.x, rect.origin.y + rect.size.height - radius);
+    CGContextAddArc(context, rect.origin.x + radius, rect.origin.y + rect.size.height - radius,
+                    radius, M_PI, M_PI / 2, 1); //STS fixed
+    CGContextAddLineToPoint(context, rect.origin.x + rect.size.width - radius,
+                            rect.origin.y + rect.size.height);
+    CGContextAddArc(context, rect.origin.x + rect.size.width - radius,
+                    rect.origin.y + rect.size.height - radius, radius, M_PI / 2, 0.0f, 1);
+    CGContextAddLineToPoint(context, rect.origin.x + rect.size.width, rect.origin.y + radius);
+    CGContextAddArc(context, rect.origin.x + rect.size.width - radius, rect.origin.y + radius,
+                    radius, 0.0f, -M_PI / 2, 1);
+    CGContextAddLineToPoint(context, rect.origin.x + radius, rect.origin.y);
+    CGContextAddArc(context, rect.origin.x + radius, rect.origin.y + radius, radius,
+                    -M_PI / 2, M_PI, 1);
+    
+    
+    CGContextSetBlendMode(context, kCGBlendModeNormal);
+    CGContextSetFillColorWithColor(context, [UIColor colorWithWhite:0.0 alpha:0.9].CGColor);
+    CGContextFillPath(context);
+    
+    CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + radius);
+    CGContextAddLineToPoint(context, rect.origin.x, rect.origin.y + rect.size.height - radius);
+    CGContextAddArc(context, rect.origin.x + radius, rect.origin.y + rect.size.height - radius,
+                    radius, M_PI, M_PI / 2, 1); //STS fixed
+    CGContextAddLineToPoint(context, rect.origin.x + rect.size.width - radius,
+                            rect.origin.y + rect.size.height);
+    CGContextAddArc(context, rect.origin.x + rect.size.width - radius,
+                    rect.origin.y + rect.size.height - radius, radius, M_PI / 2, 0.0f, 1);
+    CGContextAddLineToPoint(context, rect.origin.x + rect.size.width, rect.origin.y + radius);
+    CGContextAddArc(context, rect.origin.x + rect.size.width - radius, rect.origin.y + radius,
+                    radius, 0.0f, -M_PI / 2, 1);
+    CGContextAddLineToPoint(context, rect.origin.x + radius, rect.origin.y);
+    CGContextAddArc(context, rect.origin.x + radius, rect.origin.y + radius, radius,
+                    -M_PI / 2, M_PI, 1);
+    
+    
+    CGContextSetStrokeColorWithColor(context, _color.CGColor);
+    CGContextStrokePath(context);
 }
 
 

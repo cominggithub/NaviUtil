@@ -29,6 +29,7 @@ static float _wifiStatus;
 static float _threeGStatus;
 static float _batteryLife;
 static float _gpsStatus;
+static float _networkStatus;
 
 @implementation SystemManager
 
@@ -41,6 +42,7 @@ static float _gpsStatus;
     [self initSupportedLanguage];
     [self initDirectory];
     [self initOS];
+    [self initSystemStatus];
 
     isInit = true;
 }
@@ -100,6 +102,14 @@ static float _gpsStatus;
     }
 }
 
++(void) removeDelegate: (id<SystemManagerDelegate>) delegate
+{
+    if (YES == [_delegates containsObject:delegate])
+    {
+        [_delegates removeObject:delegate];
+    }
+}
+
 +(void) triggerBatterStatusChangeNotify
 {
     for (id<SystemManagerDelegate> delegate in _delegates)
@@ -147,17 +157,26 @@ static float _gpsStatus;
             statusString = @"Access Not Available";
             //Minor interface detail- connectionRequired may return yes, even when the host is unreachable.  We cover that up here...
             connectionRequired= NO;
+            _wifiStatus     = 0;
+            _threeGStatus   = 0;
+            _networkStatus  = 0;
             break;
         }
             
         case ReachableViaWWAN:
         {
             statusString = @"Reachable WWAN";
+            _wifiStatus     = 0;
+            _threeGStatus   = 1;
+            _networkStatus  = 1;
             break;
         }
         case ReachableViaWiFi:
         {
             statusString= @"Reachable WiFi";
+            _wifiStatus     = 1;
+            _threeGStatus   = 0;
+            _networkStatus  = 1;
             break;
         }
     }
@@ -178,7 +197,35 @@ static float _gpsStatus;
     [self triggerBatterStatusChangeNotify];
 }
 
++(float) getWifiStatus
+{
+    return _wifiStatus;
+}
 
++(float) getThreeGStatus
+{
+    return _threeGStatus;
+}
+
++(float) getBatteryLife
+{
+    return _batteryLife;
+}
+
++(float) getGpsStatus
+{
+    return [CLLocationManager locationServicesEnabled] == YES ? 1:0;
+}
+
++(float) getNetworkStatus
+{
+    return _networkStatus;
+}
+
++(void) initSystemStatus
+{
+    _batteryLife = [[UIDevice currentDevice] batteryLevel];
+}
 
 +(void) initSupportedLanguage
 {
@@ -274,7 +321,6 @@ static float _gpsStatus;
 +(NSString*) tmpPath
 {
     return _tmpPath;
-    
 }
 
 

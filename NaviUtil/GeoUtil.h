@@ -12,6 +12,7 @@
 
 #define M_2PI (2*M_PI)
 #define TO_ANGLE(r) ((r*180.0)/M_PI)
+#define TO_RADIUS(a) ((a*M_PI)/180.0)
 
 #define MAX_LEVEL 20
 typedef struct PointD
