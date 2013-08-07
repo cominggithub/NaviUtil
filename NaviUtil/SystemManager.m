@@ -43,6 +43,7 @@ static float _networkStatus;
     [self initDirectory];
     [self initOS];
     [self initSystemStatus];
+    [self updateNetworkStatus];
 
     isInit = true;
 }
@@ -77,16 +78,17 @@ static float _networkStatus;
     _lanscapeScreenRect.size.width      = _screenRect.size.height;
     _lanscapeScreenRect.size.height     = _screenRect.size.width;
     
-    
+
+
     [device setBatteryMonitoringEnabled:YES];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(batteryLevelUpdate)
+                                             selector:@selector(batteryLevelUpdate:)
                                                  name:UIDeviceBatteryLevelDidChangeNotification
                                             object:nil];
-    
+
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(updateNetworkStatus:)
+                                             selector:@selector(updateNetworkStatus)
                                                  name:kReachabilityChangedNotification object:nil];
     
 }
@@ -143,10 +145,10 @@ static float _networkStatus;
     }
 }
 
-+(void) updateNetworkStatus:(Reachability*) reachiability
++(void) updateNetworkStatus
 {
     logfn();
-    Reachability* networkStatus = _reachiability;
+    Reachability* networkStatus = [Reachability reachabilityForInternetConnection];
     NetworkStatus netStatus     = [networkStatus currentReachabilityStatus];
     BOOL connectionRequired     = [networkStatus connectionRequired];
     NSString* statusString= @"";
@@ -154,61 +156,69 @@ static float _networkStatus;
     {
         case NotReachable:
         {
-            statusString = @"Access Not Available";
+            statusString        = @"None";
             //Minor interface detail- connectionRequired may return yes, even when the host is unreachable.  We cover that up here...
-            connectionRequired= NO;
-            _wifiStatus     = 0;
-            _threeGStatus   = 0;
-            _networkStatus  = 0;
+            connectionRequired  = NO;
+            _wifiStatus         = 0;
+            _threeGStatus       = 0;
+            _networkStatus      = 0;
             break;
         }
-            
+
         case ReachableViaWWAN:
         {
-            statusString = @"Reachable WWAN";
-            _wifiStatus     = 0;
-            _threeGStatus   = 1;
-            _networkStatus  = 1;
+            statusString        = @"3G";
+            _wifiStatus         = 0;
+            _threeGStatus       = 1;
+            _networkStatus      = 1;
             break;
         }
+        
         case ReachableViaWiFi:
         {
-            statusString= @"Reachable WiFi";
-            _wifiStatus     = 1;
-            _threeGStatus   = 0;
-            _networkStatus  = 1;
+            statusString        = @"Wifi";
+            _wifiStatus         = 1;
+            _threeGStatus       = 0;
+            _networkStatus      = 1;
             break;
         }
+        default:
+        {
+            statusString        = @"None";
+            _wifiStatus         = 0;
+            _threeGStatus       = 0;
+            _networkStatus      = 0;
+            break;
+        }
+
     }
-    
-    if(connectionRequired)
-    {
-        statusString= [NSString stringWithFormat: @"%@, Connection Required", statusString];
-    }
-    
-    mlogInfo(@"%@\n", statusString);
+
+    mlogInfo(@"Network: %@\n", statusString);
     [self triggerNetworkChangeStatusNotify];
 }
 
 +(void) batteryLevelUpdate:(NSNotification *)notification
 {
-    logfn();
     _batteryLife = [[UIDevice currentDevice] batteryLevel];
     [self triggerBatterStatusChangeNotify];
 }
 
 +(float) getWifiStatus
 {
+    logf(_wifiStatus);
     return _wifiStatus;
 }
 
 +(float) getThreeGStatus
 {
+    logf(_threeGStatus);
     return _threeGStatus;
 }
 
 +(float) getBatteryLife
 {
+    _batteryLife = [[UIDevice currentDevice] batteryLevel];
+    logf(_batteryLife);
     return _batteryLife;
 }
 

@@ -46,7 +46,7 @@ typedef enum
 +(NSString*) getUsedMemoryStr;
 +(NSString *) getLanguageString:(NSString*) stringIndex;
 +(NSString *) getPath:(SystemManagerPathType) pathType;
-+(void) updateNetworkStatus:(Reachability*) reachibility;
++(void) updateNetworkStatus;
 +(void) addDelegate: (id<SystemManagerDelegate>) delegate;
 +(void) removeDelegate: (id<SystemManagerDelegate>) delegate;
 
