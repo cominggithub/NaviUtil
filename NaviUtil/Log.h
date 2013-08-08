@@ -19,15 +19,15 @@
 #define logo(o) printf("%s: %s(0x%X)\n",#o, [[o description] UTF8String], (int)o)
 #define logObjNoName(o) printf("%s\n",[[o description] UTF8String])
 #define logos(o, args...) do{printf("%s", #o); printf(args);}while(0)
-#define logi(o) printf("%s: %d\n",#o, o)
-#define logf(o) printf("%s: %f\n",#o, o)
-#define logs(o) printf("%s: %s\n",#o, o)
-#define loglc(o) printf("%s: (%f, %f)\n",#o, o.latitude, o.longitude)
-#define logpd(o) printf("%s: (%f, %f)\n",#o, o.x, o.y)
-#define logns(o) printf("%s: %s\n",#o, [o UTF8String])
-#define logbool(o) do{printf("%s: %s\n", #o, o == TRUE ? "TRUE":"FALSE");}while(0)
+#define logi(o) printf("%s(%d), %s: %d\n", __FUNCTION__, __LINE__, #o, o)
+#define logf(o) printf("%s(%d), %s: %f\n", __FUNCTION__, __LINE__, #o, o)
+#define logs(o) printf("%s(%d), %s: %s\n", __FUNCTION__, __LINE__, #o, o)
+#define loglc(o) printf("%s(%d), %s: (%f, %f)\n", __FUNCTION__, __LINE__, #o, o.latitude, o.longitude)
+#define logpd(o) printf("%s(%d), %s: (%f, %f)\n", __FUNCTION__, __LINE__, #o, o.x, o.y)
+#define logns(o) printf("%s(%d), %s: %s\n", __FUNCTION__, __LINE__, #o, [o UTF8String])
+#define logbool(o) do{printf("%s(%d), %s: %s\n", __FUNCTION__, __LINE__, #o, o == TRUE ? "TRUE":"FALSE");}while(0)
 #define getObjectName(oo) #oo
-#define logClass(o) printf("%s: %s\n", getObjectName(o), (char*)class_getName([o class]))
+#define logClass(o) printf("%s(%d), %s: %s\n", __FUNCTION__, __LINE__, getObjectName(o), (char*)class_getName([o class]))
 
 
 #define mlogInfo(args...)     do{logOut(kLogInfo, __FUNCTION__, __LINE__, args);}while(0)

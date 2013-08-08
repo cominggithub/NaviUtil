@@ -38,6 +38,7 @@ typedef enum
 +(Place*) currentPlace;
 +(void) addUpdatedCLLocations:(NSArray *) clLoctions;
 +(void) addDelegate: (id<LocationManagerDelegate>) delegate;
++(void) removeDelegate: (id<LocationManagerDelegate>) delegate;
 
 +(void) startMonitorLocation;
 +(void) stopMonitorLocation;

@@ -97,7 +97,7 @@ static NSMutableArray *_savedLocations;
     
 }
 
-+ (void) addDelegate: (id<LocationManagerDelegate>) delegate
++(void) addDelegate: (id<LocationManagerDelegate>) delegate
 {
     // Additional code
     if (NO == [_delegates containsObject:delegate])
@@ -106,10 +106,12 @@ static NSMutableArray *_savedLocations;
     }
 }
 
-+ (void) removeDelegate: (id<LocationManagerDelegate>) delegate
++(void) removeDelegate: (id<LocationManagerDelegate>) delegate
 {
-    // Additional code
-    [_delegates removeObject: delegate];
+    if (YES == [_delegates containsObject:delegate])
+    {
+        [_delegates removeObject: delegate];
+    }
 }
 
 
@@ -184,6 +186,7 @@ static NSMutableArray *_savedLocations;
     BOOL isLocationUpdated = FALSE;
     BOOL hasNewLocationInThisUpdate   = FALSE;
     CLLocationSpeed speed = 0;
+    CLLocationDirection heading = 0;
     
     if (YES == _isTracking)
     {
@@ -204,6 +207,9 @@ static NSMutableArray *_savedLocations;
                 speed += c.speed;
                 updateLocationCount++;
             }
+            
+            heading = c.course;
+            
             hasNewLocationInThisUpdate  = TRUE;
             
         }
@@ -242,9 +248,16 @@ static NSMutableArray *_savedLocations;
         _currentSpeed                   = 0.75*_currentSpeed + 0.25*speed;
         _currentDistance                += distance;
         _currentCLLocationCoordinate2D  = nextLocation;
+
         _locationLostCount              = 0;
         _hasLocation                    = YES;
         _lastUpdateTime                 = updateTime;
+        
+        if (heading > 0)
+        {
+            _currentHeading                 = 0.75*_currentHeading + 0.25*heading;
+        }
+        
         [self triggerLocationUpdateNotify];
     }
     
@@ -318,6 +331,13 @@ static NSMutableArray *_savedLocations;
         return;
     }
 
+    mlogDebug(@"notify location update: (%.8f, %.8f), speed: %.2f, distance: %.2f, heading: %.2f\n",
+              _currentCLLocationCoordinate2D.latitude,
+              _currentCLLocationCoordinate2D.longitude,
+              _currentSpeed,
+              _currentDistance,
+              _currentHeading
+              );
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(locationUpdate:speed:distance:heading:)])
@@ -415,28 +435,30 @@ static NSMutableArray *_savedLocations;
 
 +(void) writeLocationToFile:(NSArray *)locations
 {
-    logfn();
     NSString *msg;
     NSDateFormatter *formater = [[NSDateFormatter alloc] init];
     [formater setDateFormat:@"HH:mm:ss"];
 
     if (nil == locations)
     {
-        mlogDebug(@"AAAAA");
         return;
     }
         
     for(CLLocation *location in locations)
     {
-        msg = [NSString stringWithFormat:@"%@ %.8f, %.8f, %.8f, %.8f, %.8f\n",
+        msg = [NSString stringWithFormat:@"%@ %.8f, %.8f, %.8f, %.8f, %.8f, %.8f, %.8f\n",
                [formater stringFromDate:[NSDate date]],
                location.coordinate.latitude,
                location.coordinate.longitude,
                location.altitude,
                location.horizontalAccuracy,
-               location.verticalAccuracy
+               location.verticalAccuracy,
+               location.speed,
+               location.course
                ];
     }
+    
+    mlogDebug(@"%@", msg);
     
     if (nil != _fileHandle)
     {

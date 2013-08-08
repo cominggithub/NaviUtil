@@ -205,20 +205,18 @@ static float _networkStatus;
 
 +(float) getWifiStatus
 {
-    logf(_wifiStatus);
     return _wifiStatus;
 }
 
 +(float) getThreeGStatus
 {
-    logf(_threeGStatus);
     return _threeGStatus;
 }
 
 +(float) getBatteryLife
 {
     _batteryLife = [[UIDevice currentDevice] batteryLevel];
-    logf(_batteryLife);
+
     return _batteryLife;
 }
 
