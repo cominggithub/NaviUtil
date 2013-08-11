@@ -284,7 +284,7 @@ static NSMutableArray *_savedLocations;
 
 +(BOOL) isLocationDifferenceReasonable:(CLLocationCoordinate2D) fromLocation To:(CLLocationCoordinate2D) toLocation
 {
-    if (TRUE == [SystemConfig getBOOLValue:CONFIG_IS_LOCATION_UPDATE_FILTER])
+    if (TRUE == [SystemConfig getBoolValue:CONFIG_IS_LOCATION_UPDATE_FILTER])
     {
         int distance = [GeoUtil getGeoDistanceFromLocation:fromLocation ToLocation:toLocation];
         if (distance > LOCATION_UPDATE_DISTANCE_THRESHOLD)
@@ -299,7 +299,7 @@ static NSMutableArray *_savedLocations;
 {
     Place *p = _currentPlace;
     
-    if (TRUE == [SystemConfig getBOOLValue:CONFIG_IS_MANUAL_PLACE])
+    if (TRUE == [SystemConfig getBoolValue:CONFIG_IS_MANUAL_PLACE])
         p = _currentManualPlace;
     else
     {
@@ -330,7 +330,7 @@ static NSMutableArray *_savedLocations;
         mlogDebug(@"skip location update notify %.0fms > %.0fms", [SystemConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL], timeInterval);
         return;
     }
-
+#if 0
     mlogDebug(@"notify location update: (%.8f, %.8f), speed: %.2f, distance: %.2f, heading: %.2f\n",
               _currentCLLocationCoordinate2D.latitude,
               _currentCLLocationCoordinate2D.longitude,
@@ -338,6 +338,7 @@ static NSMutableArray *_savedLocations;
               _currentDistance,
               _currentHeading
               );
+#endif
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(locationUpdate:speed:distance:heading:)])
@@ -458,7 +459,7 @@ static NSMutableArray *_savedLocations;
                ];
     }
     
-    mlogDebug(@"%@", msg);
+//    mlogDebug(@"%@", msg);
     
     if (nil != _fileHandle)
     {
@@ -518,8 +519,8 @@ static NSMutableArray *_savedLocations;
     
     _kmlFileName = [NSString stringWithFormat:@"%@/GT_%@.kml", [SystemManager documentPath], [_dateFormatter2 stringFromDate:[NSDate date]]];
     
-    mlogDebug(@"%s", _fileName);
-    mlogDebug(@"%s", _kmlFileName);
+    mlogDebug(@"%@", _fileName);
+    mlogDebug(@"%@", _kmlFileName);
     @try
     {
         _fileHandle = [NSFileHandle fileHandleForWritingAtPath:_fileName];

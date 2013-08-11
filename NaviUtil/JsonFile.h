@@ -23,5 +23,6 @@
 -(void) setIntForKey:(NSString*) key value:(int) value;
 -(void) setDoubleForKey:(NSString*) key value:(double) value;
 -(void) setFloatForKey:(NSString*) key value:(float) value;
--(void) setBOOLForKey:(NSString*) key value:(BOOL) value;
+-(void) setBoolForKey:(NSString*) key value:(BOOL) value;
+-(void) setUIColorForKey:(NSString*) key value:(UIColor*) value;
 @end

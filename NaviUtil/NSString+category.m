@@ -13,6 +13,17 @@
 
 @implementation NSString (stringByStrippingHTML)
 
+-(UIColor*) uicolorValue
+{
+    NSArray *fields = [self componentsSeparatedByString:@","];
+    return [UIColor colorWithRed:[fields[0] intValue]/255.0
+                           green:[fields[1] intValue]/255.0
+                            blue:[fields[2] intValue]/255.0
+                           alpha:[fields[3] intValue]/255.0
+            ];
+}
+
+
 -(NSString*) trim
 {
     return [self stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
@@ -179,15 +190,6 @@
 
 #endif
 
-+(UIColor*) uicolorValue:(NSString*) value
-{
-    NSArray *fields = [value componentsSeparatedByString:@","];
-    return [UIColor colorWithRed:[fields[0] intValue]/255.0
-                           green:[fields[1] intValue]/255.0
-                            blue:[fields[2] intValue]/255.0
-                           alpha:[fields[3] intValue]/255.0
-            ];
-}
 
 +(NSString*) stringFromInt:(int) value
 {
@@ -225,7 +227,7 @@
             (int)(blue*255.0),
             (int)(alpha*255.0)
             ];
-    
 }
+
 
 @end

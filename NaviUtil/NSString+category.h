@@ -15,11 +15,13 @@
 -(NSMutableArray *) decodePolyLine;
 -(NSMutableArray *) decodePolyLineLevel;
 -(NSString*) trim;
-+ (NSString *)encodeStringWithCoordinate:(CLLocationCoordinate2D )coordinate;
+-(UIColor*) uicolorValue;
++(NSString *) encodeStringWithCoordinate:(CLLocationCoordinate2D )coordinate;
 +(NSString*) stringFromInt:(int) value;
 +(NSString*) stringFromDouble:(double) value;
 +(NSString*) stringFromFloat:(float) value;
 +(NSString*) stringFromBOOL:(BOOL) value;
 +(NSString*) stringFromUIColor:(UIColor*) color;
 +(NSString *) stringFromInt:(int)value numOfDigits:(int) numOfDigits;
+
 @end

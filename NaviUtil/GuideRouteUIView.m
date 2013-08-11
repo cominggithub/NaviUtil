@@ -86,7 +86,7 @@
     _routeComponentRect.size.width  = [SystemManager lanscapeScreenRect].size.width - _speedComponentRect.size.width;
     _routeComponentRect.size.height = [SystemManager lanscapeScreenRect].size.height;
     
-    _color                          = [SystemConfig defaultColor];
+    _color                          = [SystemConfig getUIColorValue:CONFIG_DEFAULT_COLOR];
     [LocationManager addDelegate:self];
 }
 
@@ -313,7 +313,7 @@
         {
             NSString* text = [route getStepInstruction:nextStepRouteLine.stepNo];
             [self drawMessageBox:context Message:[route getStepInstruction:nextStepRouteLine.stepNo]];
-            if(YES == [SystemConfig getBOOLValue:CONFIG_IS_SPEECH] && FALSE == [audioPlayer isPlaying] )
+            if(YES == [SystemConfig getBoolValue:CONFIG_IS_SPEECH] && FALSE == [audioPlayer isPlaying] )
             {
                 [self playSpeech:text];
             }
@@ -398,7 +398,7 @@
     CGContextStrokePath(context);
     
     
-    if (YES == [SystemConfig getBOOLValue:CONFIG_IS_DEBUG])
+    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG])
     {
     
         // mark edge of route line by red circle
@@ -923,7 +923,7 @@
     
     rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
     
-    if (YES == [SystemConfig getBOOLValue:CONFIG_IS_SPEECH])
+    if (YES == [SystemConfig getBoolValue:CONFIG_IS_SPEECH])
     {
         [NaviQueryManager downloadSpeech:route];
     }

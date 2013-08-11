@@ -8,6 +8,7 @@
 
 #import "SystemConfig.h"
 #import "JsonFile.h"
+#import "NSString+category.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
@@ -34,10 +35,16 @@ static JsonFile *_configFile;
     return [[_configFile objectForKey:key] floatValue];
 }
 
-+(BOOL) getBOOLValue:(NSString*) key
++(BOOL) getBoolValue:(NSString*) key
 {
     return [[_configFile objectForKey:key] boolValue];
 }
+
++(UIColor*) getUIColorValue:(NSString*) key
+{
+    return [(NSString*)[_configFile objectForKey:key] uicolorValue];
+}
+
 
 +(void) setValue:(NSString*) key int:(int) value
 {
@@ -63,6 +70,12 @@ static JsonFile *_configFile;
     [self save];
 }
 
++(void) setValue:(NSString*) key uicolor:(UIColor*) value
+{
+    [_configFile setObjectForKey:key object:[NSString stringFromUIColor:value]];
+    [self save];
+}
+
 +(UIColor*) defaultColor
 {
     return _defaultColor;
@@ -77,26 +90,47 @@ static JsonFile *_configFile;
 #pragma mark - function
 +(BOOL) init
 {
-    _defaultColor                   = [UIColor greenColor];
-    _configFile                     = [JsonFile jsonFileWithFileName:[SystemManager getPath:kSystemManager_Path_Config]];
+    _configFile = [JsonFile jsonFileWithFileName:[SystemManager getPath:kSystemManager_Path_Config]];
+    logo(_configFile);
+    [self checkKeys];
 
-    /* initialization System Config */
-    if ( 0 == _configFile.root.count)
-    {
-        logfn();
-        [_configFile setBOOLForKey:CONFIG_IS_DEBUG                      value:TRUE];
-        [_configFile setBOOLForKey:CONFIG_IS_AD                         value:TRUE];
-        [_configFile setBOOLForKey:CONFIG_IS_DEBUG_ROUTE_DRAW           value:TRUE];
-        [_configFile setBOOLForKey:CONFIG_IS_MANUAL_PLACE               value:FALSE];
-        [_configFile setBOOLForKey:CONFIG_IS_LOCATION_UPDATE_FILTER     value:FALSE];
-        [_configFile setBOOLForKey:CONFIG_IS_SPEECH                     value:TRUE];
-        [_configFile setFloatForKey:CONFIG_TURN_ANGLE_DISTANCE          value:50.0]; // meters
-        [_configFile setFloatForKey:CONFIG_TARGET_ANGLE_DISTANCE        value:5.0]; // meters
-        [_configFile setFloatForKey:CONFIG_TRIGGER_LOCATION_INTERVAL    value:500]; // 200 millisecond
-        [self save];
-    }
+    [self save];
     
     return TRUE;
+}
+
++(void) checkKeys
+{
+    [self checkKey:CONFIG_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_IS_SPEECH                     defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_TURN_ANGLE_DISTANCE           defaultValue:[NSString stringFromFloat:50.0]];
+    [self checkKey:CONFIG_TARGET_ANGLE_DISTANCE         defaultValue:[NSString stringFromFloat:5.0]];
+    [self checkKey:CONFIG_TRIGGER_LOCATION_INTERVAL     defaultValue:[NSString stringFromInt:500]];
+    [self checkKey:CONFIG_IS_SPEED_UNIT_MPH             defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_DEFAULT_COLOR                 defaultValue:[NSString stringFromUIColor:[UIColor greenColor]]];
+    
+    [self checkKey:CONFIG_CP1_COLOR                     defaultValue:[NSString stringFromUIColor:[UIColor greenColor]]];
+    [self checkKey:CONFIG_CP1_IS_SPEED_UNIT_MPH         defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_CP1_IS_HUD                    defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_CP1_IS_COURSE                 defaultValue:[NSString stringFromBOOL:TRUE]];
+    
+    [self save];
+    
+}
+
++(void) checkKey:(NSString*) key defaultValue:(NSString*) defaultValue
+{
+    id value;
+    value = [_configFile objectForKey:key];
+
+    if (nil == value)
+    {
+        [_configFile setObjectForKey:key object:defaultValue];
+    }
 }
 
 +(void) save

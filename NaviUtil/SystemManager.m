@@ -423,7 +423,17 @@ static float _networkStatus;
 
 +(NSString *) getLanguageString:(NSString*) stringIndex
 {
-    return stringIndex;
+    
+    NSString *result = NSLocalizedString(stringIndex, nil);
+
+    if (nil == result || result.length <= 0)
+    {
+        result = [NSString stringWithString:stringIndex];
+    }
+    
+    return result;
+
+    
 }
 
 +(NSString *) getPath:(SystemManagerPathType) pathType

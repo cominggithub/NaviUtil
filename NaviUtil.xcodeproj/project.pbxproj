@@ -38,6 +38,7 @@
 		2B6FCDC3178DA10F00DCFAAF /* UIAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6FCDC2178DA10F00DCFAAF /* UIAnimation.m */; };
 		2B70BEDE16F5F0E5002269AB /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B70BEDD16F5F0E5002269AB /* User.m */; };
 		2B7ADCAC16E4E5DE00F8A182 /* Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B7ADCAB16E4E5DE00F8A182 /* Log.m */; };
+		2B89A7B017B5F1960042539F /* UIFont+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B89A7AF17B5F1960042539F /* UIFont+category.m */; };
 		2B8B71B2178C32E7005E460F /* UIImage+simple-image-processing.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B8B71B1178C32E7005E460F /* UIImage+simple-image-processing.mm */; };
 		2B8B71C7178C35B6005E460F /* Image.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B8B71C6178C35B6005E460F /* Image.mm */; };
 		2B8B7218178C46F8005E460F /* BatteryNormalDrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B8B7217178C46F8005E460F /* BatteryNormalDrawBlock.m */; };
@@ -139,6 +140,8 @@
 		2B70BEDD16F5F0E5002269AB /* User.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = User.m; sourceTree = "<group>"; };
 		2B7ADCAA16E4E5DE00F8A182 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
 		2B7ADCAB16E4E5DE00F8A182 /* Log.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Log.m; sourceTree = "<group>"; };
+		2B89A7AE17B5F1960042539F /* UIFont+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIFont+category.h"; sourceTree = "<group>"; };
+		2B89A7AF17B5F1960042539F /* UIFont+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIFont+category.m"; sourceTree = "<group>"; };
 		2B8B71B0178C32E7005E460F /* UIImage+simple-image-processing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+simple-image-processing.h"; sourceTree = "<group>"; };
 		2B8B71B1178C32E7005E460F /* UIImage+simple-image-processing.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "UIImage+simple-image-processing.mm"; sourceTree = "<group>"; };
 		2B8B71C5178C35B6005E460F /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
@@ -296,6 +299,8 @@
 				2BE15360178ED92600C55363 /* UIImageView+category.m */,
 				2BC2C3C117A6AE9F00A9AEE0 /* UIColor+category.h */,
 				2BC2C3C217A6AE9F00A9AEE0 /* UIColor+category.m */,
+				2B89A7AE17B5F1960042539F /* UIFont+category.h */,
+				2B89A7AF17B5F1960042539F /* UIFont+category.m */,
 			);
 			name = Category;
 			sourceTree = "<group>";
@@ -530,6 +535,7 @@
 				2B94C8E217A4C8B3002581F3 /* JsonFile.m in Sources */,
 				2BC2C3C317A6AE9F00A9AEE0 /* UIColor+category.m in Sources */,
 				2BEF697317A954D6005EC74A /* BatteryLifeView.m in Sources */,
+				2B89A7B017B5F1960042539F /* UIFont+category.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

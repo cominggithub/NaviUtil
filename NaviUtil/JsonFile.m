@@ -53,7 +53,7 @@
         return FALSE;
     }
 
-    return _root.count > 0;
+    return TRUE;
 }
 
 -(void) save
@@ -96,9 +96,17 @@
     [self setObjectForKey:key object:[NSString stringFromFloat:value]];
 }
 
--(void) setBOOLForKey:(NSString*) key value:(BOOL) value
+-(void) setBoolForKey:(NSString*) key value:(BOOL) value
 {
     [self setObjectForKey:key object:[NSString stringFromBOOL:value]];
 }
+
+-(void) setUIColorForKey:(NSString*) key value:(UIColor*) value
+{
+    [self setObjectForKey:key object:[NSString stringFromUIColor:value]];
+}
+
+
+
 
 @end
