@@ -21,15 +21,15 @@ static Place* _currentManualPlace;
 static Place* _currentPlace;
 static LocationManager *_locationManager;
 static LocationSimulator *_locationSimulator;
-
 static NSMutableArray* _delegates;
-static int _currentSpeed; /* meter/s */
+static double _currentSpeed; /* meter/s */
 static int _currentDistance;
 static CLLocationDirection _currentHeading;
 static CLLocationCoordinate2D _currentCLLocationCoordinate2D;
+static CLLocationCoordinate2D _lastCLLocationCoordinate2D;
+static NSDate* _lastUpdateTime;
 static int _locationLostCount;
 static BOOL _hasLocation;
-static NSDate* _lastUpdateTime;
 static NSDate* _lastTriggerLocationUpdateTime;
 static int _setLocationUpdateInterval; // in milliseconds
 static int _skipLostDetectionCount;
@@ -41,7 +41,6 @@ static NSString* _fileName;
 static NSString* _kmlFileName;
 static NSFileHandle *_fileHandle;
 static NSMutableArray *_savedLocations;
-
 
 @implementation LocationManager
 {
@@ -190,6 +189,7 @@ static NSMutableArray *_savedLocations;
     
     if (YES == _isTracking)
     {
+        logfn();
         [_savedLocations addObjectsFromArray:clLocations];
         [self writeLocationToFile:clLocations];
     }
@@ -208,7 +208,7 @@ static NSMutableArray *_savedLocations;
                 updateLocationCount++;
             }
             
-            heading = c.course;
+            heading = TO_RADIUS(c.course);
             
             hasNewLocationInThisUpdate  = TRUE;
             
@@ -436,8 +436,12 @@ static NSMutableArray *_savedLocations;
 
 +(void) writeLocationToFile:(NSArray *)locations
 {
+    int i;
     NSString *msg;
     NSDateFormatter *formater = [[NSDateFormatter alloc] init];
+    NSDate *now = [NSDate date];
+    NSTimeInterval timeDiffer;
+    timeDiffer = [now timeIntervalSinceDate:_lastUpdateTime];
     [formater setDateFormat:@"HH:mm:ss"];
 
     if (nil == locations)
@@ -445,18 +449,30 @@ static NSMutableArray *_savedLocations;
         return;
     }
         
-    for(CLLocation *location in locations)
+    for( i=0; i<locations.count; i++)
     {
-        msg = [NSString stringWithFormat:@"%@ %.8f, %.8f, %.8f, %.8f, %.8f, %.8f, %.8f\n",
-               [formater stringFromDate:[NSDate date]],
-               location.coordinate.latitude,
-               location.coordinate.longitude,
-               location.altitude,
-               location.horizontalAccuracy,
-               location.verticalAccuracy,
-               location.speed,
-               location.course
+        
+        CLLocation *location = [locations objectAtIndex:i];
+        
+        msg = [NSString stringWithFormat:@"%@ %d, %.8f, %.8f, %.1f, %.1f, %.1f, %.2f, %.2f, %.2f, %.2f, %.2f\n",
+               [formater stringFromDate:[NSDate date]],     // 1. time
+               i,                                           // 2. index
+               location.coordinate.latitude,                // 3. latitude
+               location.coordinate.longitude,               // 4. longitude
+               location.altitude,                           // 5. altitude
+               location.horizontalAccuracy,                 // 6. h accuracy
+               location.verticalAccuracy,                   // 7. v accuracy
+               location.speed,                              // 8. speed
+               location.course,                             // 9. course
+                                                            // 10. distance
+               [GeoUtil getGeoDistanceFromLocation:_lastCLLocationCoordinate2D ToLocation:location.coordinate],
+                                                            // 11. time difference
+               timeDiffer,
+                                                            // 12. calculate speed
+               [GeoUtil getGeoDistanceFromLocation:_lastCLLocationCoordinate2D ToLocation:location.coordinate]/timeDiffer
+               
                ];
+        _lastCLLocationCoordinate2D = location.coordinate;
     }
     
 //    mlogDebug(@"%@", msg);
@@ -515,6 +531,7 @@ static NSMutableArray *_savedLocations;
 +(void) newFile
 {
     logfn();
+    _savedLocations = [[NSMutableArray alloc] initWithCapacity:0];
     _fileName = [NSString stringWithFormat:@"%@/GT_%@.txt", [SystemManager documentPath], [_dateFormatter2 stringFromDate:[NSDate date]]];
     
     _kmlFileName = [NSString stringWithFormat:@"%@/GT_%@.kml", [SystemManager documentPath], [_dateFormatter2 stringFromDate:[NSDate date]]];

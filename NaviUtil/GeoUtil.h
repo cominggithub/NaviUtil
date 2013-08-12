@@ -13,6 +13,8 @@
 #define M_2PI (2*M_PI)
 #define TO_ANGLE(r) ((r*180.0)/M_PI)
 #define TO_RADIUS(a) ((a*M_PI)/180.0)
+#define MS_TO_KMH(m) (m*3.6)
+#define MS_TO_MPH(m) (m*2.23693)
 
 #define MAX_LEVEL 20
 typedef struct PointD
@@ -50,6 +52,7 @@ typedef struct LocationCoordinateRect2D
 +(PointD) makePointDFromCLLocationCoordinate2D: (CLLocationCoordinate2D) location;
 +(PointD) makePointDFromX: (double) x Y:(double) y;
 +(bool) isCLLocationCoordinate2DEqual:(CLLocationCoordinate2D) c1 To:(CLLocationCoordinate2D) c2;
+
 @end
 
 
