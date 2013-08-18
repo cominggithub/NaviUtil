@@ -9,6 +9,12 @@
 #import "GuideRouteUIView.h"
 #import "SystemConfig.h"
 #import "UIImage+category.h"
+#import "UIImageView+category.h"
+#import "SystemStatusView.h"
+#import "ClockView.h"
+#import "SpeedView.h"
+
+
 
 #define FILE_DEBUG TRUE
 #include "Log.h"
@@ -22,7 +28,19 @@
     double _turnAngle;
     CGRect _routeComponentRect;
     CGRect _speedComponentRect;
+    PointD _carCenterPoint;
+    
 
+    CGRect _turnArrowFrame;
+    UITextField *_messageBoxTextField;
+    SystemStatusView *_systemStatusView;
+    
+    UIImageView *_turnArrowImage;
+    UIImageView *_currentLocationImage;
+    ClockView *_clockView;
+    SpeedView *_speedView;
+    
+    NSString *_lastPlayedSpeech;
 }
 
 #pragma mark - Main
@@ -62,13 +80,13 @@
 -(void) initSelf
 {
     
-    self.isDebugDraw = true;
-    self.isDebugNormalLine = false;
-    self.isDebugRouteLineAngle = false;
+    self.isDebugDraw            = true;
+    self.isDebugNormalLine      = false;
+    self.isDebugRouteLineAngle  = false;
     
     
     msgRect.origin.x        = floor(480*0.1);
-    msgRect.origin.y        = floor(320*0.05);
+    msgRect.origin.y        = floor(320*0.15);
     msgRect.size.width      = floor(480*0.8);
     msgRect.size.height     = floor(320*0.4);
     
@@ -85,8 +103,15 @@
     _routeComponentRect.origin.y    = 0;
     _routeComponentRect.size.width  = [SystemManager lanscapeScreenRect].size.width - _speedComponentRect.size.width;
     _routeComponentRect.size.height = [SystemManager lanscapeScreenRect].size.height;
+   
+    _carCenterPoint.x        = _routeComponentRect.size.width/2;
+//    _carCenterPoint.y        = (_routeComponentRect.size.height/4)*3;
+    _carCenterPoint.y        = 250;
     
-    _color                          = [SystemConfig getUIColorValue:CONFIG_DEFAULT_COLOR];
+    [self addUIComponents];
+    
+    self.color  =   [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
+    
     [LocationManager addDelegate:self];
 }
 
@@ -150,12 +175,58 @@
 
 #pragma mark - Draw Functions
 
--(void) setColor:(UIColor *)color
+// Only override drawRect: if you perform custom drawing.
+// An empty implementation adversely affects performance during animation.
+- (void)drawRect:(CGRect)rect
 {
-    logfn();
-    _color = color;
-    [self setNeedsDisplay];
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    [super drawRect:rect];
+    
+    
+    [self drawBackground:context Rectangle:rect];
+    
+    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG] && _messageBoxText.length > 0)
+    {
+        [self drawMessageBox:context Message:_messageBoxText];
+        return;
+    }
+    
+    if (nil == route || (nil != routeDownloadRequest && routeDownloadRequest.status != kDownloadStatus_Finished))
+    {
+        [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Route Planning"]];
+        return;
+    }
+    
+    if(currentRouteLine != nil)
+    {
+        PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
+        PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
+        
+        xOffset = tmpCarDrawPoint.x - startPoint.x + _routeComponentRect.origin.x;
+    }
+    else
+    {
+        [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Find our location now"]];
+        mlogError(@" currentRouteLine is null\n");
+    }
+    
+    
+    [self drawRoute:context Rectangle:rect];
+    [self drawTurnMessage:context];
+    
+    _turnArrowImage.image = [self getTurnImage];
+    
+    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG_ROUTE_DRAW])
+    {
+        [self drawCar:context];
+        [self drawCurrentRouteLine:context];
+        [self drawCarFootPrint:context];
+        [self drawDebugMessage:context];
+        [self drawRouteLabel:context];
+    }
 }
+
 
 -(void) drawBackground:(CGContextRef) context Rectangle:(CGRect) rect
 {
@@ -171,6 +242,7 @@
     // draw screen frame
     CGContextAddRect(context, routeDisplayBound);
     CGContextStrokeRect(context, routeDisplayBound);
+    
 }
 
 
@@ -186,8 +258,8 @@
     CGContextSetFillColorWithColor(context, [UIColor yellowColor].CGColor);
     CGContextSetLineWidth(context, 4.0);
     
-    carRect.origin.x = carCenterPoint.x - size + _routeComponentRect.origin.x;
-    carRect.origin.y = carCenterPoint.y - size;
+    carRect.origin.x = _carCenterPoint.x - size + _routeComponentRect.origin.x;
+    carRect.origin.y = _carCenterPoint.y - size;
     carRect.size.width = size*2;
     carRect.size.height = size*2;
     CGContextStrokeRect(context, carRect);
@@ -204,8 +276,8 @@
         normalPointStart = [self getDrawPoint:normalPointStart];
         normalPointEnd = [self getDrawPoint:normalPointEnd];
         
-        carOffset.x = carCenterPoint.x - normalPointStart.x;
-        carOffset.y = carCenterPoint.y - normalPointStart.y;
+        carOffset.x = _carCenterPoint.x - normalPointStart.x;
+        carOffset.y = _carCenterPoint.y - normalPointStart.y;
         CGContextSetStrokeColorWithColor(context, [UIColor whiteColor].CGColor);
         
         CGContextSetLineWidth(context, 2.0);
@@ -253,58 +325,19 @@
 }
 
 
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    [super drawRect:rect];
-
-    
-
-
-    [self drawBackground:context Rectangle:rect];
-    
-    
-    if (nil == route || (nil != routeDownloadRequest && routeDownloadRequest.status != kDownloadStatus_Finished))
-    {
-        [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Route Planning..."]];
-        return;
-    }
-
-    if(currentRouteLine != nil)
-    {
-        PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
-        PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
-        
-        xOffset = tmpCarDrawPoint.x - startPoint.x + _routeComponentRect.origin.x;
-    }
-    else
-    {
-        [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Find our location now..."]];
-        mlogError(@" currentRouteLine is null\n");
-    }
-
-    
-    [self drawRoute:context Rectangle:rect];
-    [self drawCar:context];
-    [self drawTurnMessage:context];
-    [self drawTurnArrow:context];
-    
-    if (self.isDebugDraw)
-    {
-        [self drawCurrentRouteLine:context];
-        [self drawCarFootPrint:context];
-        [self drawDebugMessage:context];
-        [self drawRouteLabel:context];
-    }
-}
 
 
 -(void) drawTurnMessage:(CGContextRef) context
 {
     RouteLine *nextStepRouteLine;
+    
+    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG] && _messageBoxText.length > 0)
+    {
+//        [self drawMessageBox:context Message:_messageBoxText];
+        return;
+    }
+
+    
     if(currentRouteLine != nil)
     {
         nextStepRouteLine = [route getNextStepFirstRouteLineByStepNo:currentRouteLine.stepNo CarLocation:currentCarLocation];
@@ -319,6 +352,8 @@
             }
         }
     }
+    
+    
 }
 -(void) drawRoute:(CGContextRef) context Rectangle:(CGRect) rect
 {
@@ -327,17 +362,13 @@
     PointD endPoint;
     CGRect roundRect;
     CGRect routeRect = rect;
+    CGRect endPointRect;
     int roundRectSize = 8;
     int currentStepNo = -1;
-    
     NSMutableArray *stepPoint;
+    RouteLine *tmpRouteLine;
     
     hasStartPoint = FALSE;
-
-//    routeRect.origin.x -= 200;
-//    routeRect.origin.y -= 200;
-//    routeRect.size.width +=400;
-//    routeRect.size.height +=400;
     routeRect = rect;
     stepPoint = [[NSMutableArray alloc] init];
     
@@ -351,11 +382,13 @@
     {
         drawedRouteLines = [[NSMutableArray alloc] initWithCapacity:0];
     }
+
     [drawedRouteLines removeAllObjects];
-    
-    
+
+    CGContextSetFillColorWithColor(context, self.color.CGColor);
     for(RouteLine *rl in route.routeLines)
     {
+
         startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
         endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
         startPoint.x    += xOffset;
@@ -374,33 +407,82 @@
             [drawedRouteLines addObject:rl];
         }
     }
+    
     CGContextStrokePath(context);
     
-    // add circle to the edge of step
-    CGContextSetStrokeColorWithColor(context, [UIColor yellowColor].CGColor);
-    for(RouteLine *rl in drawedRouteLines)
+    tmpRouteLine = [route.routeLines objectAtIndex:0];
+    startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpRouteLine.startLocation]];
+    endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpRouteLine.endLocation]];
+    startPoint.x    += xOffset;
+    endPoint.x      += xOffset;
+    
+    if (CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:startPoint]) ||
+        CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:endPoint]))
     {
-        startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
-        startPoint.x    += xOffset;
-        if(currentStepNo != rl.stepNo)
+        CGContextSetStrokeColorWithColor(context, _color.CGColor);
+        CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
+        CGContextSetLineWidth(context, 4.0);
+        
+        endPointRect.origin.x = startPoint.x - 16;
+        endPointRect.origin.y = startPoint.y - 16;
+        endPointRect.size.width = 16*2;
+        endPointRect.size.height = 16*2;
+        CGContextFillEllipseInRect(context, endPointRect);
+        CGContextStrokeEllipseInRect(context, endPointRect);
+
+        CGContextSetFillColorWithColor(context, _color.CGColor);
+        CGContextFillEllipseInRect(context, CGRectInset(endPointRect, 6, 6));
+    }
+#
+    tmpRouteLine = [route.routeLines lastObject];
+    startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpRouteLine.startLocation]];
+    endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpRouteLine.endLocation]];
+    startPoint.x    += xOffset;
+    endPoint.x      += xOffset;
+    
+    if (CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:startPoint]) ||
+        CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:endPoint]))
+    {
+        CGContextSetStrokeColorWithColor(context, _color.CGColor);
+        CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
+        CGContextSetLineWidth(context, 4.0);
+        
+        endPointRect.origin.x = startPoint.x - 16;
+        endPointRect.origin.y = startPoint.y - 16;
+        endPointRect.size.width = 16*2;
+        endPointRect.size.height = 16*2;
+        CGContextFillEllipseInRect(context, endPointRect);
+        CGContextStrokeEllipseInRect(context, endPointRect);
+        
+        CGContextSetFillColorWithColor(context, _color.CGColor);
+        CGContextFillEllipseInRect(context, CGRectInset(endPointRect, 6, 6));
+    }
+    
+    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG_ROUTE_DRAW])
+    {
+    
+        // add circle to the edge of step
+        CGContextSetStrokeColorWithColor(context, [UIColor yellowColor].CGColor);
+        for(RouteLine *rl in drawedRouteLines)
         {
-            currentStepNo = rl.stepNo;
-            
-            roundRect.origin.x = startPoint.x-roundRectSize/2;
-            roundRect.origin.y = startPoint.y-roundRectSize/2;
-            roundRect.size.width = roundRectSize;
-            roundRect.size.height = roundRectSize;
+            startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
+            startPoint.x    += xOffset;
+            if(currentStepNo != rl.stepNo)
+            {
+                currentStepNo = rl.stepNo;
+                
+                roundRect.origin.x = startPoint.x-roundRectSize/2;
+                roundRect.origin.y = startPoint.y-roundRectSize/2;
+                roundRect.size.width = roundRectSize;
+                roundRect.size.height = roundRectSize;
+                
+            }
+            CGContextAddEllipseInRect(context, roundRect);
             
         }
-        CGContextAddEllipseInRect(context, roundRect);
+        CGContextStrokePath(context);
+    
         
-    }
-    CGContextStrokePath(context);
-    
-    
-    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG])
-    {
-    
         // mark edge of route line by red circle
         CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
         CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
@@ -421,6 +503,7 @@
         }
         CGContextFillPath(context);
     }
+
 }
 
 -(void) drawRouteLabel:(CGContextRef) context
@@ -505,32 +588,31 @@
     CGRect endPosText;
     
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-    endPosText.origin.x = 20;
-    endPosText.origin.y = 250;
+    endPosText.origin.x = 8;
+    endPosText.origin.y = 300;
     endPosText.size.width = 350;
     endPosText.size.height = 60;
     
     
-    NSString *endText = [NSString stringWithFormat:@"Target:%.2f, Turn:%.2f\n%d\n%@", TO_ANGLE(targetAngle), TO_ANGLE(_turnAngle), routeLineNo, [SystemManager getUsedMemoryStr]];
+    NSString *endText = [NSString stringWithFormat:@"Target:%.2f, Turn:%.2f, rno:%d, mem:%@", TO_ANGLE(targetAngle), TO_ANGLE(_turnAngle), routeLineNo, [SystemManager getUsedMemoryStr]];
     
     [endText drawInRect:endPosText withFont:[UIFont boldSystemFontOfSize:14.0]];
     
 }
 -(void) drawMessageBox:(CGContextRef) context Message:(NSString*) message
 {
-    CGRect rect                 = msgRect;
-    CGRect actualMessageRect    = msgRect;
-    int radius = 20;
-    int fontSize = 32;
     
-    actualMessageRect.origin.x += 10;
-    actualMessageRect.origin.y += 5;
-    actualMessageRect.size.width -= 20;
-    actualMessageRect.size.height -= 10;
+    CGRect rect                 = msgRect;
+    CGRect actualMessageRect    = CGRectInset(msgRect, 10, 10);
+    int radius = 8;
+    int fontSize = 32;
     
     actualMessageRect = [self getFitSizeRect:actualMessageRect Message:message FontSize:&fontSize];
     
     rect.size.height = actualMessageRect.size.height + 10;
+    
+    CGContextSetFillColorWithColor(context, _color.CGColor);
+    CGContextSetStrokeColorWithColor(context, _color.CGColor);
     
     CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + radius);
     CGContextAddLineToPoint(context, rect.origin.x, rect.origin.y + rect.size.height - radius);
@@ -569,10 +651,10 @@
     
     CGContextSetLineWidth(context, 5.0);
 
-    CGContextSetStrokeColorWithColor(context, [UIColor greenColor].CGColor);
+    CGContextSetStrokeColorWithColor(context, _color.CGColor);
     CGContextStrokePath(context);
     
-    CGContextSetFillColorWithColor(context, [UIColor greenColor].CGColor);
+    CGContextSetFillColorWithColor(context, _color.CGColor);
     
     [message drawInRect:actualMessageRect
                withFont:[UIFont boldSystemFontOfSize:fontSize]
@@ -582,13 +664,19 @@
 
 -(void) drawTurnArrow:(CGContextRef) context
 {
+    _turnArrowImage.image = [self getTurnImage];
+#if 0
     UIImage *turnImage;
     CGSize size;
     
     turnImage   = [self getTurnImage];
     size        = turnImage.size;;
 
-    [turnImage drawInRect:CGRectMake(20, 100, size.width, size.height)];
+    [turnImage drawInRect:
+     CGRectMake(_turnArrowFrame.origin.x + (_turnArrowFrame.size.width - size.width)/2,
+                _turnArrowFrame.origin.y + (_turnArrowFrame.size.height - size.height)/2,
+                size.width, size.height)];
+#endif
 }
 
 -(void) dumpCarFootPrint
@@ -680,7 +768,7 @@
         turnImage = [UIImage imageNamed:@"turn_straight"];
     }
     
-    return [turnImage imageTintedWithColor:self.color];
+    return [turnImage imageTintedWithColor:_color];
 }
 
 
@@ -800,7 +888,7 @@
     {
         font = [UIFont boldSystemFontOfSize:tmpFontSize];
         actualSize = [message sizeWithFont:font constrainedToSize:rect.size lineBreakMode:NSLineBreakByClipping];
-        mlogDebug(@"actualSize: %.0f X %.0f, msg box: %.0f X %.0f\n", actualSize.width, actualSize.height, rect.size.width, rect.size.height);
+
         if (actualSize.width <= rect.size.width && actualSize.height <= oneLineHeight*currentLineNo)
             break;
         
@@ -878,7 +966,7 @@
     // 1. move to origin (-carCenterPoint)
     // 2. mirror, y=-y
     // 3. move back (+carCenterPoint)
-    translatedPoint.y = carCenterPoint.y - translatedPoint.y + carCenterPoint.y;
+    translatedPoint.y = _carCenterPoint.y - translatedPoint.y + _carCenterPoint.y;
     
     
     //    printf("     draw point (%.5f, %.5f) - > (%.0f, %.0f)\n\n", p.x, p.y, translatedPoint.x, translatedPoint.y);
@@ -897,8 +985,7 @@
     targetAngle             = 0;
     screenSize.width        = 480;
     screenSize.height       = 320;
-    carCenterPoint.x        = _routeComponentRect.size.width/2;
-    carCenterPoint.y        = (_routeComponentRect.size.height/4)*3;
+
     
     carPoint.x              = 0;
     carPoint.y              = 0;
@@ -971,20 +1058,37 @@
     routeUnitVector.x = (routeEndPoint.x - routeStartPoint.x)/routeDistance;
     routeUnitVector.y = (routeEndPoint.y - routeStartPoint.y)/routeDistance;
 }
+#if TARGET_IPHONE_SIMULATOR
+-(void) playSpeech:(NSString*) text
+{
+    
+}
+#else
+// Do Live stuff
 
 -(void) playSpeech:(NSString*) text
 {
     
+    /* never play speech in simulator mode */
+    if (NO == [SystemConfig getBoolValue:CONFIG_IS_SPEECH])
+        return;
+    
+    /* if played before, just skip it */
+    
+    if (YES == [_lastPlayedSpeech isEqualToString:text])
+         return;
     @try
     {
         NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@.mp3", [SystemManager getPath:kSystemManager_Path_Speech], text]];
-        NSError *error;
+        
+        _lastPlayedSpeech = [NSString stringWithString:text];
         
         mlogDebug(@"play %@, %@\n", text, [NSString stringWithFormat:@"%@/%@.mp3", [SystemManager getPath:kSystemManager_Path_Speech], text]);
-        audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
+        audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
         audioPlayer.numberOfLoops = 0;
         [audioPlayer prepareToPlay];
         [audioPlayer play];
+
     }
     @catch (NSException *exception)
     {
@@ -993,6 +1097,7 @@
 
 
 }
+#endif
 
 -(void) processRouteDownloadRequestStatusChange
 {
@@ -1106,19 +1211,7 @@
     }
 }
 
--(void) setHUD
-{
-    if(self.isHUD == false)
-    {
-        self.transform = CGAffineTransformMakeScale(1,-1);
-    }
-    else
-    {
-        self.transform = CGAffineTransformMakeScale(1,1);
-    }
-    
-    self.isHUD = !self.isHUD;
-}
+
 
 -(void) stopRouteNavigation
 {
@@ -1134,8 +1227,8 @@
 #pragma mark - Location Update
 -(void) updateTranslationConstant
 {
-    toScreenOffset.x = carCenterPoint.x - carPoint.x*ratio;
-    toScreenOffset.y = carCenterPoint.y - carPoint.y*ratio;
+    toScreenOffset.x = _carCenterPoint.x - carPoint.x*ratio;
+    toScreenOffset.y = _carCenterPoint.y - carPoint.y*ratio;
     
     //    printf("toScreenOffset (%.8f, %.8f)\n", toScreenOffset.x, toScreenOffset.y);
 }
@@ -1159,7 +1252,7 @@
     else
     {
         _turnAngle      = 0;
-        mlogError(@"Cannot found current route line, car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+//        mlogError(@"Cannot found current route line, car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     }
     
     carPoint = nextCarPoint;
@@ -1340,4 +1433,93 @@
 //    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
 }
 
+
+#pragma mark - UI Control
+
+
+
+-(void) addUIComponents
+{
+
+    _clockView                  = [[ClockView alloc] initWithFrame:CGRectMake(8, 50, 120, 50)];
+    _clockView.backgroundColor  = [UIColor clearColor];
+    _clockView.opaque           = TRUE;
+    _systemStatusView           = [[SystemStatusView alloc] initWithFrame:CGRectMake(0, 0, 180, 50)];
+    
+    _systemStatusView.opaque    = FALSE;
+    
+    
+    _turnArrowImage                 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"turn_right45.png"]];
+    _turnArrowFrame                 = CGRectMake(40, 170, 128, 128);
+    _turnArrowImage.frame           = _turnArrowFrame;
+
+    _turnArrowImage.contentMode     = UIViewContentModeScaleAspectFit;
+    _currentLocationImage           = [[UIImageView alloc] initWithFrame:
+                                       CGRectMake(_carCenterPoint.x + _routeComponentRect.origin.x-15, _carCenterPoint.y-15, 30, 30)];
+
+    _currentLocationImage.image     = [[UIImage imageNamed:@"route_current_location.png"] imageTintedWithColor:[UIColor redColor]];
+    _turnArrowImage.contentMode     = UIViewContentModeScaleAspectFit;
+    
+    _speedView                      = [[SpeedView alloc] initWithFrame:CGRectMake(8, 100, 150, 50)];
+    
+    [_clockView update];
+
+    
+    [self addSubview:_turnArrowImage];
+    [self addSubview:_systemStatusView];
+    [self addSubview:_clockView];
+    [self addSubview:_currentLocationImage];
+    [self addSubview:_speedView];
+    
+}
+
+-(void) setIsHud:(BOOL)isHud
+{
+    _isHud = isHud;
+    
+    if(TRUE == _isHud)
+    {
+        self.transform = CGAffineTransformMakeScale(1,-1);
+    }
+    else
+    {
+        self.transform = CGAffineTransformMakeScale(1,1);
+    }
+}
+
+-(void) setColor:(UIColor *)color
+{
+    
+    _color                  = color;
+    _systemStatusView.color = _color;
+    _clockView.color        = _color;
+    _speedView.color        = _color;
+    _turnArrowImage.image   = [_turnArrowImage.image   imageTintedWithColor:_color];
+
+    [self setNeedsDisplay];
+}
+
+-(void) setMessageBoxText:(NSString *)messageBoxText
+{
+    _messageBoxText = messageBoxText;
+    [self setNeedsDisplay];
+}
+
+-(void) active
+{
+    _lastPlayedSpeech         = nil;
+    _speedView.isSpeedUnitMph = [SystemConfig getBoolValue:CONFIG_RN1_IS_SPEED_UNIT_MPH];
+    self.color                = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
+    [_systemStatusView active];
+    [_clockView active];
+    [_speedView active];
+    
+}
+
+-(void) deactive
+{
+    [_systemStatusView deactive];
+    [_clockView deactive];
+    [_speedView deactive];
+}
 @end

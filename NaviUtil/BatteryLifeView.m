@@ -89,7 +89,7 @@
     [self drawRoundRect:context rect:mainBody radius:3];
     CGContextStrokeRect(context, head);
 
-    CGContextSetFillColorWithColor(context, [_color getOffColor].CGColor);
+    CGContextSetFillColorWithColor(context, [_color getOff05Color].CGColor);
     CGContextFillRect(context, batterLife);
 
 

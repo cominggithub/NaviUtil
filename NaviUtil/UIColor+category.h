@@ -10,5 +10,9 @@
 
 @interface UIColor (category)
 -(void) getRGBA:(float*) red green:(float*) green blue:(float*) blue alpha:(float*) alpha;
--(UIColor*) getOffColor;
+-(UIColor*) getOff05Color;
+-(UIColor*) getOff03Color;
+-(UIColor*) getColorByAlpha:(float) alpha;
+-(NSString*) getRGBHexCode;
++(UIColor*) colorWithRGBHexCode:(NSString*) rgbHexCode;
 @end

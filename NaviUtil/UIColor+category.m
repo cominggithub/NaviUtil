@@ -24,12 +24,66 @@
     }
 }
 
--(UIColor*) getOffColor
+-(UIColor*) getOff05Color
 {
     float r,g,b, a;
     
     [self getRed:&r green:&g blue:&b alpha:&a];
         
     return [UIColor colorWithRed:r green:g blue:b alpha:a*0.5];
+}
+
+-(UIColor*) getOff03Color
+{
+    float r,g,b, a;
+    
+    [self getRed:&r green:&g blue:&b alpha:&a];
+    
+    return [UIColor colorWithRed:r green:g blue:b alpha:0.3];
+}
+
+-(UIColor*) getColorByAlpha:(float) alpha
+{
+    float r,g,b, a;
+    
+    [self getRed:&r green:&g blue:&b alpha:&a];
+    
+    return [UIColor colorWithRed:r green:g blue:b alpha:alpha];
+}
+
+-(NSString*) getRGBHexCode
+{
+    float r,g,b,a;
+
+    [self getRed:&r green:&g blue:&b alpha:&a];
+    int hexCode = (0xFF&(int)(r*255)) << 16 | (0xFF&(int)(g*255)) << 8 | (0xFF&(int)(b*255));
+    return [NSString stringWithFormat:@"%06X", hexCode ];
+}
++(UIColor*) colorWithRGBHexCode:(NSString*) rgbHexCode
+{
+    float r, g, b;
+    UIColor *c = nil;
+    unsigned result = 0;
+    NSScanner *scanner;
+    
+    if ( rgbHexCode.length == 6)
+    {
+        scanner = [NSScanner scannerWithString:rgbHexCode];
+        
+        [scanner setScanLocation:0];
+        
+        if (YES == [scanner scanHexInt:&result])
+        {
+        
+            r = ((result >> 16) & 0x000000FF)/255.0;
+            g = ((result >> 8) & 0x000000FF)/255.0;
+            b = ((result >> 0) & 0x000000FF)/255.0;
+        
+            c = [UIColor colorWithRed:r green:g blue:b alpha:1.0];
+        }
+    }
+    
+    return c;
+
 }
 @end

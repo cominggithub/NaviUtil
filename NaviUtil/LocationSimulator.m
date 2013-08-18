@@ -15,6 +15,8 @@
 {
     CLLocationCoordinate2D _lastLocationCoordinate2D;
     float _locationCoordinate2DChangeStep;
+    double _speedCnt;
+    double _courseCnt;
 }
 @synthesize delegate=_delegate;
 @synthesize timeInterval=_timeInterval;
@@ -31,6 +33,8 @@
         _type                           = kLocationSimulator_ManualRoute;
         _lastLocationCoordinate2D       = CLLocationCoordinate2DMake(0, 0);
         _locationCoordinate2DChangeStep = 0.00005;
+        _speedCnt                       = 0;
+        _courseCnt                      = 0;
         
     }
     return self;
@@ -57,8 +61,16 @@
     if(_nextLocationIndex == 0)
     {
         tmpLocationCoordinate2D = [[self.locationPoints objectAtIndex:0] CLLocationCoordinate2DValue];
-        _currentLocation = [[CLLocation alloc] initWithLatitude:tmpLocationCoordinate2D.latitude + latOffset
-                                                     longitude:tmpLocationCoordinate2D.longitude + lngOffset];
+        _currentLocation = [[CLLocation alloc] initWithCoordinate:
+                            CLLocationCoordinate2DMake(tmpLocationCoordinate2D.latitude + latOffset,
+                                                       tmpLocationCoordinate2D.longitude + lngOffset)
+                                                         altitude:0.0
+                                               horizontalAccuracy:1.0
+                                                 verticalAccuracy:1.0
+                                                           course:_courseCnt
+                                                            speed:_speedCnt
+                                                        timestamp:[NSDate date]];
+        
         _nextLocationIndex++;
     }
     else if(_nextLocationIndex < self.locationPoints.count)
@@ -66,14 +78,29 @@
         for(i = _nextLocationIndex; i<self.locationPoints.count; i++)
         {
             tmpLocationCoordinate2D = [[self.locationPoints objectAtIndex:i] CLLocationCoordinate2DValue];
-            _nextLocation = [[CLLocation alloc] initWithLatitude:tmpLocationCoordinate2D.latitude + latOffset
-                                                      longitude:tmpLocationCoordinate2D.longitude + lngOffset];
+            _nextLocation = [[CLLocation alloc] initWithCoordinate:
+                             CLLocationCoordinate2DMake(tmpLocationCoordinate2D.latitude + latOffset,
+                                                        tmpLocationCoordinate2D.longitude + lngOffset)
+                                                          altitude:0.0
+                                                horizontalAccuracy:1.0
+                                                  verticalAccuracy:1.0
+                                                            course:_courseCnt
+                                                             speed:_speedCnt
+                                                         timestamp:[NSDate date]];
+            
+
+            
+            
             if([_nextLocation distanceFromLocation:_currentLocation] > 10.0)
                 break;
         }
         _currentLocation = _nextLocation;
         _nextLocationIndex = i+1;
     }
+    
+    _speedCnt   += 0.1;
+    _courseCnt  += 1;
+    _courseCnt  = (int)(_courseCnt)%362;
     
 /*
     mlogDebug(@"%.7f, %.7f +- (%.7f, %.7f)\n",
@@ -107,8 +134,13 @@
             break;
             
     }
-    CLLocation* location = [[CLLocation alloc] initWithCoordinate:locationCoordinate2D altitude:0.0 horizontalAccuracy:1.0 verticalAccuracy:1.0 timestamp:[NSDate date]];
+    
+    CLLocation* location = [[CLLocation alloc] initWithCoordinate:locationCoordinate2D altitude:0.0 horizontalAccuracy:1.0 verticalAccuracy:1.0 course:_courseCnt speed:_speedCnt timestamp:[NSDate date]];
 
+    _speedCnt   += 0.1;
+    _courseCnt  += 1;
+    _courseCnt  = (int)(_courseCnt)%362;
+    
     if (self.delegate)
     {
         if([self.delegate respondsToSelector:@selector(locationManager:didUpdateLocations:)])

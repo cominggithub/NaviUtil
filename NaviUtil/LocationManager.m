@@ -83,6 +83,7 @@ static NSMutableArray *_savedLocations;
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
+    logfn();
     [LocationManager addUpdatedCLLocations:locations];
 }
 
@@ -189,7 +190,6 @@ static NSMutableArray *_savedLocations;
     
     if (YES == _isTracking)
     {
-        logfn();
         [_savedLocations addObjectsFromArray:clLocations];
         [self writeLocationToFile:clLocations];
     }

@@ -117,6 +117,11 @@ static JsonFile *_configFile;
     [self checkKey:CONFIG_CP1_IS_SPEED_UNIT_MPH         defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_CP1_IS_HUD                    defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_CP1_IS_COURSE                 defaultValue:[NSString stringFromBOOL:TRUE]];
+
+    [self checkKey:CONFIG_RN1_COLOR                     defaultValue:[NSString stringFromUIColor:[UIColor greenColor]]];
+    [self checkKey:CONFIG_RN1_IS_SPEED_UNIT_MPH         defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_RN1_IS_HUD                    defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_RN1_IS_COURSE                 defaultValue:[NSString stringFromBOOL:TRUE]];
     
     [self save];
     

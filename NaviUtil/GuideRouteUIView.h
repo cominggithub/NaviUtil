@@ -33,7 +33,7 @@
     int locationIndex;
     PointD carPoint;
     PointD carDrawPoint;
-    PointD carCenterPoint;
+
     PointD screenOffsetPoint;
     
     PointD leftMost, rightMost, topMost, bottomMost;
@@ -81,8 +81,20 @@
 @property (nonatomic) bool isDebugDraw;
 @property (nonatomic) bool isDebugNormalLine;
 @property (nonatomic) bool isDebugRouteLineAngle;
-@property (nonatomic) bool isHUD;
+
+
+/* UI Control */
+@property (nonatomic) double speed;
+@property (nonatomic) double heading;
 @property (strong, nonatomic) UIColor *color;
+@property (nonatomic) float batteryLife;
+@property (nonatomic) float networkStatus;
+@property (nonatomic) BOOL gpsEnabled;
+@property (nonatomic) BOOL isHud;
+@property (nonatomic) BOOL isCourse;
+@property (nonatomic) BOOL isSpeedUnitMph;
+
+@property (nonatomic) NSString* messageBoxText;
 
 
 -(void) autoSimulatorLocationUpdateStart;
@@ -95,9 +107,10 @@
 -(void) timerTimeout;
 -(void) triggerLocationUpdate;
 -(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
--(void) setHUD;
 /* LocationManager delegate */
 -(void) locationUpdate:(CLLocationCoordinate2D) location speed:(int) speed distance:(int) distance heading:(double)heading;
 -(void) lostLocationUpdate;
 
+-(void) active;
+-(void) deactive;
 @end

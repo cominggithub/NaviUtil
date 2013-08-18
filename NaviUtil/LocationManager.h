@@ -14,8 +14,8 @@
 
 @protocol LocationManagerDelegate <NSObject>
 
--(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
--(void) lostLocationUpdate;
+@optional -(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
+@optional -(void) lostLocationUpdate;
 @end
 
 typedef enum

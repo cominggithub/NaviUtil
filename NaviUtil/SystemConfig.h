@@ -29,7 +29,11 @@
 #define CONFIG_CP1_IS_COURSE                @"CP1_IsCourse"
 #define CONFIG_CP1_IS_SPEED_UNIT_MPH        @"CP1_IsSpeedUnitMPH"
 
-
+/* for route navigation 1 */
+#define CONFIG_RN1_COLOR                    @"RN1_Color"
+#define CONFIG_RN1_IS_HUD                   @"RN1_IsHud"
+#define CONFIG_RN1_IS_COURSE                @"RN1_Course"
+#define CONFIG_RN1_IS_SPEED_UNIT_MPH        @"RN1_IsSpeedUnitMPH"
 
 
 @interface SystemConfig : NSObject
