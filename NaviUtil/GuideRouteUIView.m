@@ -13,6 +13,7 @@
 #import "SystemStatusView.h"
 #import "ClockView.h"
 #import "SpeedView.h"
+#import "MessageBoxLabel.h"
 
 
 
@@ -39,6 +40,7 @@
     UIImageView *_currentLocationImage;
     ClockView *_clockView;
     SpeedView *_speedView;
+    MessageBoxLabel *_messageBoxLabel;
     
     NSString *_lastPlayedSpeech;
 }
@@ -331,6 +333,8 @@
 {
     RouteLine *nextStepRouteLine;
     
+    _messageBoxLabel.text = @"";
+    
     if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG] && _messageBoxText.length > 0)
     {
 //        [self drawMessageBox:context Message:_messageBoxText];
@@ -345,12 +349,15 @@
         if(nextStepRouteLine != nil)
         {
             NSString* text = [route getStepInstruction:nextStepRouteLine.stepNo];
-            [self drawMessageBox:context Message:[route getStepInstruction:nextStepRouteLine.stepNo]];
+            //[self drawMessageBox:context Message:[route getStepInstruction:nextStepRouteLine.stepNo]];
+            _messageBoxLabel.text = [route getStepInstruction:nextStepRouteLine.stepNo];
             if(YES == [SystemConfig getBoolValue:CONFIG_IS_SPEECH] && FALSE == [audioPlayer isPlaying] )
             {
                 [self playSpeech:text];
             }
         }
+    
+            
     }
     
     
@@ -1462,6 +1469,8 @@
     
     _speedView                      = [[SpeedView alloc] initWithFrame:CGRectMake(8, 100, 150, 50)];
     
+    _messageBoxLabel                = [[MessageBoxLabel alloc] initWithFrame:
+                                       CGRectMake(30, 40, [SystemManager lanscapeScreenRect].size.width - 60, 161)];
     [_clockView update];
 
     
@@ -1470,6 +1479,7 @@
     [self addSubview:_clockView];
     [self addSubview:_currentLocationImage];
     [self addSubview:_speedView];
+    [self addSubview:_messageBoxLabel];
     
 }
 
@@ -1490,19 +1500,21 @@
 -(void) setColor:(UIColor *)color
 {
     
-    _color                  = color;
-    _systemStatusView.color = _color;
-    _clockView.color        = _color;
-    _speedView.color        = _color;
-    _turnArrowImage.image   = [_turnArrowImage.image   imageTintedWithColor:_color];
+    _color                      = color;
+    _systemStatusView.color     = _color;
+    _clockView.color            = _color;
+    _speedView.color            = _color;
+    _messageBoxLabel.textColor  = _color;
+    _turnArrowImage.image       = [_turnArrowImage.image   imageTintedWithColor:_color];
 
     [self setNeedsDisplay];
 }
 
 -(void) setMessageBoxText:(NSString *)messageBoxText
 {
-    _messageBoxText = messageBoxText;
-    [self setNeedsDisplay];
+//    _messageBoxText = messageBoxText;
+    _messageBoxLabel.text = messageBoxText;
+//    [self setNeedsDisplay];
 }
 
 -(void) active

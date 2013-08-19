@@ -55,6 +55,7 @@
 		2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE15360178ED92600C55363 /* UIImageView+category.m */; };
 		2BE3A81017046D92007621EC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A80F17046D92007621EC /* LocationManager.m */; };
 		2BE3A81317046DD5007621EC /* LocationSimulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A81217046DD5007621EC /* LocationSimulator.m */; };
+		2BE7765817C24AEB007AE899 /* MessageBoxLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE7765717C24AEB007AE899 /* MessageBoxLabel.m */; };
 		2BE8FE0217C06E890060395E /* SpeedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8FE0117C06E890060395E /* SpeedView.m */; };
 		2BEBB83717BF66BC00B336E6 /* ClockView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEBB83617BF66BC00B336E6 /* ClockView.m */; };
 		2BEBB83A17BF99D900B336E6 /* SystemStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEBB83917BF99D900B336E6 /* SystemStatusView.m */; };
@@ -177,6 +178,8 @@
 		2BE3A80F17046D92007621EC /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		2BE3A81117046DD5007621EC /* LocationSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationSimulator.h; sourceTree = "<group>"; };
 		2BE3A81217046DD5007621EC /* LocationSimulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationSimulator.m; sourceTree = "<group>"; };
+		2BE7765617C24AEB007AE899 /* MessageBoxLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBoxLabel.h; sourceTree = "<group>"; };
+		2BE7765717C24AEB007AE899 /* MessageBoxLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageBoxLabel.m; sourceTree = "<group>"; };
 		2BE8FE0017C06E890060395E /* SpeedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeedView.h; sourceTree = "<group>"; };
 		2BE8FE0117C06E890060395E /* SpeedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpeedView.m; sourceTree = "<group>"; };
 		2BEBB83517BF66BC00B336E6 /* ClockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockView.h; sourceTree = "<group>"; };
@@ -233,6 +236,8 @@
 				2BEBB83917BF99D900B336E6 /* SystemStatusView.m */,
 				2BE8FE0017C06E890060395E /* SpeedView.h */,
 				2BE8FE0117C06E890060395E /* SpeedView.m */,
+				2BE7765617C24AEB007AE899 /* MessageBoxLabel.h */,
+				2BE7765717C24AEB007AE899 /* MessageBoxLabel.m */,
 			);
 			name = CarPanel;
 			sourceTree = "<group>";
@@ -554,6 +559,7 @@
 				2BEBB83717BF66BC00B336E6 /* ClockView.m in Sources */,
 				2BEBB83A17BF99D900B336E6 /* SystemStatusView.m in Sources */,
 				2BE8FE0217C06E890060395E /* SpeedView.m in Sources */,
+				2BE7765817C24AEB007AE899 /* MessageBoxLabel.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
