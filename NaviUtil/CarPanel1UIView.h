@@ -27,9 +27,6 @@
 
 
 @property (strong, nonatomic) UIColor* color;
--(void) autoRedrawStart;
--(void) autoRedrawStop;
--(void) update;
 -(void) start;
 -(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int) speed Distance:(int) distance;
 -(void) lostLocationUpdate;

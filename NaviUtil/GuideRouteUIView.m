@@ -196,7 +196,7 @@
     
     if (nil == route || (nil != routeDownloadRequest && routeDownloadRequest.status != kDownloadStatus_Finished))
     {
-        [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Route Planning"]];
+        _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Planning"];
         return;
     }
     
@@ -209,7 +209,7 @@
     }
     else
     {
-        [self drawMessageBox:context Message:[SystemManager getLanguageString:@"Find our location now"]];
+        _messageBoxLabel.text = [SystemManager getLanguageString:@"Find our location now"];
         mlogError(@" currentRouteLine is null\n");
     }
     
@@ -438,7 +438,7 @@
         CGContextStrokeEllipseInRect(context, endPointRect);
 
         CGContextSetFillColorWithColor(context, _color.CGColor);
-        CGContextFillEllipseInRect(context, CGRectInset(endPointRect, 6, 6));
+        CGContextFillEllipseInRect(context, CGRectInset(endPointRect, 8, 8));
     }
 #
     tmpRouteLine = [route.routeLines lastObject];

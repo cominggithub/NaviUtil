@@ -25,9 +25,9 @@ typedef enum
 }SystemManagerPathType;
 
 @protocol SystemManagerDelegate <NSObject>
--(void) networkStatusChangeWifi:(float) wifiStatus threeG:(float) threeGStatus;
--(void) gpsStatusChange:(float) status;
--(void) batteryStatusChange:(float) status;
+@optional -(void) networkStatusChangeWifi:(float) wifiStatus threeG:(float) threeGStatus;
+@optional -(void) gpsStatusChange:(float) status;
+@optional -(void) batteryStatusChange:(float) status;
 @end
 
 @interface SystemManager : NSObject

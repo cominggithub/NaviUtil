@@ -13,8 +13,7 @@
 
 
 @protocol LocationManagerDelegate <NSObject>
-
-@optional -(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
+-(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
 @optional -(void) lostLocationUpdate;
 @end
 

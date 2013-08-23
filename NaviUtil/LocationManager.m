@@ -83,7 +83,6 @@ static NSMutableArray *_savedLocations;
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    logfn();
     [LocationManager addUpdatedCLLocations:locations];
 }
 
@@ -202,14 +201,13 @@ static NSMutableArray *_savedLocations;
         {
             nextLocation.latitude       = c.coordinate.latitude;
             nextLocation.longitude      = c.coordinate.longitude;
-            if (c.speed > 0)
+            if (c.speed > 0 && !isnan(c.speed))
             {
                 speed += c.speed;
                 updateLocationCount++;
             }
             
             heading = TO_RADIUS(c.course);
-            
             hasNewLocationInThisUpdate  = TRUE;
             
         }
@@ -241,10 +239,14 @@ static NSMutableArray *_savedLocations;
     if (YES == isLocationUpdated)
     {
         // calculate location update parameter
+        if (updateLocationCount > 0)
+        {
+            speed /= updateLocationCount;
+        }
         
         distance = [GeoUtil getGeoDistanceFromLocation:_currentCLLocationCoordinate2D ToLocation:nextLocation];
         timeDiff = [updateTime timeIntervalSinceDate:_lastUpdateTime];
-        speed /= updateLocationCount;
+
         _currentSpeed                   = 0.75*_currentSpeed + 0.25*speed;
         _currentDistance                += distance;
         _currentCLLocationCoordinate2D  = nextLocation;

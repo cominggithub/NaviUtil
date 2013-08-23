@@ -38,11 +38,11 @@
 
 -(void) addUIComponent
 {
-    _speedLabel         = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 160, 60)];
-    _speedUnitLabel     = [[UILabel alloc] initWithFrame:CGRectMake(165, 30, 80, 30)];
+    _speedLabel         = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 180, 80)];
+    _speedUnitLabel     = [[UILabel alloc] initWithFrame:CGRectMake(170, 50, 80, 30)];
 
     
-    [_speedLabel        setFont:[UIFont fontWithName:@"JasmineUPC" size:100]];
+    [_speedLabel        setFont:[UIFont fontWithName:@"JasmineUPC" size:120]];
     [_speedUnitLabel    setFont:[UIFont fontWithName:@"JasmineUPC" size:30]];
     
     _speedLabel.textAlignment           = NSTextAlignmentCenter;
@@ -73,7 +73,6 @@
 
 -(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading
 {
-    logf(speed);
     if (YES == _isSpeedUnitMph)
     {
         self.speed = MS_TO_MPH(speed);
@@ -104,9 +103,9 @@
         speed = 0;
 
     _speed = speed;
-    _speedLabel.text = [NSString stringWithFormat:@"%.0f", speed];
-    logf(_speed);
-    logo(_speedLabel.text);
+    _speed = 999;
+    _speedLabel.text = [NSString stringWithFormat:@"%.0f", _speed];
+
 }
 
 -(void) setIsSpeedUnitMph:(BOOL)isSpeedUnitMph
