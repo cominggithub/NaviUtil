@@ -21,6 +21,9 @@
 #include "Log.h"
 
 #define radians(degrees) (degrees * M_PI/180)
+
+
+
 @implementation GuideRouteUIView
 {
     Route* route;
@@ -34,15 +37,17 @@
 
     CGRect _turnArrowFrame;
     UITextField *_messageBoxTextField;
+    ClockView *_clockView;
     SystemStatusView *_systemStatusView;
     
     UIImageView *_turnArrowImage;
     UIImageView *_currentLocationImage;
-    ClockView *_clockView;
+
     SpeedView *_speedView;
     MessageBoxLabel *_messageBoxLabel;
-    
+    UILabel         *_debugMsgLabel;
     NSString *_lastPlayedSpeech;
+    BOOL _isDrawCarFootPrint;
 }
 
 #pragma mark - Main
@@ -112,9 +117,11 @@
     
     [self addUIComponents];
     
-    self.color  =   [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
+    [SystemManager addDelegate:self];
+    self.color      = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
+    self.state      = state_route_planning;
     
-    [LocationManager addDelegate:self];
+
 }
 
 #pragma mark - Geo Calculation
@@ -155,17 +162,17 @@
 {
     if (nil == route || kRouteStatusCodeOk != route.status)
     {
-        _isAutoSimulatorLocationUpdateStarted = false;
+        _isAutoSimulatorLocationUpdateStarted = FALSE;
         return;
     }
     
-    _isAutoSimulatorLocationUpdateStarted = true;
+    _isAutoSimulatorLocationUpdateStarted = TRUE;
 }
 
 -(void) autoSimulatorLocationUpdateStop
 {
 
-    _isAutoSimulatorLocationUpdateStarted = false;
+    _isAutoSimulatorLocationUpdateStarted = FALSE;
 }
 
 -(void) downloadRequestStatusChange: (DownloadRequest*) downloadRequest
@@ -191,31 +198,41 @@
     if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG] && _messageBoxText.length > 0)
     {
         [self drawMessageBox:context Message:_messageBoxText];
+
         return;
     }
-    
+#if 0
     if (nil == route || (nil != routeDownloadRequest && routeDownloadRequest.status != kDownloadStatus_Finished))
     {
         _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Planning"];
         return;
     }
     
-    if(currentRouteLine != nil)
-    {
-        PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
-        PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
-        
-        xOffset = tmpCarDrawPoint.x - startPoint.x + _routeComponentRect.origin.x;
-    }
+
     else
     {
         _messageBoxLabel.text = [SystemManager getLanguageString:@"Find our location now"];
         mlogError(@" currentRouteLine is null\n");
     }
+#endif
+    
+    if (nil == currentRouteLine)
+    {
+        return;
+    }
+
+    PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
+    PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
+    xOffset = tmpCarDrawPoint.x - startPoint.x + _routeComponentRect.origin.x;
+
     
     
     [self drawRoute:context Rectangle:rect];
-    [self drawTurnMessage:context];
+    
+    if (state_navigateion == _state)
+    {
+        [self drawTurnMessage:context];
+    }
     
     _turnArrowImage.image = [self getTurnImage];
     
@@ -250,6 +267,7 @@
 
 -(void) drawCar:(CGContextRef) context
 {
+
     int size = 20;
     PointD normalPointStart;
     PointD normalPointEnd;
@@ -264,9 +282,10 @@
     carRect.origin.y = _carCenterPoint.y - size;
     carRect.size.width = size*2;
     carRect.size.height = size*2;
-    CGContextStrokeRect(context, carRect);
+
+    //    CGContextStrokeRect(context, carRect);
     
-    
+
     
     if (self.isDebugNormalLine)
     {
@@ -300,7 +319,6 @@
         CGContextAddLineToPoint(context, normalPointEnd.x + xOffset + carOffset.x, normalPointEnd.y + carOffset.y);
         CGContextStrokePath(context);
     }
-    
     
 }
 
@@ -531,7 +549,7 @@
         tmpCurrentRouteLine = [drawedRouteLines objectAtIndex:i];
         if (i < drawedRouteLines.count-1)
         {
-            nextRouteLine = [route.routeLines objectAtIndex:i+1];
+            nextRouteLine = [drawedRouteLines objectAtIndex:i+1];
         }
         startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpCurrentRouteLine.startLocation]];
         endPoint    = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpCurrentRouteLine.endLocation]];
@@ -564,7 +582,7 @@
     PointD curPoint;
     CGRect rect;
     NSMutableArray* drawedPoint = [[NSMutableArray alloc] init];
-    if(false == isDrawCarFootPrint)
+    if(FALSE == _isDrawCarFootPrint)
         return;
     
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
@@ -1000,7 +1018,7 @@
     routeLineM              = 0;
     routeLineB              = 0;
     isRouteLineMUndefind    = false;
-    ratio                   = 222000;
+    ratio                   = 452000;
     angleRotateStep         = 0.1;
     rotateInterval          = 0.1;
     
@@ -1010,10 +1028,6 @@
     [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
     currentStep = 0;
     carFootPrint = [NSMutableArray arrayWithCapacity:0];
-    isDrawCarFootPrint = true;
-    _isAutoSimulatorLocationUpdateStarted   = false;
-    
-    [LocationManager setRoute:route];
     
     rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
     
@@ -1021,7 +1035,24 @@
     {
         [NaviQueryManager downloadSpeech:route];
     }
+    
     [self updateCarLocation:((RouteLine*)[route.routeLines objectAtIndex:0]).startLocation];
+    
+    [LocationManager setRoute:route];
+    
+    if (YES == [SystemConfig getBoolValue:CONFIG_IS_LOCATION_SIMULATOR])
+    {
+        [LocationManager triggerLocationUpdate];
+    }
+    
+    
+    // configure debug option
+    
+    _isDrawCarFootPrint                     = FALSE;
+    _isAutoSimulatorLocationUpdateStarted   = FALSE;
+    
+    self.state = state_lookup;
+    
     [self setNeedsDisplay];
 
 }
@@ -1169,6 +1200,8 @@
     
     GoogleJsonStatus status;
     
+    self.state = state_route_planning;
+    
     if (nil == s || nil == e)
     {
         mlogError(@"No start or end place");
@@ -1218,18 +1251,86 @@
     }
 }
 
-
-
--(void) stopRouteNavigation
+-(GuideRouteState_t) lookupState
 {
+    GuideRouteState_t state;
+    
+    state = state_navigateion;
+    
+    if (NO == self.isGps )
+    {
+        state = state_no_gps;
+    }
+    else if (NO == self.isNetwork)
+    {
+        state = state_no_network;
+    }
+    else if (nil == route || ( nil != routeDownloadRequest && routeDownloadRequest.status != kDownloadStatus_Finished))
+    {
+        state = state_route_planning;
+    }
+    else if (nil == currentRouteLine)
+    {
+        state = state_location_lost;
+    }
+    
+    return state;
+}
+
+-(void) setState:(GuideRouteState_t)state
+{
+    _state = state;
+    
+    if (state_lookup == state)
+        _state = [self lookupState];
+    
+    if (NO == _isNetwork)
+        _state = state_no_network;
+    else if (NO == _isGps)
+        _state = state_no_gps;
+    
+    switch (_state)
+    {
+        case state_route_planning:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Planning"];
+            break;
+        case state_no_gps:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"No GPS Signal"];
+            break;
+        case state_no_network:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"No Network"];
+            break;
+        case state_location_lost:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Re-Planning"];
+            break;
+        default:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@""];
+            break;
+            
+    }
     
 }
 
--(void) speedUpdate:(int) speed
+-(NSString*) getStateStr:(GuideRouteState_t) state
 {
+    switch (state)
+    {
+        case state_route_planning:
+            return @"state_route_planning";
+        case state_no_gps:
+            return @"state_no_gps";
+        case state_no_network:
+            return @"state_no_network";
+        case state_location_lost:
+            return @"state_location_lost";
+        case state_lookup:
+            return @"state_location_lost";
+        case state_navigateion:
+            return @"state_navigateion";
+    }
     
+    return @"state_???";
 }
-
 
 #pragma mark - Location Update
 -(void) updateTranslationConstant
@@ -1269,6 +1370,10 @@
     
     [self updateTranslationConstant];
 
+    self.state = state_lookup;
+    
+    
+    
 }
 
 #pragma location update
@@ -1404,6 +1509,7 @@
             mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
         }
         currentDrawAngle = targetAngle;
+
         return false;
     }
     
@@ -1430,7 +1536,7 @@
 #endif
 
 
--(void) locationUpdate:(CLLocationCoordinate2D) location speed:(int) speed distance:(int) distance heading:(double)heading;
+-(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
 {
     currentStep++;
 //    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
@@ -1438,7 +1544,17 @@
     [self updateCarLocation:location];
     [self setNeedsDisplay];
 //    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
+    
+    _debugMsgLabel.text = [NSString stringWithFormat:@"%.8f, %.8f, %.1f, %.1f",
+                               location.latitude,
+                               location.longitude,
+                               speed,
+                               heading
+                               ];
+    
+    
 }
+
 
 
 #pragma mark - UI Control
@@ -1448,7 +1564,7 @@
 -(void) addUIComponents
 {
 
-    _clockView                  = [[ClockView alloc] initWithFrame:CGRectMake(8, 50, 120, 50)];
+    _clockView                  = [[ClockView alloc] initWithFrame:CGRectMake(8, 60, 120, 50)];
     _clockView.backgroundColor  = [UIColor clearColor];
     _clockView.opaque           = TRUE;
     _systemStatusView           = [[SystemStatusView alloc] initWithFrame:CGRectMake(0, 0, 180, 50)];
@@ -1471,6 +1587,11 @@
     
     _messageBoxLabel                = [[MessageBoxLabel alloc] initWithFrame:
                                        CGRectMake(30, 40, [SystemManager lanscapeScreenRect].size.width - 60, 161)];
+    _debugMsgLabel                  = [[UILabel alloc] init];
+    _debugMsgLabel.text             = @"debug msg";
+    _debugMsgLabel.textColor        = [UIColor whiteColor];
+    _debugMsgLabel.backgroundColor  = [UIColor clearColor];
+    _debugMsgLabel.frame            = CGRectMake(8, 280, 480, 20);
     [_clockView update];
 
     
@@ -1480,6 +1601,8 @@
     [self addSubview:_currentLocationImage];
     [self addSubview:_speedView];
     [self addSubview:_messageBoxLabel];
+    [self addSubview:_debugMsgLabel];
+
     
 }
 
@@ -1526,12 +1649,66 @@
     [_clockView active];
     [_speedView active];
     
+    [LocationManager addDelegate:self];
+
+    _debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_IS_DEBUG];
+    
+    self.state      = state_route_planning;
+    self.isNetwork  = [SystemManager getNetworkStatus] > 0;
+    self.isGps      = [SystemManager getGpsStatus] > 0;
+    
+//    self.isDebugRouteLineAngle  = TRUE;
+//    self.isDebugNormalLine      = TRUE;
+    
 }
 
--(void) deactive
+-(void) inactive
 {
-    [_systemStatusView deactive];
-    [_clockView deactive];
-    [_speedView deactive];
+    [LocationManager removeDelegate:self];
+    [_systemStatusView inactive];
+    [_clockView inactive];
+    [_speedView inactive];
 }
+
+-(void) update
+{
+    [_systemStatusView update];
+}
+
+#pragma mark - property
+
+-(void) setIsNetwork:(BOOL)isNetwork
+{
+    _isNetwork = isNetwork;
+    if (NO == _isNetwork)
+        self.state = state_no_network;
+    else
+        self.state = state_lookup;
+    
+    [self setNeedsDisplay];
+}
+
+-(void) setIsGps:(BOOL)isGps
+{
+    _isGps = isGps;
+    if (NO == _isGps)
+        self.state = state_no_gps;
+    else
+        self.state = state_lookup;
+    [self setNeedsDisplay];    
+}
+#pragma mark - SystemManage Monitor
+-(void) networkStatusChangeWifi:(float) wifiStatus threeG:(float) threeGStatus
+{
+    self.isNetwork = (wifiStatus + threeGStatus > 0) ? YES:NO;
+
+}
+-(void) gpsStatusChange:(float) status
+{
+    self.isGps = status > 0 ? YES:NO;
+}
+
+
+
+
 @end

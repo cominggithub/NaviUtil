@@ -12,5 +12,5 @@
 @property (strong, nonatomic) UIColor *color;
 -(void) update;
 -(void) active;
--(void) deactive;
+-(void) inactive;
 @end

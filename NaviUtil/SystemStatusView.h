@@ -17,6 +17,7 @@
 @property (nonatomic) BOOL gpsEnabled;
 
 -(void) active;
--(void) deactive;
+-(void) inactive;
+-(void) update;
 
 @end

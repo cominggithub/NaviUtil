@@ -15,6 +15,7 @@
 #define CONFIG_IS_DEBUG_ROUTE_DRAW           @"IsDebugRouteDraw"
 #define CONFIG_IS_SPEECH                     @"IsSpeech"
 #define CONFIG_IS_LOCATION_UPDATE_FILTER     @"IsLocationUpdateFilter"
+#define CONFIG_IS_LOCATION_SIMULATOR         @"IsLocationSimulator"
 #define CONFIG_TRIGGER_LOCATION_INTERVAL     @"TriggerLocationUpdateInterval"
 #define CONFIG_TURN_ANGLE_DISTANCE           @"TurnAngleDistance"
 #define CONFIG_TARGET_ANGLE_DISTANCE         @"TargetAngleDistance"

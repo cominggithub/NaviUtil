@@ -54,7 +54,6 @@
     _secondLabel.backgroundColor    = [UIColor clearColor];
     _minuteLabel.backgroundColor    = [UIColor clearColor];
     _unitLabel.backgroundColor      = [UIColor clearColor];
-    self.backgroundColor            = [UIColor clearColor];
     
     
     _secondLabel.text   = @":";
@@ -107,7 +106,7 @@
     
 }
 
--(void) deactive
+-(void) inactive
 {
     [_clockTimer invalidate];
     _clockTimer = nil;
@@ -133,6 +132,15 @@
     }
 }
 
+
+-(void) dealloc
+{
+    _hourLabel      = nil;
+    _minuteLabel    = nil;
+    _secondLabel    = nil;
+    _unitLabel      = nil;
+    _clockTimer     = nil;
+}
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

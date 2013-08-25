@@ -8,12 +8,15 @@
 
 #import "BatteryLifeView.h"
 #import "UIColor+category.h"
+#import "SystemConfig.h"
+
 #include "Log.h"
 
 @implementation BatteryLifeView
 {
     BOOL _firstDraw;
     int _width;
+    UILabel *_lifeLabel;
 }
 - (id)initWithFrame:(CGRect)frame
 {
@@ -27,9 +30,19 @@
 
 -(void) initSelf
 {
-    _life = 0;
-    _firstDraw = FALSE;
-    _width = 34;
+    _lifeLabel                  = [[UILabel alloc] init];
+    _lifeLabel.frame            = CGRectMake(0, 20, 30, 40);
+    _lifeLabel.backgroundColor  = [UIColor clearColor];
+    _lifeLabel.textColor        = [UIColor whiteColor];
+    _firstDraw                  = FALSE;
+    _width                      = 34;
+    self.life                   = 0;
+
+
+    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG])
+    {
+        [self addSubview:_lifeLabel];
+    }
 }
 
 -(void) setColor:(UIColor *)color
@@ -49,6 +62,7 @@
     
     _life = life;
 
+    _lifeLabel.text = [NSString stringWithFormat:@"%.0f", _life*100];
     [self setNeedsDisplay];
     
 }

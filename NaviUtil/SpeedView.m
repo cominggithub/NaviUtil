@@ -103,7 +103,6 @@
         speed = 0;
 
     _speed = speed;
-    _speed = 999;
     _speedLabel.text = [NSString stringWithFormat:@"%.0f", _speed];
 
 }
@@ -131,7 +130,7 @@
 
 }
 
--(void) deactive
+-(void) inactive
 {
     [LocationManager removeDelegate:self];
 }

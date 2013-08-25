@@ -11,7 +11,7 @@
 #import "SystemManager.h"
 #import "LocationSimulator.h"
 
-#define FILE_DEBUG TRUE
+#define FILE_DEBUG FALSE
 #include "Log.h"
 
 #define LOCATION_UPDATE_DISTANCE_THRESHOLD 30 /* 30 meter */ 
@@ -88,6 +88,7 @@ static NSMutableArray *_savedLocations;
 
 -(void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
+    
     if (newHeading.headingAccuracy < 0)
         return;
     
@@ -186,7 +187,7 @@ static NSMutableArray *_savedLocations;
     BOOL hasNewLocationInThisUpdate   = FALSE;
     CLLocationSpeed speed = 0;
     CLLocationDirection heading = 0;
-    
+    CLLocationCoordinate2D lastUpdatedLocation;
     if (YES == _isTracking)
     {
         [_savedLocations addObjectsFromArray:clLocations];
@@ -209,7 +210,7 @@ static NSMutableArray *_savedLocations;
             
             heading = TO_RADIUS(c.course);
             hasNewLocationInThisUpdate  = TRUE;
-            
+            lastUpdatedLocation         = c.coordinate;
         }
     }
 
@@ -247,7 +248,15 @@ static NSMutableArray *_savedLocations;
         distance = [GeoUtil getGeoDistanceFromLocation:_currentCLLocationCoordinate2D ToLocation:nextLocation];
         timeDiff = [updateTime timeIntervalSinceDate:_lastUpdateTime];
 
-        _currentSpeed                   = 0.75*_currentSpeed + 0.25*speed;
+        if (YES == [GeoUtil isCLLocationCoordinate2DEqual:_lastCLLocationCoordinate2D To:lastUpdatedLocation])
+        {
+            _currentSpeed = 0;
+        }
+        else
+        {
+            _currentSpeed = 0.75*_currentSpeed + 0.25*speed;
+        }
+        
         _currentDistance                += distance;
         _currentCLLocationCoordinate2D  = nextLocation;
 
@@ -268,10 +277,10 @@ static NSMutableArray *_savedLocations;
         [self triggerLostLocationUpdateNotify];
         [self reprobeLocation];
     }
-    else
-    {
-        
-    }
+
+    
+    _lastCLLocationCoordinate2D = lastUpdatedLocation;
+    
 }
 
 +(int) getManualPlaceCount;
@@ -474,7 +483,7 @@ static NSMutableArray *_savedLocations;
                [GeoUtil getGeoDistanceFromLocation:_lastCLLocationCoordinate2D ToLocation:location.coordinate]/timeDiffer
                
                ];
-        _lastCLLocationCoordinate2D = location.coordinate;
+        
     }
     
 //    mlogDebug(@"%@", msg);

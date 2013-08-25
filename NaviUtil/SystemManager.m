@@ -48,6 +48,7 @@ static float _networkStatus;
     isInit = true;
 }
 
+
 +(void) initOS
 {
     UIDevice* device    = [UIDevice currentDevice];
@@ -83,17 +84,31 @@ static float _networkStatus;
     [device setBatteryMonitoringEnabled:YES];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(batteryLevelUpdate:)
+                                             selector:@selector(updateBatteryLevel)
                                                  name:UIDeviceBatteryLevelDidChangeNotification
                                             object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(updateNetworkStatus)
                                                  name:kReachabilityChangedNotification object:nil];
+ 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(updateSystemStatus)
+                                                 name:@"applicationDidBecomeActive"
+                                               object:nil];
     
 }
 
 
++(void) updateSystemStatus
+{
+    logfn();
+    [self updateNetworkStatus];
+    [self triggerBatterStatusChangeNotify];
+    [self triggerNetworkChangeStatusNotify];
+    [self triggerGpsStatusChangeNotify];
+
+}
 
 +(void) addDelegate: (id<SystemManagerDelegate>) delegate
 {
@@ -114,6 +129,7 @@ static float _networkStatus;
 
 +(void) triggerBatterStatusChangeNotify
 {
+    logfn();
     for (id<SystemManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(batteryStatusChange:)])
@@ -125,6 +141,7 @@ static float _networkStatus;
 
 +(void) triggerNetworkChangeStatusNotify
 {
+    logfn();
     for (id<SystemManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector( networkStatusChangeWifi:threeG:)])
@@ -136,11 +153,12 @@ static float _networkStatus;
 
 +(void) triggerGpsStatusChangeNotify
 {
+    logfn();
     for (id<SystemManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(gpsStatusChange:)])
         {
-            [delegate gpsStatusChange:_gpsStatus];
+            [delegate gpsStatusChange:[self getGpsStatus]];
         }
     }
 }
@@ -197,7 +215,7 @@ static float _networkStatus;
     [self triggerNetworkChangeStatusNotify];
 }
 
-+(void) batteryLevelUpdate:(NSNotification *)notification
++(void) updateBatteryLevel
 {
     _batteryLife = [[UIDevice currentDevice] batteryLevel];
     [self triggerBatterStatusChangeNotify];
@@ -440,6 +458,11 @@ static float _networkStatus;
 {
     return [_pathArray objectAtIndex:pathType];
 
+}
+
++(void) dinit
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 @end
 

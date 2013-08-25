@@ -136,9 +136,7 @@
      then turn right + becomes turn left - and
      turn left - becomes turn right +
      */
-    
     reverseDirection = angleOffset > (M_PI) ? true:false;
-    
     
     /* should be turn right + */
     if(self.angle < routeLine.angle)
@@ -146,7 +144,9 @@
         turnAngle = angleOffset;
         /* become turn left - */
         if (true == reverseDirection)
+        {
             turnAngle = (-1) * (2*M_PI - turnAngle);
+        }
     }
     /* should be turn left - */
     else
@@ -154,7 +154,9 @@
         turnAngle = (-1) * angleOffset;
         /* becomes turn right + */
         if (true == reverseDirection)
+        {
             turnAngle = 2*M_PI + turnAngle;
+        }
     }
     
     return turnAngle;

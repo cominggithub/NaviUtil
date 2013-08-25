@@ -106,6 +106,7 @@ static JsonFile *_configFile;
     [self checkKey:CONFIG_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:TRUE]];
     [self checkKey:CONFIG_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_IS_SPEECH                     defaultValue:[NSString stringFromBOOL:TRUE]];
     [self checkKey:CONFIG_TURN_ANGLE_DISTANCE           defaultValue:[NSString stringFromFloat:50.0]];
     [self checkKey:CONFIG_TARGET_ANGLE_DISTANCE         defaultValue:[NSString stringFromFloat:5.0]];

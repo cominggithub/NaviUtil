@@ -13,6 +13,7 @@
 #import "UIFont+category.h"
 #import "BatteryLifeView.h"
 #import "UIImageView+category.h"
+#import "UIImage+category.h"
 #import "UIColor+category.h"
 
 #define FILE_DEBUG TRUE
@@ -21,8 +22,12 @@
 @implementation SystemStatusView
 {
     BatteryLifeView* _batteryLifeView;
-    UIImageView *_threeGImage;
-    UIImageView *_gpsImage;
+    UIImage *_gpsOnImage;
+    UIImage *_gpsOffImage;
+    UIImage *_threeGOnImage;
+    UIImage *_threeGOffImage;
+    UIImageView *_threeGImageView;
+    UIImageView *_gpsImageView;
 
     
 }
@@ -42,6 +47,9 @@
     self.batteryLife    = [SystemManager getBatteryLife];
     self.networkStatus  = [SystemManager getNetworkStatus];
     [SystemManager addDelegate:self];
+    
+
+    
     [self update];
 }
 
@@ -60,7 +68,7 @@
     [self update];
 }
 
--(void) deactive
+-(void) inactive
 {
     [SystemManager removeDelegate:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:UIDeviceBatteryLevelDidChangeNotification object:nil];
@@ -70,65 +78,99 @@
 {
     
     _batteryLifeView        = [[BatteryLifeView alloc] initWithFrame:CGRectMake(18, 8, 49, 28)];
-    _threeGImage            = [[UIImageView alloc] initWithFrame:CGRectMake(86, 8, 43, 28)];
-    _gpsImage               = [[UIImageView alloc] initWithFrame:CGRectMake(150, 8, 27, 27)];
+    _threeGImageView        = [[UIImageView alloc] initWithFrame:CGRectMake(86, 8, 43, 28)];
+    _gpsImageView           = [[UIImageView alloc] initWithFrame:CGRectMake(150, 8, 27, 27)];
     
-    _threeGImage.image  = [UIImage imageNamed:@"3g.png"];
-    _gpsImage.image     = [UIImage imageNamed:@"gps.png"];
+    _threeGOnImage          = [UIImage imageNamed:@"3g.png"];
+    _threeGOffImage         = [UIImage imageNamed:@"3g_off.png"];
+    _gpsOnImage             = [UIImage imageNamed:@"gps.png"];
+    _gpsOffImage            = [UIImage imageNamed:@"gps_off.png"];
+    _threeGImageView.image  = _threeGOnImage;
+    _gpsImageView.image     = _gpsOnImage;
     
     
     [self addSubview:_batteryLifeView];
-    [self addSubview:_threeGImage];
-    [self addSubview:_gpsImage];
+    [self addSubview:_threeGImageView];
+    [self addSubview:_gpsImageView];
 }
 
 -(void) update
 {
-    _gpsEnabled = [SystemManager getGpsStatus] > 0;
+    self.batteryLife       = [SystemManager getBatteryLife];
+    self.networkStatus     = [SystemManager getNetworkStatus];
+    self.gpsEnabled        = [SystemManager getGpsStatus] > 0 ? TRUE:FALSE;
+}
+
+-(void) setBatteryLife:(float)batteryLife
+{
+    _batteryLifeView.life = batteryLife;
+}
+
+-(void) setGpsEnabled:(BOOL)gpsEnabled
+{
+    _gpsEnabled = gpsEnabled;
     
     if (NO == _gpsEnabled)
     {
-        [_gpsImage setImageTintColor:[_color getColorByAlpha:0.4]];
+        _gpsImageView.image = [_gpsOffImage imageTintedWithColor:_color];
     }
     else
     {
-        [_gpsImage setImageTintColor:_color];
+        _gpsImageView.image = [_gpsOnImage imageTintedWithColor:_color];
     }
-
-    
-    if (0 >= _networkStatus)
-    {
-        _threeGImage.hidden = !_threeGImage.hidden;
-    }
-    else
-    {
-        _threeGImage.hidden = NO;
-    }
-    
-    self.batteryLife    = [SystemManager getBatteryLife];
-    self.networkStatus  = [SystemManager getNetworkStatus];
 }
 
+-(void) setNetworkStatus:(float)networkStatus
+{
+    _networkStatus = networkStatus;
+    if (0 >= _networkStatus)
+    {
+        _threeGImageView.image = [_threeGOffImage imageTintedWithColor:_color];
+    }
+    else
+    {
+        _threeGImageView.image = [_threeGOnImage imageTintedWithColor:_color];
+    }
+}
 -(void) setColor:(UIColor *)color
 {
     _color                  = color;
     _batteryLifeView.color  = _color;
 
-    [_gpsImage          setImageTintColor:_color];
-    [_threeGImage       setImageTintColor:_color];
+    [_gpsImageView          setImageTintColor:_color];
+    [_threeGImageView       setImageTintColor:_color];
 
 }
 
+-(void) dealloc
+{
+    _batteryLifeView    = nil;
+    _gpsOnImage         = nil;
+    _gpsOffImage        = nil;
+    _threeGOnImage      = nil;
+    _threeGOffImage     = nil;
+    _threeGImageView    = nil;
+    _gpsImageView       = nil;
+    
+}
 #pragma mark - System Monitor
 -(void) networkStatusChangeWifi:(float) wifiStatus threeG:(float) threeGStatus
 {
+    logfn();
     self.networkStatus = wifiStatus + threeGStatus;
 }
 
 
 -(void) batteryStatusChange:(float) status
 {
+    logfn();
     self.batteryLife = status;
+}
+
+-(void) gpsStatusChange:(float) status
+{
+    logfn();
+    self.gpsEnabled = status > 0 ? TRUE:FALSE;
 }
 
 /*

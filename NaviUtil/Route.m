@@ -9,7 +9,7 @@
 #import "Route.h"
 #import "SystemConfig.h"
 
-#define FILE_DEBUG TRUE
+#define FILE_DEBUG FALSE
 #include "Log.h"
 
 @implementation Route
@@ -572,15 +572,15 @@
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
             
-            mlogDebug(@"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
-                      rl.no,
-                      angleStart + angleEnd,
-                      angleStart,
-                      angleEnd,
-                      tmpDistance,
-                      tmpStartDistance,
-                      matchFlag
-                      );
+//            mlogDebug(@"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
+//                      rl.no,
+//                      angleStart + angleEnd,
+//                      angleStart,
+//                      angleEnd,
+//                      tmpDistance,
+//                      tmpStartDistance,
+//                      matchFlag
+//                      );
             
             searchCount++;
         }
@@ -647,12 +647,13 @@
     
     duration = [endTime timeIntervalSinceDate:startTime];
 
-    mlogDebug(@"Matched: %d(%.7f), RouteLine %d searched, in %f seconds",
-             matchedRouteLine != nil ? matchedRouteLine.no : -1,
-             distance,
-             searchCount,
-             duration
-             );
+    
+//    mlogDebug(@"Matched: %d(%.7f), RouteLine %d searched, in %f seconds",
+//             matchedRouteLine != nil ? matchedRouteLine.no : -1,
+//             distance,
+//             searchCount,
+//             duration
+//             );
 
     return matchedRouteLine;
         
@@ -722,49 +723,69 @@
 {
     int i;
 
-    double cumulativeDistance   = 0;
-    double startAngle           = 0;
-    double endAngle             = 0;
-    bool isStartAngleUndfined   = TRUE;
+    double cumulativeDistance           = 0;
+    double startAngleCumulativeDistance = 0;
+    double endAngleCumulativeDistance   = 0;
+    double startAngle                   = 0;
+    double endAngle                     = 0;
+    double turnAngle                    = 0;
+    double distanceToNextRouteLine      = 0;
+    bool isStartAngleUndfined           = TRUE;
     RouteLine *r;
     
     if (routeLineNo < 0 || routeLineNo > self.routeLines.count)
         return 0;
+
+    r = (RouteLine*) [self.routeLines objectAtIndex:routeLineNo];
+    distanceToNextRouteLine = [GeoUtil getGeoDistanceFromLocation:location ToLocation:r.endLocation];
     
+    // look backward to decide start angle
     for (i=routeLineNo; i >= 0 && cumulativeDistance < distance; i--)
     {
         r = (RouteLine*) [self.routeLines objectAtIndex:routeLineNo];
-        if (r.distance > 2)
+        if (r.distance > 1)
         {
-            startAngle           = r.angle;
-            endAngle             = r.angle;
+            startAngle                      = r.angle;
+            endAngle                        = r.angle;
+            startAngleCumulativeDistance    += r.distance;
+            endAngleCumulativeDistance      += r.distance;
             cumulativeDistance  += [GeoUtil getGeoDistanceFromLocation:location ToLocation:r.endLocation];
             isStartAngleUndfined = FALSE;
-            mlogDebug(@"Start Angle: %.2f, cdistance: %.2f", startAngle, cumulativeDistance);
+            mlogDebug(@"Start Angle: %.2f at r:%d, cdistance: %.2f", startAngle, r.no, cumulativeDistance);
             break;
         }
-    }
-    
-    for (i=routeLineNo; i<self.routeLines.count && cumulativeDistance < distance; i++)
-    {
-        r = [self.routeLines objectAtIndex:i];
- 
-        if (r.distance > 2)
-        {
-            if (TRUE == isStartAngleUndfined)
-            {
-                startAngle = r.angle;
-                mlogDebug(@"Start Angle: %.2f, cdistance: %.2f", startAngle, cumulativeDistance);
-            }
-            endAngle                = r.angle;
-            cumulativeDistance      += r.distance;
-            mlogDebug(@"End Angle: %.2f, cdistance: %.2f\n", endAngle, cumulativeDistance);
-        }
-        
 
     }
     
-    return [GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle];
+    
+    // look forward to decide end angle
+    for (i=routeLineNo+1; i<self.routeLines.count && cumulativeDistance < distance; i++)
+    {
+        r = [self.routeLines objectAtIndex:i];
+
+        if (TRUE == isStartAngleUndfined)
+        {
+            startAngle                      = r.angle;
+            startAngleCumulativeDistance    += r.distance;
+            mlogDebug(@"Start Angle: %.2f at r:%d, cdistance: %.2f", startAngle, r.no, cumulativeDistance);
+            isStartAngleUndfined = FALSE;
+        }
+        endAngle                    = r.angle;
+        endAngleCumulativeDistance  += r.distance;
+        
+        cumulativeDistance          += r.no == routeLineNo ? distanceToNextRouteLine : r.distance;
+        mlogDebug(@"End Angle: %.2f at r:%d, cdistance: %.2f", endAngle, r.no, cumulativeDistance);
+    }
+    
+    turnAngle =[GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle];
+    
+    mlogDebug(@"StartAngle: %.0f, EndAngle: %.0f, turnAngle: %.0f, cdistance: %.2f",
+              TO_ANGLE(startAngle),
+              TO_ANGLE(endAngle),
+              TO_ANGLE(turnAngle),
+              cumulativeDistance);
+    
+    return turnAngle;
     
 }
 

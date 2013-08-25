@@ -16,6 +16,6 @@
 
 -(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
 -(void) active;
--(void) deactive;
+-(void) inactive;
 
 @end

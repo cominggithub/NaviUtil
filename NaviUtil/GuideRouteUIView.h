@@ -20,13 +20,22 @@
 
 
 
+typedef enum
+{
+    state_route_planning,
+    state_location_lost,
+    state_no_gps,
+    state_no_network,
+    state_navigateion,
+    state_lookup
+}GuideRouteState_t;
 
-@interface GuideRouteUIView : UIView<LocationManagerDelegate, DownloadRequestDelegate>
+@interface GuideRouteUIView : UIView<LocationManagerDelegate, DownloadRequestDelegate, SystemManagerDelegate>
 {
 
     NSMutableArray *routePoints;
     NSMutableArray *carFootPrint;
-    bool isDrawCarFootPrint;
+
     double margin;
     double ratio;
     double fitRatio;
@@ -87,14 +96,14 @@
 @property (nonatomic) double speed;
 @property (nonatomic) double heading;
 @property (strong, nonatomic) UIColor *color;
-@property (nonatomic) float batteryLife;
-@property (nonatomic) float networkStatus;
-@property (nonatomic) BOOL gpsEnabled;
 @property (nonatomic) BOOL isHud;
 @property (nonatomic) BOOL isCourse;
 @property (nonatomic) BOOL isSpeedUnitMph;
 
 @property (nonatomic) NSString* messageBoxText;
+@property (nonatomic) GuideRouteState_t state;
+@property (nonatomic) BOOL isNetwork;
+@property (nonatomic) BOOL isGps;
 
 
 -(void) autoSimulatorLocationUpdateStart;
@@ -108,9 +117,10 @@
 -(void) triggerLocationUpdate;
 -(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
 /* LocationManager delegate */
--(void) locationUpdate:(CLLocationCoordinate2D) location speed:(int) speed distance:(int) distance heading:(double)heading;
+-(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
 -(void) lostLocationUpdate;
 
 -(void) active;
--(void) deactive;
+-(void) inactive;
+-(void) update;
 @end
