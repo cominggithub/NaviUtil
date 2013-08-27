@@ -22,6 +22,7 @@
 #define CONFIG_DEFAULT_COLOR                 @"DefaultColor"
 #define CONFIG_IS_SPEED_UNIT_MPH             @"IsSpeedUnitMPH"
 #define CONFIG_NUMBER_OF_COLOR               @"NumberOfColor"
+#define CONFIG_MAX_OUT_OF_ROUTELINE_COUNT    @"MaxOutOfRouteLineCount"
 
 
 /* for car panel 1 */

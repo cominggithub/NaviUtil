@@ -22,8 +22,6 @@
 
 #define radians(degrees) (degrees * M_PI/180)
 
-
-
 @implementation GuideRouteUIView
 {
     Route* route;
@@ -48,6 +46,9 @@
     UILabel         *_debugMsgLabel;
     NSString *_lastPlayedSpeech;
     BOOL _isDrawCarFootPrint;
+    int _maxOutOfRouteLineCount;
+    int _outOfRouteLineCount;
+    
 }
 
 #pragma mark - Main
@@ -115,10 +116,12 @@
 //    _carCenterPoint.y        = (_routeComponentRect.size.height/4)*3;
     _carCenterPoint.y        = 250;
     
+    _maxOutOfRouteLineCount  = [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
     [self addUIComponents];
     
     [SystemManager addDelegate:self];
     self.color      = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
+    logfn();
     self.state      = state_route_planning;
     
 
@@ -1002,6 +1005,7 @@
 #pragma mark - Navigation
 -(void) initNewRouteNavigation
 {
+    logfn();
     ratio = 1;
     [self generateRoutePoints];
     
@@ -1050,7 +1054,8 @@
     
     _isDrawCarFootPrint                     = FALSE;
     _isAutoSimulatorLocationUpdateStarted   = FALSE;
-    
+    _outOfRouteLineCount                    = 0;
+
     self.state = state_lookup;
     
     [self setNeedsDisplay];
@@ -1156,6 +1161,7 @@
     {
         
     }
+    
 }
 
 -(void) triggerLocationUpdate
@@ -1181,6 +1187,7 @@
 
 -(void) startRouteNavigation
 {
+    logfn();
     GoogleJsonStatus status = [GoogleJson getStatus:routeDownloadRequest.filePath];
     if ( kGoogleJsonStatus_Ok == status)
     {
@@ -1197,11 +1204,7 @@
 -(void) startRouteNavigationFrom:(Place*) s To:(Place*) e
 {
     mlogInfo(@"Start: %@, To: %@", s, e);
-    
     GoogleJsonStatus status;
-    
-    self.state = state_route_planning;
-    
     if (nil == s || nil == e)
     {
         mlogError(@"No start or end place");
@@ -1232,8 +1235,17 @@
     
 }
 
+-(void) replanRoute
+{
+    mlogDebug(@"Re-Route by current place\n");
+    routeStartPlace = [LocationManager currentPlace];
+    [self planRoute];
+    
+}
+
 -(void) planRoute
 {
+    self.state = state_route_planning;
     if (nil != routeStartPlace && nil != routeEndPlace)
     {
         if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
@@ -1242,12 +1254,18 @@
                                     getRouteDownloadRequestFrom:routeStartPlace.coordinate
                                     To:routeEndPlace.coordinate];
             routeDownloadRequest.delegate = self;
-                
-            if ([GoogleJson getStatus:routeDownloadRequest.fileName] != kGoogleJsonStatus_Ok)
-            {
-                [NaviQueryManager download:routeDownloadRequest];
-            }
+            [NaviQueryManager download:routeDownloadRequest];
         }
+        else
+        {
+            _messageBoxLabel.text = @"route start place and end place are the same";
+            self.state = state_unknown;
+        }
+    }
+    else
+    {
+        _messageBoxLabel.text = @"start place or end place error";
+        self.state = state_unknown;
     }
 }
 
@@ -1279,15 +1297,22 @@
 
 -(void) setState:(GuideRouteState_t)state
 {
+    logfn();
     _state = state;
     
     if (state_lookup == state)
+    {
         _state = [self lookupState];
+    }
     
     if (NO == _isNetwork)
+    {
         _state = state_no_network;
+    }
     else if (NO == _isGps)
+    {
         _state = state_no_gps;
+    }
     
     switch (_state)
     {
@@ -1347,7 +1372,10 @@
     currentCarLocation = newCarLocation;
     nextCarPoint.x = newCarLocation.longitude;
     nextCarPoint.y = newCarLocation.latitude;
-    
+    carPoint = nextCarPoint;
+    [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
+    [self updateTranslationConstant];
+
     currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
     if(currentRouteLine != nil)
     {
@@ -1355,22 +1383,25 @@
         routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
         targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
         _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
-
+        _outOfRouteLineCount = 0;
+        self.state = state_lookup;
     }
     else
     {
         _turnAngle      = 0;
-//        mlogError(@"Cannot found current route line, car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+        _outOfRouteLineCount++;
+        if (_outOfRouteLineCount < _maxOutOfRouteLineCount)
+        {
+            self.state = state_lookup;
+        }
+        else
+        {
+            [self replanRoute];
+        }
     }
     
-    carPoint = nextCarPoint;
-    [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
     
-    
-    
-    [self updateTranslationConstant];
 
-    self.state = state_lookup;
     
     
     
@@ -1652,7 +1683,7 @@
     [LocationManager addDelegate:self];
 
     _debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_IS_DEBUG];
-    
+        logfn();
     self.state      = state_route_planning;
     self.isNetwork  = [SystemManager getNetworkStatus] > 0;
     self.isGps      = [SystemManager getGpsStatus] > 0;
@@ -1680,7 +1711,9 @@
 -(void) setIsNetwork:(BOOL)isNetwork
 {
     _isNetwork = isNetwork;
+    logfn();
     if (NO == _isNetwork)
+    
         self.state = state_no_network;
     else
         self.state = state_lookup;
@@ -1690,6 +1723,7 @@
 
 -(void) setIsGps:(BOOL)isGps
 {
+    logfn();
     _isGps = isGps;
     if (NO == _isGps)
         self.state = state_no_gps;

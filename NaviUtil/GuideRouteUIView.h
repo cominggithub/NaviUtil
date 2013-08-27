@@ -23,11 +23,13 @@
 typedef enum
 {
     state_route_planning,
+    state_reroute_planning,
     state_location_lost,
     state_no_gps,
     state_no_network,
     state_navigateion,
-    state_lookup
+    state_lookup,
+    state_unknown
 }GuideRouteState_t;
 
 @interface GuideRouteUIView : UIView<LocationManagerDelegate, DownloadRequestDelegate, SystemManagerDelegate>
@@ -83,6 +85,8 @@ typedef enum
     double xOffset;
     Place *routeStartPlace;
     Place *routeEndPlace;
+    
+
     
 }
 @property (nonatomic) bool isAutoSimulatorLocationUpdateStarted;

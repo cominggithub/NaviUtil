@@ -124,6 +124,8 @@ static JsonFile *_configFile;
     [self checkKey:CONFIG_RN1_IS_HUD                    defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_RN1_IS_COURSE                 defaultValue:[NSString stringFromBOOL:TRUE]];
     
+    [self checkKey:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT    defaultValue:[NSString stringFromInt:3]];
+    
     [self save];
     
 }
