@@ -7,6 +7,7 @@
 //
 
 #import "LocationSimulator.h"
+#import "SystemConfig.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
@@ -17,9 +18,13 @@
     float _locationCoordinate2DChangeStep;
     double _speedCnt;
     double _courseCnt;
+    BOOL _isTrackFileLoaded;
+    NSMutableArray *_locationsOfTraceFile;
+    int _locationIndexOfTrackFile;
 }
-@synthesize delegate=_delegate;
-@synthesize timeInterval=_timeInterval;
+
+@synthesize delegate     = _delegate;
+@synthesize timeInterval = _timeInterval;
 
 
 -(id) init
@@ -35,11 +40,63 @@
         _locationCoordinate2DChangeStep = 0.00005;
         _speedCnt                       = 0;
         _courseCnt                      = 0;
+
+        [self loadLocationFromTraceFile:[SystemConfig getStringValue:CONFIG_DEFAULT_TRACK_FILE]];
         
     }
     return self;
 }
 
+-(void) loadLocationFromTraceFile:(NSString*) fileName
+{
+
+    NSString *fileContents = [NSString stringWithContentsOfFile:[SystemManager getFilePathInDocument:fileName] encoding:NSUTF8StringEncoding error:NULL];
+    CLLocation *location;
+    NSDateFormatter *formatter;
+
+    _locationIndexOfTrackFile       = 0;
+    
+    formatter = [[NSDateFormatter alloc]init];
+    [formatter setDateFormat:@"HH:mm:ss"];
+    _locationsOfTraceFile = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    for (NSString *line in [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
+    {
+        NSArray *fields = [line componentsSeparatedByString:@","];
+        NSString *dateStr;
+        if (nil == fields || 11 != fields.count)
+            continue;
+        
+        dateStr = [[[fields objectAtIndex:0] componentsSeparatedByString:@" "] objectAtIndex:0];
+        location = [[CLLocation alloc]
+                    initWithCoordinate:CLLocationCoordinate2DMake([[fields objectAtIndex:1] doubleValue], [[fields objectAtIndex:2] doubleValue])
+                    altitude:[[fields objectAtIndex:3] doubleValue]
+                    horizontalAccuracy:[[fields objectAtIndex:4] doubleValue]
+                    verticalAccuracy:[[fields objectAtIndex:5] doubleValue]
+                    course:[[fields objectAtIndex:6] doubleValue]
+                    speed:[[fields objectAtIndex:7] doubleValue]
+                    timestamp:[formatter dateFromString:dateStr]
+                    ];
+        [_locationsOfTraceFile addObject:location];
+    }
+
+    location = [self getNextLocationFromFile];
+
+    while(nil != location)
+    {
+        logo(location);
+        location = [self getNextLocationFromFile];
+    };
+
+}
+
+-(CLLocation *) getNextLocationFromFile
+{
+    if (_locationIndexOfTrackFile >= _locationsOfTraceFile.count)
+        return nil;
+    
+    return [_locationsOfTraceFile objectAtIndex:_locationIndexOfTrackFile++];
+}
 
 -(CLLocationCoordinate2D) getNextLineLocation
 {
@@ -124,22 +181,27 @@
 -(void) updateLocation
 {
     CLLocationCoordinate2D locationCoordinate2D;
+    CLLocation* location;
     switch (self.type)
     {
         case kLocationSimulator_Line:
             locationCoordinate2D = [self getNextLineLocation];
-            break;
         case kLocationSimulator_ManualRoute:
             locationCoordinate2D = [self getNextRouteLocation];
+            location = [[CLLocation alloc] initWithCoordinate:locationCoordinate2D altitude:0.0 horizontalAccuracy:1.0 verticalAccuracy:1.0 course:_courseCnt speed:_speedCnt timestamp:[NSDate date]];
+            
+            _speedCnt   += 0.1;
+            _courseCnt  += 1;
+            _courseCnt  = (int)(_courseCnt)%362;
+            
+            break;
+        case kLocationSimulator_File:
+            location = [self getNextLocationFromFile];
             break;
             
     }
     
-    CLLocation* location = [[CLLocation alloc] initWithCoordinate:locationCoordinate2D altitude:0.0 horizontalAccuracy:1.0 verticalAccuracy:1.0 course:_courseCnt speed:_speedCnt timestamp:[NSDate date]];
 
-    _speedCnt   += 0.1;
-    _courseCnt  += 1;
-    _courseCnt  = (int)(_courseCnt)%362;
     
     if (self.delegate)
     {

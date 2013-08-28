@@ -102,7 +102,6 @@ static float _networkStatus;
 
 +(void) updateSystemStatus
 {
-    logfn();
     [self updateNetworkStatus];
     [self triggerBatterStatusChangeNotify];
     [self triggerNetworkChangeStatusNotify];
@@ -129,7 +128,6 @@ static float _networkStatus;
 
 +(void) triggerBatterStatusChangeNotify
 {
-    logfn();
     for (id<SystemManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(batteryStatusChange:)])
@@ -141,7 +139,6 @@ static float _networkStatus;
 
 +(void) triggerNetworkChangeStatusNotify
 {
-    logfn();
     for (id<SystemManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector( networkStatusChangeWifi:threeG:)])
@@ -153,7 +150,6 @@ static float _networkStatus;
 
 +(void) triggerGpsStatusChangeNotify
 {
-    logfn();
     for (id<SystemManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(gpsStatusChange:)])
@@ -165,7 +161,6 @@ static float _networkStatus;
 
 +(void) updateNetworkStatus
 {
-    logfn();
     Reachability* networkStatus = [Reachability reachabilityForInternetConnection];
     NetworkStatus netStatus     = [networkStatus currentReachabilityStatus];
     BOOL connectionRequired     = [networkStatus connectionRequired];
@@ -337,6 +332,11 @@ static float _networkStatus;
     mlogInfo(@"   Log File Path: %@", [self getPath:kSystemManager_Path_Log]);
     
 
+}
+
++(NSString *) getFilePathInDocument:(NSString*) fileName
+{
+    return [NSString stringWithFormat:@"%@/%@", _documentPath, fileName];
 }
 
 +(NSString*) documentPath

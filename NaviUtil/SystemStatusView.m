@@ -156,20 +156,17 @@
 #pragma mark - System Monitor
 -(void) networkStatusChangeWifi:(float) wifiStatus threeG:(float) threeGStatus
 {
-    logfn();
     self.networkStatus = wifiStatus + threeGStatus;
 }
 
 
 -(void) batteryStatusChange:(float) status
 {
-    logfn();
     self.batteryLife = status;
 }
 
 -(void) gpsStatusChange:(float) status
 {
-    logfn();
     self.gpsEnabled = status > 0 ? TRUE:FALSE;
 }
 

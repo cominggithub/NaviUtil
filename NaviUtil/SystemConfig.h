@@ -23,6 +23,9 @@
 #define CONFIG_IS_SPEED_UNIT_MPH             @"IsSpeedUnitMPH"
 #define CONFIG_NUMBER_OF_COLOR               @"NumberOfColor"
 #define CONFIG_MAX_OUT_OF_ROUTELINE_COUNT    @"MaxOutOfRouteLineCount"
+#define CONFIG_DEFAULT_TRACK_FILE            @"DefaultTrack"
+#define CONFIG_DEFAULT_ROUTE_FILE            @"DefaultRoute"
+#define CONFIG_IS_TRACK_FILE                 @"IsTrackFile"
 
 
 /* for car panel 1 */
@@ -42,6 +45,7 @@
 
 +(BOOL) init;
 
++(NSString*) getStringValue:(NSString*) key;
 +(int) getIntValue:(NSString*) key;
 +(double) getDoubleValue:(NSString*) key;
 +(float) getFloatValue:(NSString*) key;

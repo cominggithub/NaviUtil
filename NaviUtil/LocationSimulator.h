@@ -14,7 +14,8 @@
 typedef enum
 {
     kLocationSimulator_ManualRoute,
-    kLocationSimulator_Line
+    kLocationSimulator_Line,
+    kLocationSimulator_File
 }LocationSimulator_Type;
 
 @interface LocationSimulator : NSObject
