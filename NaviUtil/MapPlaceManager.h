@@ -7,7 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <GoogleMaps/GoogleMaps.h>
+#import "Place.h"
 
 @interface MapPlaceManager : NSObject
+{
+    
 
+}
+
+-(void) addPlace:(Place*) p;
+-(void) removePlace:(Place*) p;
+-(Place*) getPlaceByGMSMarker:(GMSMarker*) marker;
 @end

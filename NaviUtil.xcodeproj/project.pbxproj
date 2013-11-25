@@ -12,6 +12,20 @@
 		2B1C471817884D0400ED6D98 /* TimeDrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C471717884D0400ED6D98 /* TimeDrawBlock.m */; };
 		2B1C471B178851DC00ED6D98 /* DigitalNumDrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C471A178851DC00ED6D98 /* DigitalNumDrawBlock.m */; };
 		2B1C472117885ECC00ED6D98 /* CarPanel1UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C472017885ECC00ED6D98 /* CarPanel1UIView.m */; };
+		2B2447211843941100813A0F /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447201843941100813A0F /* GoogleMaps.framework */; };
+		2B2447231843941E00813A0F /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2B2447221843941E00813A0F /* GoogleMaps.bundle */; };
+		2B2447301843949E00813A0F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447241843949E00813A0F /* AVFoundation.framework */; };
+		2B2447311843949E00813A0F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447251843949E00813A0F /* CoreData.framework */; };
+		2B2447321843949E00813A0F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447261843949E00813A0F /* CoreLocation.framework */; };
+		2B2447331843949E00813A0F /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447271843949E00813A0F /* CoreText.framework */; };
+		2B2447341843949E00813A0F /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447281843949E00813A0F /* GLKit.framework */; };
+		2B2447351843949E00813A0F /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447291843949E00813A0F /* ImageIO.framework */; };
+		2B2447361843949E00813A0F /* libc++.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472A1843949E00813A0F /* libc++.dylib */; };
+		2B2447371843949E00813A0F /* libicucore.A.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472B1843949E00813A0F /* libicucore.A.dylib */; };
+		2B2447381843949E00813A0F /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472C1843949E00813A0F /* libz.dylib */; };
+		2B2447391843949E00813A0F /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472D1843949E00813A0F /* OpenGLES.framework */; };
+		2B24473A1843949E00813A0F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472E1843949E00813A0F /* QuartzCore.framework */; };
+		2B24473B1843949E00813A0F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472F1843949E00813A0F /* SystemConfiguration.framework */; };
 		2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B61D8661771E64400ACB1AA /* SystemConfig.m */; };
 		2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */; };
 		2B6CBFA716DFA6D90095CBD4 /* NaviUtil.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */; };
@@ -97,6 +111,20 @@
 		2B1C471A178851DC00ED6D98 /* DigitalNumDrawBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DigitalNumDrawBlock.m; sourceTree = "<group>"; };
 		2B1C471F17885ECC00ED6D98 /* CarPanel1UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel1UIView.h; sourceTree = "<group>"; };
 		2B1C472017885ECC00ED6D98 /* CarPanel1UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel1UIView.m; sourceTree = "<group>"; };
+		2B2447201843941100813A0F /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
+		2B2447221843941E00813A0F /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = "../../ios/framework/GoogleMaps-iOS-1.5.0/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"; sourceTree = "<group>"; };
+		2B2447241843949E00813A0F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		2B2447251843949E00813A0F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		2B2447261843949E00813A0F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		2B2447271843949E00813A0F /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		2B2447281843949E00813A0F /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		2B2447291843949E00813A0F /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		2B24472A1843949E00813A0F /* libc++.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libc++.dylib"; path = "usr/lib/libc++.dylib"; sourceTree = SDKROOT; };
+		2B24472B1843949E00813A0F /* libicucore.A.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.A.dylib; path = usr/lib/libicucore.A.dylib; sourceTree = SDKROOT; };
+		2B24472C1843949E00813A0F /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		2B24472D1843949E00813A0F /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		2B24472E1843949E00813A0F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		2B24472F1843949E00813A0F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		2B61D8651771E64400ACB1AA /* SystemConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemConfig.h; sourceTree = "<group>"; };
 		2B61D8661771E64400ACB1AA /* SystemConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemConfig.m; sourceTree = "<group>"; };
 		2B6A6BF0178718B7005FC851 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
@@ -198,6 +226,19 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B2447301843949E00813A0F /* AVFoundation.framework in Frameworks */,
+				2B2447311843949E00813A0F /* CoreData.framework in Frameworks */,
+				2B2447321843949E00813A0F /* CoreLocation.framework in Frameworks */,
+				2B2447331843949E00813A0F /* CoreText.framework in Frameworks */,
+				2B2447341843949E00813A0F /* GLKit.framework in Frameworks */,
+				2B2447351843949E00813A0F /* ImageIO.framework in Frameworks */,
+				2B2447361843949E00813A0F /* libc++.dylib in Frameworks */,
+				2B2447371843949E00813A0F /* libicucore.A.dylib in Frameworks */,
+				2B2447381843949E00813A0F /* libz.dylib in Frameworks */,
+				2B2447391843949E00813A0F /* OpenGLES.framework in Frameworks */,
+				2B24473A1843949E00813A0F /* QuartzCore.framework in Frameworks */,
+				2B24473B1843949E00813A0F /* SystemConfiguration.framework in Frameworks */,
+				2B2447211843941100813A0F /* GoogleMaps.framework in Frameworks */,
 				2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -353,6 +394,20 @@
 		2B6CBFA016DFA6D90095CBD4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2B2447241843949E00813A0F /* AVFoundation.framework */,
+				2B2447251843949E00813A0F /* CoreData.framework */,
+				2B2447261843949E00813A0F /* CoreLocation.framework */,
+				2B2447271843949E00813A0F /* CoreText.framework */,
+				2B2447281843949E00813A0F /* GLKit.framework */,
+				2B2447291843949E00813A0F /* ImageIO.framework */,
+				2B24472A1843949E00813A0F /* libc++.dylib */,
+				2B24472B1843949E00813A0F /* libicucore.A.dylib */,
+				2B24472C1843949E00813A0F /* libz.dylib */,
+				2B24472D1843949E00813A0F /* OpenGLES.framework */,
+				2B24472E1843949E00813A0F /* QuartzCore.framework */,
+				2B24472F1843949E00813A0F /* SystemConfiguration.framework */,
+				2B2447221843941E00813A0F /* GoogleMaps.bundle */,
+				2B2447201843941100813A0F /* GoogleMaps.framework */,
 				2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */,
 				2B6CBFB016DFA6DA0095CBD4 /* SenTestingKit.framework */,
 				2B6CBFB216DFA6DA0095CBD4 /* UIKit.framework */,
@@ -494,6 +549,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B6CBFBD16DFA6DA0095CBD4 /* InfoPlist.strings in Resources */,
+				2B2447231843941E00813A0F /* GoogleMaps.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -625,6 +681,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				ONLY_ACTIVE_ARCH = YES;
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -647,6 +704,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
+				OTHER_LDFLAGS = "-ObjC";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -656,6 +714,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/NaviUtil.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Data/Program/NaviUtil,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
@@ -668,6 +730,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/NaviUtil.dst;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					/Data/Program/NaviUtil,
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";
 				OTHER_LDFLAGS = "-ObjC";
