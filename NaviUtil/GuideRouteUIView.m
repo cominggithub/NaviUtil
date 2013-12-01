@@ -1352,6 +1352,10 @@
             return @"state_location_lost";
         case state_navigateion:
             return @"state_navigateion";
+        case state_reroute_planning:
+            return @"state_reroute_planning";
+        case state_unknown:
+            return @"state_unknown";
     }
     
     return @"state_???";
@@ -1413,7 +1417,6 @@
 
 -(bool) updateCurrentDrawAngle
 {
-    bool isUpdate = true;
     bool reverseDirection = false;
     double angleOffset = fabs(currentDrawAngle - targetAngle);
     double turnAngle;
@@ -1567,7 +1570,7 @@
 #endif
 
 
--(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
+-(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
     currentStep++;
 //    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);

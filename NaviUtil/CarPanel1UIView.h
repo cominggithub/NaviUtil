@@ -28,7 +28,7 @@
 
 @property (strong, nonatomic) UIColor* color;
 -(void) start;
--(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int) speed Distance:(int) distance;
--(void) lostLocationUpdate;
+
+-(void) locationManager:(LocationManager*) locationManager update:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
 
 @end

@@ -15,10 +15,6 @@
 -(void) dump;
 +(NSDictionary*) getLatLngDic:(CLLocationCoordinate2D) coordinate;
 -(CLLocationCoordinate2D) getCLLocationCoordinate2D;
--(int) intValueForKey:(NSString*) key;
--(BOOL) boolValueForKey:(NSString*) key;
--(float) floatValueForKey:(NSString*) key;
--(double) doubleValueForKey:(NSString*) key;
--(NSString*) stringValueForKey:(NSString*) key;
+
 
 @end

@@ -117,12 +117,10 @@ typedef enum
 -(UIImage*) getCarImage;
 -(PointD) getDrawPoint:(PointD) location;
 -(void) startRouteNavigationFrom:(Place*) s To:(Place*) e;
--(void) timerTimeout;
 -(void) triggerLocationUpdate;
 -(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
 /* LocationManager delegate */
--(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
--(void) lostLocationUpdate;
+-(void) locationManager:(LocationManager*) locationManager update:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
 
 -(void) active;
 -(void) inactive;

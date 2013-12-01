@@ -32,8 +32,6 @@ typedef enum
 @property (readonly) bool isStart;
 @property (nonatomic) LocationSimulator_Type type;
 
-
--(CLLocationCoordinate2D) getNextLocation;
 -(void) start;
 -(void) stop;
 -(void) triggerLocationUpdate;

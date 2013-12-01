@@ -28,7 +28,6 @@ static NSMutableArray* _delegates;
 static float _wifiStatus;
 static float _threeGStatus;
 static float _batteryLife;
-static float _gpsStatus;
 static float _networkStatus;
 
 @implementation SystemManager

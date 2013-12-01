@@ -31,7 +31,6 @@ static NSDate* _lastUpdateTime;
 static int _locationLostCount;
 static BOOL _hasLocation;
 static NSDate* _lastTriggerLocationUpdateTime;
-static int _setLocationUpdateInterval; // in milliseconds
 static int _skipLostDetectionCount;
 static LocationManagerLocationUpdateType _locationUpdateType;
 static BOOL _isTracking;
@@ -352,12 +351,13 @@ static NSMutableArray *_savedLocations;
 #endif
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
-        if ([delegate respondsToSelector:@selector(locationUpdate:speed:distance:heading:)])
+        if ([delegate respondsToSelector:@selector(locationManager:update:speed:distance:heading:)])
         {
-            [delegate locationUpdate:_currentCLLocationCoordinate2D
-                               speed:_currentSpeed
-                            distance:_currentDistance
-                             heading:_currentHeading
+            [delegate locationManager:nil
+                               update:_currentCLLocationCoordinate2D
+                                speed:_currentSpeed
+                             distance:_currentDistance
+                              heading:_currentHeading
              ];
         }
     }
@@ -369,9 +369,9 @@ static NSMutableArray *_savedLocations;
 {
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
-        if ([delegate respondsToSelector:@selector(lostLocationUpdate)])
+        if ([delegate respondsToSelector:@selector(locationManager:lostLocation:)])
         {
-            [delegate lostLocationUpdate];
+            [delegate locationManager:nil lostLocation:YES];
         }
     }
 }

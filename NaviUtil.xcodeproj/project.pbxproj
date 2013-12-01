@@ -12,8 +12,6 @@
 		2B1C471817884D0400ED6D98 /* TimeDrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C471717884D0400ED6D98 /* TimeDrawBlock.m */; };
 		2B1C471B178851DC00ED6D98 /* DigitalNumDrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C471A178851DC00ED6D98 /* DigitalNumDrawBlock.m */; };
 		2B1C472117885ECC00ED6D98 /* CarPanel1UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C472017885ECC00ED6D98 /* CarPanel1UIView.m */; };
-		2B2447211843941100813A0F /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447201843941100813A0F /* GoogleMaps.framework */; };
-		2B2447231843941E00813A0F /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2B2447221843941E00813A0F /* GoogleMaps.bundle */; };
 		2B2447301843949E00813A0F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447241843949E00813A0F /* AVFoundation.framework */; };
 		2B2447311843949E00813A0F /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447251843949E00813A0F /* CoreData.framework */; };
 		2B2447321843949E00813A0F /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447261843949E00813A0F /* CoreLocation.framework */; };
@@ -60,12 +58,14 @@
 		2B94C8E217A4C8B3002581F3 /* JsonFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B94C8E117A4C8B3002581F3 /* JsonFile.m */; };
 		2B98912716EB82D90057A226 /* TextValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912616EB82D90057A226 /* TextValue.m */; };
 		2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912916EB89C10057A226 /* NSDictionary+category.m */; };
+		2B98933F184B4B8B00811F5B /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B98933E184B4B8B00811F5B /* GoogleMaps.framework */; };
+		2B989341184B4B9600811F5B /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2B989340184B4B9600811F5B /* GoogleMaps.bundle */; };
 		2B995CD81706F27500991700 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B995CD71706F27500991700 /* Reachability.m */; };
 		2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD7FA917281CA100162D20 /* RouteLine.m */; };
 		2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */; };
 		2BC2C3C317A6AE9F00A9AEE0 /* UIColor+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC2C3C217A6AE9F00A9AEE0 /* UIColor+category.m */; };
 		2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC61A96173E783C00990DA7 /* UIView+category.m */; };
-		2BCBD07B183A5E4700B08D1D /* MapPlaceManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BCBD07A183A5E4700B08D1D /* MapPlaceManager.m */; };
+		2BCBD07B183A5E4700B08D1D /* MapManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BCBD07A183A5E4700B08D1D /* MapManager.m */; };
 		2BDC6B9117859E9C003E61E9 /* UIImage+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDC6B9017859E9C003E61E9 /* UIImage+category.m */; };
 		2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE15360178ED92600C55363 /* UIImageView+category.m */; };
 		2BE3A81017046D92007621EC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A80F17046D92007621EC /* LocationManager.m */; };
@@ -111,8 +111,6 @@
 		2B1C471A178851DC00ED6D98 /* DigitalNumDrawBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DigitalNumDrawBlock.m; sourceTree = "<group>"; };
 		2B1C471F17885ECC00ED6D98 /* CarPanel1UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel1UIView.h; sourceTree = "<group>"; };
 		2B1C472017885ECC00ED6D98 /* CarPanel1UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel1UIView.m; sourceTree = "<group>"; };
-		2B2447201843941100813A0F /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
-		2B2447221843941E00813A0F /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = "../../ios/framework/GoogleMaps-iOS-1.5.0/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"; sourceTree = "<group>"; };
 		2B2447241843949E00813A0F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		2B2447251843949E00813A0F /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		2B2447261843949E00813A0F /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -189,6 +187,8 @@
 		2B98912616EB82D90057A226 /* TextValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextValue.m; sourceTree = "<group>"; };
 		2B98912816EB89C10057A226 /* NSDictionary+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+category.h"; sourceTree = "<group>"; };
 		2B98912916EB89C10057A226 /* NSDictionary+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+category.m"; sourceTree = "<group>"; };
+		2B98933E184B4B8B00811F5B /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
+		2B989340184B4B9600811F5B /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = "../../ios/framework/GoogleMaps-iOS-1.6.0/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"; sourceTree = "<group>"; };
 		2B995CD61706F27500991700 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		2B995CD71706F27500991700 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		2BAD7FA817281CA100162D20 /* RouteLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouteLine.h; sourceTree = "<group>"; };
@@ -199,8 +199,8 @@
 		2BC2C3C217A6AE9F00A9AEE0 /* UIColor+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIColor+category.m"; sourceTree = "<group>"; };
 		2BC61A95173E783C00990DA7 /* UIView+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+category.h"; sourceTree = "<group>"; };
 		2BC61A96173E783C00990DA7 /* UIView+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+category.m"; sourceTree = "<group>"; };
-		2BCBD079183A5E4700B08D1D /* MapPlaceManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapPlaceManager.h; sourceTree = "<group>"; };
-		2BCBD07A183A5E4700B08D1D /* MapPlaceManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapPlaceManager.m; sourceTree = "<group>"; };
+		2BCBD079183A5E4700B08D1D /* MapManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MapManager.h; sourceTree = "<group>"; };
+		2BCBD07A183A5E4700B08D1D /* MapManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MapManager.m; sourceTree = "<group>"; };
 		2BDC6B8F17859E9C003E61E9 /* UIImage+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+category.h"; sourceTree = "<group>"; };
 		2BDC6B9017859E9C003E61E9 /* UIImage+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+category.m"; sourceTree = "<group>"; };
 		2BE1535F178ED92600C55363 /* UIImageView+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+category.h"; sourceTree = "<group>"; };
@@ -234,11 +234,11 @@
 				2B2447351843949E00813A0F /* ImageIO.framework in Frameworks */,
 				2B2447361843949E00813A0F /* libc++.dylib in Frameworks */,
 				2B2447371843949E00813A0F /* libicucore.A.dylib in Frameworks */,
+				2B98933F184B4B8B00811F5B /* GoogleMaps.framework in Frameworks */,
 				2B2447381843949E00813A0F /* libz.dylib in Frameworks */,
 				2B2447391843949E00813A0F /* OpenGLES.framework in Frameworks */,
 				2B24473A1843949E00813A0F /* QuartzCore.framework in Frameworks */,
 				2B24473B1843949E00813A0F /* SystemConfiguration.framework in Frameworks */,
-				2B2447211843941100813A0F /* GoogleMaps.framework in Frameworks */,
 				2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -315,8 +315,8 @@
 				2B6CBFE216DFA6FD0095CBD4 /* Speech.m */,
 				2B98912516EB82D90057A226 /* TextValue.h */,
 				2B98912616EB82D90057A226 /* TextValue.m */,
-				2BCBD079183A5E4700B08D1D /* MapPlaceManager.h */,
-				2BCBD07A183A5E4700B08D1D /* MapPlaceManager.m */,
+				2BCBD079183A5E4700B08D1D /* MapManager.h */,
+				2BCBD07A183A5E4700B08D1D /* MapManager.m */,
 			);
 			name = GeoNavigation;
 			sourceTree = "<group>";
@@ -394,6 +394,8 @@
 		2B6CBFA016DFA6D90095CBD4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2B989340184B4B9600811F5B /* GoogleMaps.bundle */,
+				2B98933E184B4B8B00811F5B /* GoogleMaps.framework */,
 				2B2447241843949E00813A0F /* AVFoundation.framework */,
 				2B2447251843949E00813A0F /* CoreData.framework */,
 				2B2447261843949E00813A0F /* CoreLocation.framework */,
@@ -406,8 +408,6 @@
 				2B24472D1843949E00813A0F /* OpenGLES.framework */,
 				2B24472E1843949E00813A0F /* QuartzCore.framework */,
 				2B24472F1843949E00813A0F /* SystemConfiguration.framework */,
-				2B2447221843941E00813A0F /* GoogleMaps.bundle */,
-				2B2447201843941100813A0F /* GoogleMaps.framework */,
 				2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */,
 				2B6CBFB016DFA6DA0095CBD4 /* SenTestingKit.framework */,
 				2B6CBFB216DFA6DA0095CBD4 /* UIKit.framework */,
@@ -549,7 +549,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B6CBFBD16DFA6DA0095CBD4 /* InfoPlist.strings in Resources */,
-				2B2447231843941E00813A0F /* GoogleMaps.bundle in Resources */,
+				2B989341184B4B9600811F5B /* GoogleMaps.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -614,7 +614,7 @@
 				2B6FCDC3178DA10F00DCFAAF /* UIAnimation.m in Sources */,
 				2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */,
 				2B94C8E217A4C8B3002581F3 /* JsonFile.m in Sources */,
-				2BCBD07B183A5E4700B08D1D /* MapPlaceManager.m in Sources */,
+				2BCBD07B183A5E4700B08D1D /* MapManager.m in Sources */,
 				2BC2C3C317A6AE9F00A9AEE0 /* UIColor+category.m in Sources */,
 				2BEF697317A954D6005EC74A /* BatteryLifeView.m in Sources */,
 				2B89A7B017B5F1960042539F /* UIFont+category.m in Sources */,

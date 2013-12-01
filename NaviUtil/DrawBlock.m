@@ -78,7 +78,7 @@
 
 -(void) drawRect:(CGRect) rect context:(CGContextRef) context
 {
-    NSDate* start = [NSDate date];
+//    NSDate* start = [NSDate date];
     CGRect drawRect = CGRectMake(_origin.x + rect.origin.x,
                                  _origin.y + rect.origin.y,
                                  _size.width,
@@ -99,7 +99,7 @@
     
     [_imgToDraw drawInRect:drawRect];
     
-    NSDate* end = [NSDate date];
+//    NSDate* end = [NSDate date];
     //    mlogDebug(@"%4.4f, %@ ", [end timeIntervalSinceDate:start], _name);
     
     return;

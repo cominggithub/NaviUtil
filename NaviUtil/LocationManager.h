@@ -11,10 +11,12 @@
 #import "Place.h"
 #import "Route.h"
 
+@class LocationManager;
 
 @protocol LocationManagerDelegate <NSObject>
--(void) locationUpdate:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
-@optional -(void) lostLocationUpdate;
+-(void) locationManager:(LocationManager*) locationManager update:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
+@optional
+-(void) locationManager:(LocationManager*) locationManager lostLocation:(BOOL) lostLocation;
 @end
 
 typedef enum
@@ -43,7 +45,6 @@ typedef enum
 +(void) stopMonitorLocation;
 +(void) startLocationSimulation;
 +(void) stopLocationSimulation;
-+(void) setLocationUpdateInterval;
 +(void) triggerLocationUpdate;
 +(void) setRoute:(Route*) route;
 +(void) setLocationUpdateType:(LocationManagerLocationUpdateType) locationUpdateType;

@@ -68,7 +68,6 @@ typedef enum DownloadFileFormat {
 +(void) planRouteStartLocation:(CLLocationCoordinate2D) start EndLocation:(CLLocationCoordinate2D) end;
 +(void) startNavigation;
 +(void) stopNavigation;
-+(void) startDownloadPlaces;
 +(void) startDownloadSpeech;
 
 +(void) init;

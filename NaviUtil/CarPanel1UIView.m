@@ -308,14 +308,10 @@
     
 }
 
--(void) locationUpdate:(CLLocationCoordinate2D) location Speed:(int) speed Distance:(int) distance
+
+-(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
     [self updateSpeed:speed];
-}
-
--(void) lostLocationUpdate
-{
-    
 }
 
 @end

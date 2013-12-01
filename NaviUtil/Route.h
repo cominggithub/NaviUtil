@@ -56,7 +56,6 @@ typedef enum
 -(NSArray*) getRoutePolyLineCLLocationCoordinate2D;
 -(NSArray*) getRoutePolyLineCLLocation;
 -(NSArray*) getRoutePolyLinePointD;
--(NSArray*) getRouteLines;
 -(NSArray*) getStepPolyLine:(int) stepIndex;
 -(NSString*) getStepInstruction: (int) stepIndex;
 -(NSString*) getStepDurationString: (int) stepIndex;
@@ -72,7 +71,6 @@ typedef enum
 -(CLLocationCoordinate2D) getEndLocation;
 -(RouteLine*) getNextStepFirstRouteLineByStepNo:(int)stepNo CarLocation:(CLLocationCoordinate2D) carLocation;
 -(double) getAngleFromCLLocationCoordinate2D:(CLLocationCoordinate2D) location routeLineNo:(int) routeLineNo withInDistance:(double) distance;
--(double) downloadSpeech;
 -(double) getCorrectedTargetAngle:(int) routeLineNo distance:(int) distance;
 
 @end

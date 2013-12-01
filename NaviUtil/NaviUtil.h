@@ -18,7 +18,7 @@
 #import "GuideRouteUIView.h"
 #import "LocationManager.h"
 #import "LocationSimulator.h"
-#import "MapPlaceManager.h"
+#import "MapManager.h"
 #import "NaviQueryManager.h"
 #import "NSString+category.h"
 #import "NSValue+category.h"

@@ -38,7 +38,6 @@ typedef struct LocationCoordinateRect2D
 @interface GeoUtil : NSObject
 
 +(CGPoint) getCGPoint:(PointD) p;
-+(float) isOnPath: (PointD) c Point1:(PointD) p1 Point2:(PointD) p2;
 +(float) getAngleByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3;
 +(float) getAngleByPoint1: (PointD) p1 Point2:(PointD) p2 Point3:(PointD) p3;
 +(float) getLength: (PointD) p1 ToPoint:(PointD) p2;
