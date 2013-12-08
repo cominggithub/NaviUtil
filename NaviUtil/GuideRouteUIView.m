@@ -121,7 +121,6 @@
     
     [SystemManager addDelegate:self];
     self.color      = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
-    logfn();
     self.state      = state_route_planning;
     
 
@@ -133,12 +132,10 @@
 {
     if(angle > M_PI+0.000001)
     {
-        logfn();
         angle -= 2*M_PI;
     }
     else if(angle < -M_PI-0.000001)
     {
-        logfn();
         angle += 2*M_PI;
     }
     
@@ -1005,7 +1002,6 @@
 #pragma mark - Navigation
 -(void) initNewRouteNavigation
 {
-    logfn();
     ratio = 1;
     [self generateRoutePoints];
     
@@ -1187,7 +1183,6 @@
 
 -(void) startRouteNavigation
 {
-    logfn();
     GoogleJsonStatus status = [GoogleJson getStatus:routeDownloadRequest.filePath];
     if ( kGoogleJsonStatus_Ok == status)
     {
@@ -1297,7 +1292,6 @@
 
 -(void) setState:(GuideRouteState_t)state
 {
-    logfn();
     _state = state;
     
     if (state_lookup == state)
@@ -1686,7 +1680,6 @@
     [LocationManager addDelegate:self];
 
     _debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_IS_DEBUG];
-        logfn();
     self.state      = state_route_planning;
     self.isNetwork  = [SystemManager getNetworkStatus] > 0;
     self.isGps      = [SystemManager getGpsStatus] > 0;
@@ -1714,7 +1707,7 @@
 -(void) setIsNetwork:(BOOL)isNetwork
 {
     _isNetwork = isNetwork;
-    logfn();
+
     if (NO == _isNetwork)
     
         self.state = state_no_network;
@@ -1726,7 +1719,7 @@
 
 -(void) setIsGps:(BOOL)isGps
 {
-    logfn();
+
     _isGps = isGps;
     if (NO == _isGps)
         self.state = state_no_gps;

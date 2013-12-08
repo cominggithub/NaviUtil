@@ -84,7 +84,6 @@
 
     while(nil != location)
     {
-        logo(location);
         location = [self getNextLocationFromFile];
     };
 

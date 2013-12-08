@@ -85,7 +85,6 @@ static void PrintReachabilityFlags(SCNetworkReachabilityFlags    flags, const ch
 @implementation Reachability
 static void ReachabilityCallback(SCNetworkReachabilityRef target, SCNetworkReachabilityFlags flags, void* info)
 {
-    logfn();
 	#pragma unused (target, flags)
 //	NSCAssert(info != NULL, @"info was NULL in ReachabilityCallback");
 //	NSCAssert([(NSObject*) CFBridgingRelease(info isKindOfClass: [Reachability class]], @"info was wrong class in ReachabilityCallback");

@@ -25,8 +25,8 @@
 -(void) dump
 {
     printf("dump dic:\n");
-    for(NSString *key in self) {
-        printf("%s:%s\n", [key UTF8String], [[[self objectForKey:key] description] UTF8String]);
+    for(NSString *key in self.allKeys) {
+        printf("%s, obj:%s\n", [[key description] UTF8String], [[[self objectForKey:key] description] UTF8String]);
 
     }
 }

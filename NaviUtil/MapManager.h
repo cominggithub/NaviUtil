@@ -9,8 +9,16 @@
 #import <Foundation/Foundation.h>
 #import <GoogleMaps/GoogleMaps.h>
 #import "Place.h"
+#import "DownloadManager.h"
 
-@interface MapManager : NSObject <GMSMapViewDelegate>
+
+@class MapManager;
+
+@protocol MapManagerDelegate <NSObject>
+-(void) mapManager: (MapManager*) mapManager placeSearchResult:(NSArray*) places;
+@end
+
+@interface MapManager : NSObject <GMSMapViewDelegate, DownloadRequestDelegate>
 {
     
  
@@ -20,22 +28,20 @@
 //@property GMSMapView* mapView;
 @property NSArray* searchedPlaces;
 @property BOOL hasRoute;
+@property BOOL updateToCurrentPlace;
+@property BOOL useCurrentPlaceAsRouteStart;
 @property Place* routeStartPlace;
 @property Place* routeEndPlace;
 @property CGRect frame;
+@property id<MapManagerDelegate> delegate;
 
--(void) addSearchedPlaces:(NSArray*) places;
--(void) addPlace:(Place*) p;
--(void) removePlace:(Place*) p;
--(void) setRouteStart:(Place*) marker;
--(void) setRouteEnd:(Place*) marker;
--(void) planRoute;
--(void) clearRoute;
+-(void) searchPlace:(NSString*) placeText;
+-(void) moveToSearchedPlaceByIndex:(int) index;
 -(GMSMapView*) mapView;
 
--(Place*) placeByGMSMarker:(GMSMarker*) marker;
--(NSArray*) placeMarkers;
+-(Place*) placeByMarker:(GMSMarker*) marker;
 -(void) moveToPlace:(Place*) place;
+-(void) refreshMap;
 
 -(void) zoomIn;
 -(void) zoomOut;

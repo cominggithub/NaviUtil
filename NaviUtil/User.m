@@ -8,10 +8,13 @@
 
 #import "User.h"
 #import "TestFlight.h"
+#import "NSString+category.h"
+
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
 
+#define USERJSON_VERSION @"Version"
 #define USERJSON_USER @"Usuer"
 #define USERJSON_NAME @"Name"
 #define USERJSON_EMAIL @"Email"
@@ -22,9 +25,11 @@
 
 #define USERJONS_SEARCHED_PLACE_TEXT_MAX 20
 
+#define USERJSON_VERSION_NUM 1
 
 @implementation User
 
+static int              _versionNum;
 static NSString*        _name;
 static NSString*        _email;
 static NSMutableArray*  _homePlaces;
@@ -32,6 +37,12 @@ static NSMutableArray*  _officePlaces;
 static NSMutableArray*  _favorPlaces;
 static NSMutableArray*  _searchedPlaceText;
 static NSMutableArray*  _searchedPlaces;
+
+
++(int) versionNum
+{
+    return _versionNum;
+}
 
 +(NSString*) name
 {
@@ -70,6 +81,25 @@ static NSMutableArray*  _searchedPlaces;
 {
     
     return _searchedPlaces;
+}
+
++(int) placeCount
+{
+    int count = 0;
+    
+    if (nil != _homePlaces )
+        count += _homePlaces.count;
+    
+    if (nil != _officePlaces)
+        count += _officePlaces.count;
+    
+    if (nil != _favorPlaces)
+        count += _favorPlaces.count;
+
+    if (nil != _searchedPlaces)
+        count += _searchedPlaces.count;
+    
+    return count;
 }
 
 +(NSString*) getSearchedPlaceTextByIndex:(int) index
@@ -184,6 +214,8 @@ static NSMutableArray*  _searchedPlaces;
             return _searchedPlaces.count;
         case kPlaceType_SearchedPlaceText:
             return _searchedPlaceText.count;
+        case kPlaceType_None:
+            return 0;
     }
     
     mlogError(@"unknown place type %d at SectionMode:%d section:%d\n", placeType, sectionMode, section);
@@ -229,7 +261,6 @@ static NSMutableArray*  _searchedPlaces;
 +(void) addOfficePlace:(Place*) p
 {
     mlogAssertNotNil(p);
-    
     p.placeType = kPlaceType_Office;
     [_officePlaces addObject:p];
 }
@@ -237,7 +268,6 @@ static NSMutableArray*  _searchedPlaces;
 +(void) addFavorPlace:(Place*) p
 {
     mlogAssertNotNil(p);
-    
     p.placeType = kPlaceType_Favor;
     [_favorPlaces addObject:p];
 }
@@ -281,7 +311,7 @@ static NSMutableArray*  _searchedPlaces;
 +(void) addPlaceBySectionMode:(SectionMode) sectionMode section:(int) section place:(Place*) p
 {
     int placeType;
-    
+
     mlogAssertNotNil(p);
     
     placeType = [self translatSectionIndexIntoPlaceType:sectionMode section:section];
@@ -486,42 +516,20 @@ static NSMutableArray*  _searchedPlaces;
     if(false == [User parseJson:[SystemManager getPath:kSystemManager_Path_User]])
     {
         mlogInfo(@"Create new user profile");
-        Place *p                = [[Place alloc] init];
-        _name                   = @"Coming";
-        _email                  = @"misscoming@gmail.com";
-        _homePlaces             = [[NSMutableArray alloc] initWithCapacity:0];
-        _officePlaces           = [[NSMutableArray alloc] initWithCapacity:0];
-        _favorPlaces            = [[NSMutableArray alloc] initWithCapacity:0];
-        _searchedPlaceText      = [[NSMutableArray alloc] initWithCapacity:0];
-
-        p               = [[Place alloc] init];
-        p.name          = @"永安租房";
-        p.address       = @"台南市永康區永安路103巷20號4F-2";
-        p.coordinate    = CLLocationCoordinate2DMake(23.042724,120.245876);
-        [self addHomePlace:p];
-        
-        p               = [[Place alloc] init];
-        p.name          = @"宜蘭冬山";
-        p.address       = @"宜蘭縣冬山鄉保安二路131巷19號";
-        p.coordinate    = CLLocationCoordinate2DMake(24.641790,121.798983);
-        [self addHomePlace:p];
-
-        p               = [[Place alloc] init];
-        p.name          = @"南科智邦";
-        p.address       = @"台南市新市區南科3路3號3樓";
-        p.coordinate    = CLLocationCoordinate2DMake(23.099313,120.284371);
-        [self addOfficePlace:p];
-
-        p               = [[Place alloc] init];
-        p.name          = @"成大";
-        p.address       = @"台南市東區大學路1號";
-        p.coordinate    = CLLocationCoordinate2DMake(22.9967080, 120.2198480);
-        [self addFavorPlace:p];
-        
-        [self addSearchedPlaceText:@"成大"];
-        [self addSearchedPlaceText:@"宜蘭高中"];
+        [self emptyConfig];
     }
 
+}
+
+
+
++(void) initDebug
+{
+    mlogInfo(@"User Debug Init");
+    if(false == [User parseJson:[SystemManager getPath:kSystemManager_Path_User]])
+    {
+
+    }
 }
 
 +(bool) parseJson:(NSString*) fileName
@@ -643,7 +651,9 @@ static NSMutableArray*  _searchedPlaces;
     {
         [searchedPlaceTextArray addObject:place];
     }
+
     
+    [userDic setObject:[NSString stringFromInt:self.version] forKey:USERJSON_VERSION];
     [userDic setObject:self.name forKey:USERJSON_NAME];
     [userDic setObject:self.email forKey:USERJSON_EMAIL];
     
@@ -666,4 +676,56 @@ static NSMutableArray*  _searchedPlaces;
                                                        options:NSJSONWritingPrettyPrinted error:&error];
     [jsonData writeToFile:[SystemManager getPath:kSystemManager_Path_User] atomically:true];
 }
+
++(void) emptyConfig
+{
+    _versionNum             = USERJSON_VERSION_NUM;
+    _name                   = @"";
+    _email                  = @"";
+    _homePlaces             = [[NSMutableArray alloc] initWithCapacity:0];
+    _officePlaces           = [[NSMutableArray alloc] initWithCapacity:0];
+    _favorPlaces            = [[NSMutableArray alloc] initWithCapacity:0];
+    _searchedPlaceText      = [[NSMutableArray alloc] initWithCapacity:0];
+    _searchedPlaces         = [[NSMutableArray alloc] initWithCapacity:0];
+}
+
++(void) createDebugConfig
+{
+    mlogInfo(@"Create new user profile");
+    Place *p                = [[Place alloc] init];
+    _name                   = @"Coming";
+    _email                  = @"misscoming@gmail.com";
+    _homePlaces             = [[NSMutableArray alloc] initWithCapacity:0];
+    _officePlaces           = [[NSMutableArray alloc] initWithCapacity:0];
+    _favorPlaces            = [[NSMutableArray alloc] initWithCapacity:0];
+    _searchedPlaceText      = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    p               = [[Place alloc] init];
+    p.name          = @"永安租房";
+    p.address       = @"台南市永康區永安路103巷20號4F-2";
+    p.coordinate    = CLLocationCoordinate2DMake(23.042724,120.245876);
+    [self addHomePlace:p];
+    
+    p               = [[Place alloc] init];
+    p.name          = @"宜蘭冬山";
+    p.address       = @"宜蘭縣冬山鄉保安二路131巷19號";
+    p.coordinate    = CLLocationCoordinate2DMake(24.641790,121.798983);
+    [self addHomePlace:p];
+    
+    p               = [[Place alloc] init];
+    p.name          = @"南科智邦";
+    p.address       = @"台南市新市區南科3路3號3樓";
+    p.coordinate    = CLLocationCoordinate2DMake(23.099313,120.284371);
+    [self addOfficePlace:p];
+    
+    p               = [[Place alloc] init];
+    p.name          = @"成大";
+    p.address       = @"台南市東區大學路1號";
+    p.coordinate    = CLLocationCoordinate2DMake(22.9967080, 120.2198480);
+    [self addFavorPlace:p];
+    
+    [self addSearchedPlaceText:@"成大"];
+    [self addSearchedPlaceText:@"宜蘭高中"];
+}
+
 @end

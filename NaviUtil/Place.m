@@ -18,6 +18,20 @@
 @synthesize address=_address;
 
 
+- (id)initWithName:(NSString*) name address:(NSString*) address coordinate:(CLLocationCoordinate2D) coordinate
+{
+    self = [super init];
+    if(self)
+    {
+        self.placeType = kPlaceType_None;
+        self.name          = [NSString stringWithString:name];
+        self.address       = [NSString stringWithString:address];
+        self.coordinate    = CLLocationCoordinate2DMake(coordinate.latitude, coordinate.longitude);
+    }
+    
+    return self;
+}
+
 -(id) init
 {
     self = [super init];
@@ -99,7 +113,6 @@
     printf("dump array\n");
     for(i=0; i<[array count]; i++)
     {
-//        printf("[%d]\n", i, [[array objectAtIndex:i] UTF8String]);
           printf("[%d]: %s\n", i, [[[array objectAtIndex:i] description] UTF8String]);
     }
 }

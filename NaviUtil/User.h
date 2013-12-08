@@ -27,6 +27,8 @@ typedef enum
 +(void) init;
 +(bool) parseJson:(NSString*) fileName;
 +(void) save;
++(void) emptyConfig;
++(void) createDebugConfig;
 +(void) addHomePlace:(Place*) p;
 +(void) addOfficePlace:(Place*) p;
 +(void) addFavorPlace:(Place*) p;
@@ -46,6 +48,7 @@ typedef enum
 +(int) getPlaceCountBySectionMode:(SectionMode) sectionMode section:(int) section;
 +(Place*) getPlaceBySectionMode:(SectionMode) sectionMode section:(int) section index:(int) index;
 +(void) addPlaceBySectionMode:(SectionMode) sectionMode section:(int) section place:(Place*) p;
++(int) placeCount;
 
 +(NSString*) getSearchedPlaceTextByIndex:(int) index;
 +(NSString*) name;
@@ -54,5 +57,6 @@ typedef enum
 +(NSArray*) officePlaces;
 +(NSArray*) favorPlaces;
 +(NSArray*) searchedPlaceText;
+
 
 @end

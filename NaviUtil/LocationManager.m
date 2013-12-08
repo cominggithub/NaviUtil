@@ -118,20 +118,31 @@ static NSMutableArray *_savedLocations;
 {
     Place *p;
     _manualPlaces = [[NSMutableArray alloc] initWithCapacity:0];
-    p = [Place newPlace:@"台灣" Address:@"台灣" Location:CLLocationCoordinate2DMake(23.845650,120.893555)];
-    [_manualPlaces addObject:p];
-    p = [Place newPlace:@"成大" Address:@"成大" Location:CLLocationCoordinate2DMake(22.996501,120.216678)];
-    [_manualPlaces addObject:p];
-    p = [Place newPlace:@"台南一中" Address:@"台南一中" Location:CLLocationCoordinate2DMake(22.9942340, 120.2159120)];
-    [_manualPlaces addObject:p];
-    p = [Place newPlace:@"智邦" Address:@"智邦" Location:CLLocationCoordinate2DMake(23.099313,120.284371)];
-    [_manualPlaces addObject:p];
-    p = [Place newPlace:@"永安租屋" Address:@"安平古堡" Location:CLLocationCoordinate2DMake(23.042724,120.245876)];
-    [_manualPlaces addObject:p];
-    p = [Place newPlace:@"冬山家" Address:@"冬山家" Location:CLLocationCoordinate2DMake(24.641790,121.798983)];
+    // 0 台灣
+    p = [[Place alloc] initWithName:@"台灣" address:@"台灣" coordinate:CLLocationCoordinate2DMake(23.845650,120.893555)];
     [_manualPlaces addObject:p];
     
-    _currentManualPlace                         = p;
+    // 1 成大
+    p = [[Place alloc] initWithName:@"成大" address:@"成大" coordinate:CLLocationCoordinate2DMake(22.996501,120.216678)];
+    [_manualPlaces addObject:p];
+    
+    // 2 台南一中
+    p = [[Place alloc] initWithName:@"台南一中" address:@"台南一中" coordinate:CLLocationCoordinate2DMake(22.9942340, 120.2159120)];
+    [_manualPlaces addObject:p];
+    
+    // 3 智邦
+    p = [[Place alloc] initWithName:@"智邦" address:@"智邦" coordinate:CLLocationCoordinate2DMake(23.099313,120.284371)];
+    [_manualPlaces addObject:p];
+ 
+    // 4 永安租屋
+    p = [[Place alloc] initWithName:@"永安租屋" address:@"安平古堡" coordinate:CLLocationCoordinate2DMake(23.042724,120.245876)];
+    [_manualPlaces addObject:p];
+ 
+    // 5 冬山家
+    p = [[Place alloc] initWithName:@"冬山家" address:@"冬山家" coordinate:CLLocationCoordinate2DMake(24.641790,121.798983)];
+    [_manualPlaces addObject:p];
+    
+    _currentManualPlace                         = [_manualPlaces objectAtIndex:1];
     _currentSpeed                               = 0;
     _currentDistance                            = 0;
     _locationLostCount                          = 0;
@@ -313,7 +324,9 @@ static NSMutableArray *_savedLocations;
         p = _currentManualPlace;
     else
     {
-        p = [Place newPlace:[SystemManager getLanguageString:@"Current Place"] Address:[SystemManager getLanguageString:@"Current Place"] Location:_currentCLLocationCoordinate2D];
+        p = [[Place alloc] initWithName:[SystemManager getLanguageString:@"Current Location"]
+                                address:@""
+                             coordinate:_currentCLLocationCoordinate2D];
     }
 
     p.placeRouteType = kPlaceType_CurrentPlace;
@@ -497,7 +510,6 @@ static NSMutableArray *_savedLocations;
 
 +(void) saveToKml
 {
-    logfn();
     NSMutableString *content = [[NSMutableString alloc] init];
     NSMutableString *coordinates = [[NSMutableString alloc] init];
     NSError *err;
@@ -541,7 +553,6 @@ static NSMutableArray *_savedLocations;
 
 +(void) newFile
 {
-    logfn();
     _savedLocations = [[NSMutableArray alloc] initWithCapacity:0];
     _fileName = [NSString stringWithFormat:@"%@/GT_%@.txt", [SystemManager documentPath], [_dateFormatter2 stringFromDate:[NSDate date]]];
     
@@ -565,7 +576,6 @@ static NSMutableArray *_savedLocations;
 
 +(void) saveFile
 {
-    logfn();
     if (nil != _fileHandle)
     {
         [_fileHandle closeFile];

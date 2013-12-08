@@ -59,7 +59,6 @@
 
 -(void) setNumImagePrefix:(NSString *)value
 {
-    logfn();
     _numImagePrefix = value;
     
     _num0 = [UIImage imageNamed:[NSString stringWithFormat:@"%@0.png", _numImagePrefix] color:self.color];

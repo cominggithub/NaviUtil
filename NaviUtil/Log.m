@@ -9,6 +9,9 @@
 #import "Log.h"
 #import "TestFlight.h"
 #include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 
 static bool isInit = false;
 static NSFileHandle *fileHandle = nil;
@@ -132,3 +135,15 @@ const char* getLevelStr(int level)
     return "[DEBUG]";
 }
 
+void classProtocol(id a)
+{
+    
+    if (class_conformsToProtocol([a class], @protocol(NSCopying)))
+    {
+        logfns("conforms NSCopying\n");
+    }
+    else
+    {
+        logfns("not conforms NSCopying\n");
+    }
+}

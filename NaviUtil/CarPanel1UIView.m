@@ -217,10 +217,8 @@
 #if 0
 -(void) autoRedrawStart
 {
-    logfn();
     if (nil == _redrawTimer)
     {
-        logfn();
         _redrawTimer = [NSTimer scheduledTimerWithTimeInterval:_redrawInterval target:self selector:@selector(redrawTimeout) userInfo:nil repeats:YES];
     }
 }
@@ -237,7 +235,6 @@
 -(void) startPreDraw
 {
     _isPreDraw = TRUE;
-    logfn();
 #if 0
     dispatch_async(_backgroundQueue, ^(void) {
         [self preDrawThread];
@@ -247,7 +244,6 @@
 
 -(void) stopPreDraw
 {
-    logfn();
     _isPreDraw = FALSE;
 }
 

@@ -96,7 +96,6 @@ static JsonFile *_configFile;
 +(BOOL) init
 {
     _configFile = [JsonFile jsonFileWithFileName:[SystemManager getPath:kSystemManager_Path_Config]];
-    logo(_configFile);
     [self checkKeys];
 
     [self save];
