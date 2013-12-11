@@ -359,6 +359,8 @@
         if ( kGoogleJsonStatus_Ok == status)
         {
             currentRoute = [Route parseJson:routeDownloadRequest.filePath];
+            [User addRecentPlace:self.routeEndPlace];
+            [User save];
             [self removeRoutePolyline];
             [self addRoutePolyline];
         }
@@ -396,21 +398,21 @@
     marker.snippet  = p.address;
     marker.position = p.coordinate;
     
-    if ( p.placeType == kPlaceType_Home)
+    if (p.placeType == kPlaceType_Home)
     {
-        marker.icon     = homeMarkerImage;
+        marker.icon = homeMarkerImage;
     }
-    else if ( p.placeType == kPlaceType_Office )
+    else if (p.placeType == kPlaceType_Office )
     {
-        marker.icon     = officeMarkerImage;
+        marker.icon = officeMarkerImage;
     }
-    else if ( p.placeType == kPlaceType_Favor )
+    else if (p.placeType == kPlaceType_Favor )
     {
-        marker.icon     = favorMarkerImage;
+        marker.icon = favorMarkerImage;
     }
     else
     {
-        marker.icon     = normalMarkerImage;
+        marker.icon = normalMarkerImage;
     }
     
     marker.map      = self.mapView;
@@ -452,6 +454,7 @@
         if (false == [self isPlaceInSearchedPlaces:p])
         {
             [_searchedPlaces addObject:p];
+            [User addSearchedPlace:p];
             if (nil == firstPlace)
                 firstPlace = p;
         }
@@ -466,10 +469,37 @@
 {
     for (Place *p in self.searchedPlaces)
     {
-        [self addPlaceToMarker:p];
+    
+        if (FALSE == [self isPlaceInUserPlaces:p])
+        {
+            [self addPlaceToMarker:p];
+        }
     }
 }
 
+-(BOOL) isPlaceInUserPlaces:(Place *) p
+{
+    
+    for (Place *tp in User.homePlaces)
+    {
+        if ([tp isCoordinateEqualTo:p])
+            return TRUE;
+    }
+
+    for (Place *tp in User.officePlaces)
+    {
+        if ([tp isCoordinateEqualTo:p])
+            return TRUE;
+    }
+    
+    for (Place *tp in User.favorPlaces)
+    {
+        if ([tp isCoordinateEqualTo:p])
+            return TRUE;
+    }
+    
+    return FALSE;
+}
 -(void) processSearchPlaceDownloadRequestStatusChange
 {
     
@@ -592,6 +622,7 @@
 {
     [self removeSearchedPlacesFromMarkers];
     [_searchedPlaces removeAllObjects];
+    [User removeAllSearchedPlaces];
 }
 
 

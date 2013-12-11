@@ -27,17 +27,20 @@ typedef enum
 +(void) init;
 +(bool) parseJson:(NSString*) fileName;
 +(void) save;
-+(void) emptyConfig;
++(void) clearConfig;
 +(void) createDebugConfig;
 +(void) addHomePlace:(Place*) p;
 +(void) addOfficePlace:(Place*) p;
 +(void) addFavorPlace:(Place*) p;
 +(void) addSearchedPlace:(Place*) p;
 +(void) addSearchedPlaceText:(NSString*) PlaceText;
++(void) addRecentPlace:(Place*) p;
++(PlaceType) translatSectionIndexIntoPlaceType:(SectionMode) sectionMode section:(int) section;
 +(void) removeHomePlaceAtIndex:(int) index;
 +(void) removeOfficePlaceAtIndex:(int) index;
 +(void) removeFavorPlaceAtIndex:(int) index;
 +(void) removePlaceBySectionMode:(SectionMode) sectionMode section:(int) section index:(int) index;
++(void) removeAllSearchedPlaces;
 
 +(Place*) getHomePlaceByIndex:(int) index;
 +(Place*) getOfficePlaceByIndex:(int) index;
@@ -50,6 +53,7 @@ typedef enum
 +(void) addPlaceBySectionMode:(SectionMode) sectionMode section:(int) section place:(Place*) p;
 +(int) placeCount;
 
+
 +(NSString*) getSearchedPlaceTextByIndex:(int) index;
 +(NSString*) name;
 +(NSString*) email;
@@ -57,6 +61,9 @@ typedef enum
 +(NSArray*) officePlaces;
 +(NSArray*) favorPlaces;
 +(NSArray*) searchedPlaceText;
++(NSArray*) searchedPlaces;
++(NSArray*) recentPlaces;
+
 
 
 @end

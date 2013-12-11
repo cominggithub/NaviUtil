@@ -7,6 +7,7 @@
 //
 
 #import "Place.h"
+#import "NSString+category.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
@@ -23,10 +24,10 @@
     self = [super init];
     if(self)
     {
-        self.placeType = kPlaceType_None;
-        self.name          = [NSString stringWithString:name];
-        self.address       = [NSString stringWithString:address];
-        self.coordinate    = CLLocationCoordinate2DMake(coordinate.latitude, coordinate.longitude);
+        self.placeType      = kPlaceType_None;
+        self.name           = [NSString stringWithString:name];
+        self.address        = [NSString stringWithString:address];
+        self.coordinate     = CLLocationCoordinate2DMake(coordinate.latitude, coordinate.longitude);
     }
     
     return self;
@@ -125,6 +126,7 @@
     
     p.name          = [dic objectForKey:@"name"];
     p.address       = [dic objectForKey:@"address"];
+    p.placeType     = [[dic objectForKey:@"placeType"] intValue];
     lat             = [[dic objectForKey:@"lat"] doubleValue];
     lng             = [[dic objectForKey:@"lng"] doubleValue];
     p.coordinate    = CLLocationCoordinate2DMake(lat, lng);
@@ -138,6 +140,7 @@
     p.name          = [NSString stringWithString:name];
     p.address       = [NSString stringWithString:address];
     p.coordinate    = CLLocationCoordinate2DMake(location.latitude, location.longitude);
+    p.placeType     = kPlaceType_None;
     
     return p;
     
@@ -147,8 +150,10 @@
 {
     if (nil == p)
         return;
+    
     p.name          = [NSString stringWithString:self.name];
     p.address       = [NSString stringWithString:self.address];
+    p.placeType     = self.placeType;
     p.coordinate    = CLLocationCoordinate2DMake(self.coordinate.latitude, self.coordinate.longitude);
     
 }
@@ -156,8 +161,26 @@
 -(NSString*) description
 {
     
-    return [NSString stringWithFormat:@"%@, %@, (%.7f, %.7f)", self.name, self.address, self.coordinate.latitude, self.coordinate.longitude];
+    return [NSString stringWithFormat:@"%@, %@, %@, (%.7f, %.7f)", self.getPlaceTypeString, self.name, self.address, self.coordinate.latitude, self.coordinate.longitude];
     
+}
+
+-(NSString*) getPlaceTypeString
+{
+    
+    switch (self.placeType)
+    {
+        case kPlaceType_None:
+            return @"None";
+        case kPlaceType_Home:
+            return @"Home";
+        case kPlaceType_Office:
+            return @"Office";
+        case kPlaceType_Favor:
+            return @"Favor";
+        default:
+            return @"unknown type";
+    }
 }
 
 -(bool) isPlaceMatched:(NSString*) name
@@ -203,6 +226,7 @@
 
     [result setObject:self.name forKey:@"name"];
     [result setObject:self.address forKey:@"address"];
+    [result setObject:[NSString stringFromInt:self.placeType] forKey:@"placeType"];
     [result setObject:[NSString stringWithFormat:@"%.7f", self.coordinate.latitude] forKey:@"lat"];
     [result setObject:[NSString stringWithFormat:@"%.7f", self.coordinate.longitude] forKey:@"lng"];
    
