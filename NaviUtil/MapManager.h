@@ -16,6 +16,7 @@
 
 @protocol MapManagerDelegate <NSObject>
 -(void) mapManager: (MapManager*) mapManager placeSearchResult:(NSArray*) places;
+-(void) mapManager: (MapManager*) mapManager updateCurrentPlace:(Place*) place;
 @end
 
 @interface MapManager : NSObject <GMSMapViewDelegate, DownloadRequestDelegate>

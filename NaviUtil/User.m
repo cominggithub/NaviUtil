@@ -314,14 +314,13 @@ static NSMutableArray*  _recentPlaces;
         if (_searchedPlaces.count > 0)
             sectionCount++;
     }
-    else
+    else if (kSectionMode_Home_Office_Favor_SearchedText == sectionMode)
     {
         // for searched places text
         if (_searchedPlaceText.count > 0)
             sectionCount++;
     }
-    
-    
+
     return sectionCount;
     
 }

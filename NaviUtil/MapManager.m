@@ -23,7 +23,8 @@
 #define ZOOM_LEVEL_MIN 1
 #define ZOOM_LEVEL_DEFAULT 10
 #define VIEW_ANGLE 37.f
-
+#define SEARCHED_PLACE_MAX 5
+#define ROUTE_POLYLINE_WIDTH 20
 
 @implementation MapManager 
 {
@@ -127,7 +128,8 @@
         [self planRoute];
     }
     
-    self.useCurrentPlaceAsRouteStart = FALSE;
+    self.hasRoute                       = FALSE;
+    self.useCurrentPlaceAsRouteStart    = FALSE;
 }
 
 -(Place*) routeEndPlace
@@ -158,6 +160,7 @@
         [self planRoute];
     }
     
+    self.hasRoute                       = FALSE;
 }
 
 
@@ -306,7 +309,7 @@
     
     routePoints                 = [currentRoute getRoutePolyLineCLLocation];
     routePolyline               = [[GMSPolyline alloc] init];
-    routePolyline.strokeWidth   = 10;
+    routePolyline.strokeWidth   = ROUTE_POLYLINE_WIDTH;
     routePolyline.strokeColor   = [UIColor blueColor];
     path                        = [GMSMutablePath path];
     
@@ -363,6 +366,7 @@
             [User save];
             [self removeRoutePolyline];
             [self addRoutePolyline];
+            self.hasRoute = TRUE;
         }
         else
         {
@@ -447,7 +451,7 @@
     Place* firstPlace = nil;
     
     /* only reserve the first three places */
-    for(i=0; i<places.count && i < 3; i++)
+    for(i=0; i<places.count && i < SEARCHED_PLACE_MAX; i++)
     {
         Place *p = [places objectAtIndex:i];
         /* add the first search result no matter what */

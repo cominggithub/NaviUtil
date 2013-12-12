@@ -98,8 +98,10 @@
     msgRect.size.width      = floor(480*0.8);
     msgRect.size.height     = floor(320*0.4);
     
+
     routeDisplayBound               = [SystemManager lanscapeScreenRect];
     
+    logRect(routeDisplayBound);
     carImage = [UIImage imageNamed:@"Blue_car_marker"];
     
     _speedComponentRect.origin.x    = 0;
@@ -192,7 +194,7 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     [super drawRect:rect];
     
-    
+    logRect(rect);
     [self drawBackground:context Rectangle:rect];
     
     if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG] && _messageBoxText.length > 0)
