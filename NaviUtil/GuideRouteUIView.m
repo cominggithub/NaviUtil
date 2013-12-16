@@ -194,7 +194,6 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     [super drawRect:rect];
     
-    logRect(rect);
     [self drawBackground:context Rectangle:rect];
     
     if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG] && _messageBoxText.length > 0)
@@ -1673,8 +1672,6 @@
 -(void) active
 {
     _lastPlayedSpeech         = nil;
-    _speedView.isSpeedUnitMph = [SystemConfig getBoolValue:CONFIG_RN1_IS_SPEED_UNIT_MPH];
-    self.color                = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
     [_systemStatusView active];
     [_clockView active];
     [_speedView active];
@@ -1729,6 +1726,13 @@
         self.state = state_lookup;
     [self setNeedsDisplay];    
 }
+
+-(void) setIsSpeedUnitMph:(BOOL)isSpeedUnitMph
+{
+    _speedView.isSpeedUnitMph = isSpeedUnitMph;
+    
+}
+
 #pragma mark - SystemManage Monitor
 -(void) networkStatusChangeWifi:(float) wifiStatus threeG:(float) threeGStatus
 {

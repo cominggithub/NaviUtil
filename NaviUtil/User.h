@@ -41,6 +41,7 @@ typedef enum
 +(void) removeFavorPlaceAtIndex:(int) index;
 +(void) removePlaceBySectionMode:(SectionMode) sectionMode section:(int) section index:(int) index;
 +(void) removeAllSearchedPlaces;
++(void) updateRecentPlacesByPlace:(Place*) p;
 
 +(Place*) getHomePlaceByIndex:(int) index;
 +(Place*) getOfficePlaceByIndex:(int) index;

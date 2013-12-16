@@ -483,6 +483,22 @@ static NSMutableArray*  _recentPlaces;
     [place copyTo:oldPlace];
 }
 
++(void) updateRecentPlacesByPlace:(Place*) p
+{
+    int i;
+    Place *tmpP;
+    
+    for (i=0; i<_recentPlaces.count; i++)
+    {
+        tmpP = [_recentPlaces objectAtIndex:i];
+        if ([tmpP isCoordinateEqualTo:p])
+        {
+            [self addRecentPlace:p];
+            break;
+        }
+    }
+}
+
 
 
 #pragma mark -- table view section
