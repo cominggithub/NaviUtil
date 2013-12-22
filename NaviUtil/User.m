@@ -753,7 +753,8 @@ static NSMutableArray*  _recentPlaces;
         for(NSDictionary *d in tmpArray)
         {
             Place* p = [Place parseDictionary:d];
-            [self addRecentPlace:p];
+//            [self addRecentPlace:p];
+            [_recentPlaces addObject:p];
         }
 
     }

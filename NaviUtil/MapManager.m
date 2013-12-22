@@ -83,7 +83,7 @@
     homeMarkerImage     = [UIImage imageNamed:@"place_marker_home_32"];
     officeMarkerImage   = [UIImage imageNamed:@"place_marker_office_32"];
     favorMarkerImage    = [UIImage imageNamed:@"place_marker_favor_32"];
-    normalMarkerImage   = [UIImage imageNamed:@"place_marker_normal_32"];
+    normalMarkerImage   = [UIImage imageNamed:@"place_marker_normal32"];
     
     self.useCurrentPlaceAsRouteStart = TRUE;
     
@@ -220,9 +220,6 @@
     [self removeRoutePolyline];
 }
 
-
-
-
 -(void) moveToPlace:(Place*) place
 {
     if (nil != place)
@@ -280,8 +277,6 @@
         zoomLevel--;
         [self.mapView animateToZoom:zoomLevel];
     }
-    
-    
 }
 
 -(void) zoomOut
@@ -292,6 +287,8 @@
         zoomLevel++;
         [self.mapView animateToZoom:zoomLevel];
     }
+    
+    
 }
 
 
@@ -396,7 +393,7 @@
 
     if (nil == p)
         return;
-    
+
     marker          = [[GMSMarker alloc] init];
     marker.title    = p.name;
     marker.snippet  = p.address;
@@ -423,6 +420,7 @@
 
     [markers addObject:marker];
     [placesInMarkers addObject:p];
+    
 }
 
 - (void) addUserPlacesToMarkers
