@@ -17,6 +17,7 @@
 @protocol MapManagerDelegate <NSObject>
 -(void) mapManager: (MapManager*) mapManager placeSearchResult:(NSArray*) places;
 -(void) mapManager: (MapManager*) mapManager updateCurrentPlace:(Place*) place;
+-(void) mapManager: (MapManager*) mapManager routeChangedFrom:(Place*) fromPlace to:(Place*) toPlace;
 @end
 
 @interface MapManager : NSObject <GMSMapViewDelegate, DownloadRequestDelegate>
@@ -43,6 +44,7 @@
 -(Place*) placeByMarker:(GMSMarker*) marker;
 -(void) moveToPlace:(Place*) place;
 -(void) refreshMap;
+-(void) moveToMyLocation;
 
 -(void) zoomIn;
 -(void) zoomOut;

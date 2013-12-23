@@ -80,10 +80,10 @@
     markers             = [[NSMutableArray alloc] initWithCapacity:10];
     placesInMarkers     = [[NSMutableArray alloc] initWithCapacity:10];
     _searchedPlaces     = [[NSMutableArray alloc] initWithCapacity:10];
-    homeMarkerImage     = [UIImage imageNamed:@"place_marker_home_32"];
-    officeMarkerImage   = [UIImage imageNamed:@"place_marker_office_32"];
-    favorMarkerImage    = [UIImage imageNamed:@"place_marker_favor_32"];
-    normalMarkerImage   = [UIImage imageNamed:@"place_marker_normal32"];
+    homeMarkerImage     = [UIImage imageNamed:@"marker_home"];
+    officeMarkerImage   = [UIImage imageNamed:@"marker_office"];
+    favorMarkerImage    = [UIImage imageNamed:@"marker_favor"];
+    normalMarkerImage   = [UIImage imageNamed:@"marker_normal"];
     
     self.useCurrentPlaceAsRouteStart = TRUE;
     
@@ -130,6 +130,13 @@
     
     self.hasRoute                       = FALSE;
     self.useCurrentPlaceAsRouteStart    = FALSE;
+    
+    /* notify the delegate */
+    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:routeChangedFrom:to:)])
+    {
+        [self.delegate mapManager:self routeChangedFrom:self.routeStartPlace to:self.routeEndPlace];
+    }
+    
 }
 
 -(Place*) routeEndPlace
@@ -161,6 +168,12 @@
     }
     
     self.hasRoute                       = FALSE;
+    
+    /* notify the delegate */
+    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:routeChangedFrom:to:)])
+    {
+        [self.delegate mapManager:self routeChangedFrom:self.routeStartPlace to:self.routeEndPlace];
+    }
 }
 
 
@@ -220,6 +233,11 @@
     [self removeRoutePolyline];
 }
 
+-(void) moveToMyLocation
+{
+    [self moveToPlace:currentPlace];
+}
+
 -(void) moveToPlace:(Place*) place
 {
     if (nil != place)
@@ -247,13 +265,12 @@
         self.updateToCurrentPlace   = NO;
         CLLocation *location        = [change objectForKey:NSKeyValueChangeNewKey];
         self.mapView.camera         = [GMSCameraPosition cameraWithTarget:location.coordinate zoom:zoomLevel];
+        currentPlace                = [[Place alloc] initWithName:[SystemManager getLanguageString:@"Current Location"]
+                                                          address:@""
+                                                       coordinate:CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)];
         if (YES == self.useCurrentPlaceAsRouteStart)
         {
-            Place* p;
-            p = [[Place alloc] initWithName:[SystemManager getLanguageString:@"Current Location"]
-                                    address:@""
-                                 coordinate:CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)];
-            [self setRouteStartPlace:p];
+            [self setRouteStartPlace:currentPlace];
         }
     }
 
