@@ -52,5 +52,6 @@ typedef enum PlaceRouteType
 -(bool) isPlaceMatched:(NSString*) name;
 -(bool) isCoordinateEqualTo:(Place*) p;
 -(void) copyTo:(Place*) p;
+-(BOOL) isNullPlace;
 
 @end

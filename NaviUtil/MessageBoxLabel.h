@@ -12,4 +12,5 @@
 
 @property (nonatomic) int maxFont;
 @property (nonatomic) int minFont;
+@property (weak, nonatomic) UIColor* color;
 @end

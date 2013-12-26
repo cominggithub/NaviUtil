@@ -174,6 +174,18 @@ static CLLocationCoordinate2D _endLocation;
     return downloadRequest;
 }
 
++(DownloadRequest*) getNearPlaceDownloadRequest:(NSString*) locationName locaiton:(CLLocationCoordinate2D) location radius:(int) radius
+{
+    DownloadRequest* downloadRequest = [[DownloadRequest alloc] init];
+    downloadRequest.requestId   = [self getNextRequestId];
+    downloadRequest.filePath    = [self getNearPlaceFilePath:locationName location:location radius:radius];
+    downloadRequest.url         = [self getNearPlaceQuery:locationName location:location radius:radius];
+    downloadRequest.requestId   = [self getNextRequestId];
+    downloadRequest.status      = kDownloadStatus_Pending;
+    
+    return downloadRequest;
+}
+
 +(DownloadRequest*) getSpeechDownloadRequest:(NSString*) text
 {
     DownloadRequest* downloadRequest = [[DownloadRequest alloc] init];
@@ -252,6 +264,23 @@ static CLLocationCoordinate2D _endLocation;
     return param;
 }
 
++(NSDictionary*) getNearPlaceQueryParam:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
+{
+    logfn();
+    NSDictionary* param = [[NSDictionary alloc] initWithObjectsAndKeys:
+                           locationName, S_QUERY,
+                           [NaviUtil getGooglePlaceAPIKey], S_GOOGLE_API_KEY,
+                           S_FALSE, S_SENSOR,
+                           [SystemManager getSupportLanguage], S_LANGUAGE,
+                           [NSString stringWithFormat:@"%.8f,%.8f", location.latitude, location.longitude], S_LOCATION,
+                           @(radius), S_RADIUS,
+                           nil
+                           ];
+    
+    return param;
+}
+
+
 +(NSDictionary*) getSpeechQueryParam:(NSString*) text
 {
     
@@ -288,6 +317,15 @@ static CLLocationCoordinate2D _endLocation;
     return filePath;
 }
 
++(NSString*) getNearPlaceFilePath:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
+{
+    NSDictionary* param = [self getNearPlaceQueryParam:locationName location:location radius:radius];
+    
+    NSString *filePath = [NSString stringWithFormat:@"%@/%@", [SystemManager getPath:kSystemManager_Path_Route], [self getFileNameParameters:param downloadFileFormat:GOOGLE_JSON]];
+    
+    return filePath;
+}
+
 +(NSString*) getSpeechFilePath:(NSString*) text
 {
 //    NSDictionary* param = [self getSpeechQueryParam:text];
@@ -314,6 +352,16 @@ static CLLocationCoordinate2D _endLocation;
      * query, language, key, sensor
      */
     NSDictionary* param = [self getPlaceQueryParam:locationName];
+    return [NaviQueryManager getQueryBaseUrl:GG_PLACE_TEXT_SEARCH_URL parameters:param downloadFileFormat:GOOGLE_JSON];
+}
+
++(NSString*) getNearPlaceQuery:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
+{
+    
+    /*
+     * query, language, key, sensor
+     */
+    NSDictionary* param = [self getNearPlaceQueryParam:locationName location:location radius:radius];
     return [NaviQueryManager getQueryBaseUrl:GG_PLACE_TEXT_SEARCH_URL parameters:param downloadFileFormat:GOOGLE_JSON];
 }
 

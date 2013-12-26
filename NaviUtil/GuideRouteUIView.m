@@ -101,7 +101,6 @@
 
     routeDisplayBound               = [SystemManager lanscapeScreenRect];
     
-    logRect(routeDisplayBound);
     carImage = [UIImage imageNamed:@"Blue_car_marker"];
     
     _speedComponentRect.origin.x    = 0;
@@ -627,7 +626,6 @@
 }
 -(void) drawMessageBox:(CGContextRef) context Message:(NSString*) message
 {
-    
     CGRect rect                 = msgRect;
     CGRect actualMessageRect    = CGRectInset(msgRect, 10, 10);
     int radius = 8;
@@ -637,8 +635,8 @@
     
     rect.size.height = actualMessageRect.size.height + 10;
     
-    CGContextSetFillColorWithColor(context, _color.CGColor);
-    CGContextSetStrokeColorWithColor(context, _color.CGColor);
+    CGContextSetFillColorWithColor(context, self.color.CGColor);
+    CGContextSetStrokeColorWithColor(context, self.color.CGColor);
     
     CGContextMoveToPoint(context, rect.origin.x, rect.origin.y + radius);
     CGContextAddLineToPoint(context, rect.origin.x, rect.origin.y + rect.size.height - radius);
@@ -677,14 +675,15 @@
     
     CGContextSetLineWidth(context, 5.0);
 
-    CGContextSetStrokeColorWithColor(context, _color.CGColor);
+    CGContextSetStrokeColorWithColor(context, self.color.CGColor);
     CGContextStrokePath(context);
     
-    CGContextSetFillColorWithColor(context, _color.CGColor);
-    
+    CGContextSetFillColorWithColor(context, self.color.CGColor);
+
     [message drawInRect:actualMessageRect
                withFont:[UIFont boldSystemFontOfSize:fontSize]
           lineBreakMode:NSLineBreakByClipping alignment:NSTextAlignmentCenter];
+
     
 }
 
@@ -1234,17 +1233,22 @@
 -(void) replanRoute
 {
     mlogDebug(@"Re-Route by current place\n");
+    
     routeStartPlace = [LocationManager currentPlace];
     [self planRoute];
-    
 }
 
 -(void) planRoute
 {
     self.state = state_route_planning;
+
     if (nil != routeStartPlace && nil != routeEndPlace)
     {
-        if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
+        if (YES == [routeStartPlace isNullPlace])
+        {
+            self.state = state_no_gps;
+        }
+        else if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
         {
             routeDownloadRequest = [NaviQueryManager
                                     getRouteDownloadRequestFrom:routeStartPlace.coordinate
@@ -1635,40 +1639,6 @@
     
 }
 
--(void) setIsHud:(BOOL)isHud
-{
-    _isHud = isHud;
-    
-    if(TRUE == _isHud)
-    {
-        self.transform = CGAffineTransformMakeScale(1,-1);
-    }
-    else
-    {
-        self.transform = CGAffineTransformMakeScale(1,1);
-    }
-}
-
--(void) setColor:(UIColor *)color
-{
-    
-    _color                      = color;
-    _systemStatusView.color     = _color;
-    _clockView.color            = _color;
-    _speedView.color            = _color;
-    _messageBoxLabel.textColor  = _color;
-    _turnArrowImage.image       = [_turnArrowImage.image   imageTintedWithColor:_color];
-
-    [self setNeedsDisplay];
-}
-
--(void) setMessageBoxText:(NSString *)messageBoxText
-{
-//    _messageBoxText = messageBoxText;
-    _messageBoxLabel.text = messageBoxText;
-//    [self setNeedsDisplay];
-}
-
 -(void) active
 {
     _lastPlayedSpeech         = nil;
@@ -1732,6 +1702,41 @@
     _speedView.isSpeedUnitMph = isSpeedUnitMph;
     
 }
+
+-(void) setIsHud:(BOOL)isHud
+{
+    _isHud = isHud;
+    
+    if(TRUE == _isHud)
+    {
+        self.transform = CGAffineTransformMakeScale(1,-1);
+    }
+    else
+    {
+        self.transform = CGAffineTransformMakeScale(1,1);
+    }
+}
+
+-(void) setColor:(UIColor *)color
+{
+    
+    _color                      = color;
+    _systemStatusView.color     = _color;
+    _clockView.color            = _color;
+    _speedView.color            = _color;
+    _messageBoxLabel.color      = _color;
+    _turnArrowImage.image       = [_turnArrowImage.image   imageTintedWithColor:_color];
+    
+    [self setNeedsDisplay];
+}
+
+-(void) setMessageBoxText:(NSString *)messageBoxText
+{
+    //    _messageBoxText = messageBoxText;
+    _messageBoxLabel.text = messageBoxText;
+    //    [self setNeedsDisplay];
+}
+
 
 #pragma mark - SystemManage Monitor
 -(void) networkStatusChangeWifi:(float) wifiStatus threeG:(float) threeGStatus

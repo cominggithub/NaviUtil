@@ -91,10 +91,6 @@
     {
         mlogWarning(@"parse json file fail: %@", fileName);
     }
-    @finally
-    {
-        mlogWarning(@"parse json file fail: %@", fileName);            
-    }
     
     return nil;
 }
@@ -181,6 +177,11 @@
         default:
             return @"unknown type";
     }
+}
+
+-(BOOL) isNullPlace
+{
+    return self.coordinate.latitude == 0 && self.coordinate.longitude == 0;
 }
 
 -(bool) isPlaceMatched:(NSString*) name

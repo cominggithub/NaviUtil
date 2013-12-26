@@ -75,11 +75,13 @@
     
 }
 
--(void) setTextColor:(UIColor *)textColor
+-(void) setColor:(UIColor *)color
 {
-    super.textColor = textColor;
-    self.layer.borderColor=[[UIColor greenColor]CGColor];
+    _color                  = color;
+    super.textColor         = self.color;
+    self.layer.borderColor  = self.color.CGColor;
     
 }
+
 
 @end

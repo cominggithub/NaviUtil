@@ -22,6 +22,8 @@
 #define S_ORIGIN                    @"origin"
 #define S_DESTINATION               @"destination"
 #define S_SENSOR                    @"sensor"
+#define S_LOCATION                  @"location"
+#define S_RADIUS                    @"radius"
 #define S_MODE                      @"mode"
 #define S_WAYPOINTS                 @"waypoints"
 #define S_ALTERNATIVES              @"alternatives"
@@ -74,6 +76,7 @@ typedef enum DownloadFileFormat {
 
 +(void) downloadRequestStatusChange:(DownloadRequest*) downloadRequest;
 +(DownloadRequest*) getPlaceDownloadRequest:(NSString*) place;
++(DownloadRequest*) getNearPlaceDownloadRequest:(NSString*) locationName locaiton:(CLLocationCoordinate2D) location radius:(int) radius;
 +(DownloadRequest*) getRouteDownloadRequestFrom:(CLLocationCoordinate2D) start To:(CLLocationCoordinate2D) end;
 +(void) download:(DownloadRequest*) dr;
 +(void) downloadSpeech:(Route*) route;

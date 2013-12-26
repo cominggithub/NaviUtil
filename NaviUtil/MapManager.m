@@ -26,6 +26,8 @@
 #define SEARCHED_PLACE_MAX 5
 #define ROUTE_POLYLINE_WIDTH 20
 
+#define NEAR_PLACE_SEARCH_RADIUS 50000  // 50,000 meters, 50Km
+
 @implementation MapManager 
 {
     NSMutableArray *_searchedPlaces;
@@ -37,6 +39,7 @@
     bool isRouteChanged;
     DownloadRequest *routeDownloadRequest;
     DownloadRequest *searchPlaceDownloadRequest;
+    DownloadRequest *searchNearPlaceDownloadRequest;
 
     NSMutableArray* markers;
     NSMutableArray* placesInMarkers;
@@ -57,6 +60,8 @@
     
     BOOL _useCurrentPlaceAsRouteStart;
 
+    BOOL isSearchPlaceFinished;
+    BOOL isSearchNearPlaceFinished;
 }
 
 @synthesize routePolyline;
@@ -85,7 +90,10 @@
     favorMarkerImage    = [UIImage imageNamed:@"marker_favor"];
     normalMarkerImage   = [UIImage imageNamed:@"marker_normal"];
     
-    self.useCurrentPlaceAsRouteStart = TRUE;
+    
+    self.useCurrentPlaceAsRouteStart    = TRUE;
+    isSearchPlaceFinished               = FALSE;
+    isSearchNearPlaceFinished           = FALSE;
     
     [self addUserPlacesToMarkers];
 }
@@ -460,10 +468,31 @@
     }
 }
 
+-(void) addNearSearchedPlaces:(NSArray*) places
+{
+    logfn();
+    int i;
+    int insertedCount;
+    
+    
+    /* only reserve the first three places */
+    for(i=0, insertedCount=0; i<places.count && i < SEARCHED_PLACE_MAX; i++)
+    {
+        Place *p = [places objectAtIndex:i];
+        /* add the first search result no matter what */
+        if (false == [self isPlaceInSearchedPlaces:p])
+        {
+            [_searchedPlaces insertObject:p atIndex:insertedCount++];
+        }
+    }
+
+    [self addSearchedPlacesToMarkers];
+}
+
 -(void) addSearchedPlaces:(NSArray*) places
 {
+    logfn();
     int i=0;
-    Place* firstPlace = nil;
     
     /* only reserve the first three places */
     for(i=0; i<places.count && i < SEARCHED_PLACE_MAX; i++)
@@ -473,13 +502,10 @@
         if (false == [self isPlaceInSearchedPlaces:p])
         {
             [_searchedPlaces addObject:p];
-            [User addSearchedPlace:p];
-            if (nil == firstPlace)
-                firstPlace = p;
         }
     }
     
-    [self moveToPlace:firstPlace];
+
     [self addSearchedPlacesToMarkers];
 }
 
@@ -519,31 +545,61 @@
     
     return FALSE;
 }
--(void) processSearchPlaceDownloadRequestStatusChange
+
+-(void) processSearchPlaceDownloadRequestStatusChange:(DownloadRequest*) downloadRequest
 {
     
     bool isFail = true;
     bool updateStatus = false;
     /* search place finished */
-    if(searchPlaceDownloadRequest.status == kDownloadStatus_Finished )
+    if(downloadRequest.status == kDownloadStatus_Finished )
     {
         NSArray* places;
-        GoogleJsonStatus status = [GoogleJson getStatus:searchPlaceDownloadRequest.filePath];
+        GoogleJsonStatus status = [GoogleJson getStatus:downloadRequest.filePath];
         
         if ( kGoogleJsonStatus_Ok == status)
         {
-            places = [Place parseJson:searchPlaceDownloadRequest.filePath];
+            places = [Place parseJson:downloadRequest.filePath];
             if(places != nil && places.count > 0)
             {
-                [self removeSearchedPlaces];
-                [self addSearchedPlaces:places];
-                
-                /* notify the delegate */
-                if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:placeSearchResult:)])
+                /* clear search result */
+                if (FALSE == isSearchNearPlaceFinished && FALSE == isSearchPlaceFinished)
                 {
-                    [self.delegate mapManager:self placeSearchResult:self.searchedPlaces];
+                    [self removeSearchedPlaces];
                 }
-                isFail = false;
+                
+                if (downloadRequest == searchNearPlaceDownloadRequest)
+                {
+                    [self addNearSearchedPlaces:places];
+                    isSearchNearPlaceFinished = TRUE;
+                }
+                else
+                {
+                    [self addSearchedPlaces:places];
+                    isSearchPlaceFinished = TRUE;
+                }
+                
+                if (YES == isSearchPlaceFinished && YES == isSearchNearPlaceFinished)
+                {
+                    /* move to first place */
+                    if (_searchedPlaces.count > 0)
+                    {
+                        for (Place* p in _searchedPlaces)
+                        {
+                            [User addSearchedPlace:p];
+                        }
+                        [self moveToPlace:[_searchedPlaces objectAtIndex:0]];
+                    }
+
+                    /* notify the delegate */
+                    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:placeSearchResult:)])
+                    {
+                        [self.delegate mapManager:self placeSearchResult:self.searchedPlaces];
+                    }
+                    
+
+                    isFail = false;
+                }
             }
         }
         updateStatus = true;
@@ -553,6 +609,22 @@
     {
         updateStatus = true;
     }
+    
+    if (FALSE == isSearchNearPlaceFinished && FALSE == isSearchPlaceFinished)
+    {
+        [self removeSearchedPlaces];
+    }
+    
+    /* set search place status */
+    if (downloadRequest == searchNearPlaceDownloadRequest)
+    {
+        isSearchNearPlaceFinished   = TRUE;
+    }
+    else
+    {
+        isSearchPlaceFinished       = TRUE;
+    }
+    
 }
 
 -(void) removeUserPlacesFromMarkers
@@ -628,9 +700,18 @@
 {
     if (nil != place && place.length > 0)
     {
-        searchPlaceDownloadRequest          = [NaviQueryManager getPlaceDownloadRequest:place];
-        searchPlaceDownloadRequest.delegate = self;
+        searchNearPlaceDownloadRequest          = [NaviQueryManager getNearPlaceDownloadRequest:place
+                                                                                       locaiton:currentPlace.coordinate
+                                                                                         radius:NEAR_PLACE_SEARCH_RADIUS];
+        searchNearPlaceDownloadRequest.delegate = self;
+        searchPlaceDownloadRequest              = [NaviQueryManager getPlaceDownloadRequest:place];
+        searchPlaceDownloadRequest.delegate     = self;
+        
+        [NaviQueryManager download:searchNearPlaceDownloadRequest];
         [NaviQueryManager download:searchPlaceDownloadRequest];
+        
+        isSearchNearPlaceFinished   = FALSE;
+        isSearchPlaceFinished       = FALSE;
     }
 }
 
@@ -653,9 +734,9 @@
 {
     if (nil == downloadRequest)
         return;
-    if (searchPlaceDownloadRequest == downloadRequest)
+    if (searchPlaceDownloadRequest == downloadRequest || searchNearPlaceDownloadRequest == downloadRequest)
     {
-        [self processSearchPlaceDownloadRequestStatusChange];
+        [self processSearchPlaceDownloadRequestStatusChange:downloadRequest];
     }
     else if (routeDownloadRequest == downloadRequest)
     {
