@@ -22,15 +22,17 @@ typedef enum
 {
     NSTimer *_timer;
 
-    int _nextLocationIndex;
+    int nextRouteLineIndex;
     CLLocation *_currentLocation;
     CLLocation *_nextLocation;
 }
 @property (nonatomic, weak) id<CLLocationManagerDelegate> delegate;
-@property (nonatomic) NSTimeInterval timeInterval;
-@property (nonatomic, strong) NSArray *locationPoints;
+@property (nonatomic) NSTimeInterval locationUpdateInterval;
+@property (nonatomic) int simulationSpeed;
+
 @property (readonly) bool isStart;
 @property (nonatomic) LocationSimulator_Type type;
+@property (nonatomic) BOOL vibrant;
 
 -(void) start;
 -(void) stop;

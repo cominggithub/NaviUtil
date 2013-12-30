@@ -88,27 +88,19 @@
         }
     
         self.status = kRouteStatusCodeOk;
-        [self addLocationToRouteLinesWithStepNo:i Location:[self getEndLocation]];
+        [self addLocationToRouteLinesWithStepNo:i-1 Location:[self getEndLocation]];
 
         [self saveRouteLines];
         [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager getPath:kSystemManager_Path_Route], [self getName]]];
-//        [self dumpRouteLines];
-    
-//        [self dumpRouteLineAndPolyLine];
-        mlogDebug(@"parse json file done: %@", fileName);
-        return true;
         
     }
     @catch (NSException *exception)
     {
         mlogWarning(@"parse json file fail: %@, reason: %@\n%@", fileName, [exception reason], exception );
-    }
-    @finally
-    {
-//        mlogWarning(ROUTE, @"parse json file fail: %@", fileName);
+        return FALSE;
     }
     
-    return false;
+    return TRUE;
 }
 
 +(Route*) parseJson:(NSString*) fileName
@@ -304,16 +296,34 @@
 
 -(NSString* ) getStepInstruction: (int) index
 {
+    if (index == steps.count)
+    {
+        mlogError(@"index >= steps.count");
+        return @"";
+    }
+    
     return [[(NSDictionary*)[steps objectAtIndex:index] objectForKey:@"html_instructions"] stripHTML];
 }
 
 -(NSString* ) getStepDurationString: (int) index
 {
+    if (index >= steps.count)
+    {
+        mlogError(@"index >= steps.count");
+        return @"";
+    }
+    
     return [[(NSDictionary*)[steps objectAtIndex:index] objectForKey:@"duration"] objectForKey:@"text"];
 }
 
 -(NSString* ) getStepDistanceString: (int) index
 {
+    if (index >= steps.count)
+    {
+        mlogError(@"index >= steps.count");
+        return @"";
+    }
+    
     return [[(NSDictionary*)[steps objectAtIndex:index] objectForKey:@"distance"] objectForKey:@"text"];
 }
 
@@ -677,7 +687,9 @@
         {
             double distance = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:carLocation];
             if(distance < [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE])
+            {
                 return rl;
+            }
         }
     }
     

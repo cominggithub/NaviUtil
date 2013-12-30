@@ -45,7 +45,6 @@
     MessageBoxLabel *_messageBoxLabel;
     UILabel         *_debugMsgLabel;
     NSString *_lastPlayedSpeech;
-    BOOL _isDrawCarFootPrint;
     int _maxOutOfRouteLineCount;
     int _outOfRouteLineCount;
     
@@ -193,49 +192,40 @@
     CGContextRef context = UIGraphicsGetCurrentContext();
     [super drawRect:rect];
     
+    /* draw background */
     [self drawBackground:context Rectangle:rect];
     
+    /* draw debug message */
     if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG] && _messageBoxText.length > 0)
     {
         [self drawMessageBox:context Message:_messageBoxText];
 
         return;
     }
-#if 0
-    if (nil == route || (nil != routeDownloadRequest && routeDownloadRequest.status != kDownloadStatus_Finished))
-    {
-        _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Planning"];
-        return;
-    }
-    
 
-    else
-    {
-        _messageBoxLabel.text = [SystemManager getLanguageString:@"Find our location now"];
-        mlogError(@" currentRouteLine is null\n");
-    }
-#endif
-    
     if (nil == currentRouteLine)
     {
         return;
     }
 
+    /* get draw point, can calculate offset */
     PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
     PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
     xOffset = tmpCarDrawPoint.x - startPoint.x + _routeComponentRect.origin.x;
 
-    
-    
+    /* draw route */
     [self drawRoute:context Rectangle:rect];
     
+    /* draw turn message */
     if (state_navigateion == _state)
     {
         [self drawTurnMessage:context];
     }
     
+    /* reset ture image */
     _turnArrowImage.image = [self getTurnImage];
-    
+
+    /* draw debug information */
     if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG_ROUTE_DRAW])
     {
         [self drawCar:context];
@@ -353,13 +343,6 @@
     
     _messageBoxLabel.text = @"";
     
-    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG] && _messageBoxText.length > 0)
-    {
-//        [self drawMessageBox:context Message:_messageBoxText];
-        return;
-    }
-
-    
     if(currentRouteLine != nil)
     {
         nextStepRouteLine = [route getNextStepFirstRouteLineByStepNo:currentRouteLine.stepNo CarLocation:currentCarLocation];
@@ -419,7 +402,12 @@
         startPoint.x    += xOffset;
         endPoint.x      += xOffset;
         
-        if (CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:startPoint]) ||
+        /* 1. current route line
+         * 2. start point in the draw rect
+         * 3. end point int the draw rect
+         */
+        if (rl == currentRouteLine                                          ||
+            CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:startPoint]) ||
             CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:endPoint]))
         {
             if (FALSE == hasStartPoint)
@@ -579,22 +567,25 @@
 }
 -(void) drawCarFootPrint:(CGContextRef) context
 {
+    int i;
     PointD curPoint;
     CGRect rect;
+    NSTextAlignment aligment;
     NSMutableArray* drawedPoint = [[NSMutableArray alloc] init];
-    if(FALSE == _isDrawCarFootPrint)
-        return;
     
     CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-    
-    for(NSValue *v in carFootPrint)
+
+    for(i=0; i<carFootPrint.count; i++)
     {
         int size = 4;
+        NSValue* v = [carFootPrint objectAtIndex:i];
         curPoint = [self getDrawPoint:[v PointDValue]];
         curPoint.x += xOffset;
-        /* disable check out of bound point */
         
-        
+        if (i == carFootPrint.count-1)
+        {
+            CGContextSetFillColorWithColor(context, [UIColor redColor].CGColor);
+        }
         
         rect.origin.x = curPoint.x-size/2;
         rect.origin.y = curPoint.y-size/2;
@@ -602,6 +593,25 @@
         rect.size.height = size;
         
         CGContextFillRect(context, rect);
+
+        if (i%2 == 0)
+        {
+            rect.origin.x = curPoint.x-size/2+6;
+            aligment = NSTextAlignmentLeft;
+        }
+        else
+        {
+           rect.origin.x = curPoint.x-size/2-26;
+           aligment = NSTextAlignmentRight;
+        }
+        
+        rect.origin.y = curPoint.y-size/2-6;
+        rect.size.width = size+20;
+        rect.size.height = size+4;
+        
+        NSString *num = [NSString stringWithFormat:@"%d", i];
+        
+        [num drawInRect:rect withFont:[UIFont boldSystemFontOfSize:10.0] lineBreakMode:NSLineBreakByCharWrapping alignment:aligment];
         
         [drawedPoint addObject:[NSValue valueWithPointD:curPoint]];
     }
@@ -1047,8 +1057,6 @@
     
     
     // configure debug option
-    
-    _isDrawCarFootPrint                     = FALSE;
     _isAutoSimulatorLocationUpdateStarted   = FALSE;
     _outOfRouteLineCount                    = 0;
 
@@ -1097,17 +1105,9 @@
     routeUnitVector.x = (routeEndPoint.x - routeStartPoint.x)/routeDistance;
     routeUnitVector.y = (routeEndPoint.y - routeStartPoint.y)/routeDistance;
 }
-#if TARGET_IPHONE_SIMULATOR
--(void) playSpeech:(NSString*) text
-{
-    
-}
-#else
-// Do Live stuff
 
 -(void) playSpeech:(NSString*) text
 {
-    
     /* never play speech in simulator mode */
     if (NO == [SystemConfig getBoolValue:CONFIG_IS_SPEECH])
         return;
@@ -1136,7 +1136,6 @@
 
 
 }
-#endif
 
 -(void) processRouteDownloadRequestStatusChange
 {
@@ -1368,9 +1367,10 @@
     
     //    printf("toScreenOffset (%.8f, %.8f)\n", toScreenOffset.x, toScreenOffset.y);
 }
+
 -(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
 {
-//    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     PointD nextCarPoint;
     currentCarLocation = newCarLocation;
     nextCarPoint.x = newCarLocation.longitude;
@@ -1572,11 +1572,11 @@
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
     currentStep++;
-//    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
     [self updateCarLocation:location];
     [self setNeedsDisplay];
-//    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
+    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
     
     _debugMsgLabel.text = [NSString stringWithFormat:@"%.8f, %.8f, %.1f, %.1f",
                                location.latitude,
