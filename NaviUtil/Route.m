@@ -9,8 +9,11 @@
 #import "Route.h"
 #import "SystemConfig.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
+
+#define DISTANCE_FROM_ROUTE_LINE_THRESHOLD  10
+#define DISTANCE_FROM_START_POINT_THRESHOLD 10
 
 @implementation Route
 {
@@ -478,6 +481,48 @@
             ];
 }
 
+-(RouteLine*) crossRouteLineByLocation:(CLLocationCoordinate2D) location
+{
+    int i;
+    double angleStart; // angle from start point
+    double angleEnd;   // angle from end point
+    double tmpDistance;
+    double tmpStartDistance;
+    double distanceFromStart;
+    RouteLine* candidateRouteLine;
+    
+    distanceFromStart = DISTANCE_FROM_START_POINT_THRESHOLD;
+    
+    for(i=0; i<routeLineCount; i++)
+    {
+        
+        RouteLine *rl = [self.routeLines objectAtIndex:i];
+        [self calculateDistanceFromLocation:location
+                              fromRouteLine:rl
+                                 angleStart:&angleStart
+                                   angleEnd:&angleEnd
+                                   distance:&tmpDistance
+                          distanceFromStart:&tmpStartDistance];
+
+        /* find acute triangle */
+        if(angleStart <= 90 && angleEnd <= 90)
+        {
+            return rl;
+        }
+
+        /* check the distance from start point
+         * choose the route line whose start point is cloeset to the car location
+         */
+        if(tmpStartDistance < distanceFromStart)
+        {
+            distanceFromStart   = tmpStartDistance;
+            candidateRouteLine  = rl;
+        }
+    }
+    
+    return nil;
+    
+}
 
 -(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine
 {
@@ -488,17 +533,16 @@
     NSDate* endTime;
     NSTimeInterval duration;
     
-    
-    
-    RouteLine* matchedRouteLine = nil;
+    RouteLine* matchedRouteLine             = nil;
     RouteLine* matchedRouteLineWithEndPoint = nil;
-    double distance = 99999;
-    double distanceFromEndPoint = 99999;
-    double tmpDistance = 0.0;
-    double tmpStartDistance = 0.0;
-    double angleStart = 0.0;
-    double angleEnd = 0.0;
-    double minDistanceRequired = 20; // 10m
+//    RouteLine* carCurrentRouteLine          = nil;
+    double distance                         = DISTANCE_FROM_ROUTE_LINE_THRESHOLD;
+    double distanceFromStartPoint           = DISTANCE_FROM_START_POINT_THRESHOLD;
+    double tmpDistance                      = 0.0;
+    double tmpStartDistance                 = 0.0;
+    double angleStart                       = 0.0;
+    double angleEnd                         = 0.0;
+    double minDistanceRequired              = 20; // 10m
 
     startTime = [NSDate date];
     NSString *matchFlag;
@@ -522,8 +566,9 @@
             matchFlag = @"";
             if(angleStart <= 90 && angleEnd <= 90)
             {
-                matchFlag = @"A";
+                matchFlag = @"acute";
             }
+            
             if((tmpDistance <= distance &&  ((angleStart <= 90) && angleEnd <= 90)))
             {
                 
@@ -531,14 +576,15 @@
                 distance = tmpDistance;
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"*"];
             }
-            if(tmpStartDistance < distanceFromEndPoint)
+            
+            if(tmpStartDistance < distanceFromStartPoint)
             {
                 matchedRouteLineWithEndPoint = rl;
-                distanceFromEndPoint = tmpStartDistance;
+                distanceFromStartPoint = tmpStartDistance;
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
-/*
-            mlogDebug(@"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
+
+            mlogDebug(@"rlno:%3d ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
                       rl.no,
                       angleStart + angleEnd,
                       angleStart,
@@ -547,7 +593,7 @@
                       tmpStartDistance,
                       matchFlag
                       );
- */           
+
             searchCount++;
         }
         
@@ -566,7 +612,7 @@
             matchFlag = @"";   
             if(angleStart <= 90 && angleEnd <= 90)
             {
-                matchFlag = @"A";
+                matchFlag = @"acute";
             }
             if((tmpDistance <= distance &&  ((angleStart <= 90) && angleEnd <= 90)))
             {
@@ -575,22 +621,22 @@
                 distance = tmpDistance;
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"*"];
             }
-            if(tmpStartDistance < distanceFromEndPoint)
+            if(tmpStartDistance < distanceFromStartPoint)
             {
                 matchedRouteLineWithEndPoint = rl;
-                distanceFromEndPoint = tmpStartDistance;
+                distanceFromStartPoint = tmpStartDistance;
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
             
-//            mlogDebug(@"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
-//                      rl.no,
-//                      angleStart + angleEnd,
-//                      angleStart,
-//                      angleEnd,
-//                      tmpDistance,
-//                      tmpStartDistance,
-//                      matchFlag
-//                      );
+            mlogDebug(@"rlno:%3d ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
+                      rl.no,
+                      angleStart + angleEnd,
+                      angleStart,
+                      angleEnd,
+                      tmpDistance,
+                      tmpStartDistance,
+                      matchFlag
+                      );
             
             searchCount++;
         }
@@ -626,7 +672,7 @@
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
             
-            mlogDebug(ROUTE, @"RouteLineNo:%3d, angle: %8.4f, angleS: %8.4f, angleE: %8.4f, distance: %11.7f Ed: %11.7f %@",
+            mlogDebug(@"rlno:%3d ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
                       rl.routeLineNo,
                       angleStart + angleEnd,
                       angleStart,
@@ -658,12 +704,12 @@
     duration = [endTime timeIntervalSinceDate:startTime];
 
     
-//    mlogDebug(@"Matched: %d(%.7f), RouteLine %d searched, in %f seconds",
-//             matchedRouteLine != nil ? matchedRouteLine.no : -1,
-//             distance,
-//             searchCount,
-//             duration
-//             );
+    mlogDebug(@"Matched: %d(%.1f), RouteLine %d searched, in %f seconds",
+             matchedRouteLine != nil ? matchedRouteLine.no : -1,
+             distance,
+             searchCount,
+             duration
+             );
 
     return matchedRouteLine;
         
@@ -763,7 +809,7 @@
             endAngleCumulativeDistance      += r.distance;
             cumulativeDistance  += [GeoUtil getGeoDistanceFromLocation:location ToLocation:r.endLocation];
             isStartAngleUndfined = FALSE;
-            mlogDebug(@"Start Angle: %.2f at r:%d, cdistance: %.2f", startAngle, r.no, cumulativeDistance);
+//            mlogDebug(@"Start Angle: %.2f at r:%d, cdistance: %.2f", startAngle, r.no, cumulativeDistance);
             break;
         }
 
@@ -779,23 +825,23 @@
         {
             startAngle                      = r.angle;
             startAngleCumulativeDistance    += r.distance;
-            mlogDebug(@"Start Angle: %.2f at r:%d, cdistance: %.2f", startAngle, r.no, cumulativeDistance);
+//            mlogDebug(@"Start Angle: %.2f at r:%d, cdistance: %.2f", startAngle, r.no, cumulativeDistance);
             isStartAngleUndfined = FALSE;
         }
         endAngle                    = r.angle;
         endAngleCumulativeDistance  += r.distance;
         
         cumulativeDistance          += r.no == routeLineNo ? distanceToNextRouteLine : r.distance;
-        mlogDebug(@"End Angle: %.2f at r:%d, cdistance: %.2f", endAngle, r.no, cumulativeDistance);
+//        mlogDebug(@"End Angle: %.2f at r:%d, cdistance: %.2f", endAngle, r.no, cumulativeDistance);
     }
     
     turnAngle =[GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle];
     
-    mlogDebug(@"StartAngle: %.0f, EndAngle: %.0f, turnAngle: %.0f, cdistance: %.2f",
-              TO_ANGLE(startAngle),
-              TO_ANGLE(endAngle),
-              TO_ANGLE(turnAngle),
-              cumulativeDistance);
+//    mlogDebug(@"StartAngle: %.0f, EndAngle: %.0f, turnAngle: %.0f, cdistance: %.2f",
+//              TO_ANGLE(startAngle),
+//              TO_ANGLE(endAngle),
+//              TO_ANGLE(turnAngle),
+//              cumulativeDistance);
     
     return turnAngle;
     

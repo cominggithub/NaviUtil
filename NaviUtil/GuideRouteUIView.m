@@ -539,6 +539,7 @@
         {
             nextRouteLine = [drawedRouteLines objectAtIndex:i+1];
         }
+        
         startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpCurrentRouteLine.startLocation]];
         endPoint    = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpCurrentRouteLine.endLocation]];
         
@@ -552,17 +553,16 @@
         routeLineLabelRect.size.width = 180;
         routeLineLabelRect.size.height = 20;
         
-        if (self.isDebugRouteLineAngle)
-        {
-            routeLineLabel = [NSString stringWithFormat:@"%d %.0f, %.0f",
+
+        routeLineLabel = [NSString stringWithFormat:@"%d %.0f, %.0f",
                           tmpCurrentRouteLine.no,
                           nextRouteLine == nil ? 0 :TO_ANGLE(tmpCurrentRouteLine.angle),
                           nextRouteLine == nil ? 0 :TO_ANGLE([tmpCurrentRouteLine getTurnAngle:nextRouteLine])
                         ];
 
         
-            [routeLineLabel drawInRect:routeLineLabelRect withFont:[UIFont boldSystemFontOfSize:14.0]];
-        }
+        [routeLineLabel drawInRect:routeLineLabelRect withFont:[UIFont boldSystemFontOfSize:14.0]];
+
     }
 }
 -(void) drawCarFootPrint:(CGContextRef) context
@@ -1288,75 +1288,11 @@
     }
     else if (nil == currentRouteLine)
     {
+        logfn();
         state = state_location_lost;
     }
     
     return state;
-}
-
--(void) setState:(GuideRouteState_t)state
-{
-    _state = state;
-    
-    if (state_lookup == state)
-    {
-        _state = [self lookupState];
-    }
-    
-    if (NO == _isNetwork)
-    {
-        _state = state_no_network;
-    }
-    else if (NO == _isGps)
-    {
-        _state = state_no_gps;
-    }
-    
-    switch (_state)
-    {
-        case state_route_planning:
-            _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Planning"];
-            break;
-        case state_no_gps:
-            _messageBoxLabel.text = [SystemManager getLanguageString:@"No GPS Signal"];
-            break;
-        case state_no_network:
-            _messageBoxLabel.text = [SystemManager getLanguageString:@"No Network"];
-            break;
-        case state_location_lost:
-            _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Re-Planning"];
-            break;
-        default:
-            _messageBoxLabel.text = [SystemManager getLanguageString:@""];
-            break;
-            
-    }
-    
-}
-
--(NSString*) getStateStr:(GuideRouteState_t) state
-{
-    switch (state)
-    {
-        case state_route_planning:
-            return @"state_route_planning";
-        case state_no_gps:
-            return @"state_no_gps";
-        case state_no_network:
-            return @"state_no_network";
-        case state_location_lost:
-            return @"state_location_lost";
-        case state_lookup:
-            return @"state_location_lost";
-        case state_navigateion:
-            return @"state_navigateion";
-        case state_reroute_planning:
-            return @"state_reroute_planning";
-        case state_unknown:
-            return @"state_unknown";
-    }
-    
-    return @"state_???";
 }
 
 #pragma mark - Location Update
@@ -1370,7 +1306,7 @@
 
 -(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
 {
-    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+//    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     PointD nextCarPoint;
     currentCarLocation = newCarLocation;
     nextCarPoint.x = newCarLocation.longitude;
@@ -1380,6 +1316,7 @@
     [self updateTranslationConstant];
 
     currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
+    
     if(currentRouteLine != nil)
     {
         routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
@@ -1387,6 +1324,8 @@
         targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
         _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
         _outOfRouteLineCount = 0;
+        
+        logfn();
         self.state = state_lookup;
     }
     else
@@ -1395,6 +1334,7 @@
         _outOfRouteLineCount++;
         if (_outOfRouteLineCount < _maxOutOfRouteLineCount)
         {
+            logfn();
             self.state = state_lookup;
         }
         else
@@ -1572,11 +1512,11 @@
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
     currentStep++;
-    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+//    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
     [self updateCarLocation:location];
     [self setNeedsDisplay];
-    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
+//    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
     
     _debugMsgLabel.text = [NSString stringWithFormat:@"%.8f, %.8f, %.1f, %.1f",
                                location.latitude,
@@ -1678,10 +1618,15 @@
     _isNetwork = isNetwork;
 
     if (NO == _isNetwork)
+    {
     
         self.state = state_no_network;
+    }
     else
+    {
+        logfn();
         self.state = state_lookup;
+    }
     
     [self setNeedsDisplay];
 }
@@ -1737,6 +1682,46 @@
     //    [self setNeedsDisplay];
 }
 
+-(void) setState:(GuideRouteState_t)state
+{
+    _state = state;
+    
+    if (state_lookup == state)
+    {
+        logfn();
+        _state = [self lookupState];
+    }
+    
+    if (NO == _isNetwork)
+    {
+        _state = state_no_network;
+    }
+    else if (NO == _isGps)
+    {
+        _state = state_no_gps;
+    }
+    
+    switch (_state)
+    {
+        case state_route_planning:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Planning"];
+            break;
+        case state_no_gps:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"No GPS Signal"];
+            break;
+        case state_no_network:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"No Network"];
+            break;
+        case state_location_lost:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Re-Planning"];
+            break;
+        default:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@""];
+            break;
+            
+    }
+    
+}
 
 #pragma mark - SystemManage Monitor
 -(void) networkStatusChangeWifi:(float) wifiStatus threeG:(float) threeGStatus

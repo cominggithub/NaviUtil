@@ -39,7 +39,7 @@
 {
     float length12, length13, length23;
     double angle = 0;
-    float cosValue = 0;
+    double cosValue = 0;
     length12 = [self getLength:p1 ToPoint:p2];
     length13 = [self getLength:p1 ToPoint:p3];
     length23 = [self getLength:p2 ToPoint:p3];
@@ -48,7 +48,23 @@
     if( length12*length23 != 0)
     {
         cosValue = (pow(length12, 2) + pow(length23, 2) - pow(length13, 2))/(2*length12*length23);
+
+        // fix precision problem of double data type
+        if (cosValue > 1.0 )
+        {
+            cosValue = 1.0;
+        }
+        else if (cosValue < -1.0)
+        {
+            cosValue = -1.0;
+        }
+        
         angle = acos(cosValue);
+        if (isnan(angle))
+        {
+            logfns("GGGGGGGGGGGGGG");
+            angle = 0;
+        }
     }
     else
     {

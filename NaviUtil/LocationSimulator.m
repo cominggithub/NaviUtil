@@ -47,7 +47,7 @@
         _locationCoordinate2DChangeStep = 0.00005;
         speedCnt                        = 0;
         courseCnt                       = 0;
-        _vibrant                        = TRUE;
+        _vibrant                        = FALSE;
         curRouteLineNo                  = -1;
         advanceDistance                 = 5;
 
@@ -218,7 +218,7 @@
             /* if required distance cannot be satisfied, move to next route line */
             if (tmpDistance < requiredDistance)
             {
-                if (curRouteLineNo < route.routeLines.count)
+                if (curRouteLineNo < route.routeLines.count-1)
                 {
                     curRouteLineNo++;
                     curRouteLine  = [route.routeLines objectAtIndex:curRouteLineNo];
