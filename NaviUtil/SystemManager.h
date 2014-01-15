@@ -56,6 +56,8 @@ typedef enum
 +(float) getBatteryLife;
 +(float) getGpsStatus;
 +(float) getNetworkStatus;
++(BOOL) hostReachable:(NSString*) host;
+
 
 @end
 

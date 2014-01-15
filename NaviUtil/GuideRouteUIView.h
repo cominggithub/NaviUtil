@@ -19,18 +19,33 @@
 
 
 
+typedef enum
+{
+    GR_EVENT_GPS_NO_SIGNAL,
+    GR_EVENT_NETWORK_NO_SIGNAL,
+    GR_EVENT_LOCATION_LOST,
+    GR_EVENT_GPS_READY,
+    GR_EVENT_NETWORK_READY,
+    GR_EVENT_ALL_READY,
+    GR_EVENT_ROUTE_DESTINATION_ERROR,
+    GR_EVENT_VIEW_DISAPPEAR,
+    GR_EVENT_ARRIVAL
+}GR_EVENT;
 
 typedef enum
 {
-    state_route_planning,
-    state_reroute_planning,
-    state_location_lost,
-    state_no_gps,
-    state_no_network,
-    state_navigateion,
-    state_lookup,
-    state_unknown
-}GuideRouteState_t;
+    GR_STATE_ROUTE_PLANNING,
+    GR_STATE_ROUTE_REPLANNING,
+    GR_STATE_ROUTE_DESTINATION_ERROR,
+    GR_STATE_NAVIGATION,
+    GR_STATE_GPS_NO_SIGNAL,
+    GR_STATE_NETWORK_NO_SIGNAL,
+    GR_STATE_LOOKUP,
+    GR_STATE_ARRIVAL,
+    GR_STATE_INIT
+    
+}GR_STATE;
+
 
 @interface GuideRouteUIView : UIView<LocationManagerDelegate, DownloadRequestDelegate, SystemManagerDelegate>
 {
@@ -90,7 +105,6 @@ typedef enum
     
 }
 @property (nonatomic) bool isAutoSimulatorLocationUpdateStarted;
-
 @property (nonatomic) bool isDebugDraw;
 @property (nonatomic) bool isDebugNormalLine;
 @property (nonatomic) bool isDebugRouteLineAngle;
@@ -105,9 +119,9 @@ typedef enum
 @property (nonatomic) BOOL isSpeedUnitMph;
 
 @property (nonatomic) NSString* messageBoxText;
-@property (nonatomic) GuideRouteState_t state;
 @property (nonatomic) BOOL isNetwork;
 @property (nonatomic) BOOL isGps;
+@property (nonatomic) GR_STATE state;
 
 
 -(void) autoSimulatorLocationUpdateStart;

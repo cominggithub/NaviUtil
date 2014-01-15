@@ -459,6 +459,19 @@ static float _networkStatus;
 
 }
 
++(BOOL) hostReachable:(NSString *)host
+{
+    bool success = false;
+    const char *host_name = [host cStringUsingEncoding:NSASCIIStringEncoding];
+    
+    SCNetworkReachabilityRef reachability = SCNetworkReachabilityCreateWithName(NULL, host_name);
+    SCNetworkReachabilityFlags flags;
+    success = SCNetworkReachabilityGetFlags(reachability, &flags);
+    bool isAvailable = success && (flags & kSCNetworkFlagsReachable) && !(flags & kSCNetworkFlagsConnectionRequired);
+    
+    return isAvailable;
+}
+
 +(void) dinit
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];

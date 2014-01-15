@@ -22,6 +22,7 @@
 
 #define radians(degrees) (degrees * M_PI/180)
 
+
 @implementation GuideRouteUIView
 {
     Route* route;
@@ -47,11 +48,9 @@
     NSString *_lastPlayedSpeech;
     int _maxOutOfRouteLineCount;
     int _outOfRouteLineCount;
-    
 }
 
 #pragma mark - Main
-
 
 -(id) init
 {
@@ -121,7 +120,6 @@
     
     [SystemManager addDelegate:self];
     self.color      = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
-    self.state      = state_route_planning;
     
 
 }
@@ -217,7 +215,7 @@
     [self drawRoute:context Rectangle:rect];
     
     /* draw turn message */
-    if (state_navigateion == _state)
+    if (GR_STATE_NAVIGATION == self.state)
     {
         [self drawTurnMessage:context];
     }
@@ -1060,8 +1058,6 @@
     _isAutoSimulatorLocationUpdateStarted   = FALSE;
     _outOfRouteLineCount                    = 0;
 
-    self.state = state_lookup;
-    
     [self setNeedsDisplay];
 
 }
@@ -1239,13 +1235,11 @@
 
 -(void) planRoute
 {
-    self.state = state_route_planning;
-
     if (nil != routeStartPlace && nil != routeEndPlace)
     {
         if (YES == [routeStartPlace isNullPlace])
         {
-            self.state = state_no_gps;
+            [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
         }
         else if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
         {
@@ -1258,42 +1252,16 @@
         else
         {
             _messageBoxLabel.text = @"route start place and end place are the same";
-            self.state = state_unknown;
+//            self.state = state_unknown;
         }
     }
     else
     {
         _messageBoxLabel.text = @"start place or end place error";
-        self.state = state_unknown;
+//        self.state = state_unknown;
     }
 }
 
--(GuideRouteState_t) lookupState
-{
-    GuideRouteState_t state;
-    
-    state = state_navigateion;
-    
-    if (NO == self.isGps )
-    {
-        state = state_no_gps;
-    }
-    else if (NO == self.isNetwork)
-    {
-        state = state_no_network;
-    }
-    else if (nil == route || ( nil != routeDownloadRequest && routeDownloadRequest.status != kDownloadStatus_Finished))
-    {
-        state = state_route_planning;
-    }
-    else if (nil == currentRouteLine)
-    {
-        logfn();
-        state = state_location_lost;
-    }
-    
-    return state;
-}
 
 #pragma mark - Location Update
 -(void) updateTranslationConstant
@@ -1325,8 +1293,7 @@
         _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
         _outOfRouteLineCount = 0;
         
-        logfn();
-        self.state = state_lookup;
+        [self sendEvent:GR_EVENT_GPS_READY];
     }
     else
     {
@@ -1334,8 +1301,7 @@
         _outOfRouteLineCount++;
         if (_outOfRouteLineCount < _maxOutOfRouteLineCount)
         {
-            logfn();
-            self.state = state_lookup;
+            [self sendEvent:GR_EVENT_GPS_READY];
         }
         else
         {
@@ -1524,27 +1490,19 @@
                                speed,
                                heading
                                ];
-    
-    
 }
 
 
-
 #pragma mark - UI Control
-
-
-
 -(void) addUIComponents
 {
 
-    _clockView                  = [[ClockView alloc] initWithFrame:CGRectMake(8, 60, 120, 50)];
-    _clockView.backgroundColor  = [UIColor clearColor];
-    _clockView.opaque           = TRUE;
-    _systemStatusView           = [[SystemStatusView alloc] initWithFrame:CGRectMake(0, 0, 180, 50)];
-    
-    _systemStatusView.opaque    = FALSE;
-    
-    
+    _clockView                      = [[ClockView alloc] initWithFrame:CGRectMake(8, 60, 120, 50)];
+    _clockView.backgroundColor      = [UIColor clearColor];
+    _clockView.opaque               = TRUE;
+    _systemStatusView               = [[SystemStatusView alloc] initWithFrame:CGRectMake(0, 0, 180, 50)];
+    _systemStatusView.opaque        = FALSE;
+
     _turnArrowImage                 = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"turn_right45.png"]];
     _turnArrowFrame                 = CGRectMake(40, 170, 128, 128);
     _turnArrowImage.frame           = _turnArrowFrame;
@@ -1589,7 +1547,6 @@
     [LocationManager addDelegate:self];
 
     _debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_IS_DEBUG];
-    self.state      = state_route_planning;
     self.isNetwork  = [SystemManager getNetworkStatus] > 0;
     self.isGps      = [SystemManager getGpsStatus] > 0;
     
@@ -1620,12 +1577,7 @@
     if (NO == _isNetwork)
     {
     
-        self.state = state_no_network;
-    }
-    else
-    {
-        logfn();
-        self.state = state_lookup;
+        [self sendEvent:GR_EVENT_NETWORK_NO_SIGNAL];
     }
     
     [self setNeedsDisplay];
@@ -1635,11 +1587,8 @@
 {
 
     _isGps = isGps;
-    if (NO == _isGps)
-        self.state = state_no_gps;
-    else
-        self.state = state_lookup;
-    [self setNeedsDisplay];    
+    [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+    [self setNeedsDisplay];
 }
 
 -(void) setIsSpeedUnitMph:(BOOL)isSpeedUnitMph
@@ -1682,48 +1631,8 @@
     //    [self setNeedsDisplay];
 }
 
--(void) setState:(GuideRouteState_t)state
-{
-    _state = state;
-    
-    if (state_lookup == state)
-    {
-        logfn();
-        _state = [self lookupState];
-    }
-    
-    if (NO == _isNetwork)
-    {
-        _state = state_no_network;
-    }
-    else if (NO == _isGps)
-    {
-        _state = state_no_gps;
-    }
-    
-    switch (_state)
-    {
-        case state_route_planning:
-            _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Planning"];
-            break;
-        case state_no_gps:
-            _messageBoxLabel.text = [SystemManager getLanguageString:@"No GPS Signal"];
-            break;
-        case state_no_network:
-            _messageBoxLabel.text = [SystemManager getLanguageString:@"No Network"];
-            break;
-        case state_location_lost:
-            _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Re-Planning"];
-            break;
-        default:
-            _messageBoxLabel.text = [SystemManager getLanguageString:@""];
-            break;
-            
-    }
-    
-}
 
-#pragma mark - SystemManage Monitor
+#pragma mark -- SystemManage Monitor
 -(void) networkStatusChangeWifi:(float) wifiStatus threeG:(float) threeGStatus
 {
     self.isNetwork = (wifiStatus + threeGStatus > 0) ? YES:NO;
@@ -1735,6 +1644,84 @@
 }
 
 
+#pragma mark -- event State management
 
+-(BOOL) checkGPS
+{
+
+    return TRUE;
+}
+
+-(BOOL) checkNetwork
+{
+    return TRUE;
+}
+
+-(BOOL) checkRouteDestination
+{
+    
+    return TRUE;
+}
+
+
+-(void) lookupState
+{
+    if (NO == self.checkGPS)
+    {
+        [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+    }
+    else if (NO == self.checkNetwork)
+    {
+        [self sendEvent:GR_EVENT_NETWORK_NO_SIGNAL];
+    }
+    else if (NO == self.checkRouteDestination)
+    {
+        [self sendEvent:GR_EVENT_LOCATION_LOST];
+    }
+    else
+    {
+        [self sendEvent:GR_EVENT_ALL_READY];
+    }
+}
+
+
+-(void) sendEvent:(GR_EVENT) event
+{
+    switch (event)
+    {
+        case GR_EVENT_GPS_NO_SIGNAL:
+            self.state = GR_STATE_GPS_NO_SIGNAL;
+            break;
+        case GR_EVENT_NETWORK_NO_SIGNAL:
+            self.state = GR_STATE_NETWORK_NO_SIGNAL;
+            break;
+        case GR_EVENT_ROUTE_DESTINATION_ERROR:
+            self.state = GR_STATE_ROUTE_DESTINATION_ERROR;
+            break;
+        case GR_EVENT_ARRIVAL:
+            self.state = GR_STATE_ARRIVAL;
+            break;
+        case GR_EVENT_GPS_READY:
+        case GR_EVENT_NETWORK_READY:
+        case GR_EVENT_LOCATION_LOST:
+        case GR_EVENT_VIEW_DISAPPEAR:
+            self.state = GR_STATE_LOOKUP;
+            break;
+        case GR_EVENT_ALL_READY:
+            self.state = GR_STATE_INIT == self.state ? GR_STATE_ROUTE_PLANNING:GR_STATE_ROUTE_REPLANNING;
+            break;
+    }
+}
+
+-(void) setState:(GR_STATE)state
+{
+    switch (state)
+    {
+        case GR_STATE_INIT:
+            _messageBoxLabel.text = @"";
+            break;
+            
+    }
+}
 
 @end

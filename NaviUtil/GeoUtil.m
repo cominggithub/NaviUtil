@@ -62,7 +62,6 @@
         angle = acos(cosValue);
         if (isnan(angle))
         {
-            logfns("GGGGGGGGGGGGGG");
             angle = 0;
         }
     }
