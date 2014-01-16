@@ -1191,23 +1191,25 @@
     return;
 }
 
--(void) startRouteNavigationFrom:(Place*) s To:(Place*) e
+-(BOOL) startRouteNavigationFrom:(Place*) s To:(Place*) e
 {
     mlogInfo(@"Start: %@, To: %@", s, e);
-    GoogleJsonStatus status;
+//    GoogleJsonStatus status;
     if (nil == s || nil == e)
     {
         mlogError(@"No start or end place");
-        return;
+        return FALSE;
     }
     
     routeStartPlace = s;
     routeEndPlace   = e;
-
+    return TRUE;
+#if 0
     routeDownloadRequest = [NaviQueryManager getRouteDownloadRequestFrom:routeStartPlace.coordinate To:routeEndPlace.coordinate];
     mlogDebug(@"route download request file: %@", routeDownloadRequest.filePath);
     status = [GoogleJson getStatus:routeDownloadRequest.filePath];
-    
+
+
     if (kGoogleJsonStatus_Ok == status)
     {
         route                   = [Route parseJson:routeDownloadRequest.filePath];
@@ -1222,7 +1224,7 @@
     {
         [self planRoute];
     }
-    
+#endif
 }
 
 -(void) replanRoute
@@ -1251,14 +1253,12 @@
         }
         else
         {
-            _messageBoxLabel.text = @"route start place and end place are the same";
-//            self.state = state_unknown;
+            [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
         }
     }
     else
     {
-        _messageBoxLabel.text = @"start place or end place error";
-//        self.state = state_unknown;
+        [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
     }
 }
 
@@ -1301,11 +1301,12 @@
         _outOfRouteLineCount++;
         if (_outOfRouteLineCount < _maxOutOfRouteLineCount)
         {
+            _outOfRouteLineCount = 0;
             [self sendEvent:GR_EVENT_GPS_READY];
         }
         else
         {
-            [self replanRoute];
+            [self sendEvent:GR_EVENT_LOCATION_LOST];
         }
     }
     
@@ -1552,7 +1553,9 @@
     
 //    self.isDebugRouteLineAngle  = TRUE;
 //    self.isDebugNormalLine      = TRUE;
-    
+
+    self.state = GR_STATE_INIT;
+    [self sendEvent:GR_EVENT_ACTIVE];
 }
 
 -(void) inactive
@@ -1561,7 +1564,9 @@
     [_systemStatusView inactive];
     [_clockView inactive];
     [_speedView inactive];
+    [self sendEvent:GR_EVENT_INACTIVE];
 }
+
 
 -(void) update
 {
@@ -1685,8 +1690,65 @@
 }
 
 
+-(NSString*) GR_EventStr:(GR_EVENT) event
+{
+    
+    switch (event)
+    {
+        case GR_EVENT_GPS_NO_SIGNAL:
+            return @"GR_EVENT_GPS_NO_SIGNAL";
+        case GR_EVENT_NETWORK_NO_SIGNAL:
+            return @"GR_EVENT_NETWORK_NO_SIGNAL";
+        case GR_EVENT_ROUTE_DESTINATION_ERROR:
+            return @"GR_EVENT_ROUTE_DESTINATION_ERROR";
+        case GR_EVENT_ARRIVAL:
+            return @"GR_EVENT_ARRIVAL";
+        case GR_EVENT_GPS_READY:
+            return @"GR_EVENT_GPS_READY";
+        case GR_EVENT_NETWORK_READY:
+            return @"GR_EVENT_NETWORK_READY";
+        case GR_EVENT_LOCATION_LOST:
+            return @"GR_EVENT_LOCATION_LOST";
+        case GR_EVENT_ACTIVE:
+            return @"GR_EVENT_ACTIVE";
+        case GR_EVENT_INACTIVE:
+            return @"GR_EVENT_INACTIVE";
+        case GR_EVENT_ALL_READY:
+            return @"GR_EVENT_ALL_READY";
+    }
+    
+}
+
+-(NSString*) GR_StateStr:(GR_STATE)state
+{
+    switch (state)
+    {
+        case GR_STATE_INIT:
+            return @"GR_STATE_INIT";
+        case GR_STATE_NAVIGATION:
+            return @"GR_STATE_NAVIGATION";
+        case GR_STATE_ROUTE_PLANNING:
+            return @"GR_STATE_ROUTE_PLANNING";
+        case GR_STATE_ROUTE_REPLANNING:
+            return @"GR_STATE_ROUTE_REPLANNING";
+        case GR_STATE_GPS_NO_SIGNAL:
+            return @"GR_STATE_GPS_NO_SIGNAL";
+        case GR_STATE_NETWORK_NO_SIGNAL:
+            return @"GR_STATE_NETWORK_NO_SIGNAL";
+        case GR_STATE_ARRIVAL:
+            return @"GR_STATE_ARRIVAL";
+        case GR_STATE_ROUTE_DESTINATION_ERROR:
+            return @"GR_STATE_ROUTE_DESTINATION_ERROR";
+        case GR_STATE_LOOKUP:
+            return @"GR_STATE_LOOKUP";
+    }
+
+}
+
+
 -(void) sendEvent:(GR_EVENT) event
 {
+    mlogDebug(@"%@", [self GR_EventStr:event]);
     switch (event)
     {
         case GR_EVENT_GPS_NO_SIGNAL:
@@ -1701,10 +1763,18 @@
         case GR_EVENT_ARRIVAL:
             self.state = GR_STATE_ARRIVAL;
             break;
+
         case GR_EVENT_GPS_READY:
+            if (self.state == GR_STATE_GPS_NO_SIGNAL)
+                self.state = GR_STATE_LOOKUP;
+            break;
         case GR_EVENT_NETWORK_READY:
+            if (self.state == GR_STATE_NETWORK_NO_SIGNAL)
+                self.state = GR_STATE_LOOKUP;
+            break;
         case GR_EVENT_LOCATION_LOST:
-        case GR_EVENT_VIEW_DISAPPEAR:
+        case GR_EVENT_ACTIVE:
+        case GR_EVENT_INACTIVE:
             self.state = GR_STATE_LOOKUP;
             break;
         case GR_EVENT_ALL_READY:
@@ -1715,13 +1785,43 @@
 
 -(void) setState:(GR_STATE)state
 {
-    switch (state)
+    mlogDebug(@"state change %@ -> %@",[self GR_StateStr:_state], [self GR_StateStr:state]);
+    _state = state;
+    
+    switch (_state)
     {
+            
         case GR_STATE_INIT:
+        case GR_STATE_NAVIGATION:
             _messageBoxLabel.text = @"";
             break;
-            
+        case GR_STATE_ROUTE_PLANNING:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Planning"];
+            [self planRoute];
+            break;
+        case GR_STATE_ROUTE_REPLANNING:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"Route Re-Planning"];
+            [self replanRoute];
+            break;
+        case GR_STATE_GPS_NO_SIGNAL:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"No GPS Signal"];
+            break;
+        case GR_STATE_NETWORK_NO_SIGNAL:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"No Network"];
+            break;
+        case GR_STATE_ARRIVAL:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"Arrive Desitnation"];
+            break;
+        case GR_STATE_ROUTE_DESTINATION_ERROR:
+            _messageBoxLabel.text = [SystemManager getLanguageString:@"Destination Error"];
+            break;
+        case GR_STATE_LOOKUP:
+            _messageBoxLabel.text = @"";
+            [self lookupState];
+            break;
     }
+    
+
 }
 
 @end

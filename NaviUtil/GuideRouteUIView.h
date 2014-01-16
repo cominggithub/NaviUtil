@@ -28,7 +28,8 @@ typedef enum
     GR_EVENT_NETWORK_READY,
     GR_EVENT_ALL_READY,
     GR_EVENT_ROUTE_DESTINATION_ERROR,
-    GR_EVENT_VIEW_DISAPPEAR,
+    GR_EVENT_ACTIVE,
+    GR_EVENT_INACTIVE,
     GR_EVENT_ARRIVAL
 }GR_EVENT;
 
@@ -130,7 +131,7 @@ typedef enum
 -(void) generateRoutePoints;
 -(UIImage*) getCarImage;
 -(PointD) getDrawPoint:(PointD) location;
--(void) startRouteNavigationFrom:(Place*) s To:(Place*) e;
+-(BOOL) startRouteNavigationFrom:(Place*) s To:(Place*) e;
 -(void) triggerLocationUpdate;
 -(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
 /* LocationManager delegate */
