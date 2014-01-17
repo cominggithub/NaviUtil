@@ -21,7 +21,7 @@
 #include "Log.h"
 
 #define radians(degrees) (degrees * M_PI/180)
-
+#define ARRIVAL_REGION 5
 
 @implementation GuideRouteUIView
 {
@@ -48,6 +48,7 @@
     NSString *_lastPlayedSpeech;
     int _maxOutOfRouteLineCount;
     int _outOfRouteLineCount;
+    CLLocationCoordinate2D endRouteLineEndPoint;
 }
 
 #pragma mark - Main
@@ -115,11 +116,14 @@
 //    _carCenterPoint.y        = (_routeComponentRect.size.height/4)*3;
     _carCenterPoint.y        = 250;
     
+    
     _maxOutOfRouteLineCount  = [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
     [self addUIComponents];
     
     [SystemManager addDelegate:self];
     self.color      = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
+    
+    endRouteLineEndPoint = CLLocationCoordinate2DMake(0, 0);
     
 
 }
@@ -1184,6 +1188,9 @@
         route = [Route parseJson:routeDownloadRequest.filePath];
         if (nil != route)
         {
+            RouteLine* rl = [route.routeLines lastObject];
+            endRouteLineEndPoint = CLLocationCoordinate2DMake(rl.endLocation.latitude, rl.endLocation.longitude);
+            [self sendEvent:GR_EVENT_START_NAVIGATION];
             [self initNewRouteNavigation];
         }
     }
@@ -1193,6 +1200,7 @@
 
 -(BOOL) startRouteNavigationFrom:(Place*) s To:(Place*) e
 {
+    logfn();
     mlogInfo(@"Start: %@, To: %@", s, e);
 //    GoogleJsonStatus status;
     if (nil == s || nil == e)
@@ -1203,6 +1211,9 @@
     
     routeStartPlace = s;
     routeEndPlace   = e;
+    
+    logO(s);
+    logO(e);
     return TRUE;
 #if 0
     routeDownloadRequest = [NaviQueryManager getRouteDownloadRequestFrom:routeStartPlace.coordinate To:routeEndPlace.coordinate];
@@ -1237,10 +1248,14 @@
 
 -(void) planRoute
 {
+    logfn();
+    logO(routeStartPlace);
+    logO(routeEndPlace);
     if (nil != routeStartPlace && nil != routeEndPlace)
     {
         if (YES == [routeStartPlace isNullPlace])
         {
+            logfn();
             [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
         }
         else if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
@@ -1253,11 +1268,13 @@
         }
         else
         {
+            logfn();
             [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
         }
     }
     else
     {
+        logfn();
         [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
     }
 }
@@ -1274,7 +1291,7 @@
 
 -(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
 {
-//    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     PointD nextCarPoint;
     currentCarLocation = newCarLocation;
     nextCarPoint.x = newCarLocation.longitude;
@@ -1293,7 +1310,16 @@
         _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
         _outOfRouteLineCount = 0;
         
-        [self sendEvent:GR_EVENT_GPS_READY];
+        if ([GeoUtil getGeoDistanceFromLocation:currentCarLocation ToLocation:endRouteLineEndPoint] < ARRIVAL_REGION)
+        {
+            [self sendEvent:GR_EVENT_ARRIVAL];
+        }
+        else
+        {
+            [self sendEvent:GR_EVENT_GPS_READY];
+        }
+        
+        
     }
     else
     {
@@ -1303,18 +1329,15 @@
         {
             _outOfRouteLineCount = 0;
             [self sendEvent:GR_EVENT_GPS_READY];
+
         }
         else
         {
+            logI(_outOfRouteLineCount);
+            logfns("WWWWWWWWWWWW");
             [self sendEvent:GR_EVENT_LOCATION_LOST];
         }
     }
-    
-    
-
-    
-    
-    
 }
 
 #pragma location update
@@ -1479,7 +1502,7 @@
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
     currentStep++;
-//    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
     [self updateCarLocation:location];
     [self setNeedsDisplay];
@@ -1540,6 +1563,7 @@
 
 -(void) active
 {
+    logfns("AAAAAAAAAAAAAActive\n");
     _lastPlayedSpeech         = nil;
     [_systemStatusView active];
     [_clockView active];
@@ -1592,7 +1616,8 @@
 {
 
     _isGps = isGps;
-    [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+    if (NO == _isGps)
+        [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
     [self setNeedsDisplay];
 }
 
@@ -1715,6 +1740,8 @@
             return @"GR_EVENT_INACTIVE";
         case GR_EVENT_ALL_READY:
             return @"GR_EVENT_ALL_READY";
+        case GR_EVENT_START_NAVIGATION:
+            return @"GR_EVENT_START_NAVIGATION";
     }
     
 }
@@ -1774,11 +1801,16 @@
             break;
         case GR_EVENT_LOCATION_LOST:
         case GR_EVENT_ACTIVE:
-        case GR_EVENT_INACTIVE:
             self.state = GR_STATE_LOOKUP;
+            break;
+        case GR_EVENT_INACTIVE:
+            self.state = GR_STATE_INIT;
             break;
         case GR_EVENT_ALL_READY:
             self.state = GR_STATE_INIT == self.state ? GR_STATE_ROUTE_PLANNING:GR_STATE_ROUTE_REPLANNING;
+            break;
+        case GR_EVENT_START_NAVIGATION:
+            self.state = GR_STATE_NAVIGATION;
             break;
     }
 }

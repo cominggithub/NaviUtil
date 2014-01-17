@@ -123,7 +123,7 @@
 
 -(void) addLocationToRouteLinesWithStepNo:(int) stepNo Location:(CLLocationCoordinate2D) location
 {
-//    mlogDebug(@"AddLocationToRouteLinesWithStepNo: %3d, Line: %3d, (%12.7f, %12.7f)", stepNo, routeLineCount, location.latitude, location.longitude);
+    mlogDebug(@"AddLocationToRouteLinesWithStepNo: %3d, Line: %3d, (%12.7f, %12.7f)", stepNo, routeLineCount, location.latitude, location.longitude);
     
     routeLineEndLocation = location;
     
@@ -149,7 +149,7 @@
     }
     else
     {
-//        mlogDebug(@"    Skip");
+        mlogDebug(@"    Skip");
     }
 
     routeLineStartLocation = routeLineEndLocation;
