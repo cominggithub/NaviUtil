@@ -19,8 +19,10 @@
 {
     double _cumulativeDistance;
 }
-@synthesize status=_status;
-@synthesize routeLines=_routeLines;
+
+@synthesize status = _status;
+@synthesize routeLines = _routeLines;
+
 -(id) init
 {
     self = [super init];
@@ -542,7 +544,7 @@
     double tmpStartDistance                 = 0.0;
     double angleStart                       = 0.0;
     double angleEnd                         = 0.0;
-    double minDistanceRequired              = 20; // 10m
+    double minDistanceRequired              = DISTANCE_FROM_ROUTE_LINE_THRESHOLD; // 10m
 
     startTime = [NSDate date];
     NSString *matchFlag;
@@ -552,17 +554,17 @@
     else
         i = lastRouteLine.no;
     
-        /* look forward */
-        for(; i<lastRouteLine.no+radius && i<routeLineCount; i++)
-        {
+    /* look forward */
+    for(; i<lastRouteLine.no+radius && i<routeLineCount; i++)
+    {
 
-            RouteLine *rl = [self.routeLines objectAtIndex:i];
-            [self calculateDistanceFromLocation:location
-                                  fromRouteLine:rl
-                                     angleStart:&angleStart
-                                       angleEnd:&angleEnd
-                                       distance:&tmpDistance
-                              distanceFromStart:&tmpStartDistance];
+        RouteLine *rl = [self.routeLines objectAtIndex:i];
+        [self calculateDistanceFromLocation:location
+                              fromRouteLine:rl
+                                 angleStart:&angleStart
+                                   angleEnd:&angleEnd
+                                   distance:&tmpDistance
+                          distanceFromStart:&tmpStartDistance];
             matchFlag = @"";
             if(angleStart <= 90 && angleEnd <= 90)
             {
@@ -640,58 +642,6 @@
             
             searchCount++;
         }
-#if 0
-    /* worest case */
-    /* if not found, look up all route lines */
-    
-//    if(matchedRouteLine == nil || distance >= minDistanceRequired)
-    {
-        for (RouteLine* rl in self.routeLines)
-        {
-            tmpDistance = [rl getGeoDistanceToLocation:location];
-            angleStart = TO_ANGLE([rl getAngleToStartLocation:location]);
-            angleEnd = TO_ANGLE([rl getAngleToEndLocation:location]);
-            matchFlag = @"";
-            if(angleStart <= 90 && angleEnd <= 90)
-            {
-                matchFlag = @"A";
-            }
-            if((tmpDistance <= distance &&  ((angleStart <= 90) && angleEnd <= 90)))
-            {
-
-                matchedRouteLine = rl;
-                distance = tmpDistance;
-                matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"*"];
-            }
-            tmpStartDistance = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:location];
-
-            if(tmpStartDistance < distanceFromEndPoint)
-            {
-                matchedRouteLineWithEndPoint = rl;
-                distanceFromEndPoint = tmpStartDistance;
-                matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
-            }
-            
-            mlogDebug(@"rlno:%3d ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
-                      rl.routeLineNo,
-                      angleStart + angleEnd,
-                      angleStart,
-                      angleEnd,
-                      tmpDistance,
-                      tmpStartDistance,
-                      matchFlag
-                      );
-            
-            searchCount++;
-            
-            if(searchCount > 20)
-                break;
-
-        }
-    }
-#endif    
-    
-
 
     if(distance >= minDistanceRequired)
     {

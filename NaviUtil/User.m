@@ -630,6 +630,12 @@ static NSMutableArray*  _recentPlaces;
     p.address       = @"宜蘭縣冬山鄉保安二路131巷19號";
     p.coordinate    = CLLocationCoordinate2DMake(24.641790,121.798983);
     [self addHomePlace:p];
+
+    p               = [[Place alloc] init];
+    p.name          = @"高雄家";
+    p.address       = @"高雄市三民區";
+    p.coordinate    = CLLocationCoordinate2DMake(22.644904, 120.305552);
+    [self addHomePlace:p];
     
     p               = [[Place alloc] init];
     p.name          = @"南科智邦";
@@ -642,6 +648,8 @@ static NSMutableArray*  _recentPlaces;
     p.address       = @"台南市東區大學路1號";
     p.coordinate    = CLLocationCoordinate2DMake(22.9967080, 120.2198480);
     [self addFavorPlace:p];
+    
+    
     
     [self addSearchedPlaceText:@"成大"];
     [self addSearchedPlaceText:@"宜蘭高中"];

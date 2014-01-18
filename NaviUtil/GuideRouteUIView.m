@@ -425,6 +425,7 @@
     
     CGContextStrokePath(context);
     
+    // draw start point
     tmpRouteLine = [route.routeLines objectAtIndex:0];
     startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpRouteLine.startLocation]];
     endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpRouteLine.endLocation]];
@@ -438,8 +439,8 @@
         CGContextSetFillColorWithColor(context, [UIColor blackColor].CGColor);
         CGContextSetLineWidth(context, 4.0);
         
-        endPointRect.origin.x = startPoint.x - 16;
-        endPointRect.origin.y = startPoint.y - 16;
+        endPointRect.origin.x = startPoint.x - 18;
+        endPointRect.origin.y = startPoint.y - 18;
         endPointRect.size.width = 16*2;
         endPointRect.size.height = 16*2;
         CGContextFillEllipseInRect(context, endPointRect);
@@ -448,7 +449,9 @@
         CGContextSetFillColorWithColor(context, _color.CGColor);
         CGContextFillEllipseInRect(context, CGRectInset(endPointRect, 8, 8));
     }
-#
+
+    
+    // draw end point
     tmpRouteLine = [route.routeLines lastObject];
     startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpRouteLine.startLocation]];
     endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpRouteLine.endLocation]];
