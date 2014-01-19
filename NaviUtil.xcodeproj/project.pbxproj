@@ -47,6 +47,7 @@
 		2B6CBFEF16DFA6FD0095CBD4 /* RouteInstruction.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE016DFA6FD0095CBD4 /* RouteInstruction.m */; };
 		2B6CBFF016DFA6FD0095CBD4 /* Speech.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE216DFA6FD0095CBD4 /* Speech.m */; };
 		2B6CBFF116DFA6FD0095CBD4 /* SystemManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */; };
+		2B6EAF48188B9FE2000F484D /* RouteView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6EAF47188B9FE2000F484D /* RouteView.m */; };
 		2B6FCDC3178DA10F00DCFAAF /* UIAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6FCDC2178DA10F00DCFAAF /* UIAnimation.m */; };
 		2B70BEDE16F5F0E5002269AB /* User.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B70BEDD16F5F0E5002269AB /* User.m */; };
 		2B7ADCAC16E4E5DE00F8A182 /* Log.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B7ADCAB16E4E5DE00F8A182 /* Log.m */; };
@@ -165,6 +166,8 @@
 		2B6CBFE216DFA6FD0095CBD4 /* Speech.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Speech.m; sourceTree = "<group>"; };
 		2B6CBFE316DFA6FD0095CBD4 /* SystemManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemManager.h; sourceTree = "<group>"; };
 		2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemManager.m; sourceTree = "<group>"; };
+		2B6EAF46188B9FE2000F484D /* RouteView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouteView.h; sourceTree = "<group>"; };
+		2B6EAF47188B9FE2000F484D /* RouteView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RouteView.m; sourceTree = "<group>"; };
 		2B6FCDC1178DA10F00DCFAAF /* UIAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIAnimation.h; sourceTree = "<group>"; };
 		2B6FCDC2178DA10F00DCFAAF /* UIAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIAnimation.m; sourceTree = "<group>"; };
 		2B70BEDC16F5F0E5002269AB /* User.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = User.h; sourceTree = "<group>"; };
@@ -317,6 +320,8 @@
 				2B98912616EB82D90057A226 /* TextValue.m */,
 				2BCBD079183A5E4700B08D1D /* MapManager.h */,
 				2BCBD07A183A5E4700B08D1D /* MapManager.m */,
+				2B6EAF46188B9FE2000F484D /* RouteView.h */,
+				2B6EAF47188B9FE2000F484D /* RouteView.m */,
 			);
 			name = GeoNavigation;
 			sourceTree = "<group>";
@@ -619,6 +624,7 @@
 				2BEF697317A954D6005EC74A /* BatteryLifeView.m in Sources */,
 				2B89A7B017B5F1960042539F /* UIFont+category.m in Sources */,
 				2BEBB83717BF66BC00B336E6 /* ClockView.m in Sources */,
+				2B6EAF48188B9FE2000F484D /* RouteView.m in Sources */,
 				2BEBB83A17BF99D900B336E6 /* SystemStatusView.m in Sources */,
 				2BE8FE0217C06E890060395E /* SpeedView.m in Sources */,
 				2BE7765817C24AEB007AE899 /* MessageBoxLabel.m in Sources */,

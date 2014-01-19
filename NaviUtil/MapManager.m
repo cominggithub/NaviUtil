@@ -27,12 +27,14 @@
 #define ROUTE_POLYLINE_WIDTH 20
 
 #define NEAR_PLACE_SEARCH_RADIUS 50000  // 50,000 meters, 50Km
+#define UPDATE_CURRENT_DISTANCE_THRESHOLD 5
 
 @implementation MapManager 
 {
     NSMutableArray *_searchedPlaces;
     Place *selectedPlace;
     Place *currentPlace;
+    Place *lastPlace;
 
     
     int zoomLevel;
@@ -94,6 +96,8 @@
     self.useCurrentPlaceAsRouteStart    = TRUE;
     isSearchPlaceFinished               = FALSE;
     isSearchNearPlaceFinished           = FALSE;
+    lastPlace                           = nil;
+    currentPlace                        = nil;
     
     [self addUserPlacesToMarkers];
 }
@@ -125,7 +129,7 @@
     {
         _routeEndPlace = nil;
     }
-    
+
     if (![_routeStartPlace isCoordinateEqualTo:p])
     {
         isRouteChanged                   = true;
@@ -137,7 +141,6 @@
     }
     
     self.hasRoute                       = FALSE;
-    self.useCurrentPlaceAsRouteStart    = FALSE;
     
     /* notify the delegate */
     if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:routeChangedFrom:to:)])
@@ -157,6 +160,7 @@
     if (nil == p)
         return;
 
+    logO(p);
     [self removeRoutePolyline];
     
     /* check on exchanging route start and end place  */
@@ -267,21 +271,33 @@
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
-
-    if ( YES == self.updateToCurrentPlace )
+    CLLocation *location;
+    
+    location        = [change objectForKey:NSKeyValueChangeNewKey];
+    
+    if ([GeoUtil getGeoDistanceFromLocation:lastPlace.coordinate ToLocation:location.coordinate] > UPDATE_CURRENT_DISTANCE_THRESHOLD)
     {
-        self.updateToCurrentPlace   = NO;
-        CLLocation *location        = [change objectForKey:NSKeyValueChangeNewKey];
-        self.mapView.camera         = [GMSCameraPosition cameraWithTarget:location.coordinate zoom:zoomLevel];
-        currentPlace                = [[Place alloc] initWithName:[SystemManager getLanguageString:@"Current Location"]
-                                                          address:@""
-                                                       coordinate:CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)];
-        if (YES == self.useCurrentPlaceAsRouteStart)
+        lastPlace               = currentPlace;
+        currentPlace            = [[Place alloc] initWithName:[SystemManager getLanguageString:@"Current Location"]
+                                                      address:@""
+                                                   coordinate:CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)];
+        currentPlace.placeType  = kPlaceType_CurrentPlace;
+
+    
+        // reset route start place
+        if (YES == self.useCurrentPlaceAsRouteStart && YES == [currentPlace.name isEqualToString:self.routeStartPlace.name])
         {
             [self setRouteStartPlace:currentPlace];
+        
         }
-    }
 
+        if ( YES == self.updateToCurrentPlace )
+        {
+            self.mapView.camera         = [GMSCameraPosition cameraWithTarget:location.coordinate zoom:zoomLevel];
+            self.updateToCurrentPlace   = NO;
+        }
+    
+    }
 }
 
 -(void) refreshMap
@@ -350,6 +366,14 @@
 
 -(void) planRoute
 {
+    if (FALSE == [NaviQueryManager mapServerReachable])
+    {
+        if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:connectToServer:)])
+        {
+            [self.delegate mapManager:self connectToServer:FALSE];
+        }
+    }
+    
     if (isRouteChanged == true)
     {
         if (nil != self.routeStartPlace && nil != self.routeEndPlace)
@@ -399,6 +423,11 @@
     else if(routeDownloadRequest.status == kDownloadStatus_DownloadFail)
     {
         updateStatus = true;
+        
+        if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:routePlanning:)])
+        {
+            [self.delegate mapManager:self routePlanning:FALSE];
+        }
     }
 }
 
@@ -408,6 +437,17 @@
         routePolyline.map = nil;
     
     routePolyline = nil;
+}
+
+-(BOOL) checkNetwork
+{
+    
+    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:connectToServer:)])
+    {
+        [self.delegate mapManager:self connectToServer:TRUE];
+    }
+    
+    return TRUE;
 }
 
 #pragma mark -- Marker
@@ -448,7 +488,15 @@
     
 }
 
-- (void) addUserPlacesToMarkers
+-(void) addCurrentPlaceToMarkers
+{
+    if (nil != currentPlace)
+    {
+        [self addPlaceToMarker:currentPlace];
+    }
+    
+}
+-(void) addUserPlacesToMarkers
 {
     int i;
     
@@ -470,7 +518,6 @@
 
 -(void) addNearSearchedPlaces:(NSArray*) places
 {
-    logfn();
     int i;
     int insertedCount;
     
@@ -491,7 +538,6 @@
 
 -(void) addSearchedPlaces:(NSArray*) places
 {
-    logfn();
     int i=0;
     
     /* only reserve the first three places */
@@ -627,6 +673,11 @@
     
 }
 
+-(void) removeCurrentPlaceFromMarkers
+{
+
+    @@@@@
+}
 -(void) removeUserPlacesFromMarkers
 {
     int i=0;

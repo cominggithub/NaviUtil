@@ -9,7 +9,7 @@
 #import "Route.h"
 #import "SystemConfig.h"
 
-#define FILE_DEBUG TRUE
+#define FILE_DEBUG FALSE
 #include "Log.h"
 
 #define DISTANCE_FROM_ROUTE_LINE_THRESHOLD  10
@@ -544,7 +544,6 @@
     double tmpStartDistance                 = 0.0;
     double angleStart                       = 0.0;
     double angleEnd                         = 0.0;
-    double minDistanceRequired              = DISTANCE_FROM_ROUTE_LINE_THRESHOLD; // 10m
 
     startTime = [NSDate date];
     NSString *matchFlag;
@@ -586,8 +585,10 @@
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
 
-            mlogDebug(@"rlno:%3d ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
+            mlogDebug(@"rlno:%3d (%12.8f, %12.8f) ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
                       rl.no,
+                      rl.startLocation.latitude,
+                      rl.startLocation.longitude,
                       angleStart + angleEnd,
                       angleStart,
                       angleEnd,
@@ -630,8 +631,10 @@
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
             
-            mlogDebug(@"rlno:%3d ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
+            mlogDebug(@"rlno:%3d (%12.8f, %12.8f) ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
                       rl.no,
+                      rl.startLocation.latitude,
+                      rl.startLocation.longitude,
                       angleStart + angleEnd,
                       angleStart,
                       angleEnd,
@@ -643,9 +646,23 @@
             searchCount++;
         }
 
-    if(distance >= minDistanceRequired)
+    if(distance >= DISTANCE_FROM_ROUTE_LINE_THRESHOLD && nil != matchedRouteLineWithEndPoint)
     {
+        
         matchedRouteLine = matchedRouteLineWithEndPoint;
+        matchFlag = @"E*";
+        mlogDebug(@"rlno:%3d (%12.8f, %12.8f) ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
+                  matchedRouteLine.no,
+                  matchedRouteLine.startLocation.latitude,
+                  matchedRouteLine.startLocation.longitude,
+                  angleStart + angleEnd,
+                  angleStart,
+                  angleEnd,
+                  tmpDistance,
+                  tmpStartDistance,
+                  matchFlag
+                  );
+        
     }
     
 

@@ -464,7 +464,6 @@ static CLLocationCoordinate2D _endLocation;
     return _requestId++;
 }
 
-
 +(BOOL) mapServerReachable
 {
     return [SystemManager hostReachable:@"maps.googleapis.com"];

@@ -39,7 +39,7 @@
 -(void) addUIComponent
 {
     _speedLabel         = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 180, 80)];
-    _speedUnitLabel     = [[UILabel alloc] initWithFrame:CGRectMake(170, 50, 80, 30)];
+    _speedUnitLabel     = [[UILabel alloc] initWithFrame:CGRectMake(175, 60, 80, 30)];
 
     
     [_speedLabel        setFont:[UIFont fontWithName:@"JasmineUPC" size:120]];

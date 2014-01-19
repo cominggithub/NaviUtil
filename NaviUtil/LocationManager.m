@@ -193,7 +193,6 @@ static NSMutableArray *_savedLocations;
     CLLocationCoordinate2D nextLocation = _currentCLLocationCoordinate2D;
     NSDate *updateTime = [NSDate date];
     NSTimeInterval timeDiff;
-    BOOL isLocationUpdated = FALSE;
     BOOL hasNewLocationInThisUpdate   = FALSE;
     CLLocationSpeed speed = 0;
     CLLocationDirection heading = 0;
@@ -228,59 +227,36 @@ static NSMutableArray *_savedLocations;
     {
         return;
     }
-    
-    if (_hasLocation && _skipLostDetectionCount == 0)
-    {
-        if ([self isLocationDifferenceReasonable:_currentCLLocationCoordinate2D To:nextLocation])
-        {
 
-            isLocationUpdated = TRUE;
-        }
-        else
-        {
-            _locationLostCount++;
-        }
+    // calculate location update parameter
+    if (updateLocationCount > 0)
+    {
+        speed /= updateLocationCount;
+    }
+        
+    distance = [GeoUtil getGeoDistanceFromLocation:_currentCLLocationCoordinate2D ToLocation:nextLocation];
+    timeDiff = [updateTime timeIntervalSinceDate:_lastUpdateTime];
+
+    if (YES == [GeoUtil isCLLocationCoordinate2DEqual:_lastCLLocationCoordinate2D To:lastUpdatedLocation])
+    {
+        _currentSpeed = 0;
     }
     else
     {
-        isLocationUpdated   = TRUE;
+        _currentSpeed = speed;
     }
+        
+    _currentDistance                += distance;
+    _currentHeading                 = heading;
+    _currentCLLocationCoordinate2D  = nextLocation;
 
-    
-    if (YES == isLocationUpdated)
-    {
-        // calculate location update parameter
-        if (updateLocationCount > 0)
-        {
-            speed /= updateLocationCount;
-        }
-        
-        distance = [GeoUtil getGeoDistanceFromLocation:_currentCLLocationCoordinate2D ToLocation:nextLocation];
-        timeDiff = [updateTime timeIntervalSinceDate:_lastUpdateTime];
+    _locationLostCount              = 0;
+    _hasLocation                    = YES;
+    _lastUpdateTime                 = updateTime;
 
-        if (YES == [GeoUtil isCLLocationCoordinate2DEqual:_lastCLLocationCoordinate2D To:lastUpdatedLocation])
-        {
-            _currentSpeed = 0;
-        }
-        else
-        {
-            _currentSpeed = 0.75*_currentSpeed + 0.25*speed;
-        }
-        
-        _currentDistance                += distance;
-        _currentCLLocationCoordinate2D  = nextLocation;
 
-        _locationLostCount              = 0;
-        _hasLocation                    = YES;
-        _lastUpdateTime                 = updateTime;
         
-        if (heading > 0)
-        {
-            _currentHeading                 = 0.75*_currentHeading + 0.25*heading;
-        }
-        
-        [self triggerLocationUpdateNotify];
-    }
+    [self triggerLocationUpdateNotify];
     
     if (YES == _hasLocation && _locationLostCount > 3)
     {
@@ -288,7 +264,6 @@ static NSMutableArray *_savedLocations;
         [self reprobeLocation];
     }
 
-    
     _lastCLLocationCoordinate2D = lastUpdatedLocation;
     
 }
