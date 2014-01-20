@@ -281,7 +281,9 @@
         currentPlace            = [[Place alloc] initWithName:[SystemManager getLanguageString:@"Current Location"]
                                                       address:@""
                                                    coordinate:CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)];
+        [self removeCurrentPlaceFromMarkers];
         currentPlace.placeType  = kPlaceType_CurrentPlace;
+        [self addCurrentPlaceToMarkers];
 
     
         // reset route start place
@@ -463,6 +465,7 @@
     marker.title    = p.name;
     marker.snippet  = p.address;
     marker.position = p.coordinate;
+    marker.userData = p;
     
     if (p.placeType == kPlaceType_Home)
     {
@@ -675,9 +678,21 @@
 
 -(void) removeCurrentPlaceFromMarkers
 {
-
-    @@@@@
+    int i;
+    GMSMarker *marker;
+    Place *place;
+    for (i=0; i<markers.count; i++)
+    {
+        marker = [markers objectAtIndex:i];
+        place = marker.userData;
+        if (place.placeType == kPlaceType_CurrentPlace)
+        {
+            [markers removeObjectAtIndex:i];
+            marker.map = nil;
+        }
+    }
 }
+
 -(void) removeUserPlacesFromMarkers
 {
     int i=0;
@@ -742,7 +757,6 @@
         }
     }
 
-
     return nil;
 }
 
@@ -766,17 +780,12 @@
     }
 }
 
-
-
-
 -(void) removeSearchedPlaces
 {
     [self removeSearchedPlacesFromMarkers];
     [_searchedPlaces removeAllObjects];
     [User removeAllSearchedPlaces];
 }
-
-
 
 
 #pragma  mark -- Delegate

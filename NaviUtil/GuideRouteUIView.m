@@ -25,6 +25,7 @@
 #define ARRIVAL_REGION 5
 #define ROUTE_LINE_WIDTH 16
 #define ROUTE_LINE_RECT_SIZE 24
+#define MESSAGE_BOX_DISPLAY_TIME_MIN 3
 
 @implementation GuideRouteUIView
 {
@@ -38,7 +39,7 @@
     
 
     CGRect                  turnArrowFrame;
-    UITextField             *messageBoxTextField;
+
     ClockView               *clockView;
     SystemStatusView        *systemStatusView;
     SpeedView               *speedView;
@@ -55,6 +56,11 @@
     int                     outOfRouteLineCount;
     CLLocationCoordinate2D  endRouteLineEndPoint;
     float                   distanceFromCarInitToRouteStart;
+    BOOL                    hasMessage;
+
+    NSString                *pendingMessage;
+    UITextField             *messageBoxTextField;
+    NSDate                  *lastUpdateMessageTime;
 }
 
 #pragma mark - Main
@@ -105,23 +111,20 @@
     
 
     routeDisplayBound               = [SystemManager lanscapeScreenRect];
-    
-    carImage = [UIImage imageNamed:@"Blue_car_marker"];
-    
-    speedComponentRect.origin.x    = 0;
-    speedComponentRect.origin.y    = 0;
-    speedComponentRect.size.width  = 240;
-    speedComponentRect.size.height = [SystemManager lanscapeScreenRect].size.height;
+    speedComponentRect.origin.x     = 0;
+    speedComponentRect.origin.y     = 0;
+    speedComponentRect.size.width   = 240;
+    speedComponentRect.size.height  = [SystemManager lanscapeScreenRect].size.height;
     
     _routeComponentRect.origin.x    = speedComponentRect.size.width;
     _routeComponentRect.origin.y    = 0;
     _routeComponentRect.size.width  = [SystemManager lanscapeScreenRect].size.width - speedComponentRect.size.width;
     _routeComponentRect.size.height = [SystemManager lanscapeScreenRect].size.height;
    
-    carCenterPoint.x        = _routeComponentRect.size.width/2;
-//    _carCenterPoint.y        = (_routeComponentRect.size.height/4)*3;
-    carCenterPoint.y        = 250;
-    
+    carCenterPoint.x                = _routeComponentRect.size.width/2;
+    carCenterPoint.y                = 250;
+    hasMessage                      = FALSE;
+    pendingMessage                  = @"";
     
     maxOutOfRouteLineCount  = [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
     [self addUIComponents];
@@ -130,6 +133,7 @@
     self.color      = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
     
     endRouteLineEndPoint = CLLocationCoordinate2DMake(0, 0);
+
 }
 
 #pragma mark - Geo Calculation
@@ -262,20 +266,28 @@
 
 -(void) drawRoute:(CGContextRef) context Rectangle:(CGRect) rect
 {
+    int i;
     BOOL hasStartPoint;
     PointD startPoint;
     PointD endPoint;
+    PointD lastCircle;
     CGRect roundRect;
     CGRect routeRect = rect;
     CGRect endPointRect;
     int roundRectSize = ROUTE_LINE_RECT_SIZE;
     NSMutableArray *stepPoint;
     RouteLine *tmpRouteLine;
+    int drawedMinRouteLineNo;
+    int drawedMaxRouteLineNo;
+
     
-    hasStartPoint = FALSE;
-    routeRect = rect;
-    stepPoint = [[NSMutableArray alloc] init];
-    
+    drawedMinRouteLineNo    = -1;
+    drawedMaxRouteLineNo    = -1;
+    hasStartPoint           = FALSE;
+    routeRect               = rect;
+    stepPoint               = [[NSMutableArray alloc] init];
+    lastCircle.x            = 0;
+    lastCircle.y            = 0;
     
     // draw route line
     CGContextSetFillColorWithColor(context, self.color.CGColor);
@@ -292,8 +304,12 @@
     CGContextSetFillColorWithColor(context, self.color.CGColor);
     CGContextSetStrokeColorWithColor(context, self.color.CGColor);
     
-    for(RouteLine *rl in route.routeLines)
+    // find out the max and min route line no to be drawed
+    i = currentRouteLine.no - 30 > -1 ? currentRouteLine.no - 30 : 0;
+    for (; i<currentRouteLine.no+30 && i<route.routeLines.count; i++)
     {
+        RouteLine *rl;
+        rl              = [route.routeLines objectAtIndex:i];
         startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
         endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
         startPoint.x    += xOffset;
@@ -307,15 +323,33 @@
             CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:startPoint]) ||
             CGRectContainsPoint(routeRect, [GeoUtil getCGPoint:endPoint]))
         {
-            if (FALSE == hasStartPoint)
-            {
-                CGContextMoveToPoint(context, startPoint.x, startPoint.y);
-                hasStartPoint = TRUE;
-            }
+            if (drawedMinRouteLineNo == -1)
+                drawedMinRouteLineNo = rl.no;
             
-            CGContextAddLineToPoint(context, endPoint.x, endPoint.y);
-            [drawedRouteLines addObject:rl];
+            if (drawedMaxRouteLineNo < rl.no)
+                drawedMaxRouteLineNo = rl.no;
+                
         }
+    }
+    
+    // draw route lines whose route line No is in among <Min,Max> route line No.
+    for (i=drawedMinRouteLineNo; i<route.routeLines.count && i<=drawedMaxRouteLineNo && i>-1; i++)
+    {
+        RouteLine *rl = [route.routeLines objectAtIndex:i];
+        
+        startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
+        endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.endLocation]];
+        startPoint.x    += xOffset;
+        endPoint.x      += xOffset;
+        
+        if (FALSE == hasStartPoint)
+        {
+            CGContextMoveToPoint(context, startPoint.x, startPoint.y);
+            hasStartPoint = TRUE;
+        }
+            
+        CGContextAddLineToPoint(context, endPoint.x, endPoint.y);
+        [drawedRouteLines addObject:rl];
     }
     
     CGContextStrokePath(context);
@@ -325,8 +359,14 @@
     // add circle to the edge of route line
     for(RouteLine *rl in drawedRouteLines)
     {
-        startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
+        startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:rl.startLocation]];
         startPoint.x    += xOffset;
+        
+        /* skip circules that are too close to the previous drawed one */
+        if ([GeoUtil getLength:startPoint ToPoint:lastCircle] < roundRectSize)
+        {
+            continue;
+        }
         
         roundRect.origin.x = startPoint.x-roundRectSize/2;
         roundRect.origin.y = startPoint.y-roundRectSize/2;
@@ -350,6 +390,7 @@
         CGContextStrokeEllipseInRect(context, CGRectInset(roundRect, 8, 8));
         CGContextStrokePath(context);
         
+        lastCircle = startPoint;
     }
     
     // draw start point
@@ -359,12 +400,13 @@
         RouteLine *secondR1 = [route.routeLines objectAtIndex:1];
         if ([GeoUtil getGeoDistanceFromLocation:firstRl.startLocation ToLocation:secondR1.startLocation] < 10.0)
         {
-            
             tmpRouteLine = secondR1;
         }
     }
     else
+    {
         tmpRouteLine = [route.routeLines objectAtIndex:0];
+    }
     
     startPoint      = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpRouteLine.startLocation]];
     endPoint        = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpRouteLine.endLocation]];
@@ -1646,21 +1688,50 @@
 -(void) setColor:(UIColor *)color
 {
     
-    _color                      = color;
-    systemStatusView.color     = _color;
-    clockView.color            = _color;
-    speedView.color            = _color;
-    messageBoxLabel.color      = _color;
-    turnArrowImage.image       = [turnArrowImage.image   imageTintedWithColor:_color];
+    _color                     = color;
+    systemStatusView.color     = self.color;
+    clockView.color            = self.color;
+    speedView.color            = self.color;
+    messageBoxLabel.color      = self.color;
+    turnArrowImage.image       = [turnArrowImage.image   imageTintedWithColor:self.color];
     
     [self setNeedsDisplay];
 }
 
 -(void) setMessageBoxText:(NSString *)messageBoxText
 {
-    //    _messageBoxText = messageBoxText;
-    messageBoxLabel.text = messageBoxText;
-    //    [self setNeedsDisplay];
+    NSDate *now = [NSDate date];
+    BOOL update = FALSE;
+    
+    if (YES == [messageBoxLabel.text isEqualToString:@""])
+    {
+        update = TRUE;
+    }
+    else if ([messageBoxLabel.text isEqualToString:[SystemManager getLanguageString:@"Route Re-Planning"]] ||
+             [messageBoxLabel.text isEqualToString:[SystemManager getLanguageString:@"Route Planning"]]
+             )
+    {
+        if (nil != lastUpdateMessageTime)
+        {
+            NSTimeInterval diff = [lastUpdateMessageTime timeIntervalSinceNow];
+            if (diff > MESSAGE_BOX_DISPLAY_TIME_MIN)
+            {
+                update = TRUE;
+            }
+        }
+    }
+    else
+    {
+        update = TRUE;
+    }
+    
+    if (TRUE == update)
+    {
+        lastUpdateMessageTime   = now;
+        messageBoxLabel.text    = pendingMessage;
+        hasMessage              = FALSE;
+        pendingMessage          = @"";
+    }
 }
 
 
@@ -1827,35 +1898,47 @@
             
         case GR_STATE_INIT:
         case GR_STATE_NAVIGATION:
-            messageBoxLabel.text = @"";
+            pendingMessage  = @"";
+            hasMessage      = TRUE;
             break;
         case GR_STATE_ROUTE_PLANNING:
-            messageBoxLabel.text = [SystemManager getLanguageString:@"Route Planning"];
+            pendingMessage  = [SystemManager getLanguageString:@"Route Planning"];
+            hasMessage      = TRUE;
             [self planRoute];
             break;
         case GR_STATE_ROUTE_REPLANNING:
-            messageBoxLabel.text = [SystemManager getLanguageString:@"Route Re-Planning"];
+            pendingMessage  = [SystemManager getLanguageString:@"Route Re-Planning"];
+            hasMessage      = TRUE;
             [self replanRoute];
             break;
         case GR_STATE_GPS_NO_SIGNAL:
-            messageBoxLabel.text = [SystemManager getLanguageString:@"No GPS Signal"];
+            pendingMessage  = [SystemManager getLanguageString:@"No GPS Signal"];
+            hasMessage      = TRUE;
             break;
         case GR_STATE_NETWORK_NO_SIGNAL:
-            messageBoxLabel.text = [SystemManager getLanguageString:@"No Network"];
+            pendingMessage = [SystemManager getLanguageString:@"No Network"];
+            hasMessage      = TRUE;
             break;
         case GR_STATE_ARRIVAL:
-            messageBoxLabel.text = [SystemManager getLanguageString:@"Arrive Desitnation"];
+            pendingMessage = [SystemManager getLanguageString:@"Arrive Desitnation"];
+            hasMessage      = TRUE;
             break;
         case GR_STATE_ROUTE_DESTINATION_ERROR:
-            messageBoxLabel.text = [SystemManager getLanguageString:@"Destination Error"];
+            pendingMessage = [SystemManager getLanguageString:@"Destination Error"];
+            hasMessage      = TRUE;
             break;
         case GR_STATE_LOOKUP:
-            messageBoxLabel.text = @"";
+            pendingMessage = @"";
+            hasMessage      = TRUE;
             [self lookupState];
             break;
     }
     
-
+    // update pending text
+    if (TRUE == hasMessage)
+    {
+        self.messageBoxText = pendingMessage;
+    }
 }
 
 @end

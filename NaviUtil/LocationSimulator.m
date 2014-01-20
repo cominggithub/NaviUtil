@@ -225,14 +225,12 @@
                     curRouteLine  = [route.routeLines objectAtIndex:curRouteLineNo];
                     nextCoordinate2D.latitude   = curRouteLine.startLocation.latitude;
                     nextCoordinate2D.longitude  = curRouteLine.startLocation.longitude;
-                    logCoor(nextCoordinate2D);
                 }
                 /* reach the last route line, leave the loop */
                 else
                 {
                     nextCoordinate2D.latitude   = curRouteLine.endLocation.latitude;
                     nextCoordinate2D.longitude  = curRouteLine.endLocation.longitude;
-                    logCoor(nextCoordinate2D);
                     break;
                 }
             }
@@ -242,22 +240,18 @@
                 
                 nextCoordinate2D.latitude   = nextCoordinate2D.latitude + (curRouteLine.endLocation.latitude - nextCoordinate2D.latitude) * (requiredDistance/tmpDistance);
                 nextCoordinate2D.longitude  = nextCoordinate2D.longitude + (curRouteLine.endLocation.longitude - nextCoordinate2D.longitude) * (requiredDistance/tmpDistance);
-                logCoor(nextCoordinate2D);
             }
             
 
             requiredDistance -= tmpDistance;
 
             distanceFromStart = [GeoUtil getGeoDistanceFromLocation:nextCoordinate2D ToLocation:curRouteLine.startLocation];
-            logF(requiredDistance);
-            logF(distanceFromStart);
         }
     }
     else
     {
         nextCoordinate2D.latitude   = _currentLocation.coordinate.latitude;
         nextCoordinate2D.longitude  = _currentLocation.coordinate.longitude;
-        logCoor(nextCoordinate2D);
     }
     
     /* update speed and courst constant */
