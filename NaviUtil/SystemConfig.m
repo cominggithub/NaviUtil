@@ -42,12 +42,31 @@ static JsonFile *_configFile;
 
 +(BOOL) getBoolValue:(NSString*) key
 {
+    if ([key hasPrefix:@"IAP_"])
+    {
+        return [self checkIAPItem:key];
+    }
+    
     return [[_configFile objectForKey:key] boolValue];
 }
 
 +(UIColor*) getUIColorValue:(NSString*) key
 {
     return [(NSString*)[_configFile objectForKey:key] uicolorValue];
+}
+
++(BOOL) checkIAPItem:(NSString*) itemId
+{
+    if ([itemId isEqualToString:CONFIG_IAP_IS_NO_AD])
+    {
+        return TRUE;
+    }
+    else if ([itemId isEqualToString:CONFIG_IAP_IS_USER_PLACE])
+    {
+        return FALSE;
+    }
+
+    return FALSE;
 }
 
 

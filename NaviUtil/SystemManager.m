@@ -476,6 +476,8 @@ static float _networkStatus;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
+
+
 @end
 
 

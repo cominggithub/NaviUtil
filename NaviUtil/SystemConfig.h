@@ -27,6 +27,9 @@
 #define CONFIG_DEFAULT_ROUTE_FILE            @"DefaultRoute"
 #define CONFIG_IS_TRACK_FILE                 @"IsTrackFile"
 
+#define CONFIG_IAP_IS_NO_AD                  @"IAP_IsNoAd"
+#define CONFIG_IAP_IS_USER_PLACE             @"IAP_IsUserPlace"
+
 
 /* for car panel 1 */
 #define CONFIG_CP1_COLOR                    @"CP1_Color"
