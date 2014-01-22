@@ -63,7 +63,7 @@ static JsonFile *_configFile;
     }
     else if ([itemId isEqualToString:CONFIG_IAP_IS_USER_PLACE])
     {
-        return FALSE;
+        return TRUE;
     }
 
     return FALSE;
@@ -126,6 +126,7 @@ static JsonFile *_configFile;
 {
     [self checkKey:CONFIG_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:TRUE]];
     [self checkKey:CONFIG_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:TRUE]];
     [self checkKey:CONFIG_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:TRUE]];
     [self checkKey:CONFIG_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];

@@ -11,6 +11,7 @@
 
 #define CONFIG_IS_DEBUG                      @"IsDebug"
 #define CONFIG_IS_AD                         @"IsAd"
+#define CONFIG_IS_USER_PLACE                 @"IsUserPlace"
 #define CONFIG_IS_MANUAL_PLACE               @"IsManualPlace"
 #define CONFIG_IS_DEBUG_ROUTE_DRAW           @"IsDebugRouteDraw"
 #define CONFIG_IS_SPEECH                     @"IsSpeech"

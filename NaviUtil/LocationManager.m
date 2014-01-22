@@ -11,7 +11,7 @@
 #import "SystemManager.h"
 #import "LocationSimulator.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 #define LOCATION_UPDATE_DISTANCE_THRESHOLD 30 /* 30 meter */ 
