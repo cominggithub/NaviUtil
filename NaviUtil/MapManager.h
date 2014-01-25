@@ -44,7 +44,7 @@
 -(void) moveToSearchedPlaceByIndex:(int) index;
 -(GMSMapView*) mapView;
 
--(Place*) placeByMarker:(GMSMarker*) marker;
+//-(Place*) placeByMarker:(GMSMarker*) marker;
 -(void) moveToPlace:(Place*) place;
 -(void) refreshMap;
 -(void) moveToMyLocation;

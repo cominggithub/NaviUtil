@@ -35,11 +35,10 @@ static float _networkStatus;
 
 +(void) init
 {
+    [self initDirectory];
     mlogCheckPoint(@"SystemManager Init");
     _delegates = [[NSMutableArray alloc] initWithCapacity:0];
-    
     [self initSupportedLanguage];
-    [self initDirectory];
     [self initOS];
     [self initSystemStatus];
     [self updateNetworkStatus];
@@ -259,24 +258,23 @@ static float _networkStatus;
 +(void) initDirectory
 {
     int i;
-    NSDateFormatter *dateFormattor = [[NSDateFormatter alloc] init];
+    NSDateFormatter *dateFormattor;
     NSFileManager *filemanager;
     NSString *currentPath;
     NSArray *dirPaths;
     NSString *tmpStr;
 
     
-    [dateFormattor setDateFormat:@"HHMM"];
+    dateFormattor  = [[NSDateFormatter alloc] init];
+    [dateFormattor setDateFormat:@"yyyy-MM-dd"];
 
     filemanager =[NSFileManager defaultManager];
     currentPath = [filemanager currentDirectoryPath];
     
-
-    
-    
     dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     
     _pathArray = [NSMutableArray arrayWithCapacity:kSystemManager_Path_Max];
+    
     for(i=0; i<kSystemManager_Path_Max; i++)
     {
         [_pathArray addObject:@""];
@@ -294,7 +292,7 @@ static float _networkStatus;
     tmpStr = [NSString stringWithFormat:@"%@/config.json", _documentPath];
     [_pathArray replaceObjectAtIndex:kSystemManager_Path_Config       withObject:tmpStr];
     
-    tmpStr = [NSString stringWithFormat:@"%@log.txt", _tmpPath];
+    tmpStr = [NSString stringWithFormat:@"%@%@.log", _tmpPath, [dateFormattor stringFromDate:[NSDate date]]];
     [_pathArray replaceObjectAtIndex:kSystemManager_Path_Log        withObject:tmpStr];
 
     tmpStr = [NSString stringWithFormat:@"%@place", _tmpPath];
@@ -306,16 +304,9 @@ static float _networkStatus;
     tmpStr = [NSString stringWithFormat:@"%@/track", _documentPath];
     [_pathArray replaceObjectAtIndex:kSystemManager_Path_Track      withObject:tmpStr];
     
-    
     tmpStr = [NSString stringWithFormat:@"%@speech", _tmpPath];
     [_pathArray replaceObjectAtIndex:kSystemManager_Path_Speech     withObject:tmpStr];
 
-    
-    for(NSString *path in dirPaths)
-    {
-        printf("%s\n", [path UTF8String]);
-    }
-    
     [self cleanDirectory:_tmpPath];
     [self makeDirectory:[self getPath:kSystemManager_Path_Place]];
     [self makeDirectory:[self getPath:kSystemManager_Path_Route]];
@@ -329,7 +320,6 @@ static float _networkStatus;
     mlogInfo(@"Config File Path: %@", [self getPath:kSystemManager_Path_Config]);
     mlogInfo(@"  User File Path: %@", [self getPath:kSystemManager_Path_User]);
     mlogInfo(@"   Log File Path: %@", [self getPath:kSystemManager_Path_Log]);
-    
 
 }
 

@@ -366,7 +366,6 @@ static NSMutableArray *_savedLocations;
 
 +(CLLocationCoordinate2D) getCurrentCLLocationCoordinate2D
 {
-   
     return _currentCLLocationCoordinate2D;
 }
 
@@ -374,7 +373,6 @@ static NSMutableArray *_savedLocations;
 {
     [_locationSimulator stop];
     [_locationManager startMonitorLocationChange];
-
 }
 
 +(void) stopMonitorLocation
@@ -473,8 +471,6 @@ static NSMutableArray *_savedLocations;
                ];
         
     }
-    
-//    mlogDebug(@"%@", msg);
     
     if (nil != _fileHandle)
     {

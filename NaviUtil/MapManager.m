@@ -160,7 +160,6 @@
     if (nil == p)
         return;
 
-    logO(p);
     [self removeRoutePolyline];
     
     /* check on exchanging route start and end place  */
@@ -240,9 +239,9 @@
 -(void) clearMap
 {
     [_mapView clear];
-    [self removeUserPlacesFromMarkers];
-    [self removeSearchedPlacesFromMarkers];
-    [self removeRoutePolyline];
+//    [self removeUserPlacesFromMarkers];
+//    [self removeSearchedPlacesFromMarkers];
+//    [self removeRoutePolyline];
 }
 
 -(void) moveToMyLocation
@@ -267,30 +266,28 @@
     
 }
 
+/* capture mylocation update event */
 -(void) observeValueForKeyPath:(NSString *)keyPath
                       ofObject:(id)object
                         change:(NSDictionary *)change
                        context:(void *)context {
     CLLocation *location;
-    
     location        = [change objectForKey:NSKeyValueChangeNewKey];
-    
-    if ([GeoUtil getGeoDistanceFromLocation:lastPlace.coordinate ToLocation:location.coordinate] > UPDATE_CURRENT_DISTANCE_THRESHOLD)
+
+    if (nil == lastPlace || [GeoUtil getGeoDistanceFromLocation:lastPlace.coordinate ToLocation:location.coordinate] > UPDATE_CURRENT_DISTANCE_THRESHOLD)
     {
         lastPlace               = currentPlace;
         currentPlace            = [[Place alloc] initWithName:[SystemManager getLanguageString:@"Current Location"]
                                                       address:@""
                                                    coordinate:CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)];
-        [self removeCurrentPlaceFromMarkers];
         currentPlace.placeType  = kPlaceType_CurrentPlace;
+        [self removeCurrentPlaceFromMarkers];
         [self addCurrentPlaceToMarkers];
 
-    
         // reset route start place
-        if (YES == self.useCurrentPlaceAsRouteStart && YES == [currentPlace.name isEqualToString:self.routeStartPlace.name])
+        if (YES == self.useCurrentPlaceAsRouteStart || self.routeStartPlace.placeType == kPlaceType_CurrentPlace)
         {
             [self setRouteStartPlace:currentPlace];
-        
         }
 
         if ( YES == self.updateToCurrentPlace )
@@ -306,6 +303,7 @@
 {
     [self clearMap];
     
+    [self addCurrentPlaceToMarkers];
     [self addUserPlacesToMarkers];
     [self addSearchedPlacesToMarkers];
     [self addRoutePolyline];
@@ -410,8 +408,17 @@
         if ( kGoogleJsonStatus_Ok == status)
         {
             currentRoute = [Route parseJson:routeDownloadRequest.filePath];
-            [User addRecentPlace:self.routeEndPlace];
-            [User save];
+            
+            if (self.routeEndPlace.placeType == kPlaceType_Home ||
+                self.routeEndPlace.placeType == kPlaceType_Favor ||
+                self.routeEndPlace.placeType == kPlaceType_Office ||
+                self.routeEndPlace.placeType == kPlaceType_SearchedPlace ||
+                self.routeEndPlace.placeType == kPlaceType_None)
+            {
+                [User addRecentPlace:self.routeEndPlace];
+                [User save];
+            }
+            
             [self removeRoutePolyline];
             [self addRoutePolyline];
             self.hasRoute = TRUE;
@@ -487,18 +494,19 @@
     marker.map      = self.mapView;
 
     [markers addObject:marker];
-    [placesInMarkers addObject:p];
+//    [placesInMarkers addObject:p];
+
     
 }
 
 -(void) addCurrentPlaceToMarkers
 {
-    if (nil != currentPlace)
+    if (nil != currentPlace && FALSE == [self isPlaceCloseToUserPlaces:currentPlace])
     {
         [self addPlaceToMarker:currentPlace];
     }
-    
 }
+
 -(void) addUserPlacesToMarkers
 {
     int i;
@@ -595,6 +603,27 @@
     return FALSE;
 }
 
+-(BOOL) isPlaceCloseToUserPlaces:(Place*) p
+{
+//    Place* tmpPlace;
+    for(Place* tmpPlace in User.homePlaces)
+    {
+        if ([p isCloseTo:tmpPlace]) return TRUE;
+    }
+
+    for(Place* tmpPlace in User.officePlaces)
+    {
+        if ([p isCloseTo:tmpPlace]) return TRUE;
+    }
+
+    for(Place* tmpPlace in User.favorPlaces)
+    {
+        if ([p isCloseTo:tmpPlace]) return TRUE;
+    }
+    
+    return FALSE;
+}
+
 -(void) processSearchPlaceDownloadRequestStatusChange:(DownloadRequest*) downloadRequest
 {
     
@@ -681,6 +710,7 @@
     int i;
     GMSMarker *marker;
     Place *place;
+
     for (i=0; i<markers.count; i++)
     {
         marker = [markers objectAtIndex:i];
@@ -689,14 +719,19 @@
         {
             [markers removeObjectAtIndex:i];
             marker.map = nil;
+            i--;
         }
     }
+
 }
 
+#if 0
 -(void) removeUserPlacesFromMarkers
 {
+
     int i=0;
     GMSMarker* marker;
+    Place* p;
     NSMutableArray* markersToRemove;
     
     markersToRemove = [[NSMutableArray alloc] initWithCapacity:10];
@@ -706,17 +741,20 @@
     for (i=0; i<markers.count; i++)
     {
         marker = [markers objectAtIndex:i];
+        p = (Place*) marker.
         if (marker.icon == homeMarkerImage || marker.icon == officeMarkerImage || marker.icon == favorMarkerImage)
         {
             [markers removeObjectAtIndex:i];
-            [placesInMarkers removeObjectAtIndex:i];
+//            [placesInMarkers removeObjectAtIndex:i];
             i--;
         }
     }
+
 }
 
 -(void) removeSearchedPlacesFromMarkers
 {
+
     int i=0;
     GMSMarker* marker;
     NSMutableArray* markersToRemove;
@@ -734,12 +772,15 @@
             [placesInMarkers removeObjectAtIndex:i];
         }
     }
-}
 
+}
+#endif
 
 #pragma mark -- Place
+#if 0
 -(Place*) placeByMarker:(GMSMarker*) k
 {
+
     int i;
     GMSMarker *marker;
 
@@ -759,6 +800,7 @@
 
     return nil;
 }
+#endif
 
 
 -(void) searchPlace:(NSString*) place
@@ -782,7 +824,7 @@
 
 -(void) removeSearchedPlaces
 {
-    [self removeSearchedPlacesFromMarkers];
+//    [self removeSearchedPlacesFromMarkers];
     [_searchedPlaces removeAllObjects];
     [User removeAllSearchedPlaces];
 }

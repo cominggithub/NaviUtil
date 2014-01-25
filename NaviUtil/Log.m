@@ -36,7 +36,7 @@ void logInit()
         [[NSFileManager defaultManager] createFileAtPath:[SystemManager getPath:kSystemManager_Path_Log]
                                                 contents:nil
                                               attributes:nil];
-        
+
         fileHandle  = [NSFileHandle fileHandleForWritingAtPath:[SystemManager getPath:kSystemManager_Path_Log]];
         outputFormatter = [[NSDateFormatter alloc] init];
         [outputFormatter setDateFormat:@"MM-dd HH:mm:ss"];

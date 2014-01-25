@@ -14,8 +14,7 @@
 
 typedef enum PlaceType
 {
-
-    kPlaceType_None,
+    kPlaceType_None=0,
     kPlaceType_Home,
     kPlaceType_Office,
     kPlaceType_Favor,
@@ -49,8 +48,9 @@ typedef enum PlaceRouteType
 +(Place*) parseDictionary:(NSDictionary*) dic;
 -(id) initWithName:(NSString*) name address:(NSString*) address coordinate:(CLLocationCoordinate2D) coordinate;
 -(NSDictionary*) toDictionary;
--(bool) isPlaceMatched:(NSString*) name;
--(bool) isCoordinateEqualTo:(Place*) p;
+-(BOOL) isPlaceMatched:(NSString*) name;
+-(BOOL) isCoordinateEqualTo:(Place*) p;
+-(BOOL) isCloseTo:(Place*) p;
 -(void) copyTo:(Place*) p;
 -(BOOL) isNullPlace;
 

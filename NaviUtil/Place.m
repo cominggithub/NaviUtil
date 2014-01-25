@@ -14,6 +14,8 @@
 
 @implementation Place
 
+
+#define CLOSE_THRESHOLD 5
 @synthesize name=_name;
 @synthesize coordinate=_coordinate;
 @synthesize address=_address;
@@ -174,6 +176,12 @@
             return @"Office";
         case kPlaceType_Favor:
             return @"Favor";
+        case kPlaceType_SearchedPlace:
+            return @"Searched Place";
+        case kPlaceType_SearchedPlaceText:
+            return @"Searched Place Text";
+        case kPlaceType_CurrentPlace:
+            return @"Current Place";
         default:
             return @"unknown type";
     }
@@ -184,7 +192,7 @@
     return self.coordinate.latitude == 0 && self.coordinate.longitude == 0;
 }
 
--(bool) isPlaceMatched:(NSString*) name
+-(BOOL) isPlaceMatched:(NSString*) name
 {
 
     if (nil == name || name.length < 1)
@@ -212,11 +220,17 @@
     
 }
 
--(bool) isCoordinateEqualTo:(Place*) p
+-(BOOL) isCoordinateEqualTo:(Place*) p
 {
     if (nil == self || nil == p)
         return false;
     return [GeoUtil isCLLocationCoordinate2DEqual:self.coordinate To:p.coordinate];
+}
+-(BOOL) isCloseTo:(Place*) p
+{
+    mlogAssertNotNilR(p, FALSE);
+
+    return [GeoUtil getGeoDistanceFromLocation:self.coordinate ToLocation:p.coordinate] <= CLOSE_THRESHOLD;
 }
 
 -(NSDictionary*) toDictionary
