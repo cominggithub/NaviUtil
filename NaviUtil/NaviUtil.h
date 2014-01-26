@@ -23,6 +23,7 @@
 #import "NSString+category.h"
 #import "NSValue+category.h"
 #import "NSDictionary+category.h"
+#import "NavierHUDIAPHelper.h"
 #import "UIView+category.h"
 #import "UILabel+category.h"
 #import "UIImageView+category.h"

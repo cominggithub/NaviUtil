@@ -45,7 +45,7 @@ static NSString* _googlePlaceAPIKey=@"";
     [NaviQueryManager init];
     [User init];
     [LocationManager init];
-    
+    [NavierHUDIAPHelper init];
     _isInit = true;
 
 }

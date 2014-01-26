@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B1372FF189510B300B398FD /* RSSecrets.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1372FE189510B300B398FD /* RSSecrets.m */; };
+		2B1373021895356900B398FD /* SKProduct+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1373011895356900B398FD /* SKProduct+category.m */; };
 		2B18AA911748D19700277F52 /* UILabel+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B18AA901748D19700277F52 /* UILabel+category.m */; };
 		2B1C47141788474600ED6D98 /* DrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C47131788474600ED6D98 /* DrawBlock.m */; };
 		2B1C471817884D0400ED6D98 /* TimeDrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C471717884D0400ED6D98 /* TimeDrawBlock.m */; };
@@ -24,6 +26,8 @@
 		2B2447391843949E00813A0F /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472D1843949E00813A0F /* OpenGLES.framework */; };
 		2B24473A1843949E00813A0F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472E1843949E00813A0F /* QuartzCore.framework */; };
 		2B24473B1843949E00813A0F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472F1843949E00813A0F /* SystemConfiguration.framework */; };
+		2B27CEA31894990D00FBE5FF /* IAPHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B27CEA21894990D00FBE5FF /* IAPHelper.m */; };
+		2B27CEA618949A0D00FBE5FF /* NavierHUDIAPHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B27CEA518949A0D00FBE5FF /* NavierHUDIAPHelper.m */; };
 		2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B61D8661771E64400ACB1AA /* SystemConfig.m */; };
 		2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */; };
 		2B6CBFA716DFA6D90095CBD4 /* NaviUtil.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */; };
@@ -102,6 +106,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2B1372FD189510B300B398FD /* RSSecrets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSSecrets.h; sourceTree = "<group>"; };
+		2B1372FE189510B300B398FD /* RSSecrets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSSecrets.m; sourceTree = "<group>"; };
+		2B1373001895356900B398FD /* SKProduct+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SKProduct+category.h"; sourceTree = "<group>"; };
+		2B1373011895356900B398FD /* SKProduct+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SKProduct+category.m"; sourceTree = "<group>"; };
 		2B18AA8F1748D19700277F52 /* UILabel+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+category.h"; sourceTree = "<group>"; };
 		2B18AA901748D19700277F52 /* UILabel+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+category.m"; sourceTree = "<group>"; };
 		2B1C47121788474600ED6D98 /* DrawBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawBlock.h; sourceTree = "<group>"; };
@@ -124,6 +132,11 @@
 		2B24472D1843949E00813A0F /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		2B24472E1843949E00813A0F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2B24472F1843949E00813A0F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		2B27CEA11894990D00FBE5FF /* IAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IAPHelper.h; sourceTree = "<group>"; };
+		2B27CEA21894990D00FBE5FF /* IAPHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAPHelper.m; sourceTree = "<group>"; };
+		2B27CEA418949A0D00FBE5FF /* NavierHUDIAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavierHUDIAPHelper.h; sourceTree = "<group>"; };
+		2B27CEA518949A0D00FBE5FF /* NavierHUDIAPHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavierHUDIAPHelper.m; sourceTree = "<group>"; };
+		2B27CEA71894A36F00FBE5FF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		2B61D8651771E64400ACB1AA /* SystemConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemConfig.h; sourceTree = "<group>"; };
 		2B61D8661771E64400ACB1AA /* SystemConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemConfig.m; sourceTree = "<group>"; };
 		2B6A6BF0178718B7005FC851 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
@@ -329,6 +342,12 @@
 		2B3D573C17896A0E00437464 /* System */ = {
 			isa = PBXGroup;
 			children = (
+				2B1372FD189510B300B398FD /* RSSecrets.h */,
+				2B1372FE189510B300B398FD /* RSSecrets.m */,
+				2B27CEA11894990D00FBE5FF /* IAPHelper.h */,
+				2B27CEA21894990D00FBE5FF /* IAPHelper.m */,
+				2B27CEA418949A0D00FBE5FF /* NavierHUDIAPHelper.h */,
+				2B27CEA518949A0D00FBE5FF /* NavierHUDIAPHelper.m */,
 				2B6CBFC916DFA6FD0095CBD4 /* DownloadManager.h */,
 				2B6CBFCA16DFA6FD0095CBD4 /* DownloadManager.m */,
 				2B6CBFCB16DFA6FD0095CBD4 /* DownloadRequest.h */,
@@ -372,6 +391,8 @@
 				2BC2C3C217A6AE9F00A9AEE0 /* UIColor+category.m */,
 				2B89A7AE17B5F1960042539F /* UIFont+category.h */,
 				2B89A7AF17B5F1960042539F /* UIFont+category.m */,
+				2B1373001895356900B398FD /* SKProduct+category.h */,
+				2B1373011895356900B398FD /* SKProduct+category.m */,
 			);
 			name = Category;
 			sourceTree = "<group>";
@@ -399,6 +420,7 @@
 		2B6CBFA016DFA6D90095CBD4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2B27CEA71894A36F00FBE5FF /* StoreKit.framework */,
 				2B989340184B4B9600811F5B /* GoogleMaps.bundle */,
 				2B98933E184B4B8B00811F5B /* GoogleMaps.framework */,
 				2B2447241843949E00813A0F /* AVFoundation.framework */,
@@ -597,6 +619,7 @@
 				2B6CBFF116DFA6FD0095CBD4 /* SystemManager.m in Sources */,
 				2B7ADCAC16E4E5DE00F8A182 /* Log.m in Sources */,
 				2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */,
+				2B27CEA31894990D00FBE5FF /* IAPHelper.m in Sources */,
 				2B98912716EB82D90057A226 /* TextValue.m in Sources */,
 				2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */,
 				2B70BEDE16F5F0E5002269AB /* User.m in Sources */,
@@ -611,10 +634,13 @@
 				2BDC6B9117859E9C003E61E9 /* UIImage+category.m in Sources */,
 				2B1C47141788474600ED6D98 /* DrawBlock.m in Sources */,
 				2B1C471817884D0400ED6D98 /* TimeDrawBlock.m in Sources */,
+				2B1372FF189510B300B398FD /* RSSecrets.m in Sources */,
 				2B1C471B178851DC00ED6D98 /* DigitalNumDrawBlock.m in Sources */,
 				2B1C472117885ECC00ED6D98 /* CarPanel1UIView.m in Sources */,
+				2B1373021895356900B398FD /* SKProduct+category.m in Sources */,
 				2B8B71B2178C32E7005E460F /* UIImage+simple-image-processing.mm in Sources */,
 				2B8B71C7178C35B6005E460F /* Image.mm in Sources */,
+				2B27CEA618949A0D00FBE5FF /* NavierHUDIAPHelper.m in Sources */,
 				2B8B7218178C46F8005E460F /* BatteryNormalDrawBlock.m in Sources */,
 				2B6FCDC3178DA10F00DCFAAF /* UIAnimation.m in Sources */,
 				2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */,

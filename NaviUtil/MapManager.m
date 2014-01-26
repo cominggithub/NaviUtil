@@ -27,7 +27,7 @@
 #define ROUTE_POLYLINE_WIDTH 20
 
 #define NEAR_PLACE_SEARCH_RADIUS 50000  // 50,000 meters, 50Km
-#define UPDATE_CURRENT_DISTANCE_THRESHOLD 5
+#define UPDATE_CURRENT_DISTANCE_THRESHOLD  2
 
 @implementation MapManager 
 {
@@ -301,6 +301,8 @@
 
 -(void) refreshMap
 {
+    [markers removeAllObjects];
+
     [self clearMap];
     
     [self addCurrentPlaceToMarkers];
@@ -501,7 +503,8 @@
 
 -(void) addCurrentPlaceToMarkers
 {
-    if (nil != currentPlace && FALSE == [self isPlaceCloseToUserPlaces:currentPlace])
+ //   if (nil != currentPlace && FALSE == [self isPlaceCloseToUserPlaces:currentPlace])
+    if (nil != currentPlace)
     {
         [self addPlaceToMarker:currentPlace];
     }
