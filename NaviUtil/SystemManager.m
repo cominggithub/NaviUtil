@@ -433,7 +433,8 @@ static float _networkStatus;
     
     NSString *result = NSLocalizedString(stringIndex, nil);
 
-    if (nil == result || result.length <= 0)
+    /* if we cannot find any string in the localized string table */
+    if (nil != stringIndex && (nil == result || result.length <= 0))
     {
         result = [NSString stringWithString:stringIndex];
     }

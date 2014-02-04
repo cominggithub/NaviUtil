@@ -18,5 +18,6 @@
 + (void)dumpIapItems;
 + (SKProduct*)productByKey:(NSString*) key;
 + (int)iapItemCount;
++ (void)buyProduct:(SKProduct*) product;
 
 @end

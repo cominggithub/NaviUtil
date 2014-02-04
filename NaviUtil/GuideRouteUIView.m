@@ -1324,29 +1324,28 @@
     nextCarPoint.y = newCarLocation.latitude;
     float distanceFromCarToRouteStart;
     RouteLine* firstRouteLine;
+    
+    
     carPoint = nextCarPoint;
     [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
     [self updateTranslationConstant];
 
 
-    firstRouteLine = [route.routeLines objectAtIndex:0];
-    
-    
+    firstRouteLine              = [route.routeLines objectAtIndex:0];
+    lastRouteLine               = currentRouteLine;
     distanceFromCarToRouteStart = [GeoUtil getGeoDistanceFromLocation:newCarLocation ToLocation:firstRouteLine.startLocation];
     
     currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
 
+    /* head to first route line */
     if (nil == currentRouteLine && 0 == lastRouteLine.no && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
         currentRouteLine = firstRouteLine;
     }
-    
-    if(currentRouteLine != nil)
+    /* found matched route line */
+    else if (nil == currentRouteLine)
     {
-        routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
-        routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
-        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
-        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
+        /* reset the out of route line count */
         outOfRouteLineCount = 0;
         
         if ([GeoUtil getGeoDistanceFromLocation:currentCarLocation ToLocation:endRouteLineEndPoint] < ARRIVAL_REGION)
@@ -1357,24 +1356,32 @@
         {
             [self sendEvent:GR_EVENT_GPS_READY];
         }
-        
-        
     }
+    /* cannot find matched route line */
     else
     {
-        _turnAngle      = 0;
+        /* let the current route line be the last route line */
+        currentRouteLine = lastRouteLine;
         outOfRouteLineCount++;
+        /* stay at GPS_READY if missing GPS signal is less than the CONFIG_MAX_OUT_OF_ROUTELINE_COUNT */
         if (outOfRouteLineCount < maxOutOfRouteLineCount)
         {
-            outOfRouteLineCount = 0;
             [self sendEvent:GR_EVENT_GPS_READY];
-
         }
+        /* location lost */
         else
         {
-
             [self sendEvent:GR_EVENT_LOCATION_LOST];
         }
+    }
+    
+    /* event we lost location now, we still use last route line to draw current navigation map */
+    if(currentRouteLine != nil)
+    {
+        routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
+        routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
+        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
+        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
     }
 }
 

@@ -84,10 +84,12 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    mlogInfo(@"%lu didFailWithError %@\n", self.downloadId, error);
+    logfn();
+    mlogDebug(@"%lu didFailWithError %@\n", self.downloadId, error);
     
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFail:)])
         [self.delegate downloadFail: self];
+    
     [self deleteFile];
 }
 

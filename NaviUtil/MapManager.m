@@ -119,10 +119,9 @@
 
 -(void) setRouteStartPlace:(Place *) p
 {
+    logfn();
     if (nil == p)
         return;
-    
-    [self removeRoutePolyline];
     
     /* check on exchanging route start and end place  */
     if ([_routeEndPlace isCoordinateEqualTo:p])
@@ -157,10 +156,9 @@
 
 -(void) setRouteEndPlace:(Place *) p
 {
+    logfn();
     if (nil == p)
         return;
-
-    [self removeRoutePolyline];
     
     /* check on exchanging route start and end place  */
     if ([_routeStartPlace isCoordinateEqualTo:p])
@@ -239,9 +237,6 @@
 -(void) clearMap
 {
     [_mapView clear];
-//    [self removeUserPlacesFromMarkers];
-//    [self removeSearchedPlacesFromMarkers];
-//    [self removeRoutePolyline];
 }
 
 -(void) moveToMyLocation
@@ -364,18 +359,20 @@
     
 }
 
-
-
 -(void) planRoute
 {
+    logfn();
     if (FALSE == [NaviQueryManager mapServerReachable])
     {
+        logfn();
         if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:connectToServer:)])
         {
+            logfn();
             [self.delegate mapManager:self connectToServer:FALSE];
         }
     }
     
+    logfn();
     if (isRouteChanged == true)
     {
         if (nil != self.routeStartPlace && nil != self.routeEndPlace)
@@ -452,7 +449,6 @@
 
 -(BOOL) checkNetwork
 {
-    
     if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:connectToServer:)])
     {
         [self.delegate mapManager:self connectToServer:TRUE];

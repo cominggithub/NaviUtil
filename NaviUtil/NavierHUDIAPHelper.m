@@ -94,4 +94,10 @@ NSMutableDictionary* iapItems;
     return [iapItems objectForKey:key];
 }
 
++ (void)buyProduct:(SKProduct*) product
+{
+    logfn();
+    [[NavierHUDIAPHelper sharedInstance] buyProduct:product];
+}
+
 @end

@@ -150,8 +150,10 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
     {
         mlogInfo(@"Transaction error: %@", transaction.error.localizedDescription);
     }
+
+    mlogInfo(@"Transaction error: %@", transaction.error.localizedDescription);
     
-    [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
+//    [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
 }
 
 - (void)provideContentForProductIdentifier:(NSString *)productIdentifier {
