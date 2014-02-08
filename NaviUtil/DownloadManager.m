@@ -30,7 +30,7 @@
     {
         self.activeDownload     = 0;
         self.maxDownload        = 1;
-        self.maxRetryCount      = 3;
+        self.maxRetryCount      = 2;
         self.currentDownloadId  = 1;
         self.currentLocation    = [SystemManager getDefaultLocation];
         self.downloadingQueue   = [[NSMutableArray alloc] initWithCapacity:0];
@@ -71,7 +71,7 @@
 -(void) downloadFail: (FileDownloader*) fileDownloader
 {
     DownloadRequest *downloadRequest;
-    if(fileDownloader.retryCount <= self.maxRetryCount)
+    if(fileDownloader.retryCount < self.maxRetryCount)
         [fileDownloader start];
     else
     {
@@ -79,7 +79,6 @@
         downloadRequest.status  = kDownloadStatus_DownloadFail;
         
         [self.downloadingQueue removeObject:downloadRequest];
-        [self.pendingQueue addObject:downloadRequest];
         [downloadRequest.delegate downloadRequestStatusChange:downloadRequest];
 
 
@@ -115,7 +114,7 @@
         [self startDownload:r];
         
 
-        mlogDebug(@"t %@\n", self);
+        mlogDebug(@"trigger %@\n", self);
     }
 }
 

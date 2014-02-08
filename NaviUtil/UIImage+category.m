@@ -23,7 +23,6 @@
     //    float diameter;
     //    diameter = sqrtf(powf(self.size.width/2, 2) + powf(self.size.height/2, 2));
     //  diameter = diameter*2;
-    //    NSLog(@"diameter:%.1f, width:%.1f, height:%.1f\n", diameter, self.size.width, self.size.height);
     
 
     // calculate the size of the rotated view's containing box for our drawing space

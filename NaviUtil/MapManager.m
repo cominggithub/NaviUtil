@@ -119,7 +119,6 @@
 
 -(void) setRouteStartPlace:(Place *) p
 {
-    logfn();
     if (nil == p)
         return;
     
@@ -127,6 +126,7 @@
     if ([_routeEndPlace isCoordinateEqualTo:p])
     {
         _routeEndPlace = nil;
+        [self removeRoutePolyline];
     }
 
     if (![_routeStartPlace isCoordinateEqualTo:p])
@@ -156,14 +156,14 @@
 
 -(void) setRouteEndPlace:(Place *) p
 {
-    logfn();
     if (nil == p)
         return;
-    
+
     /* check on exchanging route start and end place  */
     if ([_routeStartPlace isCoordinateEqualTo:p])
     {
         _routeStartPlace = nil;
+        [self removeRoutePolyline];
     }
     
     if (![_routeEndPlace isCoordinateEqualTo:p])
@@ -183,6 +183,9 @@
     {
         [self.delegate mapManager:self routeChangedFrom:self.routeStartPlace to:self.routeEndPlace];
     }
+    
+    
+    
 }
 
 
@@ -303,7 +306,7 @@
     [self addCurrentPlaceToMarkers];
     [self addUserPlacesToMarkers];
     [self addSearchedPlacesToMarkers];
-    [self addRoutePolyline];
+    [self replaceRoutePolyline];
     
 }
 
@@ -332,10 +335,13 @@
 
 #pragma mark -- Route
 
--(void) addRoutePolyline
+-(void) replaceRoutePolyline
 {
     NSArray *routePoints;
     GMSMutablePath *path;
+    GMSPolyline *prevRoutePolyLine;
+    
+    prevRoutePolyLine = routePolyline;
     
     if (nil == currentRoute || nil == self.routeStartPlace || nil == self.routeEndPlace)
     {
@@ -357,22 +363,24 @@
     routePolyline.geodesic   = NO;
     routePolyline.map        = _mapView;
     
+    if (nil != prevRoutePolyLine)
+    {
+        prevRoutePolyLine.map = nil;
+        prevRoutePolyLine = nil;
+    }
+    
 }
 
 -(void) planRoute
 {
-    logfn();
     if (FALSE == [NaviQueryManager mapServerReachable])
     {
-        logfn();
         if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:connectToServer:)])
         {
-            logfn();
             [self.delegate mapManager:self connectToServer:FALSE];
         }
     }
     
-    logfn();
     if (isRouteChanged == true)
     {
         if (nil != self.routeStartPlace && nil != self.routeEndPlace)
@@ -418,8 +426,7 @@
                 [User save];
             }
             
-            [self removeRoutePolyline];
-            [self addRoutePolyline];
+            [self replaceRoutePolyline];
             self.hasRoute = TRUE;
         }
         else

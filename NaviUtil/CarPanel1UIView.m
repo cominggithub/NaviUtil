@@ -207,7 +207,6 @@
 #if 0
 - (void)drawRect:(CGRect)rect
 {
-    NSLog(@"draw\n");
     [super drawRect:rect];
     [_preDrawImage drawInRect:rect];
 }

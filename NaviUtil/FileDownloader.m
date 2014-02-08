@@ -47,9 +47,6 @@
     
     urlRequest = [NSMutableURLRequest requestWithURL:
                   [NSURL URLWithString:[self.url stringByAddingPercentEscapesUsingEncoding: NSUTF8StringEncoding]] cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
-    
-
-    
 }
 
 - (void) start
@@ -84,7 +81,6 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    logfn();
     mlogDebug(@"%lu didFailWithError %@\n", self.downloadId, error);
     
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFail:)])

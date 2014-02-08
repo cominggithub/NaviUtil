@@ -266,7 +266,6 @@ static CLLocationCoordinate2D _endLocation;
 
 +(NSDictionary*) getNearPlaceQueryParam:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
 {
-    logfn();
     NSDictionary* param = [[NSDictionary alloc] initWithObjectsAndKeys:
                            locationName, S_QUERY,
                            [NaviUtil getGooglePlaceAPIKey], S_GOOGLE_API_KEY,

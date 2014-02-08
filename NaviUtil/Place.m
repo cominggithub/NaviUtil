@@ -102,7 +102,6 @@
     printf("dump keys\n");
     for(NSString *aKey in dic) {
         printf("%s\n", [aKey UTF8String]);
-        //        NSLog(@"%@", [[dic valueForKey:aKey] description]); //made up method
     }
 }
 

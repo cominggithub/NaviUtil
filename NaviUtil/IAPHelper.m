@@ -43,10 +43,10 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
             BOOL productPurchased = [[NSUserDefaults standardUserDefaults] boolForKey:productIdentifier];
             if (productPurchased) {
                 [_purchasedProductIdentifiers addObject:productIdentifier];
-                mlogInfo(@"Previously purchased: %@", productIdentifier);
+                mlogDebug(@"Previously purchased: %@", productIdentifier);
                 [self storeIapKey:productIdentifier];
             } else {
-                mlogInfo(@"Not purchased: %@", productIdentifier);
+                mlogDebug(@"Not purchased: %@", productIdentifier);
                 [self removeIapKey:productIdentifier];
             }
         }
@@ -79,7 +79,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 
 - (void)buyProduct:(SKProduct *)product {
     
-    mlogInfo(@"Buying %@...", product.productIdentifier);
+    mlogDebug(@"Buying %@...", product.productIdentifier);
     
     SKPayment * payment = [SKPayment paymentWithProduct:product];
     [[SKPaymentQueue defaultQueue] addPayment:payment];
@@ -92,14 +92,13 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 {
     _completionHandler(YES, response.products);
     _completionHandler = nil;
-    logfn();
     [[NSNotificationCenter defaultCenter] postNotificationName:IAPHelperProductUpdatedNotification object:nil userInfo:nil];
     
 }
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
     
-    mlogInfo(@"Failed to load list of products.");
+    mlogDebug(@"Failed IAP products.");
     _productsRequest = nil;
     
     _completionHandler(NO, nil);
@@ -129,7 +128,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 }
 
 - (void)completeTransaction:(SKPaymentTransaction *)transaction {
-    mlogInfo(@"completeTransaction...");
+    mlogDebug(@"completeTransaction...");
     
     [self provideContentForProductIdentifier:transaction.payment.productIdentifier];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
@@ -137,7 +136,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
-    mlogInfo(@"restoreTransaction...");
+    mlogDebug(@"restoreTransaction...");
     [self provideContentForProductIdentifier:transaction.originalTransaction.payment.productIdentifier];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     [self storeIapKey:transaction.payment.productIdentifier];
@@ -145,15 +144,10 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 
 - (void)failedTransaction:(SKPaymentTransaction *)transaction {
     
-    mlogInfo(@"failedTransaction...");
-    if (transaction.error.code != SKErrorPaymentCancelled)
-    {
-        mlogInfo(@"Transaction error: %@", transaction.error.localizedDescription);
-    }
-
-    mlogInfo(@"Transaction error: %@", transaction.error.localizedDescription);
+    mlogDebug(@"failedTransaction...");
+    mlogDebug(@"Transaction error: %@", transaction.error.localizedDescription);
     
-//    [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
+    [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
 }
 
 - (void)provideContentForProductIdentifier:(NSString *)productIdentifier {
