@@ -37,6 +37,15 @@ static float _networkStatus;
 {
     [self initDirectory];
     mlogCheckPoint(@"SystemManager Init");
+    
+#ifdef DEBUG
+    mlogInfo(@"DEBUG");
+#elif RELEASE_TEST
+    mlogInfo(@"RELEASE TEST");
+#else
+    mlogInfo(@"RELEASE");
+#endif
+    
     _delegates = [[NSMutableArray alloc] initWithCapacity:0];
     [self initSupportedLanguage];
     [self initOS];
@@ -76,8 +85,6 @@ static float _networkStatus;
     _lanscapeScreenRect.origin.y        = 0;
     _lanscapeScreenRect.size.width      = _screenRect.size.height;
     _lanscapeScreenRect.size.height     = _screenRect.size.width;
-    
-
 
     [device setBatteryMonitoringEnabled:YES];
 
@@ -291,8 +298,11 @@ static float _networkStatus;
 
     tmpStr = [NSString stringWithFormat:@"%@/config.json", _documentPath];
     [_pathArray replaceObjectAtIndex:kSystemManager_Path_Config       withObject:tmpStr];
+
+    tmpStr = [NSString stringWithFormat:@"%@", _tmpPath];
+    [_pathArray replaceObjectAtIndex:kSystemManager_Path_Tmp        withObject:tmpStr];
     
-    tmpStr = [NSString stringWithFormat:@"%@%@.log", _tmpPath, [dateFormattor stringFromDate:[NSDate date]]];
+    tmpStr = [NSString stringWithFormat:@"%@/log", _documentPath];
     [_pathArray replaceObjectAtIndex:kSystemManager_Path_Log        withObject:tmpStr];
 
     tmpStr = [NSString stringWithFormat:@"%@place", _tmpPath];
@@ -311,6 +321,8 @@ static float _networkStatus;
     [self makeDirectory:[self getPath:kSystemManager_Path_Place]];
     [self makeDirectory:[self getPath:kSystemManager_Path_Route]];
     [self makeDirectory:[self getPath:kSystemManager_Path_Speech]];
+    [self makeDirectory:[self getPath:kSystemManager_Path_Track]];
+    [self makeDirectory:[self getPath:kSystemManager_Path_Log]];
   
     mlogInfo(@"   Document Path: %@", [self documentPath]);
     mlogInfo(@" Place File Path: %@", [self getPath:kSystemManager_Path_Place]);
@@ -320,6 +332,7 @@ static float _networkStatus;
     mlogInfo(@"Config File Path: %@", [self getPath:kSystemManager_Path_Config]);
     mlogInfo(@"  User File Path: %@", [self getPath:kSystemManager_Path_User]);
     mlogInfo(@"   Log File Path: %@", [self getPath:kSystemManager_Path_Log]);
+    mlogInfo(@"   tmp File Path: %@", [self getPath:kSystemManager_Path_Tmp]);
 
 }
 
@@ -362,7 +375,11 @@ static float _networkStatus;
 
 +(void) makeDirectory:(NSString*) path
 {
-    [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:NULL];
+    /* file directory doesn't exist, then create it */
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        
+        [[NSFileManager defaultManager] createDirectoryAtPath:path withIntermediateDirectories:YES attributes:nil error:NULL];
+    }
 
 }
 
@@ -447,7 +464,6 @@ static float _networkStatus;
 +(NSString *) getPath:(SystemManagerPathType) pathType
 {
     return [_pathArray objectAtIndex:pathType];
-
 }
 
 +(BOOL) hostReachable:(NSString *)host

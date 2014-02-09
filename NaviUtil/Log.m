@@ -33,11 +33,16 @@ void logInit()
 {
     if(false == isInit)
     {
-        [[NSFileManager defaultManager] createFileAtPath:[SystemManager getPath:kSystemManager_Path_Log]
+        NSDateFormatter* dateFormattor  = [[NSDateFormatter alloc] init];
+        [dateFormattor setDateFormat:@"yyyy-MM-dd.HHmmss"];
+        NSString *logFileName = [NSString stringWithFormat:@"%@/%@.log",
+                                 [SystemManager getPath:kSystemManager_Path_Log], [dateFormattor stringFromDate:[NSDate date]]];
+        
+        [[NSFileManager defaultManager] createFileAtPath:logFileName
                                                 contents:nil
                                               attributes:nil];
-
-        fileHandle  = [NSFileHandle fileHandleForWritingAtPath:[SystemManager getPath:kSystemManager_Path_Log]];
+        
+        fileHandle  = [NSFileHandle fileHandleForWritingAtPath:logFileName];
         outputFormatter = [[NSDateFormatter alloc] init];
         [outputFormatter setDateFormat:@"MM-dd HH:mm:ss"];
     }
@@ -106,9 +111,19 @@ void logToFile(NSString* msg)
                 encoding:NSStringEncodingConversionAllowLossy
                    error:nil];
 #endif
-    [fileHandle writeData:[msg dataUsingEncoding:NSUTF8StringEncoding]];
-    [fileHandle synchronizeFile];
-    
+    @try
+    {
+        if (nil != fileHandle)
+        {
+            [fileHandle writeData:[msg dataUsingEncoding:NSUTF8StringEncoding]];
+            [fileHandle synchronizeFile];
+        }
+    }
+    @catch (NSException *exception)
+    {
+        
+    }
+
 }
 
 void logToConsole(NSString* msg)

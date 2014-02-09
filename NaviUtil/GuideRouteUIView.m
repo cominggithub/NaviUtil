@@ -61,6 +61,7 @@
     NSString                *pendingMessage;
     UITextField             *messageBoxTextField;
     NSDate                  *lastUpdateMessageTime;
+    GR_EVENT                lastEvent;
 }
 
 #pragma mark - Main
@@ -206,7 +207,7 @@
     [self drawBackground:context Rectangle:rect];
     
     /* draw debug message */
-    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG] && _messageBoxText.length > 0)
+    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG] && _messageBoxText.length > 0)
     {
         [self drawMessageBox:context Message:_messageBoxText];
 
@@ -236,12 +237,11 @@
     turnArrowImage.image = [self getTurnImage];
 
     /* draw debug information */
-    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG_ROUTE_DRAW])
+    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG_ROUTE_DRAW])
     {
         [self drawCar:context];
         [self drawCurrentRouteLine:context];
         [self drawCarFootPrint:context];
-        [self drawDebugMessage:context];
         [self drawRouteLabel:context];
     }
 }
@@ -669,23 +669,6 @@
     }
 }
 
--(void) drawDebugMessage:(CGContextRef) context
-{
-    int routeLineNo = currentRouteLine != nil ? currentRouteLine.no : -1;
-    CGRect endPosText;
-    
-    CGContextSetFillColorWithColor(context, [UIColor whiteColor].CGColor);
-    endPosText.origin.x = 8;
-    endPosText.origin.y = 300;
-    endPosText.size.width = 350;
-    endPosText.size.height = 60;
-    
-    
-    NSString *endText = [NSString stringWithFormat:@"Target:%.2f, Turn:%.2f, rno:%d, mem:%@", TO_ANGLE(targetAngle), TO_ANGLE(_turnAngle), routeLineNo, [SystemManager getUsedMemoryStr]];
-    
-    [endText drawInRect:endPosText withFont:[UIFont boldSystemFontOfSize:14.0]];
-    
-}
 -(void) drawMessageBox:(CGContextRef) context Message:(NSString*) message
 {
     CGRect rect                 = msgRect;
@@ -1087,7 +1070,7 @@
     
     [LocationManager setRoute:route];
     
-    if (YES == [SystemConfig getBoolValue:CONFIG_IS_LOCATION_SIMULATOR])
+    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_LOCATION_SIMULATOR])
     {
         [LocationManager triggerLocationUpdate];
     }
@@ -1315,9 +1298,10 @@
     //    printf("toScreenOffset (%.8f, %.8f)\n", toScreenOffset.x, toScreenOffset.y);
 }
 
+#if 1
 -(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
 {
-    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+//    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     PointD nextCarPoint;
     currentCarLocation = newCarLocation;
     nextCarPoint.x = newCarLocation.longitude;
@@ -1343,7 +1327,7 @@
         currentRouteLine = firstRouteLine;
     }
     /* found matched route line */
-    else if (nil == currentRouteLine)
+    else if (nil != currentRouteLine)
     {
         /* reset the out of route line count */
         outOfRouteLineCount = 0;
@@ -1385,6 +1369,71 @@
     }
 }
 
+#else
+-(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
+{
+    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+    PointD nextCarPoint;
+    currentCarLocation = newCarLocation;
+    nextCarPoint.x = newCarLocation.longitude;
+    nextCarPoint.y = newCarLocation.latitude;
+    float distanceFromCarToRouteStart;
+    RouteLine* firstRouteLine;
+    carPoint = nextCarPoint;
+    [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
+    [self updateTranslationConstant];
+    
+    
+    firstRouteLine = [route.routeLines objectAtIndex:0];
+    
+    
+    distanceFromCarToRouteStart = [GeoUtil getGeoDistanceFromLocation:newCarLocation ToLocation:firstRouteLine.startLocation];
+    
+    currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
+    
+    if (nil == currentRouteLine && 0 == lastRouteLine.no && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
+    {
+        currentRouteLine = firstRouteLine;
+    }
+    
+    if(currentRouteLine != nil)
+    {
+        routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
+        routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
+        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
+        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
+        outOfRouteLineCount = 0;
+        
+        if ([GeoUtil getGeoDistanceFromLocation:currentCarLocation ToLocation:endRouteLineEndPoint] < ARRIVAL_REGION)
+        {
+            [self sendEvent:GR_EVENT_ARRIVAL];
+        }
+        else
+        {
+            [self sendEvent:GR_EVENT_GPS_READY];
+        }
+        
+        
+    }
+    else
+    {
+        _turnAngle      = 0;
+        outOfRouteLineCount++;
+        if (outOfRouteLineCount < maxOutOfRouteLineCount)
+        {
+            outOfRouteLineCount = 0;
+            [self sendEvent:GR_EVENT_GPS_READY];
+            
+        }
+        else
+        {
+            
+            [self sendEvent:GR_EVENT_LOCATION_LOST];
+        }
+    }
+}
+#endif
+
 #pragma location update
 
 #if 1
@@ -1399,13 +1448,15 @@
      then turn right + becomes turn left - and
      turn left - becomes turn right +
      */
-    
+ 
     angleRotateStep = (10/180.0) *M_PI;
     
     reverseDirection = angleOffset > (M_PI) ? true:false;
     
     if (currentDrawAngle == targetAngle)
+    {
         return false;
+    }
     
     /* should be turn right + */
     if(currentDrawAngle < targetAngle)
@@ -1547,17 +1598,19 @@
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
     currentStep++;
-    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+//    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
     [self updateCarLocation:location];
     [self setNeedsDisplay];
 //    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
     
-    debugMsgLabel.text = [NSString stringWithFormat:@"%.8f, %.8f, %.1f, %.1f",
+    debugMsgLabel.text = [NSString stringWithFormat:@"%.8f, %.8f, %.1f, %.1f \n%@ %@",
                                location.latitude,
                                location.longitude,
                                speed,
-                               heading
+                               heading,
+                               [self GR_StateStr:self.state],
+                               [self GR_EventStr:lastEvent]
                                ];
 }
 
@@ -1594,10 +1647,11 @@
     messageBoxLabel                 = [[MessageBoxLabel alloc] initWithFrame:
                                        CGRectMake(30, 40, [SystemManager lanscapeScreenRect].size.width - 60, 161)];
     debugMsgLabel                   = [[UILabel alloc] init];
-    debugMsgLabel.text              = @"debug msg";
+    debugMsgLabel.text              = @"";
     debugMsgLabel.textColor         = [UIColor whiteColor];
     debugMsgLabel.backgroundColor   = [UIColor clearColor];
-    debugMsgLabel.frame             = CGRectMake(8, 280, 480, 20);
+    debugMsgLabel.frame             = CGRectMake(8, 260, 480, 60);
+    debugMsgLabel.numberOfLines     = 2;
     [clockView update];
 
     
@@ -1622,7 +1676,7 @@
     
     [LocationManager addDelegate:self];
 
-    debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_IS_DEBUG];
+    debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_H_IS_DEBUG];
     self.isNetwork  = [SystemManager getNetworkStatus] > 0;
     self.isGps      = [SystemManager getGpsStatus] > 0;
     
@@ -1797,11 +1851,12 @@
 
 -(NSString*) GR_EventStr:(GR_EVENT) event
 {
-    
+    lastEvent = event;
+
     switch (event)
     {
         case GR_EVENT_GPS_NO_SIGNAL:
-            return @"GR_EVENT_GPS_NO_SIGNAL";
+            return @"GR_EVENT GPS_NO_SIGNAL";
         case GR_EVENT_NETWORK_NO_SIGNAL:
             return @"GR_EVENT_NETWORK_NO_SIGNAL";
         case GR_EVENT_ROUTE_DESTINATION_ERROR:
@@ -1855,7 +1910,7 @@
 
 -(void) sendEvent:(GR_EVENT) event
 {
-    mlogDebug(@"%@", [self GR_EventStr:event]);
+//    mlogDebug(@"%@", [self GR_EventStr:event]);
     switch (event)
     {
         case GR_EVENT_GPS_NO_SIGNAL:

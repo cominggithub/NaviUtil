@@ -21,6 +21,7 @@ typedef enum
     kSystemManager_Path_User,
     kSystemManager_Path_Speech,
     kSystemManager_Path_Config,
+    kSystemManager_Path_Tmp,
     kSystemManager_Path_Max
 }SystemManagerPathType;
 
@@ -35,7 +36,6 @@ typedef enum
 
 }
 
-+(NSString *) documentPath;
 +(CGRect) lanscapeScreenRect;
 +(CGRect) screenRect;
 +(void) init;

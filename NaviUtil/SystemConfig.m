@@ -15,28 +15,40 @@
 
 @implementation SystemConfig
 
-static UIColor *_defaultColor;
 static JsonFile *_configFile;
+static JsonFile *_hiddenConfigFile;
 
 #pragma variable
 
 +(NSString*) getStringValue:(NSString*) key
 {
+    if ([key hasPrefix:@"@"])
+        return [_hiddenConfigFile objectForKey:key];
+    
     return [_configFile objectForKey:key];
 }
 
 +(int) getIntValue:(NSString*) key
 {
+    if ([key hasPrefix:@"@"])
+        return [[_hiddenConfigFile objectForKey:key] intValue];
+    
     return [[_configFile objectForKey:key] intValue];
 }
 
 +(double) getDoubleValue:(NSString*) key
 {
+    if ([key hasPrefix:@"@"])
+        return [[_hiddenConfigFile objectForKey:key] doubleValue];
+    
     return [[_configFile objectForKey:key] doubleValue];
 }
 
 +(float) getFloatValue:(NSString*) key
 {
+    if ([key hasPrefix:@"@"])
+        return [[_hiddenConfigFile objectForKey:key] floatValue];
+    
     return [[_configFile objectForKey:key] floatValue];
 }
 
@@ -46,12 +58,19 @@ static JsonFile *_configFile;
     {
         return [self checkIAPItem:key];
     }
+    else if ([key hasPrefix:@"@"])
+    {
+        return [[_hiddenConfigFile objectForKey:key] boolValue];
+    }
     
     return [[_configFile objectForKey:key] boolValue];
 }
 
 +(UIColor*) getUIColorValue:(NSString*) key
 {
+    if ([key hasPrefix:@"@"])
+        return [(NSString*)[_hiddenConfigFile objectForKey:key] uicolorValue];
+
     return [(NSString*)[_configFile objectForKey:key] uicolorValue];
 }
 
@@ -72,49 +91,76 @@ static JsonFile *_configFile;
 
 +(void) setValue:(NSString*) key int:(int) value
 {
-    [_configFile setObjectForKey:key object:[NSString stringFromInt:value]];
-    [self save];
+    if ([key hasPrefix:@"@"])
+    {
+        [_hiddenConfigFile setObjectForKey:key object:[NSString stringFromInt:value]];
+    }
+    else
+    {
+        [_configFile setObjectForKey:key object:[NSString stringFromInt:value]];
+        [self save];
+    }
+
 }
 
 +(void) setValue:(NSString*) key double:(double) value
 {
-    [_configFile setObjectForKey:key object:[NSString stringFromDouble:value]];
-    [self save];
+    if ([key hasPrefix:@"@"])
+    {
+        [_hiddenConfigFile setObjectForKey:key object:[NSString stringFromDouble:value]];
+    }
+    else
+    {
+        [_configFile setObjectForKey:key object:[NSString stringFromDouble:value]];
+        [self save];
+    }
 }
 
 +(void) setValue:(NSString*) key float:(float) value
 {
-    [_configFile setObjectForKey:key object:[NSString stringFromFloat:value]];
-    [self save];
+    if ([key hasPrefix:@"@"])
+    {
+        [_hiddenConfigFile setObjectForKey:key object:[NSString stringFromFloat:value]];
+    }
+    else
+    {
+        [_configFile setObjectForKey:key object:[NSString stringFromFloat:value]];
+        [self save];
+    }
 }
 
 +(void) setValue:(NSString*) key BOOL:(BOOL) value
 {
-    [_configFile setObjectForKey:key object:[NSString stringFromBOOL:value]];
-    [self save];
+    if ([key hasPrefix:@"@"])
+    {
+        [_hiddenConfigFile setObjectForKey:key object:[NSString stringFromBOOL:value]];
+    }
+    else
+    {
+        [_configFile setObjectForKey:key object:[NSString stringFromBOOL:value]];
+        [self save];
+    }
 }
 
 +(void) setValue:(NSString*) key uicolor:(UIColor*) value
 {
-    [_configFile setObjectForKey:key object:[NSString stringFromUIColor:value]];
-    [self save];
-}
-
-+(UIColor*) defaultColor
-{
-    return _defaultColor;
-}
-
-+(void) setDefaultColor:(UIColor*) value
-{
-    _defaultColor = value;
+    if ([key hasPrefix:@"@"])
+    {
+        [_hiddenConfigFile setObjectForKey:key object:[NSString stringFromUIColor:value]];
+    }
+    else
+    {
+        [_configFile setObjectForKey:key object:[NSString stringFromUIColor:value]];
+        [self save];
+    }
 }
 
 
 #pragma mark - function
 +(BOOL) init
 {
-    _configFile = [JsonFile jsonFileWithFileName:[SystemManager getPath:kSystemManager_Path_Config]];
+    _configFile         = [JsonFile jsonFileWithFileName:[SystemManager getPath:kSystemManager_Path_Config]];
+    _hiddenConfigFile   = [JsonFile jsonFileWithFileName:@"a.aa"];
     [self checkKeys];
 
     [self save];
@@ -124,13 +170,35 @@ static JsonFile *_configFile;
 
 +(void) checkKeys
 {
-    [self checkKey:CONFIG_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
+#if DEBUG
+    [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
+
+#elif RELEASE_TEST
+    [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
+
+#else
+    [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
+#endif
+    
+
     [self checkKey:CONFIG_IS_SPEECH                     defaultValue:[NSString stringFromBOOL:TRUE]];
     [self checkKey:CONFIG_TURN_ANGLE_DISTANCE           defaultValue:[NSString stringFromFloat:50.0]];
     [self checkKey:CONFIG_TARGET_ANGLE_DISTANCE         defaultValue:[NSString stringFromFloat:5.0]];

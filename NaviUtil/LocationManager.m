@@ -61,8 +61,9 @@ static NSMutableArray *_savedLocations;
 
 -(void) initSelf
 {
+    mlogInfo(@"Init Location Manager\n");
     _locationManager = [[CLLocationManager alloc] init];
-    _locationManager.delegate=self;
+    _locationManager.delegate = self;
     _locationManager.desiredAccuracy=kCLLocationAccuracyBestForNavigation;
     
 }
@@ -87,7 +88,6 @@ static NSMutableArray *_savedLocations;
 
 -(void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
-    
     if (newHeading.headingAccuracy < 0)
         return;
     
@@ -180,7 +180,6 @@ static NSMutableArray *_savedLocations;
 
 +(void) reprobeLocation
 {
-    mlogWarning(@"reprobe location\n");
     _hasLocation            = NO;
     _locationLostCount      = 0;
     _skipLostDetectionCount = 20;
@@ -280,7 +279,7 @@ static NSMutableArray *_savedLocations;
 
 +(BOOL) isLocationDifferenceReasonable:(CLLocationCoordinate2D) fromLocation To:(CLLocationCoordinate2D) toLocation
 {
-    if (TRUE == [SystemConfig getBoolValue:CONFIG_IS_LOCATION_UPDATE_FILTER])
+    if (TRUE == [SystemConfig getBoolValue:CONFIG_H_IS_LOCATION_UPDATE_FILTER])
     {
         int distance = [GeoUtil getGeoDistanceFromLocation:fromLocation ToLocation:toLocation];
         if (distance > LOCATION_UPDATE_DISTANCE_THRESHOLD)
@@ -295,7 +294,7 @@ static NSMutableArray *_savedLocations;
 {
     Place *p = _currentPlace;
     
-    if (TRUE == [SystemConfig getBoolValue:CONFIG_IS_MANUAL_PLACE])
+    if (TRUE == [SystemConfig getBoolValue:CONFIG_H_IS_MANUAL_PLACE])
         p = _currentManualPlace;
     else
     {
@@ -328,15 +327,9 @@ static NSMutableArray *_savedLocations;
         mlogDebug(@"skip location update notify %.0fms > %.0fms", [SystemConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL], timeInterval);
         return;
     }
-#if 0
-    mlogDebug(@"notify location update: (%.8f, %.8f), speed: %.2f, distance: %.2f, heading: %.2f\n",
-              _currentCLLocationCoordinate2D.latitude,
-              _currentCLLocationCoordinate2D.longitude,
-              _currentSpeed,
-              _currentDistance,
-              _currentHeading
-              );
-#endif
+
+
+
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(locationManager:update:speed:distance:heading:)])
@@ -371,6 +364,7 @@ static NSMutableArray *_savedLocations;
 
 +(void) startMonitorLocation
 {
+
     [_locationSimulator stop];
     [_locationManager startMonitorLocationChange];
 }
@@ -525,9 +519,9 @@ static NSMutableArray *_savedLocations;
 +(void) newFile
 {
     _savedLocations = [[NSMutableArray alloc] initWithCapacity:0];
-    _fileName = [NSString stringWithFormat:@"%@/GT_%@.txt", [SystemManager documentPath], [_dateFormatter2 stringFromDate:[NSDate date]]];
+    _fileName = [NSString stringWithFormat:@"%@/GT_%@.txt", [SystemManager getPath:kSystemManager_Path_Track], [_dateFormatter2 stringFromDate:[NSDate date]]];
     
-    _kmlFileName = [NSString stringWithFormat:@"%@/GT_%@.kml", [SystemManager documentPath], [_dateFormatter2 stringFromDate:[NSDate date]]];
+    _kmlFileName = [NSString stringWithFormat:@"%@/GT_%@.kml", [SystemManager getPath:kSystemManager_Path_Track], [_dateFormatter2 stringFromDate:[NSDate date]]];
     
     mlogDebug(@"%@", _fileName);
     mlogDebug(@"%@", _kmlFileName);

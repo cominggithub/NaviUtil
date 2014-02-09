@@ -119,9 +119,11 @@
 
 -(void) setRouteStartPlace:(Place *) p
 {
+    logfn();
     if (nil == p)
         return;
     
+    logO(p);
     /* check on exchanging route start and end place  */
     if ([_routeEndPlace isCoordinateEqualTo:p])
     {
@@ -129,6 +131,7 @@
         [self removeRoutePolyline];
     }
 
+    logfn();
     if (![_routeStartPlace isCoordinateEqualTo:p])
     {
         isRouteChanged                   = true;
@@ -283,9 +286,13 @@
         [self addCurrentPlaceToMarkers];
 
         // reset route start place
-        if (YES == self.useCurrentPlaceAsRouteStart || self.routeStartPlace.placeType == kPlaceType_CurrentPlace)
+        if (self.routeStartPlace.placeType == kPlaceType_CurrentPlace)
         {
             [self setRouteStartPlace:currentPlace];
+        }
+        else if (self.routeEndPlace.placeType == kPlaceType_CurrentPlace)
+        {
+            [self setRouteEndPlace:currentPlace];
         }
 
         if ( YES == self.updateToCurrentPlace )
@@ -452,16 +459,6 @@
         routePolyline.map = nil;
     
     routePolyline = nil;
-}
-
--(BOOL) checkNetwork
-{
-    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:connectToServer:)])
-    {
-        [self.delegate mapManager:self connectToServer:TRUE];
-    }
-    
-    return TRUE;
 }
 
 #pragma mark -- Marker

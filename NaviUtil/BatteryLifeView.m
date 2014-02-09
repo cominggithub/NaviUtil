@@ -39,7 +39,7 @@
     self.life                   = 0;
 
 
-    if (YES == [SystemConfig getBoolValue:CONFIG_IS_DEBUG])
+    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG])
     {
         [self addSubview:_lifeLabel];
     }

@@ -9,14 +9,15 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#define CONFIG_IS_DEBUG                      @"IsDebug"
-#define CONFIG_IS_AD                         @"IsAd"
-#define CONFIG_IS_USER_PLACE                 @"IsUserPlace"
-#define CONFIG_IS_MANUAL_PLACE               @"IsManualPlace"
-#define CONFIG_IS_DEBUG_ROUTE_DRAW           @"IsDebugRouteDraw"
+#define CONFIG_H_IS_DEBUG                      @"@IsDebug"
+#define CONFIG_H_IS_AD                         @"@IsAd"
+#define CONFIG_H_IS_USER_PLACE                 @"@IsUserPlace"
+#define CONFIG_H_IS_MANUAL_PLACE               @"@IsManualPlace"
+#define CONFIG_H_IS_DEBUG_ROUTE_DRAW           @"@IsDebugRouteDraw"
+#define CONFIG_H_IS_LOCATION_UPDATE_FILTER     @"@IsLocationUpdateFilter"
+#define CONFIG_H_IS_LOCATION_SIMULATOR         @"@IsLocationSimulator"
+
 #define CONFIG_IS_SPEECH                     @"IsSpeech"
-#define CONFIG_IS_LOCATION_UPDATE_FILTER     @"IsLocationUpdateFilter"
-#define CONFIG_IS_LOCATION_SIMULATOR         @"IsLocationSimulator"
 #define CONFIG_TRIGGER_LOCATION_INTERVAL     @"TriggerLocationUpdateInterval"
 #define CONFIG_TURN_ANGLE_DISTANCE           @"TurnAngleDistance"
 #define CONFIG_TARGET_ANGLE_DISTANCE         @"TargetAngleDistance"
