@@ -62,6 +62,8 @@
     UITextField             *messageBoxTextField;
     NSDate                  *lastUpdateMessageTime;
     GR_EVENT                lastEvent;
+    RouteLine               *lastRouteLine;
+    Place                   *lastFailedRouteStartPlace;
 }
 
 #pragma mark - Main
@@ -126,6 +128,7 @@
     carCenterPoint.y                = 250;
     hasMessage                      = FALSE;
     pendingMessage                  = @"";
+    lastFailedRouteStartPlace       = nil;
     
     maxOutOfRouteLineCount  = [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
     [self addUIComponents];
@@ -1052,6 +1055,8 @@
     angleRotateStep                 = 0.1;
     rotateInterval                  = 0.1;
     firstRouteLine                  = [route.routeLines objectAtIndex:0];
+    currentRouteLine                = nil;
+    lastFailedRouteStartPlace       = nil;
     distanceFromCarInitToRouteStart = [GeoUtil getGeoDistanceFromLocation:routeStartPlace.coordinate ToLocation:firstRouteLine.startLocation];
     
     [self nextRouteLine];
@@ -1157,24 +1162,19 @@
 
 -(void) processRouteDownloadRequestStatusChange
 {
-    bool isFail = true;
-    bool updateStatus = false;
+    logfn();
     /* search place finished */
     if (routeDownloadRequest.status == kDownloadStatus_Finished)
     {
+        logfn();
         [self startRouteNavigation];
     }
     /* search failed */
     else if(routeDownloadRequest.status == kDownloadStatus_DownloadFail)
     {
-        updateStatus = true;
+        logfn();
+        [self sendEvent:GR_EVENT_LOCATION_LOST];
     }
-    
-    if (true == updateStatus && true == isFail)
-    {
-        
-    }
-    
 }
 
 -(void) triggerLocationUpdate
@@ -1211,6 +1211,16 @@
             [self sendEvent:GR_EVENT_START_NAVIGATION];
             [self initNewRouteNavigation];
         }
+        else
+        {
+            lastFailedRouteStartPlace = routeStartPlace;
+            [self sendEvent:GR_EVENT_LOCATION_LOST];
+        }
+    }
+    else
+    {
+        lastFailedRouteStartPlace = routeStartPlace;
+        [self sendEvent:GR_EVENT_LOCATION_LOST];
     }
 
     return;
@@ -1256,21 +1266,34 @@
 -(void) replanRoute
 {
     mlogDebug(@"Re-Route by current place\n");
-    
     routeStartPlace = [LocationManager currentPlace];
-    [self planRoute];
+
+    if (routeStartPlace != nil && FALSE == [routeStartPlace isCoordinateEqualTo:lastFailedRouteStartPlace])
+    {
+        logfn();
+        [self planRoute];
+    }
+    else
+    {
+        logfn();
+        [self sendEvent:GR_EVENT_LOCATION_LOST];
+    }
 }
 
 -(void) planRoute
 {
+    logfn();
     if (nil != routeStartPlace && nil != routeEndPlace)
     {
+        logfn();
         if (YES == [routeStartPlace isNullPlace])
         {
+            logfn();
             [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
         }
         else if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
         {
+            logfn();
             routeDownloadRequest = [NaviQueryManager
                                     getRouteDownloadRequestFrom:routeStartPlace.coordinate
                                     To:routeEndPlace.coordinate];
@@ -1279,11 +1302,13 @@
         }
         else
         {
+            logfn();
             [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
         }
     }
     else
     {
+        logfn();
         [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
     }
 }
@@ -1301,18 +1326,13 @@
 #if 1
 -(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
 {
-//    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
     PointD nextCarPoint;
-    currentCarLocation = newCarLocation;
-    nextCarPoint.x = newCarLocation.longitude;
-    nextCarPoint.y = newCarLocation.latitude;
     float distanceFromCarToRouteStart;
     RouteLine* firstRouteLine;
-    
-    
-    carPoint = nextCarPoint;
-    [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
-    [self updateTranslationConstant];
+    lastCarLocation     = currentCarLocation;
+    currentCarLocation  = newCarLocation;
+
 
 
     firstRouteLine              = [route.routeLines objectAtIndex:0];
@@ -1322,22 +1342,26 @@
     currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
 
     /* head to first route line */
-    if (nil == currentRouteLine && 0 == lastRouteLine.no && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
+    if (nil == currentRouteLine && (nil == lastRouteLine || 0 == lastRouteLine.no) && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
+        logfn();
         currentRouteLine = firstRouteLine;
     }
     /* found matched route line */
     else if (nil != currentRouteLine)
     {
+
         /* reset the out of route line count */
         outOfRouteLineCount = 0;
         
         if ([GeoUtil getGeoDistanceFromLocation:currentCarLocation ToLocation:endRouteLineEndPoint] < ARRIVAL_REGION)
         {
+            logfn();
             [self sendEvent:GR_EVENT_ARRIVAL];
         }
         else
         {
+            logfn();
             [self sendEvent:GR_EVENT_GPS_READY];
         }
     }
@@ -1345,7 +1369,10 @@
     else
     {
         /* let the current route line be the last route line */
-        currentRouteLine = lastRouteLine;
+        currentCarLocation  = lastCarLocation;
+        currentRouteLine    = lastRouteLine;
+        
+        logI(currentRouteLine.no);
         outOfRouteLineCount++;
         /* stay at GPS_READY if missing GPS signal is less than the CONFIG_MAX_OUT_OF_ROUTELINE_COUNT */
         if (outOfRouteLineCount < maxOutOfRouteLineCount)
@@ -1362,10 +1389,16 @@
     /* event we lost location now, we still use last route line to draw current navigation map */
     if(currentRouteLine != nil)
     {
+        nextCarPoint.x      = currentCarLocation.longitude;
+        nextCarPoint.y      = currentCarLocation.latitude;
+        carPoint            = nextCarPoint;
+        [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
+        [self updateTranslationConstant];
+        
         routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
         routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
         targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
-        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
+        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
     }
 }
 
@@ -1391,7 +1424,7 @@
     
     currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
     
-    if (nil == currentRouteLine && 0 == lastRouteLine.no && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
+    if (nil == currentRouteLine && nil == lastRouteLine && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
         currentRouteLine = firstRouteLine;
     }
@@ -1598,10 +1631,18 @@
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
     currentStep++;
-//    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
-    [self updateCarLocation:location];
-    [self setNeedsDisplay];
+    if (GR_STATE_NAVIGATION == self.state)
+    {
+        [self updateCarLocation:location];
+        [self setNeedsDisplay];
+    }
+    else
+    {
+        [self sendEvent:GR_EVENT_GPS_READY];
+    }
+    
 //    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
     
     debugMsgLabel.text = [NSString stringWithFormat:@"%.8f, %.8f, %.1f, %.1f \n%@ %@",
@@ -1925,7 +1966,6 @@
         case GR_EVENT_ARRIVAL:
             self.state = GR_STATE_ARRIVAL;
             break;
-
         case GR_EVENT_GPS_READY:
             if (self.state == GR_STATE_GPS_NO_SIGNAL)
                 self.state = GR_STATE_LOOKUP;
@@ -1935,6 +1975,8 @@
                 self.state = GR_STATE_LOOKUP;
             break;
         case GR_EVENT_LOCATION_LOST:
+            self.state = GR_STATE_GPS_NO_SIGNAL;
+            break;
         case GR_EVENT_ACTIVE:
             self.state = GR_STATE_LOOKUP;
             break;

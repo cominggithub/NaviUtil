@@ -16,6 +16,7 @@
 #define CONFIG_H_IS_DEBUG_ROUTE_DRAW           @"@IsDebugRouteDraw"
 #define CONFIG_H_IS_LOCATION_UPDATE_FILTER     @"@IsLocationUpdateFilter"
 #define CONFIG_H_IS_LOCATION_SIMULATOR         @"@IsLocationSimulator"
+#define CONFIG_H_IS_SIMULATE_LOCATION_LOST     @"@IsSimulateLocationLost"
 
 #define CONFIG_IS_SPEECH                     @"IsSpeech"
 #define CONFIG_TRIGGER_LOCATION_INTERVAL     @"TriggerLocationUpdateInterval"

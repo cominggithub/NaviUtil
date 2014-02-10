@@ -91,13 +91,13 @@ typedef enum
     
     CGRect msgRect;
     int currentStep;
-    RouteLine *lastRouteLine;
     RouteLine *currentRouteLine;
     NSTimer *rotateTimer;
     double currentDrawAngle;
     double angleRotateStep;
     double rotateInterval;
     CLLocationCoordinate2D currentCarLocation;
+    CLLocationCoordinate2D lastCarLocation;
     AVAudioPlayer *audioPlayer;
     double xOffset;
     Place *routeStartPlace;

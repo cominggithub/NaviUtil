@@ -178,6 +178,7 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST     defaultValue:[NSString stringFromBOOL:TRUE]];
 
 #elif RELEASE_TEST
     [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:FALSE]];
@@ -187,7 +188,7 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
-
+    [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST     defaultValue:[NSString stringFromBOOL:FALSE]];
 #else
     [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
@@ -196,6 +197,7 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST     defaultValue:[NSString stringFromBOOL:FALSE]];
 #endif
     
 
@@ -227,12 +229,25 @@ static JsonFile *_hiddenConfigFile;
 
 +(void) checkKey:(NSString*) key defaultValue:(NSString*) defaultValue
 {
-    id value;
-    value = [_configFile objectForKey:key];
 
-    if (nil == value)
+    id value;
+    if ([key hasPrefix:@"@"])
     {
-        [_configFile setObjectForKey:key object:defaultValue];
+        value = [_hiddenConfigFile objectForKey:key];
+        
+        if (nil == value)
+        {
+            [_hiddenConfigFile setObjectForKey:key object:defaultValue];
+        }
+    }
+    else
+    {
+        value = [_configFile objectForKey:key];
+
+        if (nil == value)
+        {
+            [_configFile setObjectForKey:key object:defaultValue];
+        }
     }
 }
 
