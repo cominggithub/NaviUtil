@@ -19,5 +19,6 @@
 + (SKProduct*)productByKey:(NSString*) key;
 + (int)iapItemCount;
 + (void)buyProduct:(SKProduct*) product;
++ (void)restorePurchasedProduct;
 
 @end

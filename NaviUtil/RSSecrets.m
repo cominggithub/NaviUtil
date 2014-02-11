@@ -67,7 +67,23 @@
 	return [[NSString alloc] initWithData: data encoding: NSUTF8StringEncoding];
 }
 
-+ (void) removeKey: (NSString*) key {
++ (void)addKey:(NSString*) key
+{
+    [self setString:@"TRUE" forKey:key];
+}
+
++ (BOOL) hasKey:(NSString*) key
+{
+    NSString* value = [self stringForKey:key];
+    if (nil == value || value.length <= 0 || ![value isEqualToString:@"TRUE"])
+    {
+        return FALSE;
+    }
+    
+    return TRUE;
+}
+
++ (void)removeKey: (NSString*) key {
 	NSMutableDictionary* dict = [NSMutableDictionary dictionary];
 
 	[dict setObject: (__bridge id) kSecClassGenericPassword forKey: (__bridge id) kSecClass];

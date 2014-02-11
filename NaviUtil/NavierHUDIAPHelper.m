@@ -96,8 +96,13 @@ NSMutableDictionary* iapItems;
 
 + (void)buyProduct:(SKProduct*) product
 {
-    logfn();
     [[NavierHUDIAPHelper sharedInstance] buyProduct:product];
 }
+
++ (void)restorePurchasedProduct
+{
+    [[NavierHUDIAPHelper sharedInstance] restoreCompletedTransactions];
+}
+
 
 @end

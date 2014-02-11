@@ -9,6 +9,7 @@
 #import "SystemConfig.h"
 #import "JsonFile.h"
 #import "NSString+category.h"
+#import "RSSecrets.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
@@ -56,7 +57,7 @@ static JsonFile *_hiddenConfigFile;
 {
     if ([key hasPrefix:@"IAP_"])
     {
-        return [self checkIAPItem:key];
+        return [self hasIAPItem:key];
     }
     else if ([key hasPrefix:@"@"])
     {
@@ -74,18 +75,19 @@ static JsonFile *_hiddenConfigFile;
     return [(NSString*)[_configFile objectForKey:key] uicolorValue];
 }
 
-+(BOOL) checkIAPItem:(NSString*) itemId
++ (void)removeIAPItem:(NSString*) key
 {
-    if ([itemId isEqualToString:CONFIG_IAP_IS_NO_AD])
-    {
-        return TRUE;
-    }
-    else if ([itemId isEqualToString:CONFIG_IAP_IS_USER_PLACE])
-    {
-        return TRUE;
-    }
+    return [RSSecrets removeKey:key];
+}
 
-    return FALSE;
++ (void)addIAPItem:(NSString*) key
+{
+    return [RSSecrets addKey:key];
+}
+
++ (BOOL)hasIAPItem:(NSString*) key
+{
+    return [RSSecrets hasKey:key];
 }
 
 
@@ -182,9 +184,9 @@ static JsonFile *_hiddenConfigFile;
 
 #elif RELEASE_TEST
     [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];

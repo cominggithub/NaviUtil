@@ -30,9 +30,7 @@
 #define CONFIG_DEFAULT_ROUTE_FILE            @"DefaultRoute"
 #define CONFIG_IS_TRACK_FILE                 @"IsTrackFile"
 
-#define CONFIG_IAP_IS_NO_AD                  @"IAP_IsNoAd"
-#define CONFIG_IAP_IS_USER_PLACE             @"IAP_IsUserPlace"
-
+#define CONFIG_IAP_IS_NO_AD_AND_STORE_USER_PLACE   @"IAP_IsNoAdAndStoreUserPlace"
 
 /* for car panel 1 */
 #define CONFIG_CP1_COLOR                    @"CP1_Color"
@@ -49,19 +47,21 @@
 
 @interface SystemConfig : NSObject
 
-+(BOOL) init;
-
-+(NSString*) getStringValue:(NSString*) key;
-+(int) getIntValue:(NSString*) key;
-+(double) getDoubleValue:(NSString*) key;
-+(float) getFloatValue:(NSString*) key;
-+(BOOL) getBoolValue:(NSString*) key;
-+(UIColor*) getUIColorValue:(NSString*) key;
-+(void) setValue:(NSString*) key int:(int) value;
-+(void) setValue:(NSString*) key double:(double) value;
-+(void) setValue:(NSString*) key float:(float) value;
-+(void) setValue:(NSString*) key BOOL:(BOOL) value;
-+(void) setValue:(NSString*) key uicolor:(UIColor*) value;
-+(void) save;
++ (BOOL)init;
++ (NSString*)getStringValue:(NSString*) key;
++ (int)getIntValue:(NSString*) key;
++ (double)getDoubleValue:(NSString*) key;
++ (float)getFloatValue:(NSString*) key;
++ (BOOL)getBoolValue:(NSString*) key;
++ (UIColor*)getUIColorValue:(NSString*) key;
++ (void)setValue:(NSString*) key int:(int) value;
++ (void)setValue:(NSString*) key double:(double) value;
++ (void)setValue:(NSString*) key float:(float) value;
++ (void)setValue:(NSString*) key BOOL:(BOOL) value;
++ (void)setValue:(NSString*) key uicolor:(UIColor*) value;
++ (void)removeIAPItem:(NSString*) key;
++ (void)addIAPItem:(NSString*) key;
++ (BOOL)hasIAPItem:(NSString*) key;
++ (void)save;
 
 @end

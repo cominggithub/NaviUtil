@@ -10,6 +10,7 @@
 #import "IAPHelper.h"
 #import <StoreKit/StoreKit.h>
 #import "RSSecrets.h"
+#import "SystemConfig.h"
 
 #define FILE_DEBUG TRUE
 #include "Log.h"
@@ -31,7 +32,6 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 }
 
 - (id)initWithProductIdentifiers:(NSSet *)productIdentifiers {
-    
     if ((self = [super init])) {
         
         // Store product identifiers
@@ -44,10 +44,8 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
             if (productPurchased) {
                 [_purchasedProductIdentifiers addObject:productIdentifier];
                 mlogDebug(@"Previously purchased: %@", productIdentifier);
-                [self storeIapKey:productIdentifier];
             } else {
                 mlogDebug(@"Not purchased: %@", productIdentifier);
-                [self removeIapKey:productIdentifier];
             }
         }
         
@@ -56,7 +54,6 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
         
     }
     return self;
-    
 }
 
 -(void)requestProductsWithCompletionHandler:(RequestProductsCompletionHandler)completionHandler {
@@ -79,10 +76,14 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 
 - (void)buyProduct:(SKProduct *)product {
     
+#if RELEASE || DEBUG
     mlogDebug(@"Buying %@...", product.productIdentifier);
-    
+
     SKPayment * payment = [SKPayment paymentWithProduct:product];
     [[SKPaymentQueue defaultQueue] addPayment:payment];
+#elif RELEASE_TEST
+    [self provideContentForProductIdentifier:product.productIdentifier];
+#endif
     
 }
 
@@ -132,14 +133,12 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
     
     [self provideContentForProductIdentifier:transaction.payment.productIdentifier];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    [self storeIapKey:transaction.payment.productIdentifier];
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
     mlogDebug(@"restoreTransaction...");
     [self provideContentForProductIdentifier:transaction.originalTransaction.payment.productIdentifier];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    [self storeIapKey:transaction.payment.productIdentifier];
 }
 
 - (void)failedTransaction:(SKPaymentTransaction *)transaction {
@@ -152,33 +151,38 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 
 - (void)provideContentForProductIdentifier:(NSString *)productIdentifier {
     
+    mlogAssertStrNotEmpty(productIdentifier);
+    
+    [self addPurchasedProductIdentifier:productIdentifier];
     [_purchasedProductIdentifiers addObject:productIdentifier];
     [[NSUserDefaults standardUserDefaults] setBool:YES forKey:productIdentifier];
     [[NSUserDefaults standardUserDefaults] synchronize];
     [[NSNotificationCenter defaultCenter] postNotificationName:IAPHelperProductPurchasedNotification object:productIdentifier userInfo:nil];
-    
 }
 
 - (void)restoreCompletedTransactions {
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
-
--(void) storeIapKey:(NSString*) key
+- (void)addPurchasedProductIdentifier:(NSString*) key
 {
-    [RSSecrets setString:@"TRUE" forKey:key];
+    mlogAssertStrNotEmpty(key);
+    return [SystemConfig addIAPItem:[self systemConfigKeyByProductIdentifier:key]];
 }
 
--(void) removeIapKey:(NSString*) key
+- (BOOL)hasPurchasedProductIdentifier:(NSString*) key
 {
-    [RSSecrets removeKey:key];
+    mlogAssertStrNotEmptyR(key, FALSE);
+    
+    return [SystemConfig hasIAPItem:[self systemConfigKeyByProductIdentifier:key]];
 }
 
--(BOOL) checkIapKey:(NSString*) key
+- (NSString*)systemConfigKeyByProductIdentifier:(NSString*) key
 {
-    NSString *value = [RSSecrets stringForKey:key];
-    return value != nil && [value isEqualToString:@"TRUE"];
+    mlogAssertStrNotEmptyR(key, nil);
+    if ([key isEqualToString:@"com.coming.NavierHUD.NoAdStoreUserPlace"])
+        return CONFIG_IAP_IS_NO_AD_AND_STORE_USER_PLACE;
+    
+    return nil;
 }
-
-
 @end

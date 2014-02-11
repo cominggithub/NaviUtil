@@ -26,12 +26,8 @@
 
 @interface RSSecrets : NSObject
 
-+ (void) setData: (NSData*) object forKey: (NSString*) key;
-+ (void) setString: (NSString*) object forKey: (NSString*) key;
-
-+ (NSData*) dataForKey: (NSString*) key;
-+ (NSString*) stringForKey: (NSString*) key;
-
-+ (void) removeKey: (NSString*) key;
++ (void)addKey:(NSString*) key;
++ (BOOL)hasKey:(NSString*) key;
++ (void)removeKey: (NSString*) key;
 
 @end
