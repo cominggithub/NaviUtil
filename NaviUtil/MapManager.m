@@ -24,7 +24,7 @@
 #define ZOOM_LEVEL_DEFAULT 10
 #define VIEW_ANGLE 37.f
 #define SEARCHED_PLACE_MAX 5
-#define ROUTE_POLYLINE_WIDTH 20
+#define ROUTE_POLYLINE_WIDTH 10
 
 #define NEAR_PLACE_SEARCH_RADIUS 50000  // 50,000 meters, 50Km
 #define UPDATE_CURRENT_DISTANCE_THRESHOLD  2
@@ -64,6 +64,7 @@
 
     BOOL isSearchPlaceFinished;
     BOOL isSearchNearPlaceFinished;
+    UIColor *routePolyLineColor;
 }
 
 @synthesize routePolyline;
@@ -98,7 +99,7 @@
     isSearchNearPlaceFinished           = FALSE;
     lastPlace                           = nil;
     currentPlace                        = nil;
-    
+    routePolyLineColor                  = [UIColor redColor];
     [self addUserPlacesToMarkers];
 }
 
@@ -358,7 +359,7 @@
     routePoints                 = [currentRoute getRoutePolyLineCLLocation];
     routePolyline               = [[GMSPolyline alloc] init];
     routePolyline.strokeWidth   = ROUTE_POLYLINE_WIDTH;
-    routePolyline.strokeColor   = [UIColor blueColor];
+    routePolyline.strokeColor   = routePolyLineColor;
     path                        = [GMSMutablePath path];
     
     for(CLLocation *location in routePoints)

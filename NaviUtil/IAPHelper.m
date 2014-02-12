@@ -99,7 +99,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
     
-    mlogDebug(@"Failed IAP products.");
+    mlogDebug(@"Cannot get IAP products");
     _productsRequest = nil;
     
     _completionHandler(NO, nil);
