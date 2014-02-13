@@ -17,6 +17,7 @@
 #import "NSDictionary+category.h"
 #import "GeoUtil.h"
 
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 #define ZOOM_LEVEL_MAX 21
@@ -33,7 +34,7 @@
 {
     NSMutableArray *_searchedPlaces;
     Place *selectedPlace;
-    Place *currentPlace;
+
     Place *lastPlace;
 
     
@@ -98,7 +99,7 @@
     isSearchPlaceFinished               = FALSE;
     isSearchNearPlaceFinished           = FALSE;
     lastPlace                           = nil;
-    currentPlace                        = nil;
+    self.currentPlace                        = nil;
     routePolyLineColor                  = [UIColor redColor];
     [self addUserPlacesToMarkers];
 }
@@ -199,14 +200,14 @@
     if (_mapView == nil) {
         zoomLevel                   = ZOOM_LEVEL_DEFAULT;
         _updateToCurrentPlace       = TRUE;
-        currentPlace                = [LocationManager currentPlace];
+        self.currentPlace                = [LocationManager currentPlace];
         
         _mapView                    = [[GMSMapView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         
         _mapView.accessibilityLabel = @"mapView";
 
-        _mapView.camera = [GMSCameraPosition cameraWithLatitude:currentPlace.coordinate.latitude
-                                                         longitude:currentPlace.coordinate.longitude
+        _mapView.camera = [GMSCameraPosition cameraWithLatitude:self.currentPlace.coordinate.latitude
+                                                         longitude:self.currentPlace.coordinate.longitude
                                                               zoom:zoomLevel
                                                            bearing:10.f
                                                         viewingAngle:VIEW_ANGLE];
@@ -248,7 +249,7 @@
 
 -(void) moveToMyLocation
 {
-    [self moveToPlace:currentPlace];
+    [self moveToPlace:self.currentPlace];
 }
 
 -(void) moveToPlace:(Place*) place
@@ -278,22 +279,22 @@
 
     if (nil == lastPlace || [GeoUtil getGeoDistanceFromLocation:lastPlace.coordinate ToLocation:location.coordinate] > UPDATE_CURRENT_DISTANCE_THRESHOLD)
     {
-        lastPlace               = currentPlace;
-        currentPlace            = [[Place alloc] initWithName:[SystemManager getLanguageString:@"Current Location"]
+        lastPlace               = self.currentPlace;
+        self.currentPlace       = [[Place alloc] initWithName:[SystemManager getLanguageString:@"Current Location"]
                                                       address:@""
                                                    coordinate:CLLocationCoordinate2DMake(location.coordinate.latitude, location.coordinate.longitude)];
-        currentPlace.placeType  = kPlaceType_CurrentPlace;
+        self.currentPlace.placeType  = kPlaceType_CurrentPlace;
         [self removeCurrentPlaceFromMarkers];
         [self addCurrentPlaceToMarkers];
 
         // reset route start place
         if (self.routeStartPlace.placeType == kPlaceType_CurrentPlace)
         {
-            [self setRouteStartPlace:currentPlace];
+            [self setRouteStartPlace:self.currentPlace];
         }
         else if (self.routeEndPlace.placeType == kPlaceType_CurrentPlace)
         {
-            [self setRouteEndPlace:currentPlace];
+            [self setRouteEndPlace:self.currentPlace];
         }
 
         if ( YES == self.updateToCurrentPlace )
@@ -504,11 +505,50 @@
 
 -(void) addCurrentPlaceToMarkers
 {
+    logfn();
+    int i;
  //   if (nil != currentPlace && FALSE == [self isPlaceCloseToUserPlaces:currentPlace])
-    if (nil != currentPlace)
+    if (nil != self.currentPlace)
     {
-        [self addPlaceToMarker:currentPlace];
+        logfn();
+        for(i=0; i<User.homePlaces.count; i++)
+        {
+                logfn();
+            if (TRUE == [self.currentPlace isCoordinateEqualTo:[User getHomePlaceByIndex:i]])
+            {
+                    logfn();
+                mlogDebug(@"skip current place %s -- for -  %s",self.currentPlace, [User getHomePlaceByIndex:i]);
+                return;
+            }
+        }
+        
+            logfn();
+        for(i=0; i<User.officePlaces.count; i++)
+        {
+                logfn();
+            if (TRUE == [self.currentPlace isCoordinateEqualTo:[User getOfficePlaceByIndex:i]])
+            {
+                    logfn();
+                mlogDebug(@"skip current place %s -- for -  %s", self.currentPlace, [User getHomePlaceByIndex:i]);
+                return;
+            }
+        }
+            logfn();
+        for(i=0; i<User.favorPlaces.count; i++)
+        {
+                logfn();
+            if (TRUE == [self.currentPlace isCoordinateEqualTo:[User getFavorPlaceByIndex:i]])
+            {
+                    logfn();
+                mlogDebug(@"skip current place %s -- for -  %s", self.currentPlace, [User getHomePlaceByIndex:i]);
+                return;
+            }
+        }
+        
+            logfn();
+        [self addPlaceToMarker:self.currentPlace];
     }
+        logfn();
 }
 
 -(void) addUserPlacesToMarkers
@@ -812,7 +852,7 @@
     if (nil != place && place.length > 0)
     {
         searchNearPlaceDownloadRequest          = [NaviQueryManager getNearPlaceDownloadRequest:place
-                                                                                       locaiton:currentPlace.coordinate
+                                                                                       locaiton:self.currentPlace.coordinate
                                                                                          radius:NEAR_PLACE_SEARCH_RADIUS];
         searchNearPlaceDownloadRequest.delegate = self;
         searchPlaceDownloadRequest              = [NaviQueryManager getPlaceDownloadRequest:place];

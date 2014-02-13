@@ -37,7 +37,9 @@
 @property BOOL useCurrentPlaceAsRouteStart;
 @property Place* routeStartPlace;
 @property Place* routeEndPlace;
+@property Place *currentPlace;
 @property CGRect frame;
+
 @property id<MapManagerDelegate> delegate;
 
 -(void) searchPlace:(NSString*) placeText;

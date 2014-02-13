@@ -64,7 +64,7 @@ void logOut(int level, const char* func_name, int lineNo, id formatString, ...)
 void _logOut(int level, const char* func_name, int lineNo, NSString* msg)
 {
     logInit();
-#if DEBUG == 1
+#if DEBUG || RELEASE_TEST
     NSString *outputStr = [NSString stringWithFormat:@"%s %s(%d): %@\n",
                            getLevelStr(level),
                            func_name,

@@ -87,6 +87,7 @@ static JsonFile *_hiddenConfigFile;
 
 + (BOOL)hasIAPItem:(NSString*) key
 {
+    logfns("%s: %s\n", [key UTF8String], [RSSecrets hasKey:key]?"TRUE":"FALSE");
     return [RSSecrets hasKey:key];
 }
 
@@ -185,7 +186,7 @@ static JsonFile *_hiddenConfigFile;
 #elif RELEASE_TEST
     [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:TRUE]];
     [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
