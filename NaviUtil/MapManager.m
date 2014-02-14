@@ -125,7 +125,6 @@
     if (nil == p)
         return;
     
-    logO(p);
     /* check on exchanging route start and end place  */
     if ([_routeEndPlace isCoordinateEqualTo:p])
     {
@@ -133,8 +132,7 @@
         [self removeRoutePolyline];
     }
 
-    logfn();
-    if (![_routeStartPlace isCoordinateEqualTo:p])
+    if (![_routeStartPlace isCoordinateEqualTo:p] && ![_routeStartPlace.name isEqualToString:p.name])
     {
         isRouteChanged                   = true;
         /* clear route placeRouteType on previous route start place */
@@ -171,7 +169,7 @@
         [self removeRoutePolyline];
     }
     
-    if (![_routeEndPlace isCoordinateEqualTo:p])
+    if (![_routeEndPlace isCoordinateEqualTo:p] && ![_routeEndPlace.name isEqualToString:p.name])
     {
         isRouteChanged                  = true;
         /* clear route placeRouteType on previous route end place */
@@ -288,7 +286,8 @@
         [self addCurrentPlaceToMarkers];
 
         // reset route start place
-        if (self.routeStartPlace.placeType == kPlaceType_CurrentPlace)
+        if ((self.useCurrentPlaceAsRouteStart && nil == self.routeStartPlace) ||
+            self.routeStartPlace.placeType == kPlaceType_CurrentPlace)
         {
             [self setRouteStartPlace:self.currentPlace];
         }
@@ -498,57 +497,42 @@
     marker.map      = self.mapView;
 
     [markers addObject:marker];
-//    [placesInMarkers addObject:p];
-
-    
 }
+
 
 -(void) addCurrentPlaceToMarkers
 {
-    logfn();
     int i;
  //   if (nil != currentPlace && FALSE == [self isPlaceCloseToUserPlaces:currentPlace])
     if (nil != self.currentPlace)
     {
-        logfn();
         for(i=0; i<User.homePlaces.count; i++)
         {
-                logfn();
-            if (TRUE == [self.currentPlace isCoordinateEqualTo:[User getHomePlaceByIndex:i]])
+            if (TRUE == [self.currentPlace isVeryCloseTo:[User getHomePlaceByIndex:i]])
             {
-                    logfn();
-                mlogDebug(@"skip current place %s -- for -  %s",self.currentPlace, [User getHomePlaceByIndex:i]);
+                mlogDebug(@"skip current place %@ -- for -  %@",self.currentPlace, [User getHomePlaceByIndex:i]);
                 return;
             }
         }
-        
-            logfn();
+
         for(i=0; i<User.officePlaces.count; i++)
         {
-                logfn();
-            if (TRUE == [self.currentPlace isCoordinateEqualTo:[User getOfficePlaceByIndex:i]])
+            if (TRUE == [self.currentPlace isVeryCloseTo:[User getOfficePlaceByIndex:i]])
             {
-                    logfn();
-                mlogDebug(@"skip current place %s -- for -  %s", self.currentPlace, [User getHomePlaceByIndex:i]);
+                mlogDebug(@"skip current place %@ -- for -  %@", self.currentPlace, [User getOfficePlaceByIndex:i]);
                 return;
             }
         }
-            logfn();
         for(i=0; i<User.favorPlaces.count; i++)
         {
-                logfn();
-            if (TRUE == [self.currentPlace isCoordinateEqualTo:[User getFavorPlaceByIndex:i]])
+            if (TRUE == [self.currentPlace isVeryCloseTo:[User getFavorPlaceByIndex:i]])
             {
-                    logfn();
-                mlogDebug(@"skip current place %s -- for -  %s", self.currentPlace, [User getHomePlaceByIndex:i]);
+                mlogDebug(@"skip current place %@ -- for -  %@", self.currentPlace, [User getFavorPlaceByIndex:i]);
                 return;
             }
         }
-        
-            logfn();
         [self addPlaceToMarker:self.currentPlace];
     }
-        logfn();
 }
 
 -(void) addUserPlacesToMarkers

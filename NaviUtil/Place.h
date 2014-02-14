@@ -53,5 +53,5 @@ typedef enum PlaceRouteType
 -(BOOL) isCloseTo:(Place*) p;
 -(void) copyTo:(Place*) p;
 -(BOOL) isNullPlace;
-
+-(BOOL) isVeryCloseTo:(Place*) p;
 @end
