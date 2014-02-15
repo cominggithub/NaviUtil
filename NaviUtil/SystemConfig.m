@@ -77,17 +77,19 @@ static JsonFile *_hiddenConfigFile;
 
 + (void)removeIAPItem:(NSString*) key
 {
+    mlogAssertStrNotEmpty(key);
     return [RSSecrets removeKey:key];
 }
 
 + (void)addIAPItem:(NSString*) key
 {
+    mlogAssertStrNotEmpty(key);
     return [RSSecrets addKey:key];
 }
 
 + (BOOL)hasIAPItem:(NSString*) key
 {
-    logfns("%s: %s\n", [key UTF8String], [RSSecrets hasKey:key]?"TRUE":"FALSE");
+    mlogAssertStrNotEmptyR(key, FALSE);
     return [RSSecrets hasKey:key];
 }
 
@@ -225,6 +227,7 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_DEFAULT_TRACK_FILE            defaultValue:@"Track.tr"];
     [self checkKey:CONFIG_DEFAULT_ROUTE_FILE            defaultValue:@"Route.json"];
     [self checkKey:CONFIG_IS_TRACK_FILE                 defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_DEFAULT_BRIGHTNESS            defaultValue:[NSString stringFromFloat:.5]];
     
     [self save];
     

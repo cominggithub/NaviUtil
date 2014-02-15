@@ -24,24 +24,25 @@ typedef enum
 }SectionMode;
 
 
-+(void) init;
-+(bool) parseJson:(NSString*) fileName;
-+(void) save;
-+(void) clearConfig;
-+(void) createDebugConfig;
-+(void) addHomePlace:(Place*) p;
-+(void) addOfficePlace:(Place*) p;
-+(void) addFavorPlace:(Place*) p;
-+(void) addSearchedPlace:(Place*) p;
-+(void) addSearchedPlaceText:(NSString*) PlaceText;
-+(void) addRecentPlace:(Place*) p;
-+(PlaceType) translatSectionIndexIntoPlaceType:(SectionMode) sectionMode section:(int) section;
-+(void) removeHomePlaceAtIndex:(int) index;
-+(void) removeOfficePlaceAtIndex:(int) index;
-+(void) removeFavorPlaceAtIndex:(int) index;
-+(void) removePlaceBySectionMode:(SectionMode) sectionMode section:(int) section index:(int) index;
-+(void) removeAllSearchedPlaces;
-+(void) updateRecentPlacesByPlace:(Place*) p;
++ (void)init;
++ (bool)parseJson:(NSString*) fileName;
++ (void)save;
++ (void)clearConfig;
++ (void)createDebugConfig;
++ (void)addHomePlace:(Place*) p;
++ (void)addOfficePlace:(Place*) p;
++ (void)addFavorPlace:(Place*) p;
++ (void)addSearchedPlace:(Place*) p;
++ (void)addSearchedPlaceText:(NSString*) PlaceText;
++ (void)addRecentPlace:(Place*) p;
++ (PlaceType)translatSectionIndexIntoPlaceType:(SectionMode) sectionMode section:(int) section;
++ (BOOL)placeCloseToUserPlace:(Place*) p;
++ (void)removeHomePlaceAtIndex:(int) index;
++ (void)removeOfficePlaceAtIndex:(int) index;
++ (void)removeFavorPlaceAtIndex:(int) index;
++ (void)removePlaceBySectionMode:(SectionMode) sectionMode section:(int) section index:(int) index;
++ (void)removeAllSearchedPlaces;
++ (void)updateRecentPlacesByPlace:(Place*) p;
 
 +(Place*) getHomePlaceByIndex:(int) index;
 +(Place*) getOfficePlaceByIndex:(int) index;

@@ -353,6 +353,36 @@ static NSMutableArray*  _recentPlaces;
     return nil;
 }
 
++ (BOOL)placeCloseToUserPlace:(Place*) p
+{
+    mlogAssertNotNilR(p, FALSE);
+    int i;
+    for(i=0; i<User.homePlaces.count; i++)
+    {
+        if (TRUE == [p isCloseTo:[User getHomePlaceByIndex:i]])
+        {
+            return TRUE;
+        }
+    }
+
+    for(i=0; i<User.officePlaces.count; i++)
+    {
+        if (TRUE == [p isCloseTo:[User getOfficePlaceByIndex:i]])
+        {
+            return TRUE;
+        }
+    }
+    for(i=0; i<User.favorPlaces.count; i++)
+    {
+        if (TRUE == [p isCloseTo:[User getFavorPlaceByIndex:i]])
+        {
+            return TRUE;
+        }
+    }
+    
+    return FALSE;
+}
+
 +(void) removeAllSearchedPlaces
 {
     [_searchedPlaces removeAllObjects];
@@ -829,7 +859,7 @@ static NSMutableArray*  _recentPlaces;
 
 +(void) save
 {
-    mlogInfo(@"Save user.json %@", [SystemManager getPath:kSystemManager_Path_User]);
+    mlogDebug(@"Save user.json %@", [SystemManager getPath:kSystemManager_Path_User]);
     NSError* error;
     
     //convert object to data

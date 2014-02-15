@@ -121,7 +121,6 @@
 
 -(void) setRouteStartPlace:(Place *) p
 {
-    logfn();
     if (nil == p)
         return;
     
@@ -502,35 +501,10 @@
 
 -(void) addCurrentPlaceToMarkers
 {
-    int i;
- //   if (nil != currentPlace && FALSE == [self isPlaceCloseToUserPlaces:currentPlace])
-    if (nil != self.currentPlace)
-    {
-        for(i=0; i<User.homePlaces.count; i++)
-        {
-            if (TRUE == [self.currentPlace isVeryCloseTo:[User getHomePlaceByIndex:i]])
-            {
-                mlogDebug(@"skip current place %@ -- for -  %@",self.currentPlace, [User getHomePlaceByIndex:i]);
-                return;
-            }
-        }
 
-        for(i=0; i<User.officePlaces.count; i++)
-        {
-            if (TRUE == [self.currentPlace isVeryCloseTo:[User getOfficePlaceByIndex:i]])
-            {
-                mlogDebug(@"skip current place %@ -- for -  %@", self.currentPlace, [User getOfficePlaceByIndex:i]);
-                return;
-            }
-        }
-        for(i=0; i<User.favorPlaces.count; i++)
-        {
-            if (TRUE == [self.currentPlace isVeryCloseTo:[User getFavorPlaceByIndex:i]])
-            {
-                mlogDebug(@"skip current place %@ -- for -  %@", self.currentPlace, [User getFavorPlaceByIndex:i]);
-                return;
-            }
-        }
+    mlogAssertNotNil(self.currentPlace);
+    if ( FALSE == [User placeCloseToUserPlace:self.currentPlace ])
+    {
         [self addPlaceToMarker:self.currentPlace];
     }
 }

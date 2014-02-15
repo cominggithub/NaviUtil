@@ -28,19 +28,20 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
     RequestProductsCompletionHandler _completionHandler;
     
     NSSet * _productIdentifiers;
-    NSMutableSet * _purchasedProductIdentifiers;
+//    NSMutableSet * _purchasedProductIdentifiers;
 }
 
+/* initialize product list */
 - (id)initWithProductIdentifiers:(NSSet *)productIdentifiers {
     if ((self = [super init])) {
         
         // Store product identifiers
         _productIdentifiers = productIdentifiers;
-        
+/*
         // Check for previously purchased products
-        _purchasedProductIdentifiers = [NSMutableSet set];
+//        _purchasedProductIdentifiers = [NSMutableSet set];
         for (NSString * productIdentifier in _productIdentifiers) {
-            BOOL productPurchased = [[NSUserDefaults standardUserDefaults] boolForKey:productIdentifier];
+  //          BOOL productPurchased = [[NSUserDefaults standardUserDefaults] boolForKey:productIdentifier];
             if (productPurchased) {
                 [_purchasedProductIdentifiers addObject:productIdentifier];
                 mlogDebug(@"Previously purchased: %@", productIdentifier);
@@ -48,7 +49,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
                 mlogDebug(@"Not purchased: %@", productIdentifier);
             }
         }
-        
+*/
         // Add self as transaction observer
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
         
@@ -56,6 +57,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
     return self;
 }
 
+/* retrieve product from itune store */
 -(void)requestProductsWithCompletionHandler:(RequestProductsCompletionHandler)completionHandler {
     
     
@@ -70,10 +72,11 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
     
 }
 
+/*
 - (BOOL)productPurchased:(NSString *)productIdentifier {
     return [_purchasedProductIdentifiers containsObject:productIdentifier];
 }
-
+*/
 - (void)buyProduct:(SKProduct *)product {
     
 #if RELEASE || DEBUG
@@ -89,6 +92,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 
 #pragma mark - SKProductsRequestDelegate
 
+/* receive reponse of product request */
 - (void)productsRequest:(SKProductsRequest *)request didReceiveResponse:(SKProductsResponse *)response
 {
     _completionHandler(YES, response.products);
@@ -151,16 +155,21 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 
 - (void)provideContentForProductIdentifier:(NSString *)productIdentifier {
     
+    logfn();
     mlogAssertStrNotEmpty(productIdentifier);
     
+    logO(productIdentifier);
     [self addPurchasedProductIdentifier:productIdentifier];
-    [_purchasedProductIdentifiers addObject:productIdentifier];
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:productIdentifier];
-    [[NSUserDefaults standardUserDefaults] synchronize];
     [[NSNotificationCenter defaultCenter] postNotificationName:IAPHelperProductPurchasedNotification object:productIdentifier userInfo:nil];
+    
+//    [_purchasedProductIdentifiers addObject:productIdentifier];
+//    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:productIdentifier];
+//    [[NSUserDefaults standardUserDefaults] synchronize];
+
 }
 
 - (void)restoreCompletedTransactions {
+    logfn();
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
@@ -180,8 +189,9 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 - (NSString*)systemConfigKeyByProductIdentifier:(NSString*) key
 {
     mlogAssertStrNotEmptyR(key, nil);
-    if ([key isEqualToString:@"com.coming.NavierHUD.NoAdStoreUserPlace"])
-        return CONFIG_IAP_IS_NO_AD_AND_STORE_USER_PLACE;
+    logO(key);
+    if ([key isEqualToString:@"com.coming.NavierHUD.Iap.AdvancedVersion"])
+        return CONFIG_IAP_IS_ADVANCED_VERSION;
     
     return nil;
 }

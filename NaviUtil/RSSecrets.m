@@ -25,11 +25,15 @@
 
 #import "RSSecrets.h"
 
+#include "Log.h"
+
 @implementation RSSecrets
 
-+ (void) setData: (NSData*) object forKey: (NSString*) key {	
++ (void) setData: (NSData*) object forKey: (NSString*) key {
+    
 	NSMutableDictionary* dict = [NSMutableDictionary dictionary];
-
+    mlogAssertStrNotEmpty(key);
+    
 	[dict setObject: (__bridge id) kSecClassGenericPassword forKey: (__bridge id) kSecClass];
 	[dict setObject: key forKey: (__bridge id) kSecAttrService];
 	

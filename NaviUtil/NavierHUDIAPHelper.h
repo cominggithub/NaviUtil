@@ -8,7 +8,7 @@
 
 #import "IAPHelper.h"
 
-#define IAP_NO_AD_STORE_USER_PLACE @"com.coming.NavierHUD.NoAdStoreUserPlace"
+#define IAP_NO_AD_STORE_USER_PLACE @"com.coming.NavierHUD.Iap.AdvancedVersion"
 
 @interface NavierHUDIAPHelper : IAPHelper
 

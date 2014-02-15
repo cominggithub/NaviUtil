@@ -1162,17 +1162,14 @@
 
 -(void) processRouteDownloadRequestStatusChange
 {
-    logfn();
     /* search place finished */
     if (routeDownloadRequest.status == kDownloadStatus_Finished)
     {
-        logfn();
         [self startRouteNavigation];
     }
     /* search failed */
     else if(routeDownloadRequest.status == kDownloadStatus_DownloadFail)
     {
-        logfn();
         [self sendEvent:GR_EVENT_LOCATION_LOST];
     }
 }
@@ -1229,7 +1226,6 @@
 -(BOOL) startRouteNavigationFrom:(Place*) s To:(Place*) e
 {
     mlogInfo(@"Start: %@, To: %@", s, e);
-//    GoogleJsonStatus status;
     if (nil == s || nil == e)
     {
         mlogError(@"No start or end place");
@@ -1238,29 +1234,10 @@
     
     routeStartPlace = s;
     routeEndPlace   = e;
-
+    
+    [self sendEvent:GR_EVENT_ALL_READY];
+    
     return TRUE;
-#if 0
-    routeDownloadRequest = [NaviQueryManager getRouteDownloadRequestFrom:routeStartPlace.coordinate To:routeEndPlace.coordinate];
-    mlogDebug(@"route download request file: %@", routeDownloadRequest.filePath);
-    status = [GoogleJson getStatus:routeDownloadRequest.filePath];
-
-
-    if (kGoogleJsonStatus_Ok == status)
-    {
-        route                   = [Route parseJson:routeDownloadRequest.filePath];
-        routeDownloadRequest    = nil;
-        if (nil != route)
-        {
-
-            [self initNewRouteNavigation];
-        }
-    }
-    else
-    {
-        [self planRoute];
-    }
-#endif
 }
 
 -(void) replanRoute
@@ -1270,30 +1247,27 @@
 
     if (routeStartPlace != nil && FALSE == [routeStartPlace isCoordinateEqualTo:lastFailedRouteStartPlace])
     {
-        logfn();
         [self planRoute];
     }
     else
     {
-        logfn();
         [self sendEvent:GR_EVENT_LOCATION_LOST];
     }
 }
 
 -(void) planRoute
 {
-    logfn();
+    logO(routeStartPlace);
+    logO(routeEndPlace);
     if (nil != routeStartPlace && nil != routeEndPlace)
     {
-        logfn();
+        logBool([routeStartPlace isCoordinateEqualTo:routeEndPlace]);
         if (YES == [routeStartPlace isNullPlace])
         {
-            logfn();
             [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
         }
         else if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
         {
-            logfn();
             routeDownloadRequest = [NaviQueryManager
                                     getRouteDownloadRequestFrom:routeStartPlace.coordinate
                                     To:routeEndPlace.coordinate];
@@ -1344,7 +1318,6 @@
     /* head to first route line */
     if (nil == currentRouteLine && (nil == lastRouteLine || 0 == lastRouteLine.no) && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
-        logfn();
         currentRouteLine = firstRouteLine;
     }
     /* found matched route line */
@@ -1356,12 +1329,10 @@
         
         if ([GeoUtil getGeoDistanceFromLocation:currentCarLocation ToLocation:endRouteLineEndPoint] < ARRIVAL_REGION)
         {
-            logfn();
             [self sendEvent:GR_EVENT_ARRIVAL];
         }
         else
         {
-            logfn();
             [self sendEvent:GR_EVENT_GPS_READY];
         }
     }
@@ -1372,7 +1343,6 @@
         currentCarLocation  = lastCarLocation;
         currentRouteLine    = lastRouteLine;
         
-        logI(currentRouteLine.no);
         outOfRouteLineCount++;
         /* stay at GPS_READY if missing GPS signal is less than the CONFIG_MAX_OUT_OF_ROUTELINE_COUNT */
         if (outOfRouteLineCount < maxOutOfRouteLineCount)
@@ -1999,7 +1969,6 @@
     
     switch (_state)
     {
-            
         case GR_STATE_INIT:
         case GR_STATE_NAVIGATION:
             pendingMessage  = @"";

@@ -56,8 +56,6 @@ NSMutableDictionary* iapItems;
                 [iapItems setValue:p forKey:p.productIdentifier];
             }
         }
-        
-        [self dumpIapItems];
     }];
 
 }

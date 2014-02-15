@@ -227,14 +227,6 @@
 }
 
 /* distance within 10 meters */
--(BOOL) isVeryCloseTo:(Place*) p
-{
-    if (nil == self || nil == p)
-        return FALSE;
-    
-    return [GeoUtil getGeoDistanceFromLocation:self.coordinate ToLocation:p.coordinate] <= 10;
-}
-
 -(BOOL) isCloseTo:(Place*) p
 {
     mlogAssertNotNilR(p, FALSE);

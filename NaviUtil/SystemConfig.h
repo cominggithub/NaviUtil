@@ -29,8 +29,11 @@
 #define CONFIG_DEFAULT_TRACK_FILE            @"DefaultTrack"
 #define CONFIG_DEFAULT_ROUTE_FILE            @"DefaultRoute"
 #define CONFIG_IS_TRACK_FILE                 @"IsTrackFile"
+#define CONFIG_DEFAULT_BRIGHTNESS            @"DefaultBrightness"
 
-#define CONFIG_IAP_IS_NO_AD_AND_STORE_USER_PLACE   @"IAP_IsNoAdAndStoreUserPlace"
+
+
+#define CONFIG_IAP_IS_ADVANCED_VERSION      @"IAP_AdvancedVersion"
 
 /* for car panel 1 */
 #define CONFIG_CP1_COLOR                    @"CP1_Color"

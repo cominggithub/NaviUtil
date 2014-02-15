@@ -44,14 +44,13 @@ typedef enum PlaceRouteType
 @property (nonatomic) PlaceRouteType placeRouteType;
 
 
-+(NSArray*) parseJson:(NSString*) fileName;
-+(Place*) parseDictionary:(NSDictionary*) dic;
--(id) initWithName:(NSString*) name address:(NSString*) address coordinate:(CLLocationCoordinate2D) coordinate;
--(NSDictionary*) toDictionary;
--(BOOL) isPlaceMatched:(NSString*) name;
--(BOOL) isCoordinateEqualTo:(Place*) p;
--(BOOL) isCloseTo:(Place*) p;
--(void) copyTo:(Place*) p;
--(BOOL) isNullPlace;
--(BOOL) isVeryCloseTo:(Place*) p;
++ (NSArray*)parseJson:(NSString*) fileName;
++ (Place*)parseDictionary:(NSDictionary*) dic;
+- (id)initWithName:(NSString*) name address:(NSString*) address coordinate:(CLLocationCoordinate2D) coordinate;
+- (NSDictionary*)toDictionary;
+- (BOOL)isPlaceMatched:(NSString*) name;
+- (BOOL)isCoordinateEqualTo:(Place*) p;
+- (BOOL)isCloseTo:(Place*) p;
+- (void)copyTo:(Place*) p;
+- (BOOL)isNullPlace;
 @end
