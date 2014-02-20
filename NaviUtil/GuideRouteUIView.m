@@ -23,16 +23,22 @@
 
 #define radians(degrees) (degrees * M_PI/180)
 #define ARRIVAL_REGION 5
-#define ROUTE_LINE_WIDTH 16
+#define ROUTE_LINE_WIDTH 20
 #define ROUTE_LINE_RECT_SIZE 24
 #define MESSAGE_BOX_DISPLAY_TIME_MIN 3
+#define MAP_RATIO 92000
 
 @implementation GuideRouteUIView
 {
     Route*                  route;
     DownloadRequest         *routeDownloadRequest;
     NSMutableArray          *drawedRouteLines;
-    double                  _turnAngle;
+    
+    double                  _turnAngle;         /* turn angle in route */
+    double                  targetAngle;        /* angle to rotate the map */
+    double                  carTargetAngle;     /* angle to rotate car */
+    double                  currentDrawAngle;   /* current angle of the map */
+    
     CGRect                  _routeComponentRect;
     CGRect                  speedComponentRect;
     PointD                  carCenterPoint;
@@ -1050,8 +1056,7 @@
     routeLineM                      = 0;
     routeLineB                      = 0;
     isRouteLineMUndefind            = false;
-//    ratio                           = 452000;
-    ratio                           = 252000;
+    ratio                           = MAP_RATIO;
     angleRotateStep                 = 0.1;
     rotateInterval                  = 0.1;
     firstRouteLine                  = [route.routeLines objectAtIndex:0];
@@ -1083,8 +1088,11 @@
     
     // configure debug option
     _isAutoSimulatorLocationUpdateStarted   = FALSE;
-    outOfRouteLineCount                    = 0;
-
+    outOfRouteLineCount                     = 0;
+    
+    /* trigger a fake car location from start location */
+    [self updateCarLocation:routeStartPlace.coordinate];
+    
     [self setNeedsDisplay];
 
 }
@@ -1190,6 +1198,8 @@
 {
     if(true == [self updateCurrentDrawAngle])
     {
+        mlogDebug(@"car: %.0f, draw:%.0f", TO_ANGLE(carTargetAngle), TO_ANGLE(currentDrawAngle));
+        currentLocationImage.transform  = CGAffineTransformMakeRotation(carTargetAngle - currentDrawAngle);
         [self setNeedsDisplay];
     }
 }
@@ -1355,7 +1365,7 @@
             [self sendEvent:GR_EVENT_LOCATION_LOST];
         }
     }
-    
+
     /* event we lost location now, we still use last route line to draw current navigation map */
     if(currentRouteLine != nil)
     {
@@ -1368,8 +1378,26 @@
         routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
         routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
         targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
+
         _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
+
     }
+    
+
+    /* if car location has been changed, calculate new car target angle */
+    if (!(currentCarLocation.latitude == lastCarLocation.latitude && currentCarLocation.longitude == currentCarLocation.longitude))
+    {
+        /* far top point -> last car location -> current car location */
+        carTargetAngle  = [GeoUtil getAngle360ByLocation1:CLLocationCoordinate2DMake(lastCarLocation.latitude+1, lastCarLocation.longitude)
+                                             Location2:lastCarLocation
+                                             Location3:currentCarLocation];
+        currentLocationImage.transform  = CGAffineTransformMakeRotation(carTargetAngle - currentDrawAngle);
+    }
+    else
+    {
+        currentLocationImage.transform  = CGAffineTransformMakeRotation(0);
+    }
+    
 }
 
 #else
@@ -1514,6 +1542,7 @@
     currentDrawAngle = [self adjustAngle:currentDrawAngle];
     
     
+    
     return true;
 }
 
@@ -1646,6 +1675,7 @@
                                        CGRectMake(carCenterPoint.x + _routeComponentRect.origin.x-15, carCenterPoint.y-15, 30, 30)];
 
     currentLocationImage.image      = [[UIImage imageNamed:@"route_current_location.png"] imageTintedWithColor:[UIColor redColor]];
+    
     turnArrowImage.contentMode      = UIViewContentModeScaleAspectFit;
     
     speedView                       = [[SpeedView alloc] initWithFrame:CGRectMake(8, 100, 150, 50)];

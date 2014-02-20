@@ -207,7 +207,7 @@ static JsonFile *_hiddenConfigFile;
     
 
     [self checkKey:CONFIG_IS_SPEECH                     defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_TURN_ANGLE_DISTANCE           defaultValue:[NSString stringFromFloat:50.0]];
+    [self checkKey:CONFIG_TURN_ANGLE_DISTANCE           defaultValue:[NSString stringFromFloat:80.0]];
     [self checkKey:CONFIG_TARGET_ANGLE_DISTANCE         defaultValue:[NSString stringFromFloat:5.0]];
     [self checkKey:CONFIG_TRIGGER_LOCATION_INTERVAL     defaultValue:[NSString stringFromInt:500]];
     [self checkKey:CONFIG_IS_SPEED_UNIT_MPH             defaultValue:[NSString stringFromBOOL:FALSE]];
@@ -223,7 +223,7 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_RN1_IS_HUD                    defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_RN1_IS_COURSE                 defaultValue:[NSString stringFromBOOL:TRUE]];
     
-    [self checkKey:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT    defaultValue:[NSString stringFromInt:3]];
+    [self checkKey:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT    defaultValue:[NSString stringFromInt:10]];
     [self checkKey:CONFIG_DEFAULT_TRACK_FILE            defaultValue:@"Track.tr"];
     [self checkKey:CONFIG_DEFAULT_ROUTE_FILE            defaultValue:@"Route.json"];
     [self checkKey:CONFIG_IS_TRACK_FILE                 defaultValue:[NSString stringFromBOOL:FALSE]];

@@ -28,6 +28,8 @@
 		2B24473B1843949E00813A0F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472F1843949E00813A0F /* SystemConfiguration.framework */; };
 		2B27CEA31894990D00FBE5FF /* IAPHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B27CEA21894990D00FBE5FF /* IAPHelper.m */; };
 		2B27CEA618949A0D00FBE5FF /* NavierHUDIAPHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B27CEA518949A0D00FBE5FF /* NavierHUDIAPHelper.m */; };
+		2B3BA08B18B0BC7800416119 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2B3BA08A18B0BC7800416119 /* GoogleMaps.bundle */; };
+		2B3BA08D18B0BCCB00416119 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B3BA08C18B0BCCB00416119 /* GoogleMaps.framework */; };
 		2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B61D8661771E64400ACB1AA /* SystemConfig.m */; };
 		2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */; };
 		2B6CBFA716DFA6D90095CBD4 /* NaviUtil.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */; };
@@ -63,8 +65,6 @@
 		2B94C8E217A4C8B3002581F3 /* JsonFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B94C8E117A4C8B3002581F3 /* JsonFile.m */; };
 		2B98912716EB82D90057A226 /* TextValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912616EB82D90057A226 /* TextValue.m */; };
 		2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912916EB89C10057A226 /* NSDictionary+category.m */; };
-		2B98933F184B4B8B00811F5B /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B98933E184B4B8B00811F5B /* GoogleMaps.framework */; };
-		2B989341184B4B9600811F5B /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2B989340184B4B9600811F5B /* GoogleMaps.bundle */; };
 		2B995CD81706F27500991700 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B995CD71706F27500991700 /* Reachability.m */; };
 		2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD7FA917281CA100162D20 /* RouteLine.m */; };
 		2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */; };
@@ -137,6 +137,8 @@
 		2B27CEA418949A0D00FBE5FF /* NavierHUDIAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavierHUDIAPHelper.h; sourceTree = "<group>"; };
 		2B27CEA518949A0D00FBE5FF /* NavierHUDIAPHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavierHUDIAPHelper.m; sourceTree = "<group>"; };
 		2B27CEA71894A36F00FBE5FF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		2B3BA08A18B0BC7800416119 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = "../../ios/framework/GoogleMaps-iOS-1.7.0/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"; sourceTree = "<group>"; };
+		2B3BA08C18B0BCCB00416119 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
 		2B61D8651771E64400ACB1AA /* SystemConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemConfig.h; sourceTree = "<group>"; };
 		2B61D8661771E64400ACB1AA /* SystemConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemConfig.m; sourceTree = "<group>"; };
 		2B6A6BF0178718B7005FC851 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
@@ -203,8 +205,6 @@
 		2B98912616EB82D90057A226 /* TextValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TextValue.m; sourceTree = "<group>"; };
 		2B98912816EB89C10057A226 /* NSDictionary+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDictionary+category.h"; sourceTree = "<group>"; };
 		2B98912916EB89C10057A226 /* NSDictionary+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDictionary+category.m"; sourceTree = "<group>"; };
-		2B98933E184B4B8B00811F5B /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
-		2B989340184B4B9600811F5B /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = "../../ios/framework/GoogleMaps-iOS-1.6.0/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"; sourceTree = "<group>"; };
 		2B995CD61706F27500991700 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
 		2B995CD71706F27500991700 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		2BAD7FA817281CA100162D20 /* RouteLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouteLine.h; sourceTree = "<group>"; };
@@ -250,7 +250,6 @@
 				2B2447351843949E00813A0F /* ImageIO.framework in Frameworks */,
 				2B2447361843949E00813A0F /* libc++.dylib in Frameworks */,
 				2B2447371843949E00813A0F /* libicucore.A.dylib in Frameworks */,
-				2B98933F184B4B8B00811F5B /* GoogleMaps.framework in Frameworks */,
 				2B2447381843949E00813A0F /* libz.dylib in Frameworks */,
 				2B2447391843949E00813A0F /* OpenGLES.framework in Frameworks */,
 				2B24473A1843949E00813A0F /* QuartzCore.framework in Frameworks */,
@@ -266,6 +265,7 @@
 				2B6CBFB116DFA6DA0095CBD4 /* SenTestingKit.framework in Frameworks */,
 				2B6CBFB316DFA6DA0095CBD4 /* UIKit.framework in Frameworks */,
 				2B6CBFB416DFA6DA0095CBD4 /* Foundation.framework in Frameworks */,
+				2B3BA08D18B0BCCB00416119 /* GoogleMaps.framework in Frameworks */,
 				2B6CBFB716DFA6DA0095CBD4 /* libNaviUtil.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -420,9 +420,9 @@
 		2B6CBFA016DFA6D90095CBD4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2B3BA08C18B0BCCB00416119 /* GoogleMaps.framework */,
+				2B3BA08A18B0BC7800416119 /* GoogleMaps.bundle */,
 				2B27CEA71894A36F00FBE5FF /* StoreKit.framework */,
-				2B989340184B4B9600811F5B /* GoogleMaps.bundle */,
-				2B98933E184B4B8B00811F5B /* GoogleMaps.framework */,
 				2B2447241843949E00813A0F /* AVFoundation.framework */,
 				2B2447251843949E00813A0F /* CoreData.framework */,
 				2B2447261843949E00813A0F /* CoreLocation.framework */,
@@ -576,7 +576,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B6CBFBD16DFA6DA0095CBD4 /* InfoPlist.strings in Resources */,
-				2B989341184B4B9600811F5B /* GoogleMaps.bundle in Resources */,
+				2B3BA08B18B0BC7800416119 /* GoogleMaps.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -779,8 +779,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\\\"$(SDKROOT)/Developer/Library/Frameworks\\\"",
+					"\\\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\\\"",
+					/Data/Program/NaviUtil,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";
@@ -794,8 +795,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\\\"$(SDKROOT)/Developer/Library/Frameworks\\\"",
+					"\\\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\\\"",
+					/Data/Program/NaviUtil,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";
@@ -850,8 +852,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
-					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
-					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\\\"$(SDKROOT)/Developer/Library/Frameworks\\\"",
+					"\\\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\\\"",
+					/Data/Program/NaviUtil,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";

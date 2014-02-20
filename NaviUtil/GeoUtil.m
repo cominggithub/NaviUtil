@@ -21,6 +21,7 @@
     return v;
 }
 
+/* return 0 ~ 3.14 (0-180) */
 +(float) getAngleByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3
 {
     PointD p1, p2, p3;
@@ -35,6 +36,24 @@
     return [self getAngleByPoint1:p1 Point2:p2 Point3:p3];
 }
 
++(float) getAngle360ByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3
+{
+    PointD p1, p2, p3;
+    float angle;
+    p1.x = l1.longitude;
+    p1.y = l1.latitude;
+    
+    p2.x = l2.longitude;
+    p2.y = l2.latitude;
+    
+    p3.x = l3.longitude;
+    p3.y = l3.latitude;
+    angle = [self getAngleByPoint1:p1 Point2:p2 Point3:p3];
+    
+    return p1.x < p3.x ? angle : 2*M_PI - angle;
+}
+
+/* return 0 ~ 3.14 (0-180) */
 +(float) getAngleByPoint1: (PointD) p1 Point2:(PointD) p2 Point3:(PointD) p3;
 {
     float length12, length13, length23;

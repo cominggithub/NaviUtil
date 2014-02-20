@@ -74,7 +74,7 @@ typedef enum
 
     CGRect routeDisplayBound;
     NSTimer *timer;
-    double targetAngle;
+
     UIImage *carImage;
     
 
@@ -93,7 +93,7 @@ typedef enum
     int currentStep;
     RouteLine *currentRouteLine;
     NSTimer *rotateTimer;
-    double currentDrawAngle;
+
     double angleRotateStep;
     double rotateInterval;
     CLLocationCoordinate2D currentCarLocation;
