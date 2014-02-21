@@ -1667,16 +1667,19 @@
     systemStatusView.opaque         = TRUE;
 
     turnArrowImage                  = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"turn_right45.png"]];
-    turnArrowFrame                  = CGRectMake(40, 170, 128, 128);
+    turnArrowFrame                  = CGRectMake(-20, 180, 240, 120);
     turnArrowImage.frame            = turnArrowFrame;
 
     turnArrowImage.contentMode      = UIViewContentModeScaleAspectFit;
+//    turnArrowImage.backgroundColor  = [UIColor grayColor];
     currentLocationImage            = [[UIImageView alloc] initWithFrame:
-                                       CGRectMake(carCenterPoint.x + _routeComponentRect.origin.x-15, carCenterPoint.y-15, 30, 30)];
+                                       CGRectMake(carCenterPoint.x + _routeComponentRect.origin.x-15, carCenterPoint.y-15, 30, 60)];
 
-    currentLocationImage.image      = [[UIImage imageNamed:@"route_current_location.png"] imageTintedWithColor:[UIColor redColor]];
+//    currentLocationImage.image      = [[UIImage imageNamed:@"route_current_location.png"] imageTintedWithColor:[UIColor redColor]];
+    currentLocationImage.image      = [UIImage imageNamed:@"car_location.png"];
     
     turnArrowImage.contentMode      = UIViewContentModeScaleAspectFit;
+    
     
     speedView                       = [[SpeedView alloc] initWithFrame:CGRectMake(8, 100, 150, 50)];
 
