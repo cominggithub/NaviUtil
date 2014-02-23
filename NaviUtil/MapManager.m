@@ -306,9 +306,16 @@
 
 -(void) refreshMap
 {
+    /* google map bug, deleted marker is still on the map */
+    for (GMSMarker *marker in markers)
+    {
+        marker.map = nil;
+    }
+    
+    
+    
     [markers removeAllObjects];
-
-    [self clearMap];
+    [_mapView clear];
     
     [self addCurrentPlaceToMarkers];
     [self addUserPlacesToMarkers];
@@ -515,6 +522,7 @@
     
     for(i=0; i<User.homePlaces.count; i++)
     {
+
         [self addPlaceToMarker:[User getHomePlaceByIndex:i]];
     }
     

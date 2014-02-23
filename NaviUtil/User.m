@@ -153,10 +153,10 @@ static NSMutableArray*  _recentPlaces;
     mlogAssertNotNil(p);
     Place *oldPlace;
     p.placeType = kPlaceType_Favor;
-    oldPlace = [self getFavorPlaceByPlace:p];
+    oldPlace = [self getOfficePlaceByPlace:p];
     if (nil == oldPlace)
     {
-        [_favorPlaces addObject:p];
+        [_officePlaces addObject:p];
     }
     else
     {

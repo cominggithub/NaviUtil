@@ -67,6 +67,7 @@
 		2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912916EB89C10057A226 /* NSDictionary+category.m */; };
 		2B995CD81706F27500991700 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B995CD71706F27500991700 /* Reachability.m */; };
 		2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD7FA917281CA100162D20 /* RouteLine.m */; };
+		2BB2E1EB18BA08A1008BB41B /* Appirater.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2E1E918BA08A1008BB41B /* Appirater.m */; };
 		2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */; };
 		2BC2C3C317A6AE9F00A9AEE0 /* UIColor+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC2C3C217A6AE9F00A9AEE0 /* UIColor+category.m */; };
 		2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC61A96173E783C00990DA7 /* UIView+category.m */; };
@@ -209,6 +210,9 @@
 		2B995CD71706F27500991700 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		2BAD7FA817281CA100162D20 /* RouteLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouteLine.h; sourceTree = "<group>"; };
 		2BAD7FA917281CA100162D20 /* RouteLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RouteLine.m; sourceTree = "<group>"; };
+		2BB2E1E818BA08A1008BB41B /* Appirater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appirater.h; sourceTree = "<group>"; };
+		2BB2E1E918BA08A1008BB41B /* Appirater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Appirater.m; sourceTree = "<group>"; };
+		2BB2E1EA18BA08A1008BB41B /* AppiraterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppiraterDelegate.h; sourceTree = "<group>"; };
 		2BBA453D16E8CB6500C0B7FC /* GoogleJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleJson.h; sourceTree = "<group>"; };
 		2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleJson.m; sourceTree = "<group>"; };
 		2BC2C3C117A6AE9F00A9AEE0 /* UIColor+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIColor+category.h"; sourceTree = "<group>"; };
@@ -342,6 +346,9 @@
 		2B3D573C17896A0E00437464 /* System */ = {
 			isa = PBXGroup;
 			children = (
+				2BB2E1E818BA08A1008BB41B /* Appirater.h */,
+				2BB2E1E918BA08A1008BB41B /* Appirater.m */,
+				2BB2E1EA18BA08A1008BB41B /* AppiraterDelegate.h */,
 				2B1372FD189510B300B398FD /* RSSecrets.h */,
 				2B1372FE189510B300B398FD /* RSSecrets.m */,
 				2B27CEA11894990D00FBE5FF /* IAPHelper.h */,
@@ -641,6 +648,7 @@
 				2B8B71B2178C32E7005E460F /* UIImage+simple-image-processing.mm in Sources */,
 				2B8B71C7178C35B6005E460F /* Image.mm in Sources */,
 				2B27CEA618949A0D00FBE5FF /* NavierHUDIAPHelper.m in Sources */,
+				2BB2E1EB18BA08A1008BB41B /* Appirater.m in Sources */,
 				2B8B7218178C46F8005E460F /* BatteryNormalDrawBlock.m in Sources */,
 				2B6FCDC3178DA10F00DCFAAF /* UIAnimation.m in Sources */,
 				2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */,
