@@ -692,14 +692,19 @@
     *distanceFromStart  = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:location];
 }
 
--(RouteLine*) getNextStepFirstRouteLineByStepNo:(int)stepNo CarLocation:(CLLocationCoordinate2D) carLocation
+/* within 30s or 30 meters */
+-(RouteLine*) getNextStepFirstRouteLineByStepNo:(int)stepNo carLocation:(CLLocationCoordinate2D) carLocation
 {
+    float requireDistance = 0;
+    
+    requireDistance = [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE];
+    
     for(RouteLine* rl in self.routeLines)
     {
         if(rl.stepNo == stepNo+1)
         {
             double distance = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:carLocation];
-            if(distance < [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE])
+            if(distance < 0)
             {
                 return rl;
             }
@@ -799,10 +804,17 @@
         endAngleCumulativeDistance  += r.distance;
         
         cumulativeDistance          += r.no == routeLineNo ? distanceToNextRouteLine : r.distance;
+        
+        /* if we get an angle that is greater than 90 degress, then break the loop */
+        if (fabs([GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle]) >= M_PI_4 + 0.1)
+        {
+            break;
+        }
+        
 //        mlogDebug(@"End Angle: %.2f at r:%d, cdistance: %.2f", endAngle, r.no, cumulativeDistance);
     }
     
-    turnAngle =[GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle];
+    turnAngle = [GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle];
     
 //    mlogDebug(@"StartAngle: %.0f, EndAngle: %.0f, turnAngle: %.0f, cdistance: %.2f",
 //              TO_ANGLE(startAngle),

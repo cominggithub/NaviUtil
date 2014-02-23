@@ -207,7 +207,7 @@ static JsonFile *_hiddenConfigFile;
     
 
     [self checkKey:CONFIG_IS_SPEECH                     defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_TURN_ANGLE_DISTANCE           defaultValue:[NSString stringFromFloat:80.0]];
+    [self checkKey:CONFIG_TURN_ANGLE_DISTANCE           defaultValue:[NSString stringFromFloat:100.0]];
     [self checkKey:CONFIG_TARGET_ANGLE_DISTANCE         defaultValue:[NSString stringFromFloat:5.0]];
     [self checkKey:CONFIG_TRIGGER_LOCATION_INTERVAL     defaultValue:[NSString stringFromInt:500]];
     [self checkKey:CONFIG_IS_SPEED_UNIT_MPH             defaultValue:[NSString stringFromBOOL:FALSE]];

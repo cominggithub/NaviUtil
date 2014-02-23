@@ -117,23 +117,52 @@ static NSMutableArray*  _recentPlaces;
 +(void) addFavorPlace:(Place*) p
 {
     mlogAssertNotNil(p);
+    Place *oldPlace;
     p.placeType = kPlaceType_Favor;
-    [_favorPlaces addObject:p];
+    oldPlace = [self getFavorPlaceByPlace:p];
+    if (nil == oldPlace)
+    {
+        [_favorPlaces addObject:p];
+    }
+    else
+    {
+        oldPlace.name       = p.name;
+        oldPlace.address    = p.address;
+    }
 }
 
 +(void) addHomePlace:(Place*) p
 {
     mlogAssertNotNil(p);
-    
+    Place *oldPlace;
     p.placeType = kPlaceType_Home;
-    [_homePlaces addObject:p];
+    oldPlace = [self getHomePlaceByPlace:p];
+    if (nil == oldPlace)
+    {
+        [_homePlaces addObject:p];
+    }
+    else
+    {
+        oldPlace.name       = p.name;
+        oldPlace.address    = p.address;
+    }
 }
 
 +(void) addOfficePlace:(Place*) p
 {
     mlogAssertNotNil(p);
-    p.placeType = kPlaceType_Office;
-    [_officePlaces addObject:p];
+    Place *oldPlace;
+    p.placeType = kPlaceType_Favor;
+    oldPlace = [self getFavorPlaceByPlace:p];
+    if (nil == oldPlace)
+    {
+        [_favorPlaces addObject:p];
+    }
+    else
+    {
+        oldPlace.name       = p.name;
+        oldPlace.address    = p.address;
+    }
 }
 
 +(void) addPlaceSearchResult:(NSArray*) placeSearchResult
@@ -216,6 +245,19 @@ static NSMutableArray*  _recentPlaces;
     return nil;
 }
 
++(Place*) getFavorPlaceByPlace:(Place*) p
+{
+    for (Place *oldPlace in _favorPlaces)
+    {
+        if ([oldPlace isCoordinateEqualTo:p])
+        {
+            return oldPlace;
+        }
+    }
+    
+    return nil;
+}
+
 +(Place*) getHomePlaceByIndex:(int) index
 {
     if(index < _homePlaces.count)
@@ -226,6 +268,18 @@ static NSMutableArray*  _recentPlaces;
     return nil;
 }
 
++(Place*) getHomePlaceByPlace:(Place*) p
+{
+    for (Place *oldPlace in _homePlaces)
+    {
+        if ([oldPlace isCoordinateEqualTo:p])
+        {
+            return oldPlace;
+        }
+    }
+    
+    return nil;
+}
 
 +(Place*) getOfficePlaceByIndex:(int) index
 {
@@ -236,6 +290,20 @@ static NSMutableArray*  _recentPlaces;
     
     return nil;
 }
+
++(Place*) getOfficePlaceByPlace:(Place*) p
+{
+    for (Place *oldPlace in _officePlaces)
+    {
+        if ([oldPlace isCoordinateEqualTo:p])
+        {
+            return oldPlace;
+        }
+    }
+    
+    return nil;
+}
+
 
 +(int) getPlaceCountBySectionMode:(SectionMode) sectionMode section:(int) section
 {

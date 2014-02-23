@@ -51,7 +51,7 @@
         courseCnt                       = 0;
         _vibrant                        = FALSE;
         curRouteLineNo                  = -1;
-        advanceDistance                 = 5;
+        advanceDistance                 = (_simulationSpeed*1000*1000)/(3600*LOCATION_UPDATE_INTERVAL);
         stepCount                       = 0;
         simulateLocationLost            = FALSE;
 
@@ -193,6 +193,9 @@
 
     CLLocationCoordinate2D nextCoordinate2D = CLLocationCoordinate2DMake(_lastLocationCoordinate2D.latitude, _lastLocationCoordinate2D.longitude);
 
+    
+    advanceDistance                 = (_simulationSpeed*1000*1000)/(3600*LOCATION_UPDATE_INTERVAL);
+    logI(advanceDistance);
     
     /* get first location from first route line */
     if(curRouteLineNo == -1)

@@ -25,6 +25,7 @@ typedef enum
     GR_EVENT_NETWORK_NO_SIGNAL,
     GR_EVENT_LOCATION_LOST,
     GR_EVENT_GPS_READY,
+    GR_EVENT_ROUTE_LINE_READY,
     GR_EVENT_NETWORK_READY,
     GR_EVENT_ALL_READY,
     GR_EVENT_ROUTE_DESTINATION_ERROR,
@@ -96,8 +97,7 @@ typedef enum
 
     double angleRotateStep;
     double rotateInterval;
-    CLLocationCoordinate2D currentCarLocation;
-    CLLocationCoordinate2D lastCarLocation;
+
     AVAudioPlayer *audioPlayer;
     double xOffset;
     Place *routeStartPlace;

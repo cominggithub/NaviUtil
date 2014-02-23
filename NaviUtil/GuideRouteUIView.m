@@ -70,6 +70,11 @@
     GR_EVENT                lastEvent;
     RouteLine               *lastRouteLine;
     Place                   *lastFailedRouteStartPlace;
+    
+    CLLocationCoordinate2D currentCarLocation;
+    CLLocationCoordinate2D lastCarLocation;
+    CLLocationCoordinate2D lastCarLocationForCarAngle;
+    
 }
 
 #pragma mark - Main
@@ -560,7 +565,8 @@
     
     if(currentRouteLine != nil)
     {
-        nextStepRouteLine = [route getNextStepFirstRouteLineByStepNo:currentRouteLine.stepNo CarLocation:currentCarLocation];
+        /* show turn message within 100 meters */
+        nextStepRouteLine = [route getNextStepFirstRouteLineByStepNo:currentRouteLine.stepNo carLocation:currentCarLocation];
         
         if(nextStepRouteLine != nil)
         {
@@ -1062,6 +1068,9 @@
     firstRouteLine                  = [route.routeLines objectAtIndex:0];
     currentRouteLine                = nil;
     lastFailedRouteStartPlace       = nil;
+    lastCarLocation                 = CLLocationCoordinate2DMake(firstRouteLine.startLocation.latitude,
+                                                                 firstRouteLine.startLocation.longitude);
+    lastCarLocationForCarAngle      = CLLocationCoordinate2DMake(lastCarLocation.latitude, lastCarLocation.longitude);
     distanceFromCarInitToRouteStart = [GeoUtil getGeoDistanceFromLocation:routeStartPlace.coordinate ToLocation:firstRouteLine.startLocation];
     
     [self nextRouteLine];
@@ -1170,15 +1179,18 @@
 
 -(void) processRouteDownloadRequestStatusChange
 {
-    /* search place finished */
-    if (routeDownloadRequest.status == kDownloadStatus_Finished)
+    if (GR_STATE_ROUTE_PLANNING == self.state || GR_STATE_ROUTE_REPLANNING == self.state)
     {
-        [self startRouteNavigation];
-    }
-    /* search failed */
-    else if(routeDownloadRequest.status == kDownloadStatus_DownloadFail)
-    {
-        [self sendEvent:GR_EVENT_LOCATION_LOST];
+        /* search place finished */
+        if (routeDownloadRequest.status == kDownloadStatus_Finished)
+        {
+            [self startRouteNavigation];
+        }
+        /* search failed */
+        else if(routeDownloadRequest.status == kDownloadStatus_DownloadFail)
+        {
+            [self sendEvent:GR_EVENT_LOCATION_LOST];
+        }
     }
 }
 
@@ -1343,7 +1355,7 @@
         }
         else
         {
-            [self sendEvent:GR_EVENT_GPS_READY];
+            [self sendEvent:GR_EVENT_ROUTE_LINE_READY];
         }
     }
     /* cannot find matched route line */
@@ -1379,19 +1391,22 @@
         routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
         targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
 
-        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
+        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]+100];
 
     }
     
 
-    /* if car location has been changed, calculate new car target angle */
-    if (!(currentCarLocation.latitude == lastCarLocation.latitude && currentCarLocation.longitude == currentCarLocation.longitude))
+    /* calculate car angle for every 3m */
+    if ([GeoUtil getGeoDistanceFromLocation:lastCarLocationForCarAngle ToLocation:currentCarLocation] > 3.0)
     {
         /* far top point -> last car location -> current car location */
         carTargetAngle  = [GeoUtil getAngle360ByLocation1:CLLocationCoordinate2DMake(lastCarLocation.latitude+1, lastCarLocation.longitude)
                                              Location2:lastCarLocation
                                              Location3:currentCarLocation];
         currentLocationImage.transform  = CGAffineTransformMakeRotation(carTargetAngle - currentDrawAngle);
+        
+        lastCarLocationForCarAngle = currentCarLocation;
+        
     }
     else
     {
@@ -1632,7 +1647,7 @@
     currentStep++;
     mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
-    if (GR_STATE_NAVIGATION == self.state)
+    if (GR_STATE_NAVIGATION == self.state || GR_STATE_ROUTE_REPLANNING == self.state || GR_STATE_ROUTE_REPLANNING == self.state)
     {
         [self updateCarLocation:location];
         [self setNeedsDisplay];
@@ -1921,6 +1936,8 @@
             return @"GR_EVENT_ALL_READY";
         case GR_EVENT_START_NAVIGATION:
             return @"GR_EVENT_START_NAVIGATION";
+        case GR_EVENT_ROUTE_LINE_READY:
+            return @"GR_EVENT_ROUTE_LINE_READY";
     }
     
 }
@@ -1972,6 +1989,10 @@
         case GR_EVENT_GPS_READY:
             if (self.state == GR_STATE_GPS_NO_SIGNAL)
                 self.state = GR_STATE_LOOKUP;
+            break;
+        case GR_EVENT_ROUTE_LINE_READY:
+            if (GR_STATE_ROUTE_REPLANNING == self.state)
+                self.state = GR_STATE_NAVIGATION;
             break;
         case GR_EVENT_NETWORK_READY:
             if (self.state == GR_STATE_NETWORK_NO_SIGNAL)
