@@ -11,7 +11,13 @@
 
 #define LOCATION_UPDATE_INTERVAL 1000
 #define SIMULATION_SPEED 60 // in kmh
-#define FILE_DEBUG TRUE
+
+#if RELEASE
+#define FILE_DEBUG FALSE
+#else
+#define FILE_DEBUG FALSE
+#endif
+
 #include "Log.h"
 
 @implementation LocationSimulator
@@ -195,7 +201,6 @@
 
     
     advanceDistance                 = (_simulationSpeed*1000*1000)/(3600*LOCATION_UPDATE_INTERVAL);
-    logI(advanceDistance);
     
     /* get first location from first route line */
     if(curRouteLineNo == -1)
@@ -318,13 +323,15 @@
 
     if (TRUE == simulateLocationLost && stepCount > 10 )
     {
-        if (stepCount%20 >= 0 && stepCount%20 <= 5)
+        int outOfRouteLinecount = [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
+        if ((stepCount-10)%(outOfRouteLinecount*4) >= 0 && (stepCount-10)%(outOfRouteLinecount*4) <= outOfRouteLinecount+5)
         {
             /* for every 40 steps, zero location coordinate */
             //if (stepCount%40 >= 0 && stepCount%40 <= 5)
             if (1)
             {
-                location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(1, 1) altitude:0.0
+                location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(locationCoordinate2D.latitude, locationCoordinate2D.longitude+0.03)
+                                                         altitude:0.0
                                                horizontalAccuracy:1.0 verticalAccuracy:1.0 course:courseCnt speed:speedCnt timestamp:[NSDate date]];
                 mlogDebug(@"simulate out of location");
             }
@@ -393,6 +400,7 @@
 -(void) setRoute:(Route*) r;
 {
     curRouteLineNo          = -1;
+    stepCount               = 0;
     route                   = r;
     routeLineCoordinates    = [r getRoutePolyLineCLLocationCoordinate2D];
 }

@@ -16,16 +16,20 @@
 #import "MessageBoxLabel.h"
 #import "RouteView.h"
 
-
-
+#if RELEASE
+#define FILE_DEBUG FALSE
+#else
 #define FILE_DEBUG TRUE
+#endif
+
 #include "Log.h"
+
 
 #define radians(degrees) (degrees * M_PI/180)
 #define ARRIVAL_REGION 5
 #define ROUTE_LINE_WIDTH 20
 #define ROUTE_LINE_RECT_SIZE 24
-#define MESSAGE_BOX_DISPLAY_TIME_MIN 3
+#define MESSAGE_BOX_DISPLAY_TIME_MIN 1
 #define MAP_RATIO 92000
 
 @implementation GuideRouteUIView
@@ -74,6 +78,9 @@
     CLLocationCoordinate2D currentCarLocation;
     CLLocationCoordinate2D lastCarLocation;
     CLLocationCoordinate2D lastCarLocationForCarAngle;
+    
+    BOOL                    isSimulateSlowWifi;
+    int                     planRouteCount;
     
 }
 
@@ -148,6 +155,13 @@
     self.color      = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
     
     endRouteLineEndPoint = CLLocationCoordinate2DMake(0, 0);
+
+#if DEBUG
+    isSimulateSlowWifi  = FALSE;
+#else
+    isSimulateSlowWifi  = FALSE;
+#endif
+    planRouteCount      = 0;
 
 }
 
@@ -561,12 +575,10 @@
 {
     RouteLine *nextStepRouteLine;
     
-    messageBoxLabel.text = @"";
-    
     if(currentRouteLine != nil)
     {
         /* show turn message within 100 meters */
-        nextStepRouteLine = [route getNextStepFirstRouteLineByStepNo:currentRouteLine.stepNo carLocation:currentCarLocation];
+        nextStepRouteLine = [route getNextStepFirstRouteLineByRouteLine:currentRouteLine carLocation:currentCarLocation];
         
         if(nextStepRouteLine != nil)
         {
@@ -578,11 +590,7 @@
                 [self playSpeech:text];
             }
         }
-    
-            
     }
-    
-    
 }
 
 
@@ -768,8 +776,7 @@
 {
     for(NSValue* v in carFootPrint)
     {
-        PointD p = [v PointDValue];
-        mlogDebug(@"car foot print (%12.7f, %12.7f)", p.y, p.x);
+        mlogDebug(@"car foot print (%12.7f, %12.7f)", [v PointDValue].y, [v PointDValue].x);
     }
 }
 -(UIImage*) getCarImage{
@@ -1153,20 +1160,37 @@
         return;
     
     /* if played before, just skip it */
-    
     if (YES == [lastPlayedSpeech isEqualToString:text])
-         return;
+    {
+        return;
+    }
     @try
     {
-        NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@.mp3", [SystemManager getPath:kSystemManager_Path_Speech], text]];
+        NSString* filePath = [NSString stringWithFormat:@"%@/%@.mp3", [SystemManager getPath:kSystemManager_Path_Speech], text];
+        NSURL *url = [NSURL fileURLWithPath:filePath];
         
-        lastPlayedSpeech = [NSString stringWithString:text];
         
-        mlogDebug(@"play %@, %@\n", text, [NSString stringWithFormat:@"%@/%@.mp3", [SystemManager getPath:kSystemManager_Path_Speech], text]);
-        audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
-        audioPlayer.numberOfLoops = 0;
-        [audioPlayer prepareToPlay];
-        [audioPlayer play];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath])
+        {
+            uint64_t fileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:nil] fileSize];
+            if (fileSize > 0)
+            {
+
+                mlogDebug(@"play %@, %@, size: %LU\n", text, filePath, fileSize);
+
+                audioPlayer                 = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
+                audioPlayer.numberOfLoops   = 0;
+                if ([audioPlayer prepareToPlay])
+                {
+                    if ([audioPlayer play])
+                    {
+                        lastPlayedSpeech = [NSString stringWithString:text];
+                    }
+                        
+                }
+            }
+        }
+
 
     }
     @catch (NSException *exception)
@@ -1210,7 +1234,7 @@
 {
     if(true == [self updateCurrentDrawAngle])
     {
-        mlogDebug(@"car: %.0f, draw:%.0f", TO_ANGLE(carTargetAngle), TO_ANGLE(currentDrawAngle));
+//        mlogDebug(@"car: %.0f, draw:%.0f", TO_ANGLE(carTargetAngle), TO_ANGLE(currentDrawAngle));
         currentLocationImage.transform  = CGAffineTransformMakeRotation(carTargetAngle - currentDrawAngle);
         [self setNeedsDisplay];
     }
@@ -1279,11 +1303,10 @@
 
 -(void) planRoute
 {
-    logO(routeStartPlace);
-    logO(routeEndPlace);
+    planRouteCount++;
+    
     if (nil != routeStartPlace && nil != routeEndPlace)
     {
-        logBool([routeStartPlace isCoordinateEqualTo:routeEndPlace]);
         if (YES == [routeStartPlace isNullPlace])
         {
             [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
@@ -1294,17 +1317,27 @@
                                     getRouteDownloadRequestFrom:routeStartPlace.coordinate
                                     To:routeEndPlace.coordinate];
             routeDownloadRequest.delegate = self;
+            
+#if DEBUG
+            if (!(TRUE == isSimulateSlowWifi && planRouteCount > 2 && planRouteCount%3==0))
+            {
+                [NaviQueryManager download:routeDownloadRequest];
+            }
+            else
+            {
+                mlogDebug(@"skip plan route");
+            }
+#else
             [NaviQueryManager download:routeDownloadRequest];
+#endif
         }
         else
         {
-            logfn();
             [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
         }
     }
     else
     {
-        logfn();
         [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
     }
 }
@@ -1645,7 +1678,7 @@
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
     currentStep++;
-    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+//    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
     if (GR_STATE_NAVIGATION == self.state || GR_STATE_ROUTE_REPLANNING == self.state || GR_STATE_ROUTE_REPLANNING == self.state)
     {
@@ -1696,7 +1729,7 @@
     turnArrowImage.contentMode      = UIViewContentModeScaleAspectFit;
     
     
-    speedView                       = [[SpeedView alloc] initWithFrame:CGRectMake(8, 100, 150, 50)];
+    speedView                       = [[SpeedView alloc] initWithFrame:CGRectMake(8, 105, 150, 50)];
 
     routeView                       = [[RouteView alloc] initWithFrame:CGRectMake(200, 4, 480-200-4, 320-8)];
     routeView.backgroundColor       = [UIColor grayColor];
@@ -1833,7 +1866,7 @@
     {
         if (nil != lastUpdateMessageTime)
         {
-            NSTimeInterval diff = [lastUpdateMessageTime timeIntervalSinceNow];
+            NSTimeInterval diff = [lastUpdateMessageTime timeIntervalSinceNow] * (-1);
             if (diff > MESSAGE_BOX_DISPLAY_TIME_MIN)
             {
                 update = TRUE;
@@ -1971,7 +2004,7 @@
 
 -(void) sendEvent:(GR_EVENT) event
 {
-//    mlogDebug(@"%@", [self GR_EventStr:event]);
+    mlogDebug(@"%@", [self GR_EventStr:event]);
     switch (event)
     {
         case GR_EVENT_GPS_NO_SIGNAL:
@@ -1991,15 +2024,22 @@
                 self.state = GR_STATE_LOOKUP;
             break;
         case GR_EVENT_ROUTE_LINE_READY:
-            if (GR_STATE_ROUTE_REPLANNING == self.state)
+            if (GR_STATE_ROUTE_REPLANNING == self.state || GR_STATE_ROUTE_PLANNING == self.state)
                 self.state = GR_STATE_NAVIGATION;
+            else if (GR_STATE_NAVIGATION == self.state)
+            {
+                self.messageBoxText = @"";
+            }
             break;
         case GR_EVENT_NETWORK_READY:
             if (self.state == GR_STATE_NETWORK_NO_SIGNAL)
                 self.state = GR_STATE_LOOKUP;
             break;
         case GR_EVENT_LOCATION_LOST:
-            self.state = GR_STATE_GPS_NO_SIGNAL;
+            if (GR_STATE_NAVIGATION == self.state)
+            {
+                self.state = GR_STATE_GPS_NO_SIGNAL;
+            }
             break;
         case GR_EVENT_ACTIVE:
             self.state = GR_STATE_LOOKUP;
@@ -2014,6 +2054,7 @@
             self.state = GR_STATE_NAVIGATION;
             break;
     }
+    
 }
 
 -(void) setState:(GR_STATE)state
@@ -2060,12 +2101,9 @@
             [self lookupState];
             break;
     }
-    
-    // update pending text
-    if (TRUE == hasMessage)
-    {
-        self.messageBoxText = pendingMessage;
-    }
+
+    self.messageBoxText = pendingMessage;
+
 }
 
 @end

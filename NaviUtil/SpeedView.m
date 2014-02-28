@@ -105,6 +105,7 @@
     _speed = speed;
     _speedLabel.text = [NSString stringWithFormat:@"%.0f", _speed];
 
+
 }
 
 -(void) setIsSpeedUnitMph:(BOOL)isSpeedUnitMph

@@ -529,7 +529,7 @@
 -(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine
 {
     int i=0;
-    int radius = 5;
+    int radius = 20;
     int searchCount = 0;
     NSDate* startTime;
     NSDate* endTime;
@@ -693,20 +693,36 @@
 }
 
 /* within 30s or 30 meters */
--(RouteLine*) getNextStepFirstRouteLineByStepNo:(int)stepNo carLocation:(CLLocationCoordinate2D) carLocation
+-(RouteLine*) getNextStepFirstRouteLineByRouteLine:(RouteLine*) currentRouteLine carLocation:(CLLocationCoordinate2D) carLocation
 {
+    mlogAssertNotNilR(currentRouteLine, nil);
     float requireDistance = 0;
     
     requireDistance = [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE];
-    
+    /* subtract the distance from car location to the current end location */
+    requireDistance -= [GeoUtil getGeoDistanceFromLocation:carLocation ToLocation:currentRouteLine.endLocation];
     for(RouteLine* rl in self.routeLines)
     {
-        if(rl.stepNo == stepNo+1)
+        /* accumulate each subsequential route line */
+        if (rl.stepNo == currentRouteLine.stepNo && rl.no > currentRouteLine.no)
         {
-            double distance = [GeoUtil getGeoDistanceFromLocation:rl.startLocation ToLocation:carLocation];
-            if(distance < 0)
+            requireDistance -= rl.distance;
+            if (requireDistance < 0)
             {
+                break;
+            }
+        }
+        else if(rl.stepNo == currentRouteLine.stepNo+1)
+        {
+            if(requireDistance > 0)
+            {
+
                 return rl;
+            }
+            /* not reach the required distance yet */
+            else
+            {
+                break;
             }
         }
     }
@@ -793,24 +809,26 @@
     {
         r = [self.routeLines objectAtIndex:i];
 
-        if (TRUE == isStartAngleUndfined)
+        if (r.distance > 3)
         {
-            startAngle                      = r.angle;
-            startAngleCumulativeDistance    += r.distance;
-//            mlogDebug(@"Start Angle: %.2f at r:%d, cdistance: %.2f", startAngle, r.no, cumulativeDistance);
-            isStartAngleUndfined = FALSE;
+            if (TRUE == isStartAngleUndfined)
+            {
+                startAngle                      = r.angle;
+                startAngleCumulativeDistance    += r.distance;
+    //            mlogDebug(@"Start Angle: %.2f at r:%d, cdistance: %.2f", startAngle, r.no, cumulativeDistance);
+                isStartAngleUndfined = FALSE;
+            }
+            endAngle                    = r.angle;
+            endAngleCumulativeDistance  += r.distance;
+            
+            cumulativeDistance          += r.no == routeLineNo ? distanceToNextRouteLine : r.distance;
+            
+            /* if we get an angle that is greater than 90 degress, then break the loop */
+            if (fabs([GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle]) >= M_PI_4 + 0.1)
+            {
+                break;
+            }
         }
-        endAngle                    = r.angle;
-        endAngleCumulativeDistance  += r.distance;
-        
-        cumulativeDistance          += r.no == routeLineNo ? distanceToNextRouteLine : r.distance;
-        
-        /* if we get an angle that is greater than 90 degress, then break the loop */
-        if (fabs([GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle]) >= M_PI_4 + 0.1)
-        {
-            break;
-        }
-        
 //        mlogDebug(@"End Angle: %.2f at r:%d, cdistance: %.2f", endAngle, r.no, cumulativeDistance);
     }
     

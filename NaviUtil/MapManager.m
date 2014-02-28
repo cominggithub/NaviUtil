@@ -130,8 +130,8 @@
         _routeEndPlace = nil;
         [self removeRoutePolyline];
     }
-
-    if (![_routeStartPlace isCoordinateEqualTo:p] && ![_routeStartPlace.name isEqualToString:p.name])
+    
+    if (![_routeStartPlace isCoordinateEqualTo:p] || ![_routeStartPlace.name isEqualToString:p.name])
     {
         isRouteChanged                   = true;
         /* clear route placeRouteType on previous route start place */
@@ -168,7 +168,7 @@
         [self removeRoutePolyline];
     }
     
-    if (![_routeEndPlace isCoordinateEqualTo:p] && ![_routeEndPlace.name isEqualToString:p.name])
+    if (![_routeEndPlace isCoordinateEqualTo:p] || ![_routeEndPlace.name isEqualToString:p.name])
     {
         isRouteChanged                  = true;
         /* clear route placeRouteType on previous route end place */
@@ -389,8 +389,10 @@
 {
     if (FALSE == [NaviQueryManager mapServerReachable])
     {
+
         if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:connectToServer:)])
         {
+
             [self.delegate mapManager:self connectToServer:FALSE];
         }
     }

@@ -69,7 +69,7 @@ typedef enum
 -(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine;
 -(CLLocationCoordinate2D) getStartLocation;
 -(CLLocationCoordinate2D) getEndLocation;
--(RouteLine*) getNextStepFirstRouteLineByStepNo:(int)stepNo carLocation:(CLLocationCoordinate2D) carLocation;
+-(RouteLine*) getNextStepFirstRouteLineByRouteLine:(RouteLine*)currentRouteLine carLocation:(CLLocationCoordinate2D) carLocation;
 -(double) getAngleFromCLLocationCoordinate2D:(CLLocationCoordinate2D) location routeLineNo:(int) routeLineNo withInDistance:(double) distance;
 -(double) getCorrectedTargetAngle:(int) routeLineNo distance:(int) distance;
 
