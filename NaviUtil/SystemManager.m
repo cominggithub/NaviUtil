@@ -9,6 +9,8 @@
 #import "SystemManager.h"
 #import "NaviQueryManager.h"
 #import <mach/mach.h>
+#import <sys/utsname.h>
+#import "SystemConfig.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
@@ -30,12 +32,14 @@ static float _threeGStatus;
 static float _batteryLife;
 static float _networkStatus;
 
+
 @implementation SystemManager
 
 
 +(void) init
 {
     [self initDirectory];
+    [SystemConfig init];
     mlogCheckPoint(@"SystemManager Init");
     
 #ifdef DEBUG
@@ -61,6 +65,8 @@ static float _networkStatus;
     UIDevice* device    = [UIDevice currentDevice];
     CGRect screenBounds = [[UIScreen mainScreen] bounds];
     CGFloat screenScale = [[UIScreen mainScreen] scale];
+    struct utsname systemInfo;
+    uname(&systemInfo);
 //    CGSize screenSize = CGSizeMake(screenBounds.size.width * screenScale, screenBounds.size.height * screenScale);
 
     mlogInfo(@"%@: %@",
@@ -75,10 +81,20 @@ static float _networkStatus;
     mlogInfo(@"orientation: %d", device.orientation);
     mlogInfo(@"systemVersion: %@", device.systemVersion);
     mlogInfo(@"userInterfaceIdiom: %d", device.userInterfaceIdiom);
-    
+    mlogInfo(@"screen %.0f X %.0f %s", screenBounds.size.width, screenBounds.size.height, screenScale > 1.0 ? "Retina":"");
 
     
-    mlogInfo(@"screen %.0f X %.0f %s", screenBounds.size.width, screenBounds.size.height, screenScale > 1.0 ? "Retina":"");
+
+
+    
+    [SystemConfig setValue:CONFIG_NAVIER_NAME string:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"]];
+    [SystemConfig setValue:CONFIG_NAVIER_VERSION string:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
+    [SystemConfig setValue:CONFIG_DEVICE_MACHINE_NAME string:[NSString stringWithCString:systemInfo.machine encoding:NSUTF8StringEncoding]];
+    [SystemConfig setValue:CONFIG_DEVICE_SYSTEM_NAME string:device.systemName];
+    [SystemConfig setValue:CONFIG_DEVICE_SYSTEM_VERSION string:device.systemVersion];
+    [SystemConfig setValue:CONFIG_DEVICE_SCREEN string:[NSString stringWithFormat:@"screen %.0f X %.0f %s",
+                                                        screenBounds.size.width, screenBounds.size.height, screenScale > 1.0 ? "Retina":""]];
+    [SystemConfig setValue:CONFIG_LOCALE string:[[NSLocale currentLocale] localeIdentifier]];
     
     _screenRect                         = screenBounds;
     _lanscapeScreenRect.origin.x        = 0;

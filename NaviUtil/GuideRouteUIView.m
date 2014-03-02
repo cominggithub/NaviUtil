@@ -1,3 +1,4 @@
+
 //
 //  GuideRouteUIView.m
 //  GoogleDirection
@@ -157,7 +158,7 @@
     endRouteLineEndPoint = CLLocationCoordinate2DMake(0, 0);
 
 #if DEBUG
-    isSimulateSlowWifi  = FALSE;
+    isSimulateSlowWifi  = TRUE;
 #else
     isSimulateSlowWifi  = FALSE;
 #endif
@@ -1232,7 +1233,14 @@
 
 -(void) rotateAngle:(NSTimer *)theTimer
 {
-    if(true == [self updateCurrentDrawAngle])
+
+    /* use rotate angle timer to reset the pending message */
+    if (TRUE == hasMessage)
+    {
+        self.messageBoxText = pendingMessage;
+    }
+    
+    if(TRUE == [self updateCurrentDrawAngle])
     {
 //        mlogDebug(@"car: %.0f, draw:%.0f", TO_ANGLE(carTargetAngle), TO_ANGLE(currentDrawAngle));
         currentLocationImage.transform  = CGAffineTransformMakeRotation(carTargetAngle - currentDrawAngle);
@@ -1430,7 +1438,7 @@
     
 
     /* calculate car angle for every 3m */
-    if ([GeoUtil getGeoDistanceFromLocation:lastCarLocationForCarAngle ToLocation:currentCarLocation] > 3.0)
+    if ([GeoUtil getGeoDistanceFromLocation:lastCarLocationForCarAngle ToLocation:currentCarLocation] > 6.0)
     {
         /* far top point -> last car location -> current car location */
         carTargetAngle  = [GeoUtil getAngle360ByLocation1:CLLocationCoordinate2DMake(lastCarLocation.latitude+1, lastCarLocation.longitude)
@@ -1786,6 +1794,9 @@
     [clockView inactive];
     [speedView inactive];
     [self sendEvent:GR_EVENT_INACTIVE];
+
+    /* clear the last played speech */
+    lastPlayedSpeech = @"";
 }
 
 
@@ -2102,7 +2113,10 @@
             break;
     }
 
-    self.messageBoxText = pendingMessage;
+    if (TRUE == hasMessage)
+    {
+        self.messageBoxText = pendingMessage;
+    }
 
 }
 

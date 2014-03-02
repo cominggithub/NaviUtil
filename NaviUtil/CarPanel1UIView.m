@@ -306,7 +306,6 @@
 
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
-    logfn();
     [self updateSpeed:speed];
 }
 

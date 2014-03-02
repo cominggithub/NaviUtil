@@ -12,7 +12,7 @@
 #import "RSSecrets.h"
 #import "SystemConfig.h"
 
-#define FILE_DEBUG TRUE
+#define FILE_DEBUG FALSE
 #include "Log.h"
 
 NSString *const IAPHelperProductPurchasedNotification = @"IAPHelperProductPurchasedNotification";
@@ -59,8 +59,6 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 
 /* retrieve product from itune store */
 -(void)requestProductsWithCompletionHandler:(RequestProductsCompletionHandler)completionHandler {
-    
-    
     if (nil == _completionHandler)
     {
         _completionHandler = [completionHandler copy];
@@ -78,7 +76,6 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 }
 */
 - (void)buyProduct:(SKProduct *)product {
-    
 #if RELEASE || DEBUG
     mlogDebug(@"Buying %@...", product.productIdentifier);
 
@@ -154,11 +151,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 }
 
 - (void)provideContentForProductIdentifier:(NSString *)productIdentifier {
-    
-    logfn();
     mlogAssertStrNotEmpty(productIdentifier);
-    
-    logO(productIdentifier);
     [self addPurchasedProductIdentifier:productIdentifier];
     [[NSNotificationCenter defaultCenter] postNotificationName:IAPHelperProductPurchasedNotification object:productIdentifier userInfo:nil];
     
@@ -169,14 +162,19 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 }
 
 - (void)restoreCompletedTransactions {
-    logfn();
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
 - (void)addPurchasedProductIdentifier:(NSString*) key
 {
     mlogAssertStrNotEmpty(key);
-    return [SystemConfig addIAPItem:[self systemConfigKeyByProductIdentifier:key]];
+    NSString *iapKey = [self systemConfigKeyByProductIdentifier:key];
+    if (nil != iapKey)
+    {
+        [SystemConfig addIAPItem:iapKey];
+    }
+    
+    return ;
 }
 
 - (BOOL)hasPurchasedProductIdentifier:(NSString*) key
@@ -189,7 +187,6 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 - (NSString*)systemConfigKeyByProductIdentifier:(NSString*) key
 {
     mlogAssertStrNotEmptyR(key, nil);
-    logO(key);
     if ([key isEqualToString:@"com.coming.NavierHUD.Iap.AdvancedVersion"])
         return CONFIG_IAP_IS_ADVANCED_VERSION;
     

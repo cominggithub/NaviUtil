@@ -32,6 +32,17 @@
 #define CONFIG_DEFAULT_BRIGHTNESS            @"DefaultBrightness"
 
 
+#define CONFIG_NAVIER_NAME                   @"NavierName"
+#define CONFIG_NAVIER_VERSION                @"NavierVersion"
+
+#define CONFIG_DEVICE_MACHINE_NAME           @"DeviceMachineName"
+#define CONFIG_DEVICE_SYSTEM_NAME            @"DeviceSystemName"
+#define CONFIG_DEVICE_SYSTEM_VERSION         @"DeviceSystemVersion"
+#define CONFIG_DEVICE_SCREEN                 @"DeviceScreen"
+#define CONFIG_LOCALE                        @"LOCALE"
+#define CONFIG_USE_COUNT                     @"UseCount"
+
+
 
 #define CONFIG_IAP_IS_ADVANCED_VERSION      @"IAP_AdvancedVersion"
 
@@ -62,6 +73,7 @@
 + (void)setValue:(NSString*) key float:(float) value;
 + (void)setValue:(NSString*) key BOOL:(BOOL) value;
 + (void)setValue:(NSString*) key uicolor:(UIColor*) value;
++(void) setValue:(NSString*) key string:(NSString*) value;
 + (void)removeIAPItem:(NSString*) key;
 + (void)addIAPItem:(NSString*) key;
 + (BOOL)hasIAPItem:(NSString*) key;

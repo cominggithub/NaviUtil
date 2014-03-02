@@ -93,6 +93,19 @@ static JsonFile *_hiddenConfigFile;
     return [RSSecrets hasKey:key];
 }
 
++(void) setValue:(NSString*) key string:(NSString*) value
+{
+    if ([key hasPrefix:@"@"])
+    {
+        [_hiddenConfigFile setObjectForKey:key object:value];
+    }
+    else
+    {
+        [_configFile setObjectForKey:key object:value];
+        [self save];
+    }
+    
+}
 
 +(void) setValue:(NSString*) key int:(int) value
 {
@@ -207,7 +220,7 @@ static JsonFile *_hiddenConfigFile;
     
 
     [self checkKey:CONFIG_IS_SPEECH                     defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_TURN_ANGLE_DISTANCE           defaultValue:[NSString stringFromFloat:100.0]];
+    [self checkKey:CONFIG_TURN_ANGLE_DISTANCE           defaultValue:[NSString stringFromFloat:130.0]];
     [self checkKey:CONFIG_TARGET_ANGLE_DISTANCE         defaultValue:[NSString stringFromFloat:5.0]];
     [self checkKey:CONFIG_TRIGGER_LOCATION_INTERVAL     defaultValue:[NSString stringFromInt:500]];
     [self checkKey:CONFIG_IS_SPEED_UNIT_MPH             defaultValue:[NSString stringFromBOOL:FALSE]];
@@ -229,13 +242,21 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_IS_TRACK_FILE                 defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_DEFAULT_BRIGHTNESS            defaultValue:[NSString stringFromFloat:.5]];
     
+    [self checkKey:CONFIG_NAVIER_NAME                   defaultValue:@"NavierHUD"];
+    [self checkKey:CONFIG_NAVIER_VERSION                defaultValue:@"0.0.0"];
+    [self checkKey:CONFIG_DEVICE_MACHINE_NAME           defaultValue:@"unknown"];
+    [self checkKey:CONFIG_DEVICE_SYSTEM_NAME            defaultValue:@"unknown"];
+    [self checkKey:CONFIG_DEVICE_SYSTEM_VERSION         defaultValue:@"unknown"];
+    [self checkKey:CONFIG_DEVICE_SCREEN                 defaultValue:@"unknown"];
+    [self checkKey:CONFIG_LOCALE                        defaultValue:@"unknown"];
+    [self checkKey:CONFIG_TRIGGER_LOCATION_INTERVAL     defaultValue:[NSString stringFromInt:0]];
+    
     [self save];
     
 }
 
 +(void) checkKey:(NSString*) key defaultValue:(NSString*) defaultValue
 {
-
     id value;
     if ([key hasPrefix:@"@"])
     {
