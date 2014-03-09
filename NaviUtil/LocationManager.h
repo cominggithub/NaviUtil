@@ -22,7 +22,7 @@
 typedef enum
 {
     kLocationManagerLocationUpdateType_ManualRoute,
-    kLocationManagerLocationUpdateType_RealLocation,
+    kLocationManagerLocationUpdateType_File,
     kLocationManagerLocationUpdateType_Line
 }LocationManagerLocationUpdateType;
 

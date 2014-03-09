@@ -151,7 +151,7 @@ static NSMutableArray *_savedLocations;
     _hasLocation                                = NO;
     _lastUpdateTime                             = [NSDate date];
     _lastTriggerLocationUpdateTime              = [NSDate date];
-    _locationUpdateType                         = kLocationManagerLocationUpdateType_RealLocation;
+    _locationUpdateType                         = kLocationManagerLocationUpdateType_File;
 
     
     _locationManager            = [[LocationManager alloc] init];
@@ -364,7 +364,6 @@ static NSMutableArray *_savedLocations;
 
 +(void) startMonitorLocation
 {
-
     [_locationSimulator stop];
     [_locationManager startMonitorLocationChange];
 }
@@ -383,7 +382,6 @@ static NSMutableArray *_savedLocations;
 +(void) stopLocationSimulation
 {
     [_locationSimulator stop];
-    
 }
 
 +(void) triggerLocationUpdate
@@ -406,6 +404,9 @@ static NSMutableArray *_savedLocations;
             break;
         case kLocationManagerLocationUpdateType_ManualRoute:
             _locationSimulator.type = kLocationManagerLocationUpdateType_ManualRoute;
+            break;
+        case kLocationManagerLocationUpdateType_File:
+            _locationSimulator.type = kLocationSimulator_File;
             break;
         default:
             _locationSimulator.type = kLocationManagerLocationUpdateType_ManualRoute;
@@ -433,7 +434,7 @@ static NSMutableArray *_savedLocations;
     NSDate *now = [NSDate date];
     NSTimeInterval timeDiffer;
     timeDiffer = [now timeIntervalSinceDate:_lastUpdateTime];
-    [formater setDateFormat:@"HH:mm:ss"];
+    [formater setDateFormat:@"HH:mm:ss.SSS"];
 
     if (nil == locations)
     {
@@ -446,20 +447,20 @@ static NSMutableArray *_savedLocations;
         CLLocation *location = [locations objectAtIndex:i];
         
         msg = [NSString stringWithFormat:@"%@ %d, %.8f, %.8f, %.1f, %.1f, %.1f, %.2f, %.2f, %.2f, %.2f, %.2f\n",
-               [formater stringFromDate:[NSDate date]],     // 1. time
-               i,                                           // 2. index
-               location.coordinate.latitude,                // 3. latitude
-               location.coordinate.longitude,               // 4. longitude
-               location.altitude,                           // 5. altitude
-               location.horizontalAccuracy,                 // 6. h accuracy
-               location.verticalAccuracy,                   // 7. v accuracy
-               location.speed,                              // 8. speed
-               location.course,                             // 9. course
-                                                            // 10. distance
+               [formater stringFromDate:[NSDate date]],     // 1. time              0
+               i,                                           // 2. index             0
+               location.coordinate.latitude,                // 3. latitude          1
+               location.coordinate.longitude,               // 4. longitude         2
+               location.altitude,                           // 5. altitude          3
+               location.horizontalAccuracy,                 // 6. h accuracy        4
+               location.verticalAccuracy,                   // 7. v accuracy        5
+               location.speed,                              // 8. speed             6
+               location.course,                             // 9. course            7
+                                                            // 10. distance         8
                [GeoUtil getGeoDistanceFromLocation:_lastCLLocationCoordinate2D ToLocation:location.coordinate],
-                                                            // 11. time difference
+                                                            // 11. time difference  9
                timeDiffer,
-                                                            // 12. calculate speed
+                                                            // 12. calculate speed 10
                [GeoUtil getGeoDistanceFromLocation:_lastCLLocationCoordinate2D ToLocation:location.coordinate]/timeDiffer
                
                ];

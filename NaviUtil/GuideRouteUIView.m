@@ -1288,6 +1288,7 @@
     
     routeStartPlace = s;
     routeEndPlace   = e;
+    route           = nil;
     
     [self sendEvent:GR_EVENT_ALL_READY];
     
@@ -1327,7 +1328,8 @@
             routeDownloadRequest.delegate = self;
             
 #if DEBUG
-            if (!(TRUE == isSimulateSlowWifi && planRouteCount > 2 && planRouteCount%3==0))
+            if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT] ||
+                !(TRUE == isSimulateSlowWifi && planRouteCount > 2 && planRouteCount%3==0))
             {
                 [NaviQueryManager download:routeDownloadRequest];
             }

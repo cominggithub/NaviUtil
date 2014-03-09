@@ -38,4 +38,5 @@ typedef enum
 -(void) stop;
 -(void) triggerLocationUpdate;
 -(void) setRoute:(Route*) route;
+
 @end

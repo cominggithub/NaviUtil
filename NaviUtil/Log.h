@@ -14,6 +14,7 @@
 #import <objc/runtime.h>
 #import <objc/message.h>
 
+
 #define logfn() printf("%s(%d)\n", __FUNCTION__, __LINE__)
 #define logfns(args...) do{printf("%s(%d): ", __FUNCTION__, __LINE__); printf(args);}while(0)
 #define logO(o) printf("%s: %s(0x%X)\n",#o, [[o description] UTF8String], (int)o)
@@ -29,6 +30,9 @@
 #define getObjectName(oo) #oo
 #define logClass(o) printf("%s(%d), %s: %s\n", __FUNCTION__, __LINE__, getObjectName(o), (char*)class_getName([o class]))
 #define logRect(o) printf("%s(%d), %s: (%.1f, %.1f, %.1f, %.1f)\n", __FUNCTION__, __LINE__, #o, o.origin.x, o.origin.y, o.size.width, o.size.height)
+
+
+#define logDump() NSLog(@"%@",[NSThread callStackSymbols])
 
 #define mlogInfo(args...)     do{logOut(kLogInfo, __FUNCTION__, __LINE__, args);}while(0)
 #define mlogWarning(args...)  do{logOut(kLogWarning, __FUNCTION__, __LINE__, args);}while(0)

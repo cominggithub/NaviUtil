@@ -17,6 +17,7 @@
 #define CONFIG_H_IS_LOCATION_UPDATE_FILTER     @"@IsLocationUpdateFilter"
 #define CONFIG_H_IS_LOCATION_SIMULATOR         @"@IsLocationSimulator"
 #define CONFIG_H_IS_SIMULATE_LOCATION_LOST     @"@IsSimulateLocationLost"
+#define CONFIG_H_IS_SIMULATE_CAR_MOVEMENT      @"@IsSimulateCarMovement"
 
 #define CONFIG_IS_SPEECH                     @"IsSpeech"
 #define CONFIG_TRIGGER_LOCATION_INTERVAL     @"TriggerLocationUpdateInterval"
@@ -29,6 +30,7 @@
 #define CONFIG_DEFAULT_TRACK_FILE            @"DefaultTrack"
 #define CONFIG_DEFAULT_ROUTE_FILE            @"DefaultRoute"
 #define CONFIG_IS_TRACK_FILE                 @"IsTrackFile"
+#define CONFIG_IS_TRACK_LOCATION             @"IsTrackLocation"
 #define CONFIG_DEFAULT_BRIGHTNESS            @"DefaultBrightness"
 
 

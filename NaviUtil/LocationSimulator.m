@@ -12,8 +12,10 @@
 #define LOCATION_UPDATE_INTERVAL 1000
 #define SIMULATION_SPEED 60 // in kmh
 
-#if RELEASE
-#define FILE_DEBUG FALSE
+#if DEBUG
+#define FILE_DEBUG TRUE
+#elif RELEASE_TEST
+#define FILE_DEBUG TRUE
 #else
 #define FILE_DEBUG FALSE
 #endif
@@ -61,16 +63,18 @@
         stepCount                       = 0;
         simulateLocationLost            = FALSE;
 
-        [self loadLocationFromTraceFile:[SystemConfig getStringValue:CONFIG_DEFAULT_TRACK_FILE]];
-        
+        [self loadLocationFromTraceFile:
+         
+            [NSString stringWithFormat:@"%@/%@",
+                [[NSBundle mainBundle] resourcePath],
+             [SystemConfig getStringValue:CONFIG_DEFAULT_TRACK_FILE]]];
     }
     return self;
 }
 
 -(void) loadLocationFromTraceFile:(NSString*) fileName
 {
-
-    NSString *fileContents = [NSString stringWithContentsOfFile:[SystemManager getFilePathInDocument:fileName] encoding:NSUTF8StringEncoding error:NULL];
+    NSString *fileContents = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL];
     CLLocation *location;
     NSDateFormatter *formatter;
 
@@ -93,26 +97,21 @@
                     altitude:[[fields objectAtIndex:3] doubleValue]
                     horizontalAccuracy:[[fields objectAtIndex:4] doubleValue]
                     verticalAccuracy:[[fields objectAtIndex:5] doubleValue]
-                    course:[[fields objectAtIndex:6] doubleValue]
-                    speed:[[fields objectAtIndex:7] doubleValue]
+                    course:[[fields objectAtIndex:7] doubleValue]
+                    speed:[[fields objectAtIndex:6] doubleValue]
                     timestamp:[formatter dateFromString:dateStr]
                     ];
         [_locationsOfTraceFile addObject:location];
     }
-
-    location = [self getNextLocationFromFile];
-
-    while(nil != location)
-    {
-        location = [self getNextLocationFromFile];
-    };
-
 }
 
 -(CLLocation *) getNextLocationFromFile
 {
-    if (_locationIndexOfTrackFile >= _locationsOfTraceFile.count)
+    if (_locationsOfTraceFile.count <=0 )
         return nil;
+    
+    if (_locationIndexOfTrackFile >= _locationsOfTraceFile.count)
+        _locationIndexOfTrackFile = 0;
     
     return [_locationsOfTraceFile objectAtIndex:_locationIndexOfTrackFile++];
 }
@@ -320,26 +319,29 @@
             break;
             
     }
-
-    if (TRUE == simulateLocationLost && stepCount > 10 )
+    
+    if (self.type != kLocationSimulator_File)
     {
-        int outOfRouteLinecount = [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
-        if ((stepCount-10)%(outOfRouteLinecount*4) >= 0 && (stepCount-10)%(outOfRouteLinecount*4) <= outOfRouteLinecount+5)
+        if (TRUE == simulateLocationLost && stepCount > 10 )
         {
-            /* for every 40 steps, zero location coordinate */
-            //if (stepCount%40 >= 0 && stepCount%40 <= 5)
-            if (1)
+            int outOfRouteLinecount = [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
+            if ((stepCount-10)%(outOfRouteLinecount*4) >= 0 && (stepCount-10)%(outOfRouteLinecount*4) <= outOfRouteLinecount+5)
             {
-                location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(locationCoordinate2D.latitude, locationCoordinate2D.longitude+0.03)
-                                                         altitude:0.0
-                                               horizontalAccuracy:1.0 verticalAccuracy:1.0 course:courseCnt speed:speedCnt timestamp:[NSDate date]];
-                mlogDebug(@"simulate out of location");
-            }
-            /* for every 20 steps, skip update location */
-            else
-            {
-                mlogDebug(@"simulate location lost");
-                shouldNotify = FALSE;
+                /* for every 40 steps, zero location coordinate */
+                //if (stepCount%40 >= 0 && stepCount%40 <= 5)
+                if (1)
+                {
+                    location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(locationCoordinate2D.latitude, locationCoordinate2D.longitude+0.03)
+                                                             altitude:0.0
+                                                   horizontalAccuracy:1.0 verticalAccuracy:1.0 course:courseCnt speed:speedCnt timestamp:[NSDate date]];
+                    mlogDebug(@"simulate out of location");
+                }
+                /* for every 20 steps, skip update location */
+                else
+                {
+                    mlogDebug(@"simulate location lost");
+                    shouldNotify = FALSE;
+                }
             }
         }
     }
@@ -378,6 +380,7 @@
     _isStart                = TRUE;
     stepCount               = 0;
     simulateLocationLost    = [SystemConfig getBoolValue:CONFIG_H_IS_SIMULATE_LOCATION_LOST];
+
    _timer                   = [NSTimer scheduledTimerWithTimeInterval:self.locationUpdateInterval/1000.0
                                                                target:self selector:@selector(timeout:) userInfo:nil repeats:YES];
 }

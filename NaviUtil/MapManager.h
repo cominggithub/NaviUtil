@@ -39,6 +39,8 @@
 @property Place* routeEndPlace;
 @property Place *currentPlace;
 @property CGRect frame;
+@property BOOL isShowPlanRouteFailedForCurrentPlace;
+@property BOOL viewAppear;
 
 @property id<MapManagerDelegate> delegate;
 

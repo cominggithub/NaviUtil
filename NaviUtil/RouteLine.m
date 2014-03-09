@@ -108,7 +108,6 @@
     double angle = [self getAngleToStartLocation:location];
     double distance = [GeoUtil getLengthFromLocation:location ToLocation:self.startLocation] * sin([self getAngleToStartLocation:location]);
 #endif
-//    mlogfns(ROUTELINE, "length: %f, angle: %f, distance: %f", length, angle, distance);
     return [GeoUtil getGeoDistanceFromLocation:location ToLocation:self.startLocation] * sin([self getAngleToStartLocation:location]);
 }
 

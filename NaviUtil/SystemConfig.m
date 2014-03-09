@@ -197,7 +197,7 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST     defaultValue:[NSString stringFromBOOL:TRUE]];
-
+    [self checkKey:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT      defaultValue:[NSString stringFromBOOL:FALSE]];
 #elif RELEASE_TEST
     [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
@@ -207,6 +207,7 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST     defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT      defaultValue:[NSString stringFromBOOL:FALSE]];
 #else
     [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
@@ -216,6 +217,7 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
     [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST     defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT      defaultValue:[NSString stringFromBOOL:FALSE]];
 #endif
     
 
@@ -239,7 +241,8 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT    defaultValue:[NSString stringFromInt:10]];
     [self checkKey:CONFIG_DEFAULT_TRACK_FILE            defaultValue:@"Track.tr"];
     [self checkKey:CONFIG_DEFAULT_ROUTE_FILE            defaultValue:@"Route.json"];
-    [self checkKey:CONFIG_IS_TRACK_FILE                 defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_IS_TRACK_FILE                 defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_IS_TRACK_LOCATION                 defaultValue:[NSString stringFromBOOL:TRUE]];
     [self checkKey:CONFIG_DEFAULT_BRIGHTNESS            defaultValue:[NSString stringFromFloat:.5]];
     
     [self checkKey:CONFIG_NAVIER_NAME                   defaultValue:@"NavierHUD"];

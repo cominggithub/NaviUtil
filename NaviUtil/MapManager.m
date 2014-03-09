@@ -65,6 +65,7 @@
 
     BOOL isSearchPlaceFinished;
     BOOL isSearchNearPlaceFinished;
+
     UIColor *routePolyLineColor;
 }
 
@@ -95,13 +96,15 @@
     normalMarkerImage   = [UIImage imageNamed:@"marker_normal"];
     
     
-    self.useCurrentPlaceAsRouteStart    = TRUE;
-    isSearchPlaceFinished               = FALSE;
-    isSearchNearPlaceFinished           = FALSE;
-    lastPlace                           = nil;
-    self.currentPlace                        = nil;
-    routePolyLineColor                  = [UIColor redColor];
+    self.useCurrentPlaceAsRouteStart            = TRUE;
+    isSearchPlaceFinished                       = FALSE;
+    isSearchNearPlaceFinished                   = FALSE;
+    lastPlace                                   = nil;
+    self.currentPlace                           = nil;
+    self.isShowPlanRouteFailedForCurrentPlace   = TRUE;
+    routePolyLineColor                          = [UIColor redColor];
     [self addUserPlacesToMarkers];
+
 }
 
 - (void)dealloc {
@@ -131,7 +134,7 @@
         [self removeRoutePolyline];
     }
     
-    if (![_routeStartPlace isCoordinateEqualTo:p] || ![_routeStartPlace.name isEqualToString:p.name])
+    if (!self.hasRoute || ![_routeStartPlace isCoordinateEqualTo:p] || ![_routeStartPlace.name isEqualToString:p.name])
     {
         isRouteChanged                   = true;
         /* clear route placeRouteType on previous route start place */
@@ -168,9 +171,9 @@
         [self removeRoutePolyline];
     }
     
-    if (![_routeEndPlace isCoordinateEqualTo:p] || ![_routeEndPlace.name isEqualToString:p.name])
+    if (!self.hasRoute || ![_routeEndPlace isCoordinateEqualTo:p] || ![_routeEndPlace.name isEqualToString:p.name])
     {
-        isRouteChanged                  = true;
+        isRouteChanged                   = true;
         /* clear route placeRouteType on previous route end place */
         _routeEndPlace.placeRouteType    = kPlaceRouteType_None;
         _routeEndPlace                   = p;
@@ -273,9 +276,16 @@
                        context:(void *)context {
     CLLocation *location;
     location        = [change objectForKey:NSKeyValueChangeNewKey];
+    static float gg = 0.00000;
+
+    if (NO == self.viewAppear)
+    {
+        return;
+    }
 
     if (nil == lastPlace || [GeoUtil getGeoDistanceFromLocation:lastPlace.coordinate ToLocation:location.coordinate] > UPDATE_CURRENT_DISTANCE_THRESHOLD)
     {
+        gg += 0.00001;
         lastPlace               = self.currentPlace;
         self.currentPlace       = [[Place alloc] initWithName:[SystemManager getLanguageString:@"Current Location"]
                                                       address:@""
@@ -387,20 +397,20 @@
 
 -(void) planRoute
 {
-    if (FALSE == [NaviQueryManager mapServerReachable])
-    {
-
-        if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:connectToServer:)])
-        {
-
-            [self.delegate mapManager:self connectToServer:FALSE];
-        }
-    }
-    
     if (isRouteChanged == true)
     {
         if (nil != self.routeStartPlace && nil != self.routeEndPlace)
         {
+            if (FALSE == [NaviQueryManager mapServerReachable])
+            {
+                if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:connectToServer:)])
+                {
+                    
+                    [self.delegate mapManager:self connectToServer:FALSE];
+                }
+                self.isShowPlanRouteFailedForCurrentPlace = FALSE;
+            }
+
             if (![self.routeStartPlace isCoordinateEqualTo:self.routeEndPlace])
             {
                 routeDownloadRequest = [NaviQueryManager
@@ -444,6 +454,7 @@
             
             [self replaceRoutePolyline];
             self.hasRoute = TRUE;
+            self.isShowPlanRouteFailedForCurrentPlace = TRUE;
         }
         else
         {
