@@ -136,7 +136,7 @@
     mlogDebug(@"%@", downloadRequest);
 }
 
--(DownloadRequest*) getDownloadRequest:(int)downloadId
+-(DownloadRequest*) getDownloadRequest:(long)downloadId
 {
 
     for(DownloadRequest *r in self.downloadingQueue)

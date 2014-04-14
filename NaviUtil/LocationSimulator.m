@@ -7,7 +7,7 @@
 //
 
 #import "LocationSimulator.h"
-#import "SystemConfig.h"
+#import "SysConfig.h"
 
 #define LOCATION_UPDATE_INTERVAL 1000
 #define SIMULATION_SPEED 60 // in kmh
@@ -67,7 +67,7 @@
          
             [NSString stringWithFormat:@"%@/%@",
                 [[NSBundle mainBundle] resourcePath],
-             [SystemConfig getStringValue:CONFIG_DEFAULT_TRACK_FILE]]];
+             [SysConfig getStringValue:CONFIG_DEFAULT_TRACK_FILE]]];
     }
     return self;
 }
@@ -324,7 +324,7 @@
     {
         if (TRUE == simulateLocationLost && stepCount > 10 )
         {
-            int outOfRouteLinecount = [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
+            int outOfRouteLinecount = [SysConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
             if ((stepCount-10)%(outOfRouteLinecount*4) >= 0 && (stepCount-10)%(outOfRouteLinecount*4) <= outOfRouteLinecount+5)
             {
                 /* for every 40 steps, zero location coordinate */
@@ -379,7 +379,7 @@
 
     _isStart                = TRUE;
     stepCount               = 0;
-    simulateLocationLost    = [SystemConfig getBoolValue:CONFIG_H_IS_SIMULATE_LOCATION_LOST];
+    simulateLocationLost    = [SysConfig getBoolValue:CONFIG_H_IS_SIMULATE_LOCATION_LOST];
 
    _timer                   = [NSTimer scheduledTimerWithTimeInterval:self.locationUpdateInterval/1000.0
                                                                target:self selector:@selector(timeout:) userInfo:nil repeats:YES];

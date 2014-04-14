@@ -8,7 +8,7 @@
 
 #import "BatteryLifeView.h"
 #import "UIColor+category.h"
-#import "SystemConfig.h"
+#import "SysConfig.h"
 
 #include "Log.h"
 
@@ -39,7 +39,7 @@
     self.life                   = 0;
 
 
-    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG])
+    if (YES == [SysConfig getBoolValue:CONFIG_H_IS_DEBUG])
     {
         [self addSubview:_lifeLabel];
     }
@@ -68,8 +68,10 @@
 }
 - (void)drawRect:(CGRect)rect
 {
+    // xcode 
+
     float lineWidth = 2;
-    float r,g,b, a;
+    CGFloat r,g,b, a;
     
 
     CGSize headSize = CGSizeMake(rect.size.width/6, rect.size.height/2);
@@ -101,9 +103,11 @@
 //    CGContextStrokeRect(context, mainBody);
 
     [self drawRoundRect:context rect:mainBody radius:3];
+
     CGContextStrokeRect(context, head);
 
     CGContextSetFillColorWithColor(context, [_color getOff05Color].CGColor);
+
     CGContextFillRect(context, batterLife);
 
 

@@ -12,7 +12,7 @@
 
 -(void) getRGBA:(float*) red green:(float*) green blue:(float*) blue alpha:(float*) alpha
 {
-    int numComponents = CGColorGetNumberOfComponents([self CGColor]);
+    long numComponents = CGColorGetNumberOfComponents([self CGColor]);
     
     if (numComponents == 4)
     {
@@ -26,7 +26,7 @@
 
 -(UIColor*) getOff05Color
 {
-    float r,g,b, a;
+    CGFloat r,g,b, a;
     
     [self getRed:&r green:&g blue:&b alpha:&a];
         
@@ -35,7 +35,7 @@
 
 -(UIColor*) getOff03Color
 {
-    float r,g,b, a;
+    CGFloat r,g,b, a;
     
     [self getRed:&r green:&g blue:&b alpha:&a];
     
@@ -44,7 +44,7 @@
 
 -(UIColor*) getColorByAlpha:(float) alpha
 {
-    float r,g,b, a;
+    CGFloat r,g,b, a;
     
     [self getRed:&r green:&g blue:&b alpha:&a];
     
@@ -53,7 +53,7 @@
 
 -(NSString*) getRGBHexCode
 {
-    float r,g,b,a;
+    CGFloat r,g,b,a;
 
     [self getRed:&r green:&g blue:&b alpha:&a];
     int hexCode = (0xFF&(int)(r*255)) << 16 | (0xFF&(int)(g*255)) << 8 | (0xFF&(int)(b*255));
@@ -61,7 +61,7 @@
 }
 +(UIColor*) colorWithRGBHexCode:(NSString*) rgbHexCode
 {
-    float r, g, b;
+    CGFloat r, g, b;
     UIColor *c = nil;
     unsigned result = 0;
     NSScanner *scanner;

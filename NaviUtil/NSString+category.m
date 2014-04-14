@@ -216,9 +216,16 @@
     return [NSString stringWithFormat:format,value];
 }
 
+
++(NSString *) stringFromLong:(long)value numOfDigits:(int) numOfDigits
+{
+    NSString *format = [NSString stringWithFormat:@"%%0%dd", numOfDigits];
+    return [NSString stringWithFormat:format,value];
+}
+
 +(NSString*) stringFromUIColor:(UIColor*) color
 {
-    float red, green, blue, alpha;
+    CGFloat red, green, blue, alpha;
     [color getRed:&red green:&green blue:&blue alpha:&alpha];
     
     return [NSString stringWithFormat:@"%d, %d, %d, %d",

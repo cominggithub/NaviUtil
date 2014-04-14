@@ -55,10 +55,12 @@
                 status = kGoogleJsonStatus_Invalid_Request;
             }
         }
-        @catch (NSException *exception) {
+        @catch (NSException *exception)
+        {
             
         }
-        @finally {
+        @finally
+        {
 
         }
 

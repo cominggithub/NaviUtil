@@ -23,5 +23,6 @@
 +(NSString*) stringFromBOOL:(BOOL) value;
 +(NSString*) stringFromUIColor:(UIColor*) color;
 +(NSString *) stringFromInt:(int)value numOfDigits:(int) numOfDigits;
++(NSString *) stringFromLong:(long)value numOfDigits:(int) numOfDigits;
 
 @end

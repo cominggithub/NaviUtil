@@ -51,6 +51,7 @@ typedef enum DownloadStatus
 @property (nonatomic) DownloadMode mode;
 @property (nonatomic) CLLocationCoordinate2D coordinate;
 @property (nonatomic, weak) id<DownloadRequestDelegate> delegate;
+@property (nonatomic, readonly) BOOL done;
 
 - (NSComparisonResult)compare:(DownloadRequest *) o;
 //    NSOrderedAscending = -1L, NSOrderedSame, NSOrderedDescending

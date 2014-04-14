@@ -8,7 +8,7 @@
 
 #import "SpeedView.h"
 #import "SystemManager.h"
-#import "SystemConfig.h"
+#import "SysConfig.h"
 #import "GeoUtil.h"
 #import "LocationManager.h"
 #import "UIFont+category.h"

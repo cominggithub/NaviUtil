@@ -54,7 +54,7 @@
     [self deleteFile];
     [self createFile];
     self.retryCount++;
-    mlogDebug(@"%lu starts to download %@ from %@\n", self.downloadId, self.filePath, self.url);
+    mlogDebug(@"%lu starts to download %@\nfrom\n%@\n", self.downloadId, self.filePath, self.url);
     [NSURLConnection connectionWithRequest:urlRequest delegate:self];
 }
 

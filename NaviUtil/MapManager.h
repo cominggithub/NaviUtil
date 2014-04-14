@@ -44,7 +44,7 @@
 
 @property id<MapManagerDelegate> delegate;
 
--(void) searchPlace:(NSString*) placeText;
+-(void) searchPlace:(NSString*) locationName;
 -(void) moveToSearchedPlaceByIndex:(int) index;
 -(GMSMapView*) mapView;
 

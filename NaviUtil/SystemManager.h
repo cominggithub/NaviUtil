@@ -41,7 +41,7 @@ typedef enum
 +(void) init;
 +(void) initDirectory;
 +(NSString *) getSystemLanguage;
-+(NSString *) getSupportLanguage;
+//+(NSString *) getSupportLanguage;
 +(CLLocationCoordinate2D) getDefaultLocation;
 +(NSString*) getUsedMemoryStr;
 +(NSString *) getLanguageString:(NSString*) stringIndex;

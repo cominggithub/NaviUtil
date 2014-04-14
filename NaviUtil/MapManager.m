@@ -41,8 +41,8 @@
     int zoomLevel;
     bool isRouteChanged;
     DownloadRequest *routeDownloadRequest;
-    DownloadRequest *searchPlaceDownloadRequest;
-    DownloadRequest *searchNearPlaceDownloadRequest;
+    DownloadRequest *searchPlaceTextSearchDownloadRequest;
+    DownloadRequest *searchPlaceRadarSearchDownloadRequest;
 
     NSMutableArray* markers;
     NSMutableArray* placesInMarkers;
@@ -62,11 +62,12 @@
     GMSPolyline* routePolyline;
     
     BOOL _useCurrentPlaceAsRouteStart;
-
-    BOOL isSearchPlaceFinished;
-    BOOL isSearchNearPlaceFinished;
-
     UIColor *routePolyLineColor;
+    
+    /* cache searched places */
+    NSMutableDictionary *cachedSearch;
+    
+    
 }
 
 @synthesize routePolyline;
@@ -90,6 +91,7 @@
     markers             = [[NSMutableArray alloc] initWithCapacity:10];
     placesInMarkers     = [[NSMutableArray alloc] initWithCapacity:10];
     _searchedPlaces     = [[NSMutableArray alloc] initWithCapacity:10];
+    cachedSearch        = [[NSMutableDictionary alloc] init];
     homeMarkerImage     = [UIImage imageNamed:@"marker_home"];
     officeMarkerImage   = [UIImage imageNamed:@"marker_office"];
     favorMarkerImage    = [UIImage imageNamed:@"marker_favor"];
@@ -97,8 +99,6 @@
     
     
     self.useCurrentPlaceAsRouteStart            = TRUE;
-    isSearchPlaceFinished                       = FALSE;
-    isSearchNearPlaceFinished                   = FALSE;
     lastPlace                                   = nil;
     self.currentPlace                           = nil;
     self.isShowPlanRouteFailedForCurrentPlace   = TRUE;
@@ -647,86 +647,6 @@
     return FALSE;
 }
 
--(void) processSearchPlaceDownloadRequestStatusChange:(DownloadRequest*) downloadRequest
-{
-    
-    bool isFail = true;
-    bool updateStatus = false;
-    /* search place finished */
-    if(downloadRequest.status == kDownloadStatus_Finished )
-    {
-        NSArray* places;
-        GoogleJsonStatus status = [GoogleJson getStatus:downloadRequest.filePath];
-        
-        if ( kGoogleJsonStatus_Ok == status)
-        {
-            places = [Place parseJson:downloadRequest.filePath];
-            if(places != nil && places.count > 0)
-            {
-                /* clear search result */
-                if (FALSE == isSearchNearPlaceFinished && FALSE == isSearchPlaceFinished)
-                {
-                    [self removeSearchedPlaces];
-                }
-                
-                if (downloadRequest == searchNearPlaceDownloadRequest)
-                {
-                    [self addNearSearchedPlaces:places];
-                    isSearchNearPlaceFinished = TRUE;
-                }
-                else
-                {
-                    [self addSearchedPlaces:places];
-                    isSearchPlaceFinished = TRUE;
-                }
-                
-                if (YES == isSearchPlaceFinished && YES == isSearchNearPlaceFinished)
-                {
-                    /* move to first place */
-                    if (_searchedPlaces.count > 0)
-                    {
-                        for (Place* p in _searchedPlaces)
-                        {
-                            [User addSearchedPlace:p];
-                        }
-                        [self moveToPlace:[_searchedPlaces objectAtIndex:0]];
-                    }
-
-                    /* notify the delegate */
-                    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:placeSearchResult:)])
-                    {
-                        [self.delegate mapManager:self placeSearchResult:self.searchedPlaces];
-                    }
-                    
-
-                    isFail = false;
-                }
-            }
-        }
-        updateStatus = true;
-    }
-    /* search place failed */
-    else if( searchPlaceDownloadRequest.status == kDownloadStatus_DownloadFail)
-    {
-        updateStatus = true;
-    }
-    
-    if (FALSE == isSearchNearPlaceFinished && FALSE == isSearchPlaceFinished)
-    {
-        [self removeSearchedPlaces];
-    }
-    
-    /* set search place status */
-    if (downloadRequest == searchNearPlaceDownloadRequest)
-    {
-        isSearchNearPlaceFinished   = TRUE;
-    }
-    else
-    {
-        isSearchPlaceFinished       = TRUE;
-    }
-    
-}
 
 -(void) removeCurrentPlaceFromMarkers
 {
@@ -825,31 +745,146 @@
 }
 #endif
 
-
--(void) searchPlace:(NSString*) place
+-(void) searchPlace:(NSString *)locationName
 {
-    if (nil != place && place.length > 0)
+    if (nil != locationName && locationName.length > 0)
     {
-        searchNearPlaceDownloadRequest          = [NaviQueryManager getNearPlaceDownloadRequest:place
-                                                                                       locaiton:self.currentPlace.coordinate
-                                                                                         radius:NEAR_PLACE_SEARCH_RADIUS];
-        searchNearPlaceDownloadRequest.delegate = self;
-        searchPlaceDownloadRequest              = [NaviQueryManager getPlaceDownloadRequest:place];
-        searchPlaceDownloadRequest.delegate     = self;
-        
-        [NaviQueryManager download:searchNearPlaceDownloadRequest];
-        [NaviQueryManager download:searchPlaceDownloadRequest];
-        
-        isSearchNearPlaceFinished   = FALSE;
-        isSearchPlaceFinished       = FALSE;
+        [self searchPlaceByRadarSearch:locationName];
     }
 }
 
+-(NSMutableArray*) searchPlaceInCache:(NSString*) locationName
+{
+ 
+    NSMutableArray* places;
+    mlogDebug(@"%@: search in cache\n", locationName);
+    places = [cachedSearch objectForKey:locationName];
+    
+    return places;
+}
+
+
+
+-(void) searchPlaceByTextSearch:(NSString*) locationName
+{
+    if (nil != locationName && locationName.length > 0)
+    {
+        searchPlaceTextSearchDownloadRequest          = [NaviQueryManager getPlaceTextSearchDownloadRequest:locationName];
+        searchPlaceTextSearchDownloadRequest.delegate = self;
+
+        [NaviQueryManager download:searchPlaceTextSearchDownloadRequest];
+    }
+}
+
+
+-(void) searchPlaceByRadarSearch:(NSString*) locationName
+{
+    if (nil != locationName && locationName.length > 0)
+    {
+        searchPlaceRadarSearchDownloadRequest          = [NaviQueryManager getPlaceNearBySearchDownloadRequest:locationName
+                                                                                  locaiton:self.currentPlace.coordinate
+                                                                                    radius:NEAR_PLACE_SEARCH_RADIUS];
+        searchPlaceRadarSearchDownloadRequest.delegate = self;
+        [NaviQueryManager download:searchPlaceRadarSearchDownloadRequest];
+    }
+}
+
+-(void) addSearchedPlacesToCache:(NSString*) locationName places:(NSArray*) places
+{
+    if (nil != locationName && locationName.length > 0 && nil != places && places.count > 0)
+    {
+        [cachedSearch setObject:places forKey:locationName];
+    }
+}
 -(void) removeSearchedPlaces
 {
 //    [self removeSearchedPlacesFromMarkers];
     [_searchedPlaces removeAllObjects];
     [User removeAllSearchedPlaces];
+}
+
+-(void) processSearchPlaceDownloadRequestStatusChange:(DownloadRequest*) downloadRequest
+{
+    
+    BOOL hasPlace = FALSE;
+    NSArray* places;
+    
+    
+    /* search place finished */
+    if(downloadRequest.status == kDownloadStatus_Finished)
+    {
+        
+        GoogleJsonStatus status = [GoogleJson getStatus:downloadRequest.filePath];
+        
+        /* parse ok */
+        if ( kGoogleJsonStatus_Ok == status)
+        {
+            places = [Place parseJson:downloadRequest.filePath];
+            hasPlace = places != nil && places.count > 0;
+            
+        }
+    }
+    
+    if (TRUE == downloadRequest.done)
+    {
+        if (downloadRequest == searchPlaceRadarSearchDownloadRequest)
+        {
+            if (TRUE == hasPlace)
+            {
+                mlogDebug(@"%@: radar search success", downloadRequest.name);
+                [self removeSearchedPlaces];
+                [self addSearchedPlaces:places];
+            }
+            else
+            {
+                mlogDebug(@"%@: radar search failed, search in cache instead",  downloadRequest.name);
+                
+                places = [self searchPlaceInCache:downloadRequest.name];
+                if (nil != places && places.count > 0)
+                {
+                    mlogDebug(@"%@: search in cache success", downloadRequest.name);
+                    [self removeSearchedPlaces];
+                    [self addSearchedPlaces:places];
+                    hasPlace = TRUE;
+                }
+                else
+                {
+                    mlogDebug(@"%@: search in cache failed, use text search\n", downloadRequest.name);
+                    [self searchPlaceByTextSearch:searchPlaceRadarSearchDownloadRequest.name];
+                }
+            }
+        }
+        else if(downloadRequest == searchPlaceTextSearchDownloadRequest)
+        {
+            if (TRUE == hasPlace)
+            {
+                mlogDebug(@"%@: text search success",  downloadRequest.name);
+                [self removeSearchedPlaces];
+                [self addSearchedPlaces:places];
+                [self addSearchedPlacesToCache:downloadRequest.name places:places];
+            }
+            else
+            {
+                mlogDebug(@"%@: text search failed, notify delegate", downloadRequest.name);
+                /* search failed, notify the delegate */
+                if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:searchPlaces:)])
+                {
+                    [self.delegate mapManager:self searchPlaces:FALSE];
+                }
+            }
+        }
+
+        /* has places, notify the delegate */
+        if (TRUE == hasPlace)
+        {
+            if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:placeSearchResult:)])
+            {
+                mlogDebug(@"notify the delegate with research placed\n");
+                [self.delegate mapManager:self placeSearchResult:places];
+            }
+        }
+    }
+    
 }
 
 
@@ -859,7 +894,8 @@
 {
     if (nil == downloadRequest)
         return;
-    if (searchPlaceDownloadRequest == downloadRequest || searchNearPlaceDownloadRequest == downloadRequest)
+    
+    if (searchPlaceRadarSearchDownloadRequest == downloadRequest || searchPlaceTextSearchDownloadRequest == downloadRequest)
     {
         [self processSearchPlaceDownloadRequestStatusChange:downloadRequest];
     }

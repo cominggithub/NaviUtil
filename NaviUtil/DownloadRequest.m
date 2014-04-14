@@ -76,6 +76,14 @@
     return result;
 }
 
+-(BOOL) done
+{
+    if (self.status == kDownloadStatus_Finished || self.status == kDownloadStatus_DownloadFail)
+        return TRUE;
+    
+    return FALSE;
+}
+
 -(void) start
 {
     

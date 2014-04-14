@@ -78,11 +78,39 @@
         {
             Place *p = [[Place alloc] init];
             dic = [array objectAtIndex:i];
-            location = [dic objectForKey:@"geometry"];
-            location = [location objectForKey:@"location"];
-            p.name = [NSString stringWithString:[dic objectForKey:@"name"]];
-            p.address = [NSString stringWithString:[dic objectForKey:@"formatted_address"]];
-            p.coordinate = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue], [[location objectForKey:@"lng"] doubleValue]);
+            
+            if (nil != [dic objectForKey:@"name"])
+            {
+                p.name = [NSString stringWithString:[dic objectForKey:@"name"]];
+            }
+            else
+            {
+                p.name = @"No Name";
+            }
+            
+            if (nil != [dic objectForKey:@"formatted_address"])
+            {
+                p.address = [NSString stringWithString:[dic objectForKey:@"formatted_address"]];
+            }
+            else
+            {
+                p.address = @"";
+            }
+            
+            
+            if (nil != [dic objectForKey:@"geometry"])
+            {
+                location = [dic objectForKey:@"geometry"];
+                if (nil != location)
+                {
+                    location = [location objectForKey:@"location"];
+                    if (nil != location)
+                    {
+                        p.coordinate = CLLocationCoordinate2DMake([[location objectForKey:@"lat"] doubleValue], [[location objectForKey:@"lng"] doubleValue]);
+                    }
+                }
+            }
+
             [result addObject:p];
         }
 

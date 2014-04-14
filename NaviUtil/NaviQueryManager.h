@@ -17,6 +17,8 @@
 
 #define GG_DIRECTION_URL            @"https://maps.googleapis.com/maps/api/directions"
 #define GG_PLACE_TEXT_SEARCH_URL    @"https://maps.googleapis.com/maps/api/place/textsearch"
+#define GG_PLACE_NEARBY_SEARCH_URL  @"https://maps.googleapis.com/maps/api/place/nearbysearch"
+#define GG_PLACE_RADAR_SEARCH_URL   @"https://maps.googleapis.com/maps/api/place/radarsearch"
 #define GG_TEXT_TO_SPEECH_URL       @"http://translate.google.com/translate_tts?ie=UTF-8&"
 #define S_LANGUAGE                  @"language"
 #define S_ORIGIN                    @"origin"
@@ -40,6 +42,7 @@
 #define S_UTF8                      @"UTF-8"
 #define S_Q                         @"q"
 #define S_TL                        @"tl"
+#define S_KEYWORD                   @"keyword"
 
 
 
@@ -55,17 +58,22 @@ typedef enum DownloadFileFormat {
 
 +(Route*) getRoute;
 +(Route*) getRouteStartLocation:(CLLocationCoordinate2D) startLocation endLocation:(CLLocationCoordinate2D) endLocation;
-+(NSArray*) getPlace:(NSString*) location;
++(NSArray*) getPlaceTextSearch:(NSString*) location;
 +(NSString*) getSpeechFile:text;
 +(NSString*) getFileNameParameters:(NSDictionary*) param downloadFileFormat:(DownloadFileFormat)downloadFileFormat;
 
 +(NSString*) getRouteFilePathStartLocation:(CLLocationCoordinate2D) startLocation endLocation:(CLLocationCoordinate2D) endLocation;
-+(NSString*) getPlaceFilePath:(NSString*) locationName;
++(NSString*) getPlaceTextSearchFilePath:(NSString*) locationName;
++(NSString*) getPlaceRadarSearchFilePath:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius;
++(NSString*) getPlaceNearBySearchFilePath:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius;
 +(NSString*) getSpeechFilePath:(NSString*) text;
 
 
 +(NSString*) getQueryBaseUrl:(NSString*)url parameters:(NSDictionary*) params downloadFileFormat:(DownloadFileFormat)downloadFileFormat;
-+(NSString*) getPlaceQuery:(NSString*) location;
++(NSString*) getPlaceTextSearchQuery:(NSString*) locationName;
++(NSString*) getPlaceRadarSearchQuery:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius;
++(NSString*) getPlaceNearBySearchQuery:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius;
+
 +(NSString*) getSpeechQuery:(NSString*) text;
 
 +(void) planRouteStartLocationText:(NSString*) startLocationText EndLocationText:(NSString*) endLocationText;
@@ -77,8 +85,9 @@ typedef enum DownloadFileFormat {
 +(void) init;
 
 +(void) downloadRequestStatusChange:(DownloadRequest*) downloadRequest;
-+(DownloadRequest*) getPlaceDownloadRequest:(NSString*) place;
-+(DownloadRequest*) getNearPlaceDownloadRequest:(NSString*) locationName locaiton:(CLLocationCoordinate2D) location radius:(int) radius;
++(DownloadRequest*) getPlaceTextSearchDownloadRequest:(NSString*) locationName;
++(DownloadRequest*) getPlaceRadarSearchDownloadRequest:(NSString*) locationName locaiton:(CLLocationCoordinate2D) location radius:(int) radius;
++(DownloadRequest*) getPlaceNearBySearchDownloadRequest:(NSString*) locationName locaiton:(CLLocationCoordinate2D) location radius:(int) radius;
 +(DownloadRequest*) getRouteDownloadRequestFrom:(CLLocationCoordinate2D) start To:(CLLocationCoordinate2D) end;
 +(void) download:(DownloadRequest*) dr;
 +(void) downloadSpeech:(Route*) route;

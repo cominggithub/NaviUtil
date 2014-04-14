@@ -8,7 +8,7 @@
 //
 
 #import "GuideRouteUIView.h"
-#import "SystemConfig.h"
+#import "SysConfig.h"
 #import "UIImage+category.h"
 #import "UIImageView+category.h"
 #import "SystemStatusView.h"
@@ -82,6 +82,14 @@
     
     BOOL                    isSimulateSlowWifi;
     int                     planRouteCount;
+    NSDate                  *lastValidGPSSignalTime;
+    NSDate                  *lastGPSSignalTime;
+    NSDate                  *lastValidRouteLineTime;
+    BOOL                    isOutOfRoute;
+    long                    refreshCount;
+    
+    NSDateFormatter         *dateFormattor;
+    
     
 }
 
@@ -149,11 +157,18 @@
     pendingMessage                  = @"";
     lastFailedRouteStartPlace       = nil;
     
-    maxOutOfRouteLineCount  = [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
+    lastValidGPSSignalTime          = nil;
+    lastGPSSignalTime               = nil;
+    lastValidRouteLineTime          = nil;
+    dateFormattor                   = [[NSDateFormatter alloc] init];
+    [dateFormattor setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
+    
+    
+    maxOutOfRouteLineCount  = [SysConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
     [self addUIComponents];
     
     [SystemManager addDelegate:self];
-    self.color      = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
+    self.color      = [SysConfig getUIColorValue:CONFIG_RN1_COLOR];
     
     endRouteLineEndPoint = CLLocationCoordinate2DMake(0, 0);
 
@@ -236,7 +251,7 @@
     [self drawBackground:context Rectangle:rect];
     
     /* draw debug message */
-    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG] && _messageBoxText.length > 0)
+    if (YES == [SysConfig getBoolValue:CONFIG_H_IS_DEBUG] && _messageBoxText.length > 0)
     {
         [self drawMessageBox:context Message:_messageBoxText];
 
@@ -266,7 +281,7 @@
     turnArrowImage.image = [self getTurnImage];
 
     /* draw debug information */
-    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG_ROUTE_DRAW])
+    if (YES == [SysConfig getBoolValue:CONFIG_H_IS_DEBUG_ROUTE_DRAW])
     {
         [self drawCar:context];
         [self drawCurrentRouteLine:context];
@@ -586,7 +601,7 @@
             NSString* text = [route getStepInstruction:nextStepRouteLine.stepNo];
             //[self drawMessageBox:context Message:[route getStepInstruction:nextStepRouteLine.stepNo]];
             messageBoxLabel.text = [route getStepInstruction:nextStepRouteLine.stepNo];
-            if(YES == [SystemConfig getBoolValue:CONFIG_IS_SPEECH] && FALSE == [audioPlayer isPlaying] )
+            if(YES == [SysConfig getBoolValue:CONFIG_IS_SPEECH] && FALSE == [audioPlayer isPlaying] )
             {
                 [self playSpeech:text];
             }
@@ -1090,19 +1105,24 @@
     
     rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
     
-    if (YES == [SystemConfig getBoolValue:CONFIG_IS_SPEECH])
+    if (YES == [SysConfig getBoolValue:CONFIG_IS_SPEECH])
     {
         [NaviQueryManager downloadSpeech:route];
     }
     
     [LocationManager setRoute:route];
     
-    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_LOCATION_SIMULATOR])
+    if (YES == [SysConfig getBoolValue:CONFIG_H_IS_LOCATION_SIMULATOR])
     {
         [LocationManager triggerLocationUpdate];
     }
     
     
+    lastGPSSignalTime                       = [[NSDate alloc] init];
+    lastValidGPSSignalTime                  = [[NSDate alloc] init];
+    lastValidRouteLineTime                  = [[NSDate alloc] init];
+    
+    refreshCount                            = 0;
     // configure debug option
     _isAutoSimulatorLocationUpdateStarted   = FALSE;
     outOfRouteLineCount                     = 0;
@@ -1157,7 +1177,7 @@
 -(void) playSpeech:(NSString*) text
 {
     /* never play speech in simulator mode */
-    if (NO == [SystemConfig getBoolValue:CONFIG_IS_SPEECH])
+    if (NO == [SysConfig getBoolValue:CONFIG_IS_SPEECH])
         return;
     
     /* if played before, just skip it */
@@ -1219,6 +1239,7 @@
     }
 }
 
+
 -(void) triggerLocationUpdate
 {
     if (currentDrawAngle == targetAngle)
@@ -1229,11 +1250,11 @@
     {
         [self rotateAngle:nil];
     }
+    
 }
 
 -(void) rotateAngle:(NSTimer *)theTimer
 {
-
     /* use rotate angle timer to reset the pending message */
     if (TRUE == hasMessage)
     {
@@ -1245,6 +1266,11 @@
 //        mlogDebug(@"car: %.0f, draw:%.0f", TO_ANGLE(carTargetAngle), TO_ANGLE(currentDrawAngle));
         currentLocationImage.transform  = CGAffineTransformMakeRotation(carTargetAngle - currentDrawAngle);
         [self setNeedsDisplay];
+    }
+    
+    if (refreshCount++%5==0)
+    {
+        [self dumpWatchDog];
     }
 }
 
@@ -1328,7 +1354,7 @@
             routeDownloadRequest.delegate = self;
             
 #if DEBUG
-            if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT] ||
+            if (YES == [SysConfig getBoolValue:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT] ||
                 !(TRUE == isSimulateSlowWifi && planRouteCount > 2 && planRouteCount%3==0))
             {
                 [NaviQueryManager download:routeDownloadRequest];
@@ -1350,6 +1376,16 @@
     {
         [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
     }
+}
+
+-(void) dumpWatchDog
+{
+#if DEBUG
+    NSString *t1 = [NSString stringWithFormat:@"      last GPS Signal Time: %@", [dateFormattor stringFromDate:lastGPSSignalTime]];
+    NSString *t2 = [NSString stringWithFormat:@"last Valid Route Line Time: %@", [dateFormattor stringFromDate:lastValidRouteLineTime]];
+    NSTimeInterval elapsedTime = [lastGPSSignalTime timeIntervalSinceDate:lastValidRouteLineTime];
+    mlogDebug(@"\n%@\n%@\n              elapsed time: %f\n", t1, t2, elapsedTime);
+#endif
 }
 
 
@@ -1432,9 +1468,9 @@
         
         routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
         routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
-        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
+        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SysConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
 
-        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]+100];
+        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation routeLineNo:currentRouteLine.no withInDistance:[SysConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]+100];
 
     }
     
@@ -1687,6 +1723,7 @@
 
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
+    lastGPSSignalTime = [[NSDate alloc] init];
     currentStep++;
 //    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
@@ -1778,7 +1815,7 @@
     
     [LocationManager addDelegate:self];
 
-    debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_H_IS_DEBUG];
+    debugMsgLabel.hidden = ![SysConfig getBoolValue:CONFIG_H_IS_DEBUG];
     self.isNetwork  = [SystemManager getNetworkStatus] > 0;
     self.isGps      = [SystemManager getGpsStatus] > 0;
     
@@ -2043,6 +2080,7 @@
             {
                 self.messageBoxText = @"";
             }
+            lastValidRouteLineTime = [[NSDate alloc] init];
             break;
         case GR_EVENT_NETWORK_READY:
             if (self.state == GR_STATE_NETWORK_NO_SIGNAL)

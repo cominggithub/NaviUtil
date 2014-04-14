@@ -89,8 +89,8 @@
         _unitLabel.text = [SystemManager getLanguageString:@"am"];
     }
     
-    _hourLabel.text        = [NSString stringFromInt:hour numOfDigits:2];
-    _minuteLabel.text      = [NSString stringFromInt:minute numOfDigits:2];
+    _hourLabel.text        = [NSString stringFromLong:hour numOfDigits:2];
+    _minuteLabel.text      = [NSString stringFromLong:minute numOfDigits:2];
     _secondLabel.hidden    = !_secondLabel.hidden;
     
 }

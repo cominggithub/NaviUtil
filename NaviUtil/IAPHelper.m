@@ -10,7 +10,7 @@
 #import "IAPHelper.h"
 #import <StoreKit/StoreKit.h>
 #import "RSSecrets.h"
-#import "SystemConfig.h"
+#import "SysConfig.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
@@ -171,7 +171,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
     NSString *iapKey = [self systemConfigKeyByProductIdentifier:key];
     if (nil != iapKey)
     {
-        [SystemConfig addIAPItem:iapKey];
+        [SysConfig addIAPItem:iapKey];
     }
     
     return ;
@@ -181,7 +181,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 {
     mlogAssertStrNotEmptyR(key, FALSE);
     
-    return [SystemConfig hasIAPItem:[self systemConfigKeyByProductIdentifier:key]];
+    return [SysConfig hasIAPItem:[self systemConfigKeyByProductIdentifier:key]];
 }
 
 - (NSString*)systemConfigKeyByProductIdentifier:(NSString*) key

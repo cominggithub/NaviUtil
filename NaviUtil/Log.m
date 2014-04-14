@@ -7,7 +7,6 @@
 //
 
 #import "Log.h"
-#import "TestFlight.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -94,11 +93,11 @@ void _logOut(int level, const char* func_name, int lineNo, NSString* msg)
     
     if (level == kLogCheckPoint)
     {
-        [TestFlight passCheckpoint:outputStr];
+
     }
     else if (level == kLogInfo || level == kLogError)
     {
-        TFLog(@"%@", outputStr);
+
     }
 }
 

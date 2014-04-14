@@ -102,7 +102,7 @@
 {
     _color = color;
     
-    int numComponents = CGColorGetNumberOfComponents([_color CGColor]);
+    size_t numComponents = CGColorGetNumberOfComponents([_color CGColor]);
     
     if (numComponents == 4)
     {

@@ -10,9 +10,9 @@
 #import "NaviQueryManager.h"
 #import <mach/mach.h>
 #import <sys/utsname.h>
-#import "SystemConfig.h"
+#import "SysConfig.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 
@@ -39,7 +39,7 @@ static float _networkStatus;
 +(void) init
 {
     [self initDirectory];
-    [SystemConfig init];
+    [SysConfig init];
     mlogCheckPoint(@"SystemManager Init");
     
 #ifdef DEBUG
@@ -85,7 +85,7 @@ static float _networkStatus;
 
     
 
-
+/*
     
     [SystemConfig setValue:CONFIG_NAVIER_NAME string:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleName"]];
     [SystemConfig setValue:CONFIG_NAVIER_VERSION string:[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"]];
@@ -95,7 +95,7 @@ static float _networkStatus;
     [SystemConfig setValue:CONFIG_DEVICE_SCREEN string:[NSString stringWithFormat:@"screen %.0f X %.0f %s",
                                                         screenBounds.size.width, screenBounds.size.height, screenScale > 1.0 ? "Retina":""]];
     [SystemConfig setValue:CONFIG_LOCALE string:[[NSLocale currentLocale] localeIdentifier]];
-    
+*/    
     _screenRect                         = screenBounds;
     _lanscapeScreenRect.origin.x        = 0;
     _lanscapeScreenRect.origin.y        = 0;
@@ -403,7 +403,7 @@ static float _networkStatus;
 {
     return [[NSLocale preferredLanguages] objectAtIndex:0];
 }
-
+/*
 +(NSString *) getSupportLanguage
 {
     NSString *sysLanguage = [self getSystemLanguage];
@@ -414,6 +414,7 @@ static float _networkStatus;
     
     return [self getDefaultLanguage];
 }
+ */
 
 +(NSString *) getDefaultLanguage;
 {
@@ -446,7 +447,7 @@ static float _networkStatus;
     if( kerr == KERN_SUCCESS ) {
         if(info.resident_size < 1024)
         {
-            result = [NSString stringWithFormat:@"%d Bytes", info.resident_size];
+            result = [NSString stringWithFormat:@"%d Bytes", (int)info.resident_size];
         }
         else if(info.resident_size < 1024*1024)
         {
@@ -465,12 +466,6 @@ static float _networkStatus;
 {
     
     NSString *result = NSLocalizedString(stringIndex, nil);
-
-    /* if we cannot find any string in the localized string table */
-    if (nil != stringIndex && (nil == result || result.length <= 0))
-    {
-        result = [NSString stringWithString:stringIndex];
-    }
     
     return result;
 

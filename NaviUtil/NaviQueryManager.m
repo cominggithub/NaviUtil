@@ -46,8 +46,8 @@ static CLLocationCoordinate2D _endLocation;
 {
     _isGetStartLocation = false;
     _isGetEndLocation = false;
-    _startLocationDownloadRequest = [self getPlaceDownloadRequest:startLocationText];
-    _endLocationDownloadRequest = [self getPlaceDownloadRequest:endLocationText];
+    _startLocationDownloadRequest = [self getPlaceTextSearchDownloadRequest:startLocationText];
+    _endLocationDownloadRequest = [self getPlaceTextSearchDownloadRequest:endLocationText];
     [_downloadManager download:_startLocationDownloadRequest];
     [_downloadManager download:_endLocationDownloadRequest];
     
@@ -162,24 +162,40 @@ static CLLocationCoordinate2D _endLocation;
     return downloadRequest;
 }
 
-+(DownloadRequest*) getPlaceDownloadRequest:(NSString*) locationName
++(DownloadRequest*) getPlaceTextSearchDownloadRequest:(NSString*) locationName
 {
     DownloadRequest* downloadRequest = [[DownloadRequest alloc] init];
     downloadRequest.requestId   = [self getNextRequestId];
-    downloadRequest.filePath    = [self getPlaceFilePath:locationName];
-    downloadRequest.url         = [self getPlaceQuery:locationName];
+    downloadRequest.name        = locationName;
+    downloadRequest.filePath    = [self getPlaceTextSearchFilePath:locationName];
+    downloadRequest.url         = [self getPlaceTextSearchQuery:locationName];
+    downloadRequest.requestId   = [self getNextRequestId];
+
+    downloadRequest.status      = kDownloadStatus_Pending;
+    
+    return downloadRequest;
+}
+
++(DownloadRequest*) getPlaceRadarSearchDownloadRequest:(NSString*) locationName locaiton:(CLLocationCoordinate2D) location radius:(int) radius
+{
+    DownloadRequest* downloadRequest = [[DownloadRequest alloc] init];
+    downloadRequest.requestId   = [self getNextRequestId];
+    downloadRequest.name        = locationName;
+    downloadRequest.filePath    = [self getPlaceRadarSearchFilePath:locationName location:location radius:radius];
+    downloadRequest.url         = [self getPlaceRadarSearchQuery:locationName location:location radius:radius];
     downloadRequest.requestId   = [self getNextRequestId];
     downloadRequest.status      = kDownloadStatus_Pending;
     
     return downloadRequest;
 }
 
-+(DownloadRequest*) getNearPlaceDownloadRequest:(NSString*) locationName locaiton:(CLLocationCoordinate2D) location radius:(int) radius
++(DownloadRequest*) getPlaceNearBySearchDownloadRequest:(NSString*) locationName locaiton:(CLLocationCoordinate2D) location radius:(int) radius
 {
     DownloadRequest* downloadRequest = [[DownloadRequest alloc] init];
     downloadRequest.requestId   = [self getNextRequestId];
-    downloadRequest.filePath    = [self getNearPlaceFilePath:locationName location:location radius:radius];
-    downloadRequest.url         = [self getNearPlaceQuery:locationName location:location radius:radius];
+    downloadRequest.name        = locationName;
+    downloadRequest.filePath    = [self getPlaceNearBySearchFilePath:locationName location:location radius:radius];
+    downloadRequest.url         = [self getPlaceNearBySearchQuery:locationName location:location radius:radius];
     downloadRequest.requestId   = [self getNextRequestId];
     downloadRequest.status      = kDownloadStatus_Pending;
     
@@ -245,7 +261,7 @@ static CLLocationCoordinate2D _endLocation;
      [GeoUtil getLatLngStr:startLocation], S_ORIGIN,
      [GeoUtil getLatLngStr:endLocation], S_DESTINATION,
      S_FALSE, S_SENSOR,
-     [SystemManager getSupportLanguage], S_LANGUAGE,
+     [SystemManager getSystemLanguage], S_LANGUAGE,
      nil
      ];
     return param;
@@ -256,29 +272,56 @@ static CLLocationCoordinate2D _endLocation;
     NSDictionary* param = [[NSDictionary alloc] initWithObjectsAndKeys:
                            locationName, S_QUERY,
                            [NaviUtil getGooglePlaceAPIKey], S_GOOGLE_API_KEY,
-                           S_FALSE, S_SENSOR,
-                           [SystemManager getSupportLanguage], S_LANGUAGE,
+                           S_TRUE, S_SENSOR,
+                           [SystemManager getSystemLanguage], S_LANGUAGE,
                            nil
                            ];
     
     return param;
 }
 
-+(NSDictionary*) getNearPlaceQueryParam:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
++(NSDictionary*) getPlaceTextSearchParam:(NSString*) locationName
 {
     NSDictionary* param = [[NSDictionary alloc] initWithObjectsAndKeys:
                            locationName, S_QUERY,
                            [NaviUtil getGooglePlaceAPIKey], S_GOOGLE_API_KEY,
-                           S_FALSE, S_SENSOR,
-                           [SystemManager getSupportLanguage], S_LANGUAGE,
-                           [NSString stringWithFormat:@"%.8f,%.8f", location.latitude, location.longitude], S_LOCATION,
-                           @(radius), S_RADIUS,
+                           S_TRUE, S_SENSOR,
+                           [SystemManager getSystemLanguage], S_LANGUAGE,
                            nil
                            ];
     
     return param;
 }
 
++(NSDictionary*) getPlaceRadarSearchParam:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
+{
+    NSDictionary* param = [[NSDictionary alloc] initWithObjectsAndKeys:
+                           locationName, S_KEYWORD,
+                           [NaviUtil getGooglePlaceAPIKey], S_GOOGLE_API_KEY,
+                           S_TRUE, S_SENSOR,
+                           [SystemManager getSystemLanguage], S_LANGUAGE,
+                           @(radius), S_RADIUS,
+                           [NSString stringWithFormat:@"%.8f,%.8f", location.latitude, location.longitude], S_LOCATION,
+                           nil
+                           ];
+    
+    return param;
+}
+
++(NSDictionary*) getPlaceNearBySearchParam:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
+{
+    NSDictionary* param = [[NSDictionary alloc] initWithObjectsAndKeys:
+                           locationName, S_KEYWORD,
+                           [NaviUtil getGooglePlaceAPIKey], S_GOOGLE_API_KEY,
+                           S_TRUE, S_SENSOR,
+                           [SystemManager getSystemLanguage], S_LANGUAGE,
+                           @(radius), S_RADIUS,
+                           [NSString stringWithFormat:@"%.8f,%.8f", location.latitude, location.longitude], S_LOCATION,
+                           nil
+                           ];
+    
+    return param;
+}
 
 +(NSDictionary*) getSpeechQueryParam:(NSString*) text
 {
@@ -289,7 +332,7 @@ static CLLocationCoordinate2D _endLocation;
      */
     NSDictionary* param = [[NSDictionary alloc] initWithObjectsAndKeys:
                            text, S_Q,
-                           [SystemManager getSupportLanguage], S_TL,
+                           [SystemManager getSystemLanguage], S_TL,
                            nil
                            ];
     return param;
@@ -307,7 +350,7 @@ static CLLocationCoordinate2D _endLocation;
 }
 
 
-+(NSString*) getPlaceFilePath:(NSString*) locationName
++(NSString*) getPlaceTextSearchFilePath:(NSString*) locationName
 {
     NSDictionary* param = [self getPlaceQueryParam:locationName];
     
@@ -316,9 +359,18 @@ static CLLocationCoordinate2D _endLocation;
     return filePath;
 }
 
-+(NSString*) getNearPlaceFilePath:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
++(NSString*) getPlaceRadarSearchFilePath:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
 {
-    NSDictionary* param = [self getNearPlaceQueryParam:locationName location:location radius:radius];
+    NSDictionary* param = [self getPlaceRadarSearchParam:locationName location:location radius:radius];
+    
+    NSString *filePath = [NSString stringWithFormat:@"%@/%@", [SystemManager getPath:kSystemManager_Path_Route], [self getFileNameParameters:param downloadFileFormat:GOOGLE_JSON]];
+    
+    return filePath;
+}
+
++(NSString*) getPlaceNearBySearchFilePath:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
+{
+    NSDictionary* param = [self getPlaceNearBySearchParam:locationName location:location radius:radius];
     
     NSString *filePath = [NSString stringWithFormat:@"%@/%@", [SystemManager getPath:kSystemManager_Path_Route], [self getFileNameParameters:param downloadFileFormat:GOOGLE_JSON]];
     
@@ -344,25 +396,36 @@ static CLLocationCoordinate2D _endLocation;
     return [NaviQueryManager getQueryBaseUrl:GG_DIRECTION_URL parameters:param downloadFileFormat:GOOGLE_JSON];
 }
 
-+(NSString*) getPlaceQuery:(NSString*) locationName
-{
-
-    /*
-     * query, language, key, sensor
-     */
-    NSDictionary* param = [self getPlaceQueryParam:locationName];
-    return [NaviQueryManager getQueryBaseUrl:GG_PLACE_TEXT_SEARCH_URL parameters:param downloadFileFormat:GOOGLE_JSON];
-}
-
-+(NSString*) getNearPlaceQuery:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
++(NSString*) getPlaceTextSearchQuery:(NSString*) locationName
 {
     
     /*
-     * query, language, key, sensor
+     * query, language, key, sensor=false
      */
-    NSDictionary* param = [self getNearPlaceQueryParam:locationName location:location radius:radius];
+    NSDictionary* param = [self getPlaceTextSearchParam:locationName];
     return [NaviQueryManager getQueryBaseUrl:GG_PLACE_TEXT_SEARCH_URL parameters:param downloadFileFormat:GOOGLE_JSON];
 }
+
++(NSString*) getPlaceRadarSearchQuery:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
+{
+    
+    /*
+     * query, language, key, sensor=false
+     */
+    NSDictionary* param = [self getPlaceRadarSearchParam:locationName location:location radius:radius];
+    return [NaviQueryManager getQueryBaseUrl:GG_PLACE_RADAR_SEARCH_URL parameters:param downloadFileFormat:GOOGLE_JSON];
+}
+
++(NSString*) getPlaceNearBySearchQuery:(NSString*) locationName location:(CLLocationCoordinate2D) location radius:(int) radius
+{
+    
+    /*
+     * query, language, key, sensor=false
+     */
+    NSDictionary* param = [self getPlaceNearBySearchParam:locationName location:location radius:radius];
+    return [NaviQueryManager getQueryBaseUrl:GG_PLACE_NEARBY_SEARCH_URL parameters:param downloadFileFormat:GOOGLE_JSON];
+}
+
 
 +(NSString*) getSpeechQuery:(NSString*) text
 {
@@ -394,10 +457,10 @@ static CLLocationCoordinate2D _endLocation;
     return result;
 }
 
-+(NSArray*) getPlace:(NSString*) locationName
++(NSArray*) getPlaceTextSearch:(NSString*) locationName
 {
     NSArray* result = nil;
-    NSString *filePath = [self getPlaceFilePath:locationName];
+    NSString *filePath = [self getPlaceTextSearchFilePath:locationName];
     if([[NSFileManager defaultManager] fileExistsAtPath:filePath])
     {
         result = [Place parseJson:filePath];

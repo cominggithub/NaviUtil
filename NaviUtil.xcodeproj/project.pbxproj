@@ -30,7 +30,7 @@
 		2B27CEA618949A0D00FBE5FF /* NavierHUDIAPHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B27CEA518949A0D00FBE5FF /* NavierHUDIAPHelper.m */; };
 		2B3BA08B18B0BC7800416119 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2B3BA08A18B0BC7800416119 /* GoogleMaps.bundle */; };
 		2B3BA08D18B0BCCB00416119 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B3BA08C18B0BCCB00416119 /* GoogleMaps.framework */; };
-		2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B61D8661771E64400ACB1AA /* SystemConfig.m */; };
+		2B61D8671771E64400ACB1AA /* SysConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B61D8661771E64400ACB1AA /* SysConfig.m */; };
 		2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */; };
 		2B6CBFA716DFA6D90095CBD4 /* NaviUtil.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */; };
 		2B6CBFA916DFA6D90095CBD4 /* NaviUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFA816DFA6D90095CBD4 /* NaviUtil.m */; };
@@ -140,9 +140,8 @@
 		2B27CEA71894A36F00FBE5FF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		2B3BA08A18B0BC7800416119 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = "../../ios/framework/GoogleMaps-iOS-1.7.0/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"; sourceTree = "<group>"; };
 		2B3BA08C18B0BCCB00416119 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
-		2B61D8651771E64400ACB1AA /* SystemConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemConfig.h; sourceTree = "<group>"; };
-		2B61D8661771E64400ACB1AA /* SystemConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemConfig.m; sourceTree = "<group>"; };
-		2B6A6BF0178718B7005FC851 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
+		2B61D8651771E64400ACB1AA /* SysConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SysConfig.h; sourceTree = "<group>"; };
+		2B61D8661771E64400ACB1AA /* SysConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SysConfig.m; sourceTree = "<group>"; };
 		2B6CBF9E16DFA6D90095CBD4 /* libNaviUtil.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNaviUtil.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		2B6CBFA516DFA6D90095CBD4 /* NaviUtil-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NaviUtil-Prefix.pch"; sourceTree = "<group>"; };
@@ -361,8 +360,8 @@
 				2B6CBFCC16DFA6FD0095CBD4 /* DownloadRequest.m */,
 				2B6CBFCD16DFA6FD0095CBD4 /* FileDownloader.h */,
 				2B6CBFCE16DFA6FD0095CBD4 /* FileDownloader.m */,
-				2B61D8651771E64400ACB1AA /* SystemConfig.h */,
-				2B61D8661771E64400ACB1AA /* SystemConfig.m */,
+				2B61D8651771E64400ACB1AA /* SysConfig.h */,
+				2B61D8661771E64400ACB1AA /* SysConfig.m */,
 				2B6CBFE316DFA6FD0095CBD4 /* SystemManager.h */,
 				2B6CBFE416DFA6FD0095CBD4 /* SystemManager.m */,
 				2B70BEDC16F5F0E5002269AB /* User.h */,
@@ -457,7 +456,6 @@
 				2B3D573C17896A0E00437464 /* System */,
 				2B3D573B178969F800437464 /* GeoNavigation */,
 				2B1C471517884C6E00ED6D98 /* CarPanel */,
-				2B6A6BF0178718B7005FC851 /* TestFlight.h */,
 				2B7ADCAA16E4E5DE00F8A182 /* Log.h */,
 				2B7ADCAB16E4E5DE00F8A182 /* Log.m */,
 				2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */,
@@ -556,6 +554,7 @@
 		2B6CBF9616DFA6D90095CBD4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastTestingUpgradeCheck = 0510;
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = Coming;
 			};
@@ -637,7 +636,7 @@
 				2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */,
 				2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */,
 				2B18AA911748D19700277F52 /* UILabel+category.m in Sources */,
-				2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */,
+				2B61D8671771E64400ACB1AA /* SysConfig.m in Sources */,
 				2BDC6B9117859E9C003E61E9 /* UIImage+category.m in Sources */,
 				2B1C47141788474600ED6D98 /* DrawBlock.m in Sources */,
 				2B1C471817884D0400ED6D98 /* TimeDrawBlock.m in Sources */,

@@ -7,7 +7,6 @@
 //
 
 #import "User.h"
-#import "TestFlight.h"
 #import "NSString+category.h"
 
 
@@ -313,15 +312,15 @@ static NSMutableArray*  _recentPlaces;
     switch(placeType)
     {
         case kPlaceType_Home:
-            return _homePlaces.count;
+            return (int)_homePlaces.count;
         case kPlaceType_Office:
-            return _officePlaces.count;
+            return (int)_officePlaces.count;
         case kPlaceType_Favor:
-            return _favorPlaces.count;
+            return (int)_favorPlaces.count;
         case kPlaceType_SearchedPlace:
-            return _searchedPlaces.count;
+            return (int)_searchedPlaces.count;
         case kPlaceType_SearchedPlaceText:
-            return _searchedPlaceText.count;
+            return (int)_searchedPlaceText.count;
         case kPlaceType_None:
             return 0;
     }
