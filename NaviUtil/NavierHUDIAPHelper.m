@@ -21,13 +21,15 @@
 
 NSMutableDictionary* iapItems;
 
+static BOOL retrieveIapSuccess;
 +(void) init
 {
     iapItems = [[NSMutableDictionary alloc] initWithCapacity:0];
+    retrieveIapSuccess = FALSE;
     [self retrieveProduct];
 }
 
-+ (int)iapItemCount
++ (long)iapItemCount
 {
     return iapItems.count;
 }
@@ -51,10 +53,15 @@ NSMutableDictionary* iapItems;
     [[NavierHUDIAPHelper sharedInstance] requestProductsWithCompletionHandler:^(BOOL success, NSArray *products) {
         if (success)
         {
+            retrieveIapSuccess = TRUE;
             for (SKProduct* p in products)
             {
                 [iapItems setValue:p forKey:p.productIdentifier];
             }
+        }
+        else
+        {
+            
         }
     }];
 
@@ -100,6 +107,11 @@ NSMutableDictionary* iapItems;
 + (void)restorePurchasedProduct
 {
     [[NavierHUDIAPHelper sharedInstance] restoreCompletedTransactions];
+}
+
++ (BOOL)retrieveIap
+{
+    return retrieveIapSuccess;
 }
 
 

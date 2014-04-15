@@ -1229,6 +1229,7 @@
         /* search place finished */
         if (routeDownloadRequest.status == kDownloadStatus_Finished)
         {
+            logfn();
             [self startRouteNavigation];
         }
         /* search failed */
@@ -1270,7 +1271,7 @@
     
     if (refreshCount++%5==0)
     {
-        [self dumpWatchDog];
+//        [self dumpWatchDog];
     }
 }
 
@@ -1316,6 +1317,7 @@
     routeEndPlace   = e;
     route           = nil;
     
+    [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
     [self sendEvent:GR_EVENT_ALL_READY];
     
     return TRUE;

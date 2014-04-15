@@ -578,6 +578,7 @@
     for(i=0; i<places.count && i < SEARCHED_PLACE_MAX; i++)
     {
         Place *p = [places objectAtIndex:i];
+        p.placeType = kPlaceType_SearchedPlace;
         /* add the first search result no matter what */
         if (false == [self isPlaceInSearchedPlaces:p])
         {

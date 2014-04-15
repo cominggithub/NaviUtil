@@ -17,8 +17,9 @@
 + (void)retrieveProduct;
 + (void)dumpIapItems;
 + (SKProduct*)productByKey:(NSString*) key;
-+ (int)iapItemCount;
++ (long)iapItemCount;
 + (void)buyProduct:(SKProduct*) product;
 + (void)restorePurchasedProduct;
++ (BOOL)retrieveIap;
 
 @end

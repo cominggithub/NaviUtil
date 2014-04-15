@@ -9,7 +9,7 @@
 
 #import "FileDownloader.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 @implementation FileDownloader
