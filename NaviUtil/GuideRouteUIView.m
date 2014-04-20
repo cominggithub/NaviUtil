@@ -8,7 +8,7 @@
 //
 
 #import "GuideRouteUIView.h"
-#import "SysConfig.h"
+#import "SystemConfig.h"
 #import "UIImage+category.h"
 #import "UIImageView+category.h"
 #import "SystemStatusView.h"
@@ -89,6 +89,8 @@
     long                    refreshCount;
     
     NSDateFormatter         *dateFormattor;
+    NSTimer                 *rotateTimer;
+    NSTimer                 *routePlanTimer;
     
     
 }
@@ -164,11 +166,11 @@
     [dateFormattor setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
     
     
-    maxOutOfRouteLineCount  = [SysConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
+    maxOutOfRouteLineCount  = [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT];
     [self addUIComponents];
     
     [SystemManager addDelegate:self];
-    self.color      = [SysConfig getUIColorValue:CONFIG_RN1_COLOR];
+    self.color      = [SystemConfig getUIColorValue:CONFIG_RN1_COLOR];
     
     endRouteLineEndPoint = CLLocationCoordinate2DMake(0, 0);
 
@@ -251,7 +253,7 @@
     [self drawBackground:context Rectangle:rect];
     
     /* draw debug message */
-    if (YES == [SysConfig getBoolValue:CONFIG_H_IS_DEBUG] && _messageBoxText.length > 0)
+    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG] && _messageBoxText.length > 0)
     {
         [self drawMessageBox:context Message:_messageBoxText];
 
@@ -281,7 +283,7 @@
     turnArrowImage.image = [self getTurnImage];
 
     /* draw debug information */
-    if (YES == [SysConfig getBoolValue:CONFIG_H_IS_DEBUG_ROUTE_DRAW])
+    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG_ROUTE_DRAW])
     {
         [self drawCar:context];
         [self drawCurrentRouteLine:context];
@@ -601,7 +603,7 @@
             NSString* text = [route getStepInstruction:nextStepRouteLine.stepNo];
             //[self drawMessageBox:context Message:[route getStepInstruction:nextStepRouteLine.stepNo]];
             messageBoxLabel.text = [route getStepInstruction:nextStepRouteLine.stepNo];
-            if(YES == [SysConfig getBoolValue:CONFIG_IS_SPEECH] && FALSE == [audioPlayer isPlaying] )
+            if(YES == [SystemConfig getBoolValue:CONFIG_IS_SPEECH] && FALSE == [audioPlayer isPlaying] )
             {
                 [self playSpeech:text];
             }
@@ -1100,19 +1102,23 @@
     carPoint = routeStartPoint;
     [self updateTranslationConstant];
     [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
-    currentStep = 0;
-    carFootPrint = [NSMutableArray arrayWithCapacity:0];
+    currentStep     = 0;
+    carFootPrint    = [NSMutableArray arrayWithCapacity:0];
     
-    rotateTimer = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self selector:@selector(rotateAngle:) userInfo:nil repeats:YES];
+    rotateTimer     = [NSTimer scheduledTimerWithTimeInterval:rotateInterval target:self
+                                                     selector:@selector(rotateAngle:)
+                                                     userInfo:nil
+                                                      repeats:YES];
+    [self invalidateRoutePlanTimer];
     
-    if (YES == [SysConfig getBoolValue:CONFIG_IS_SPEECH])
+    if (YES == [SystemConfig getBoolValue:CONFIG_IS_SPEECH])
     {
         [NaviQueryManager downloadSpeech:route];
     }
     
     [LocationManager setRoute:route];
     
-    if (YES == [SysConfig getBoolValue:CONFIG_H_IS_LOCATION_SIMULATOR])
+    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_LOCATION_SIMULATOR])
     {
         [LocationManager triggerLocationUpdate];
     }
@@ -1177,7 +1183,7 @@
 -(void) playSpeech:(NSString*) text
 {
     /* never play speech in simulator mode */
-    if (NO == [SysConfig getBoolValue:CONFIG_IS_SPEECH])
+    if (NO == [SystemConfig getBoolValue:CONFIG_IS_SPEECH])
         return;
     
     /* if played before, just skip it */
@@ -1229,7 +1235,6 @@
         /* search place finished */
         if (routeDownloadRequest.status == kDownloadStatus_Finished)
         {
-            logfn();
             [self startRouteNavigation];
         }
         /* search failed */
@@ -1238,6 +1243,8 @@
             [self sendEvent:GR_EVENT_LOCATION_LOST];
         }
     }
+    
+    [self invalidateRoutePlanTimer];
 }
 
 
@@ -1356,14 +1363,19 @@
             routeDownloadRequest.delegate = self;
             
 #if DEBUG
-            if (YES == [SysConfig getBoolValue:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT] ||
+            if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT] ||
                 !(TRUE == isSimulateSlowWifi && planRouteCount > 2 && planRouteCount%3==0))
             {
+                routePlanTimer     = [NSTimer scheduledTimerWithTimeInterval:[SystemConfig getIntValue:CONFIG_ROUTE_PLAN_TIMEOUT] target:self
+                                                                 selector:@selector(routePlanTimeout:)
+                                                                 userInfo:nil
+                                                                  repeats:YES];
+                
                 [NaviQueryManager download:routeDownloadRequest];
             }
             else
             {
-                mlogDebug(@"skip plan route");
+                mlogDebug(@"simulate skip plan route");
             }
 #else
             [NaviQueryManager download:routeDownloadRequest];
@@ -1378,6 +1390,23 @@
     {
         [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
     }
+}
+
+-(void) routePlanTimeout:(NSTimer *)theTimer
+{
+    routeDownloadRequest = nil;
+    [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+}
+
+-(void) invalidateRoutePlanTimer
+{
+    if (routePlanTimer != nil && [routePlanTimer isValid])
+    {
+        [routePlanTimer invalidate];
+
+    }
+
+    routePlanTimer = nil;
 }
 
 -(void) dumpWatchDog
@@ -1422,6 +1451,7 @@
     if (nil == currentRouteLine && (nil == lastRouteLine || 0 == lastRouteLine.no) && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
         currentRouteLine = firstRouteLine;
+        [self sendEvent:GR_EVENT_ROUTE_LINE_READY];
     }
     /* found matched route line */
     else if (nil != currentRouteLine)
@@ -1470,9 +1500,9 @@
         
         routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
         routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
-        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SysConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
+        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
 
-        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation routeLineNo:currentRouteLine.no withInDistance:[SysConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]+100];
+        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]+100];
 
     }
     
@@ -1725,9 +1755,12 @@
 
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
-    lastGPSSignalTime = [[NSDate alloc] init];
+
     currentStep++;
 //    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+
+    /* keep track of last GPS signal update time */
+    lastGPSSignalTime = [[NSDate alloc] init];
     
     if (GR_STATE_NAVIGATION == self.state || GR_STATE_ROUTE_REPLANNING == self.state || GR_STATE_ROUTE_REPLANNING == self.state)
     {
@@ -1817,7 +1850,7 @@
     
     [LocationManager addDelegate:self];
 
-    debugMsgLabel.hidden = ![SysConfig getBoolValue:CONFIG_H_IS_DEBUG];
+    debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_H_IS_DEBUG];
     self.isNetwork  = [SystemManager getNetworkStatus] > 0;
     self.isGps      = [SystemManager getGpsStatus] > 0;
     
@@ -1866,7 +1899,9 @@
 
     _isGps = isGps;
     if (NO == _isGps)
+    {
         [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+    }
     [self setNeedsDisplay];
 }
 
@@ -2000,7 +2035,7 @@
     switch (event)
     {
         case GR_EVENT_GPS_NO_SIGNAL:
-            return @"GR_EVENT GPS_NO_SIGNAL";
+            return @"GR_EVENT_GPS_NO_SIGNAL";
         case GR_EVENT_NETWORK_NO_SIGNAL:
             return @"GR_EVENT_NETWORK_NO_SIGNAL";
         case GR_EVENT_ROUTE_DESTINATION_ERROR:

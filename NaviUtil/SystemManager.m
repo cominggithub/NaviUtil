@@ -10,7 +10,7 @@
 #import "NaviQueryManager.h"
 #import <mach/mach.h>
 #import <sys/utsname.h>
-#import "SysConfig.h"
+#import "SystemConfig.h"
 
 #define FILE_DEBUG TRUE
 #include "Log.h"
@@ -31,6 +31,7 @@ static float _wifiStatus;
 static float _threeGStatus;
 static float _batteryLife;
 static float _networkStatus;
+static NSDictionary *_googleLanguage;
 
 
 @implementation SystemManager
@@ -39,7 +40,7 @@ static float _networkStatus;
 +(void) init
 {
     [self initDirectory];
-    [SysConfig init];
+    [SystemConfig init];
     mlogCheckPoint(@"SystemManager Init");
     
 #ifdef DEBUG
@@ -276,6 +277,15 @@ static float _networkStatus;
                           @"TRUE", @"zh-TW",
                           nil
                           ];
+
+    _googleLanguage = [[NSDictionary alloc] initWithObjectsAndKeys:
+                          @"en", @"en",
+                          @"zh-TW", @"zh-Hant",
+                          @"zh-CN", @"zh-Hans",
+                          nil
+                          ];
+    
+
 }
 
 +(void) initDirectory
@@ -403,6 +413,12 @@ static float _networkStatus;
 {
     return [[NSLocale preferredLanguages] objectAtIndex:0];
 }
+
++(NSString *) getGoogleLanguage
+{
+    return [_googleLanguage objectForKey:[[NSLocale preferredLanguages] objectAtIndex:0]];
+}
+
 /*
 +(NSString *) getSupportLanguage
 {

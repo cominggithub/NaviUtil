@@ -93,7 +93,7 @@ typedef enum
     CGRect msgRect;
     int currentStep;
     RouteLine *currentRouteLine;
-    NSTimer *rotateTimer;
+
 
     double angleRotateStep;
     double rotateInterval;

@@ -7,7 +7,7 @@
 //
 
 #import "Route.h"
-#import "SysConfig.h"
+#import "SystemConfig.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
@@ -698,7 +698,7 @@
     mlogAssertNotNilR(currentRouteLine, nil);
     float requireDistance = 0;
     
-    requireDistance = [SysConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE];
+    requireDistance = [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE];
     /* subtract the distance from car location to the current end location */
     requireDistance -= [GeoUtil getGeoDistanceFromLocation:carLocation ToLocation:currentRouteLine.endLocation];
     for(RouteLine* rl in self.routeLines)

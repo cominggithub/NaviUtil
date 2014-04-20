@@ -8,7 +8,7 @@
 
 #import "BatteryLifeView.h"
 #import "UIColor+category.h"
-#import "SysConfig.h"
+#import "SystemConfig.h"
 
 #include "Log.h"
 
@@ -39,7 +39,7 @@
     self.life                   = 0;
 
 
-    if (YES == [SysConfig getBoolValue:CONFIG_H_IS_DEBUG])
+    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG])
     {
         [self addSubview:_lifeLabel];
     }

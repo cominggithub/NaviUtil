@@ -261,7 +261,7 @@ static CLLocationCoordinate2D _endLocation;
      [GeoUtil getLatLngStr:startLocation], S_ORIGIN,
      [GeoUtil getLatLngStr:endLocation], S_DESTINATION,
      S_FALSE, S_SENSOR,
-     [SystemManager getSystemLanguage], S_LANGUAGE,
+     [SystemManager getGoogleLanguage], S_LANGUAGE,
      nil
      ];
     return param;
@@ -273,7 +273,7 @@ static CLLocationCoordinate2D _endLocation;
                            locationName, S_QUERY,
                            [NaviUtil getGooglePlaceAPIKey], S_GOOGLE_API_KEY,
                            S_TRUE, S_SENSOR,
-                           [SystemManager getSystemLanguage], S_LANGUAGE,
+                           [SystemManager getGoogleLanguage], S_LANGUAGE,
                            nil
                            ];
     
@@ -286,7 +286,7 @@ static CLLocationCoordinate2D _endLocation;
                            locationName, S_QUERY,
                            [NaviUtil getGooglePlaceAPIKey], S_GOOGLE_API_KEY,
                            S_TRUE, S_SENSOR,
-                           [SystemManager getSystemLanguage], S_LANGUAGE,
+                           [SystemManager getGoogleLanguage], S_LANGUAGE,
                            nil
                            ];
     
@@ -299,7 +299,7 @@ static CLLocationCoordinate2D _endLocation;
                            locationName, S_KEYWORD,
                            [NaviUtil getGooglePlaceAPIKey], S_GOOGLE_API_KEY,
                            S_TRUE, S_SENSOR,
-                           [SystemManager getSystemLanguage], S_LANGUAGE,
+                           [SystemManager getGoogleLanguage], S_LANGUAGE,
                            @(radius), S_RADIUS,
                            [NSString stringWithFormat:@"%.8f,%.8f", location.latitude, location.longitude], S_LOCATION,
                            nil
@@ -314,7 +314,7 @@ static CLLocationCoordinate2D _endLocation;
                            locationName, S_KEYWORD,
                            [NaviUtil getGooglePlaceAPIKey], S_GOOGLE_API_KEY,
                            S_TRUE, S_SENSOR,
-                           [SystemManager getSystemLanguage], S_LANGUAGE,
+                           [SystemManager getGoogleLanguage], S_LANGUAGE,
                            @(radius), S_RADIUS,
                            [NSString stringWithFormat:@"%.8f,%.8f", location.latitude, location.longitude], S_LOCATION,
                            nil
@@ -332,7 +332,7 @@ static CLLocationCoordinate2D _endLocation;
      */
     NSDictionary* param = [[NSDictionary alloc] initWithObjectsAndKeys:
                            text, S_Q,
-                           [SystemManager getSystemLanguage], S_TL,
+                           [SystemManager getGoogleLanguage], S_TL,
                            nil
                            ];
     return param;

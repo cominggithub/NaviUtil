@@ -7,7 +7,7 @@
 //
 
 #import "LocationManager.h"
-#import "SysConfig.h"
+#import "SystemConfig.h"
 #import "SystemManager.h"
 #import "LocationSimulator.h"
 
@@ -279,7 +279,7 @@ static NSMutableArray *_savedLocations;
 
 +(BOOL) isLocationDifferenceReasonable:(CLLocationCoordinate2D) fromLocation To:(CLLocationCoordinate2D) toLocation
 {
-    if (TRUE == [SysConfig getBoolValue:CONFIG_H_IS_LOCATION_UPDATE_FILTER])
+    if (TRUE == [SystemConfig getBoolValue:CONFIG_H_IS_LOCATION_UPDATE_FILTER])
     {
         int distance = [GeoUtil getGeoDistanceFromLocation:fromLocation ToLocation:toLocation];
         if (distance > LOCATION_UPDATE_DISTANCE_THRESHOLD)
@@ -294,7 +294,7 @@ static NSMutableArray *_savedLocations;
 {
     Place *p = _currentPlace;
     
-    if (TRUE == [SysConfig getBoolValue:CONFIG_H_IS_MANUAL_PLACE])
+    if (TRUE == [SystemConfig getBoolValue:CONFIG_H_IS_MANUAL_PLACE])
         p = _currentManualPlace;
     else
     {
@@ -322,7 +322,7 @@ static NSMutableArray *_savedLocations;
     NSDate *updateTime = [NSDate date];
     NSTimeInterval timeInterval = [updateTime timeIntervalSinceDate:_lastTriggerLocationUpdateTime]*1000;
 
-    if ( [SysConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL] > timeInterval && _lastTriggerLocationUpdateTime != nil)
+    if ( [SystemConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL] > timeInterval && _lastTriggerLocationUpdateTime != nil)
     {
         mlogDebug(@"skip location update notify %.0fms > %.0fms", [SystemConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL], timeInterval);
         return;

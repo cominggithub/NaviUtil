@@ -8,7 +8,7 @@
 
 #import "SpeedView.h"
 #import "SystemManager.h"
-#import "SysConfig.h"
+#import "SystemConfig.h"
 #import "GeoUtil.h"
 #import "LocationManager.h"
 #import "UIFont+category.h"
@@ -65,7 +65,7 @@
 {
     NSString* language = [SystemManager getSystemLanguage];
     
-    if ([language isEqualToString:@"zh-Hant"])
+    if ([language isEqualToString:@"zh-Hant"] || [language isEqualToString:@"zh-Hans"])
     {
         _speedUnitLabel.font = [_speedUnitLabel.font newFontsize:12];
     }

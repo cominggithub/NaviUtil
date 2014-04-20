@@ -123,7 +123,7 @@
 
 -(void) updateUIByLanguage:(NSString*) language
 {
-    if ([language isEqualToString:@"zh-Hant"])
+    if ([language isEqualToString:@"zh-Hant"] || [language isEqualToString:@"zh-Hans"])
     {
 
         _unitLabel.font = [_unitLabel.font newFontsize:15];
