@@ -66,7 +66,7 @@
     
     /* cache searched places */
     NSMutableDictionary *cachedSearch;
-    
+    int newLocationCount;
     
 }
 
@@ -103,6 +103,7 @@
     self.currentPlace                           = nil;
     self.isShowPlanRouteFailedForCurrentPlace   = TRUE;
     routePolyLineColor                          = [UIColor redColor];
+    newLocationCount                            = 1;
     [self addUserPlacesToMarkers];
 
 }
@@ -200,17 +201,17 @@
     if (_mapView == nil) {
         zoomLevel                   = ZOOM_LEVEL_DEFAULT;
         _updateToCurrentPlace       = TRUE;
-        self.currentPlace                = [LocationManager currentPlace];
+        self.currentPlace           = [LocationManager currentPlace];
         
         _mapView                    = [[GMSMapView alloc] initWithFrame:CGRectMake(0, 0, 0, 0)];
         
         _mapView.accessibilityLabel = @"mapView";
 
         _mapView.camera = [GMSCameraPosition cameraWithLatitude:self.currentPlace.coordinate.latitude
-                                                         longitude:self.currentPlace.coordinate.longitude
-                                                              zoom:zoomLevel
-                                                           bearing:10.f
-                                                        viewingAngle:VIEW_ANGLE];
+                                                      longitude:self.currentPlace.coordinate.longitude
+                                                           zoom:zoomLevel
+                                                        bearing:10.f
+                                                   viewingAngle:VIEW_ANGLE];
 
         [_mapView addObserver:self
                    forKeyPath:@"myLocation"
@@ -486,9 +487,9 @@
 -(void) addPlaceToMarker:(Place*) p
 {
     GMSMarker *marker;
-
     if (nil == p)
         return;
+    
 
     marker          = [[GMSMarker alloc] init];
     marker.title    = p.name;
@@ -590,12 +591,24 @@
     [self addSearchedPlacesToMarkers];
 }
 
+-(void) addUserTappedPlace:(Place*) place
+{
+    place.placeType = kPlaceType_SearchedPlace;
+    /* add the first search result no matter what */
+    if (false == [self isPlaceInSearchedPlaces:place])
+    {
+        [_searchedPlaces addObject:place];
+    }
+
+    [self addSearchedPlacesToMarkers];
+
+}
+
 
 -(void) addSearchedPlacesToMarkers
 {
     for (Place *p in self.searchedPlaces)
     {
-    
         if (FALSE == [self isPlaceInUserPlaces:p])
         {
             [self addPlaceToMarker:p];
@@ -797,11 +810,13 @@
         [cachedSearch setObject:places forKey:locationName];
     }
 }
+
 -(void) removeSearchedPlaces
 {
 //    [self removeSearchedPlacesFromMarkers];
     [_searchedPlaces removeAllObjects];
     [User removeAllSearchedPlaces];
+    newLocationCount = 1;
 }
 
 -(void) processSearchPlaceDownloadRequestStatusChange:(DownloadRequest*) downloadRequest
@@ -906,5 +921,56 @@
     }
 
 }
+
+- (BOOL) mapView:(GMSMapView *)mapView didTapMarker:(GMSMarker *)marker
+{
+    /* notify the delegate */
+    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:didTapMarker:)])
+    {
+        return [self.delegate mapManager:self didTapMarker:marker];
+    }
+    
+    return NO;
+}
+
+
+- (void)mapView:(GMSMapView *)mapView didTapAtCoordinate:(CLLocationCoordinate2D)coordinate
+{
+    /* notify the delegate */
+    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:didTapAtCoordinate:)])
+    {
+        [self.delegate mapManager:self didTapAtCoordinate:coordinate];
+    }
+    
+}
+
+- (void)mapView:(GMSMapView *)mapView didChangeCameraPosition:(GMSCameraPosition *)position
+{
+    /* notify the delegate */
+    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:didChangeCameraPosition:)])
+    {
+        [self.delegate mapManager:self didChangeCameraPosition:position];
+    }
+}
+
+- (void)mapView:(GMSMapView *)mapView willMove:(BOOL)gesture;
+{
+    /* notify the delegate */
+    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:willMove:)])
+    {
+        [self.delegate mapManager:self willMove:gesture];
+    }
+}
+
+-(void)mapView:(GMSMapView *)mapView didLongPressAtCoordinate:(CLLocationCoordinate2D)coordinate
+{
+    Place *newPlace = [[Place alloc] initWithName:
+                        [NSString stringWithFormat:@"%@%d", [SystemManager getLanguageString:@"New Location"], newLocationCount++]
+                        address:@""
+                     coordinate:CLLocationCoordinate2DMake(coordinate.latitude, coordinate.longitude)];
+
+    [self addUserTappedPlace:newPlace];
+}
+
 @end
 

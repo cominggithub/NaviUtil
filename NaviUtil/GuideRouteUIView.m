@@ -91,7 +91,9 @@
     NSDateFormatter         *dateFormattor;
     NSTimer                 *rotateTimer;
     NSTimer                 *routePlanTimer;
-    
+    NSTimer                 *changeMessageTimer;
+    NaviState               *naviState;
+    CarStatus               *carStatus;
     
 }
 
@@ -180,6 +182,10 @@
     isSimulateSlowWifi  = FALSE;
 #endif
     planRouteCount      = 0;
+    
+    naviState           = [[NaviState alloc] init];
+    naviState.delegate  = self;
+    carStatus           = [[CarStatus alloc] init];
 
 }
 
@@ -274,7 +280,7 @@
     [self drawRoute:context Rectangle:rect];
     
     /* draw turn message */
-    if (GR_STATE_NAVIGATION == self.state)
+    if (GR_STATE_NAVIGATION == naviState.state)
     {
         [self drawTurnMessage:context];
     }
@@ -1109,7 +1115,7 @@
                                                      selector:@selector(rotateAngle:)
                                                      userInfo:nil
                                                       repeats:YES];
-    [self invalidateRoutePlanTimer];
+    [self stopRoutePlanTimer];
     
     if (YES == [SystemConfig getBoolValue:CONFIG_IS_SPEECH])
     {
@@ -1230,8 +1236,10 @@
 
 -(void) processRouteDownloadRequestStatusChange
 {
-    if (GR_STATE_ROUTE_PLANNING == self.state || GR_STATE_ROUTE_REPLANNING == self.state)
+    logfn();
+    if (GR_STATE_ROUTE_PLANNING == naviState.state || GR_STATE_ROUTE_REPLANNING == naviState.state)
     {
+        logfn();
         /* search place finished */
         if (routeDownloadRequest.status == kDownloadStatus_Finished)
         {
@@ -1240,11 +1248,12 @@
         /* search failed */
         else if(routeDownloadRequest.status == kDownloadStatus_DownloadFail)
         {
-            [self sendEvent:GR_EVENT_LOCATION_LOST];
+            logfn();
+            [naviState sendEvent:GR_EVENT_LOCATION_LOST];
         }
     }
     
-    [self invalidateRoutePlanTimer];
+    [self stopRoutePlanTimer];
 }
 
 
@@ -1293,19 +1302,24 @@
         {
             RouteLine* rl = [route.routeLines lastObject];
             endRouteLineEndPoint = CLLocationCoordinate2DMake(rl.endLocation.latitude, rl.endLocation.longitude);
-            [self sendEvent:GR_EVENT_START_NAVIGATION];
+            [naviState sendEvent:GR_EVENT_START_NAVIGATION];
             [self initNewRouteNavigation];
         }
         else
         {
             lastFailedRouteStartPlace = routeStartPlace;
-            [self sendEvent:GR_EVENT_LOCATION_LOST];
+            [naviState sendEvent:GR_EVENT_LOCATION_LOST];
         }
+    }
+    else if(kGoogleJsonStatus_Zero_Results == status)
+    {
+        lastFailedRouteStartPlace = routeStartPlace;
+        [naviState sendEvent:GR_EVENT_NO_ROUTE];
     }
     else
     {
         lastFailedRouteStartPlace = routeStartPlace;
-        [self sendEvent:GR_EVENT_LOCATION_LOST];
+        [naviState sendEvent:GR_EVENT_LOCATION_LOST];
     }
 
     return;
@@ -1324,8 +1338,8 @@
     routeEndPlace   = e;
     route           = nil;
     
-    [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
-    [self sendEvent:GR_EVENT_ALL_READY];
+    [naviState sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+    [naviState sendEvent:GR_EVENT_ALL_READY];
     
     return TRUE;
 }
@@ -1341,7 +1355,7 @@
     }
     else
     {
-        [self sendEvent:GR_EVENT_LOCATION_LOST];
+        [naviState sendEvent:GR_EVENT_LOCATION_LOST];
     }
 }
 
@@ -1353,7 +1367,7 @@
     {
         if (YES == [routeStartPlace isNullPlace])
         {
-            [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+            [naviState sendEvent:GR_EVENT_GPS_NO_SIGNAL];
         }
         else if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
         {
@@ -1366,11 +1380,7 @@
             if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT] ||
                 !(TRUE == isSimulateSlowWifi && planRouteCount > 2 && planRouteCount%3==0))
             {
-                routePlanTimer     = [NSTimer scheduledTimerWithTimeInterval:[SystemConfig getIntValue:CONFIG_ROUTE_PLAN_TIMEOUT] target:self
-                                                                 selector:@selector(routePlanTimeout:)
-                                                                 userInfo:nil
-                                                                  repeats:YES];
-                
+                [self startRoutePlanTimer];
                 [NaviQueryManager download:routeDownloadRequest];
             }
             else
@@ -1383,31 +1393,16 @@
         }
         else
         {
-            [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
+            [naviState sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
         }
     }
     else
     {
-        [self sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
+        [naviState sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
     }
 }
 
--(void) routePlanTimeout:(NSTimer *)theTimer
-{
-    routeDownloadRequest = nil;
-    [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
-}
 
--(void) invalidateRoutePlanTimer
-{
-    if (routePlanTimer != nil && [routePlanTimer isValid])
-    {
-        [routePlanTimer invalidate];
-
-    }
-
-    routePlanTimer = nil;
-}
 
 -(void) dumpWatchDog
 {
@@ -1451,7 +1446,7 @@
     if (nil == currentRouteLine && (nil == lastRouteLine || 0 == lastRouteLine.no) && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
         currentRouteLine = firstRouteLine;
-        [self sendEvent:GR_EVENT_ROUTE_LINE_READY];
+        [naviState sendEvent:GR_EVENT_ROUTE_LINE_READY];
     }
     /* found matched route line */
     else if (nil != currentRouteLine)
@@ -1462,11 +1457,11 @@
         
         if ([GeoUtil getGeoDistanceFromLocation:currentCarLocation ToLocation:endRouteLineEndPoint] < ARRIVAL_REGION)
         {
-            [self sendEvent:GR_EVENT_ARRIVAL];
+            [naviState sendEvent:GR_EVENT_ARRIVAL];
         }
         else
         {
-            [self sendEvent:GR_EVENT_ROUTE_LINE_READY];
+            [naviState sendEvent:GR_EVENT_ROUTE_LINE_READY];
         }
     }
     /* cannot find matched route line */
@@ -1480,12 +1475,12 @@
         /* stay at GPS_READY if missing GPS signal is less than the CONFIG_MAX_OUT_OF_ROUTELINE_COUNT */
         if (outOfRouteLineCount < maxOutOfRouteLineCount)
         {
-            [self sendEvent:GR_EVENT_GPS_READY];
+            [naviState sendEvent:GR_EVENT_GPS_READY];
         }
         /* location lost */
         else
         {
-            [self sendEvent:GR_EVENT_LOCATION_LOST];
+            [naviState sendEvent:GR_EVENT_LOCATION_LOST];
         }
     }
 
@@ -1762,14 +1757,14 @@
     /* keep track of last GPS signal update time */
     lastGPSSignalTime = [[NSDate alloc] init];
     
-    if (GR_STATE_NAVIGATION == self.state || GR_STATE_ROUTE_REPLANNING == self.state || GR_STATE_ROUTE_REPLANNING == self.state)
+    if (GR_STATE_NAVIGATION == naviState.state || GR_STATE_ROUTE_REPLANNING == naviState.state || GR_STATE_ROUTE_REPLANNING == naviState.state)
     {
         [self updateCarLocation:location];
         [self setNeedsDisplay];
     }
     else
     {
-        [self sendEvent:GR_EVENT_GPS_READY];
+        [naviState sendEvent:GR_EVENT_GPS_READY];
     }
     
 //    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
@@ -1779,8 +1774,8 @@
                                location.longitude,
                                speed,
                                heading,
-                               [self GR_StateStr:self.state],
-                               [self GR_EventStr:lastEvent]
+                               [naviState GR_StateStr:naviState.state],
+                               [naviState GR_EventStr:lastEvent]
                                ];
 }
 
@@ -1857,8 +1852,7 @@
 //    self.isDebugRouteLineAngle  = TRUE;
 //    self.isDebugNormalLine      = TRUE;
 
-    self.state = GR_STATE_INIT;
-    [self sendEvent:GR_EVENT_ACTIVE];
+    [naviState sendEvent:GR_EVENT_ACTIVE];
 }
 
 -(void) inactive
@@ -1867,7 +1861,7 @@
     [systemStatusView inactive];
     [clockView inactive];
     [speedView inactive];
-    [self sendEvent:GR_EVENT_INACTIVE];
+    [naviState sendEvent:GR_EVENT_INACTIVE];
 
     /* clear the last played speech */
     lastPlayedSpeech = @"";
@@ -1888,7 +1882,7 @@
     if (NO == _isNetwork)
     {
     
-        [self sendEvent:GR_EVENT_NETWORK_NO_SIGNAL];
+        [naviState sendEvent:GR_EVENT_NETWORK_NO_SIGNAL];
     }
     
     [self setNeedsDisplay];
@@ -1900,7 +1894,7 @@
     _isGps = isGps;
     if (NO == _isGps)
     {
-        [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+        [naviState sendEvent:GR_EVENT_GPS_NO_SIGNAL];
     }
     [self setNeedsDisplay];
 }
@@ -1964,14 +1958,25 @@
     {
         update = TRUE;
     }
-    
+ 
     if (TRUE == update)
     {
+
         lastUpdateMessageTime   = now;
         messageBoxLabel.text    = pendingMessage;
         hasMessage              = FALSE;
         pendingMessage          = @"";
+
     }
+    else if (nil != pendingMessage && pendingMessage.length > 0)
+    {
+        [self startChangeMessageTimer];
+    }
+    else
+    {
+        [self stopRoutePlanTimer];
+    }
+
 }
 
 
@@ -2006,151 +2011,31 @@
     return TRUE;
 }
 
-
 -(void) lookupState
 {
     if (NO == self.checkGPS)
     {
-        [self sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+        [naviState sendEvent:GR_EVENT_GPS_NO_SIGNAL];
     }
     else if (NO == self.checkNetwork)
     {
-        [self sendEvent:GR_EVENT_NETWORK_NO_SIGNAL];
+        [naviState sendEvent:GR_EVENT_NETWORK_NO_SIGNAL];
     }
     else if (NO == self.checkRouteDestination)
     {
-        [self sendEvent:GR_EVENT_LOCATION_LOST];
+        [naviState sendEvent:GR_EVENT_LOCATION_LOST];
     }
     else
     {
-        [self sendEvent:GR_EVENT_ALL_READY];
+        [naviState sendEvent:GR_EVENT_ALL_READY];
     }
 }
 
-
--(NSString*) GR_EventStr:(GR_EVENT) event
+#pragma mark -- delegate
+-(void) naviState:(NaviState*) ns newState:(GR_STATE) newState;
 {
-    lastEvent = event;
-
-    switch (event)
-    {
-        case GR_EVENT_GPS_NO_SIGNAL:
-            return @"GR_EVENT_GPS_NO_SIGNAL";
-        case GR_EVENT_NETWORK_NO_SIGNAL:
-            return @"GR_EVENT_NETWORK_NO_SIGNAL";
-        case GR_EVENT_ROUTE_DESTINATION_ERROR:
-            return @"GR_EVENT_ROUTE_DESTINATION_ERROR";
-        case GR_EVENT_ARRIVAL:
-            return @"GR_EVENT_ARRIVAL";
-        case GR_EVENT_GPS_READY:
-            return @"GR_EVENT_GPS_READY";
-        case GR_EVENT_NETWORK_READY:
-            return @"GR_EVENT_NETWORK_READY";
-        case GR_EVENT_LOCATION_LOST:
-            return @"GR_EVENT_LOCATION_LOST";
-        case GR_EVENT_ACTIVE:
-            return @"GR_EVENT_ACTIVE";
-        case GR_EVENT_INACTIVE:
-            return @"GR_EVENT_INACTIVE";
-        case GR_EVENT_ALL_READY:
-            return @"GR_EVENT_ALL_READY";
-        case GR_EVENT_START_NAVIGATION:
-            return @"GR_EVENT_START_NAVIGATION";
-        case GR_EVENT_ROUTE_LINE_READY:
-            return @"GR_EVENT_ROUTE_LINE_READY";
-    }
-    
-}
-
--(NSString*) GR_StateStr:(GR_STATE)state
-{
-    switch (state)
-    {
-        case GR_STATE_INIT:
-            return @"GR_STATE_INIT";
-        case GR_STATE_NAVIGATION:
-            return @"GR_STATE_NAVIGATION";
-        case GR_STATE_ROUTE_PLANNING:
-            return @"GR_STATE_ROUTE_PLANNING";
-        case GR_STATE_ROUTE_REPLANNING:
-            return @"GR_STATE_ROUTE_REPLANNING";
-        case GR_STATE_GPS_NO_SIGNAL:
-            return @"GR_STATE_GPS_NO_SIGNAL";
-        case GR_STATE_NETWORK_NO_SIGNAL:
-            return @"GR_STATE_NETWORK_NO_SIGNAL";
-        case GR_STATE_ARRIVAL:
-            return @"GR_STATE_ARRIVAL";
-        case GR_STATE_ROUTE_DESTINATION_ERROR:
-            return @"GR_STATE_ROUTE_DESTINATION_ERROR";
-        case GR_STATE_LOOKUP:
-            return @"GR_STATE_LOOKUP";
-    }
-
-}
-
-
--(void) sendEvent:(GR_EVENT) event
-{
-    mlogDebug(@"%@", [self GR_EventStr:event]);
-    switch (event)
-    {
-        case GR_EVENT_GPS_NO_SIGNAL:
-            self.state = GR_STATE_GPS_NO_SIGNAL;
-            break;
-        case GR_EVENT_NETWORK_NO_SIGNAL:
-            self.state = GR_STATE_NETWORK_NO_SIGNAL;
-            break;
-        case GR_EVENT_ROUTE_DESTINATION_ERROR:
-            self.state = GR_STATE_ROUTE_DESTINATION_ERROR;
-            break;
-        case GR_EVENT_ARRIVAL:
-            self.state = GR_STATE_ARRIVAL;
-            break;
-        case GR_EVENT_GPS_READY:
-            if (self.state == GR_STATE_GPS_NO_SIGNAL)
-                self.state = GR_STATE_LOOKUP;
-            break;
-        case GR_EVENT_ROUTE_LINE_READY:
-            if (GR_STATE_ROUTE_REPLANNING == self.state || GR_STATE_ROUTE_PLANNING == self.state)
-                self.state = GR_STATE_NAVIGATION;
-            else if (GR_STATE_NAVIGATION == self.state)
-            {
-                self.messageBoxText = @"";
-            }
-            lastValidRouteLineTime = [[NSDate alloc] init];
-            break;
-        case GR_EVENT_NETWORK_READY:
-            if (self.state == GR_STATE_NETWORK_NO_SIGNAL)
-                self.state = GR_STATE_LOOKUP;
-            break;
-        case GR_EVENT_LOCATION_LOST:
-            if (GR_STATE_NAVIGATION == self.state)
-            {
-                self.state = GR_STATE_GPS_NO_SIGNAL;
-            }
-            break;
-        case GR_EVENT_ACTIVE:
-            self.state = GR_STATE_LOOKUP;
-            break;
-        case GR_EVENT_INACTIVE:
-            self.state = GR_STATE_INIT;
-            break;
-        case GR_EVENT_ALL_READY:
-            self.state = GR_STATE_INIT == self.state ? GR_STATE_ROUTE_PLANNING:GR_STATE_ROUTE_REPLANNING;
-            break;
-        case GR_EVENT_START_NAVIGATION:
-            self.state = GR_STATE_NAVIGATION;
-            break;
-    }
-    
-}
-
--(void) setState:(GR_STATE)state
-{
-    mlogDebug(@"state change %@ -> %@",[self GR_StateStr:_state], [self GR_StateStr:state]);
-    _state = state;
-    
-    switch (_state)
+    mlogDebug(@"state %@",[naviState GR_StateStr:newState]);
+    switch (newState)
     {
         case GR_STATE_INIT:
         case GR_STATE_NAVIGATION:
@@ -2188,13 +2073,72 @@
             hasMessage      = TRUE;
             [self lookupState];
             break;
+        case GR_STATE_NO_ROUTE:
+            pendingMessage = [SystemManager getLanguageString:@"Cannot find any Route"];
+            hasMessage      = TRUE;
+            break;
     }
-
+    
     if (TRUE == hasMessage)
     {
         self.messageBoxText = pendingMessage;
     }
+    
+}
 
+#pragma mark -- timer
+-(void) routePlanTimeout:(NSTimer *)theTimer
+{
+    routeDownloadRequest = nil;
+    [naviState sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+}
+
+-(void) startRoutePlanTimer
+{
+    routePlanTimer     = [NSTimer scheduledTimerWithTimeInterval:[SystemConfig getIntValue:CONFIG_ROUTE_PLAN_TIMEOUT] target:self
+                                                        selector:@selector(routePlanTimeout:)
+                                                        userInfo:nil
+                                                         repeats:YES];
+
+}
+-(void) stopRoutePlanTimer
+{
+    if (routePlanTimer != nil && [routePlanTimer isValid])
+    {
+        [routePlanTimer invalidate];
+        
+    }
+    
+    routePlanTimer = nil;
+}
+
+-(void) changeMessageTimeout:(NSTimer*)theTimer
+{
+    if (pendingMessage != nil && pendingMessage.length > 0)
+    {
+        self.messageBoxText = pendingMessage;
+    }
+}
+
+-(void) startChangeMessageTimer
+{
+    if (nil == changeMessageTimer)
+    {
+        changeMessageTimer     = [NSTimer scheduledTimerWithTimeInterval:2 target:self
+                                                            selector:@selector(changeMessageTimeout:)
+                                                            userInfo:nil
+                                                             repeats:YES];
+    }
+}
+-(void) invalidateChangeMessageTimer
+{
+    if (changeMessageTimer != nil && [changeMessageTimer isValid])
+    {
+        [changeMessageTimer invalidate];
+        
+    }
+    
+    changeMessageTimer = nil;
 }
 
 @end

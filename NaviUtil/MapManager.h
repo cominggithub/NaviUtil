@@ -21,6 +21,12 @@
 -(void) mapManager:(MapManager*) mapManager routePlanning:(BOOL) result;
 -(void) mapManager:(MapManager*) mapManager searchPlaces:(BOOL) result;
 -(void) mapManager:(MapManager *)mapManager connectToServer:(BOOL) result;
+
+
+-(BOOL) mapManager:(MapManager *)mapManager didTapMarker:(GMSMarker *)marker;
+-(void) mapManager:(MapManager *)mapManager didTapAtCoordinate:(CLLocationCoordinate2D)coordinate;
+-(void) mapManager:(MapManager *)mapManager didChangeCameraPosition:(GMSCameraPosition *)position;
+-(void) mapManager:(MapManager *)mapManager willMove:(BOOL)gesture;
 @end
 
 @interface MapManager : NSObject <GMSMapViewDelegate, DownloadRequestDelegate>

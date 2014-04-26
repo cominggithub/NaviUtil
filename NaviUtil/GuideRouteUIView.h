@@ -16,41 +16,11 @@
 #import "LocationSimulator.h"
 #import "NaviQueryManager.h"
 #import "RouteLine.h"
+#import "NaviState.h"
+#import "CarStatus.h"
 
 
-
-typedef enum
-{
-    GR_EVENT_GPS_NO_SIGNAL,
-    GR_EVENT_NETWORK_NO_SIGNAL,
-    GR_EVENT_LOCATION_LOST,
-    GR_EVENT_GPS_READY,
-    GR_EVENT_ROUTE_LINE_READY,
-    GR_EVENT_NETWORK_READY,
-    GR_EVENT_ALL_READY,
-    GR_EVENT_ROUTE_DESTINATION_ERROR,
-    GR_EVENT_START_NAVIGATION,
-    GR_EVENT_ACTIVE,
-    GR_EVENT_INACTIVE,
-    GR_EVENT_ARRIVAL
-}GR_EVENT;
-
-typedef enum
-{
-    GR_STATE_ROUTE_PLANNING,
-    GR_STATE_ROUTE_REPLANNING,
-    GR_STATE_ROUTE_DESTINATION_ERROR,
-    GR_STATE_NAVIGATION,
-    GR_STATE_GPS_NO_SIGNAL,
-    GR_STATE_NETWORK_NO_SIGNAL,
-    GR_STATE_LOOKUP,
-    GR_STATE_ARRIVAL,
-    GR_STATE_INIT
-    
-}GR_STATE;
-
-
-@interface GuideRouteUIView : UIView<LocationManagerDelegate, DownloadRequestDelegate, SystemManagerDelegate>
+@interface GuideRouteUIView : UIView<LocationManagerDelegate, DownloadRequestDelegate, SystemManagerDelegate, NaviStateDelegate>
 {
 
     NSMutableArray *routePoints;
@@ -123,7 +93,7 @@ typedef enum
 @property (nonatomic) NSString* messageBoxText;
 @property (nonatomic) BOOL isNetwork;
 @property (nonatomic) BOOL isGps;
-@property (nonatomic) GR_STATE state;
+
 
 
 -(void) autoSimulatorLocationUpdateStart;
