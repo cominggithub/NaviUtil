@@ -12,12 +12,6 @@
 
 @class DownloadRequest;
 
-@protocol DownloadRequestDelegate <NSObject>
--(void) downloadRequestStatusChange: (DownloadRequest*) downloadRequest;
-@end
-
-
-
 typedef enum DownloadMode
 {
     kDownloadMode_Immediately,
@@ -32,9 +26,15 @@ typedef enum DownloadStatus
     kDownloadStatus_Pending,
     kDownloadStatus_Downloading,
     kDownloadStatus_Finished,
-    kDownloadStatus_DownloadFail
+    kDownloadStatus_DownloadFail,
+    kDownloadStatus_DownloadCancelled,
     
 }DownloadStatus;
+
+
+@protocol DownloadRequestDelegate <NSObject>
+-(void) downloadRequest:(DownloadRequest*) downloadRequest status:(DownloadStatus) status;
+@end
 
 @interface DownloadRequest : NSObject
 {

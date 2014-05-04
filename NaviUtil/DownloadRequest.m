@@ -48,7 +48,7 @@
 
 -(NSString *) description {
     
-    return [NSString stringWithFormat:@"DownloadId: %d %@ %@ %@ %@", self.downloadId, self.getStatusStr, self.url, self.fileName, self.filePath];
+    return [NSString stringWithFormat:@"DownloadId: %d, status: %@\n %@ %@ %@", self.downloadId, self.getStatusStr, self.url, self.fileName, self.filePath];
 }
 
 -(NSString*) getStatusStr
@@ -68,6 +68,9 @@
         case kDownloadStatus_Pending:
             result = @"Pending";
             break;
+        case kDownloadStatus_DownloadCancelled:
+            result = @"Cancelled";
+            break;
         default:
             result = @"Unknown";
             break;
@@ -76,9 +79,20 @@
     return result;
 }
 
+-(void) setStatus:(DownloadStatus)status
+{
+    _status = status;
+    if (self.delegate != NULL)
+    {
+        if (nil != self.delegate && [self.delegate respondsToSelector:@selector(downloadRequest:status:)])
+        {
+            [self.delegate downloadRequest:self status:self.status];
+        }
+    }
+}
 -(BOOL) done
 {
-    if (self.status == kDownloadStatus_Finished || self.status == kDownloadStatus_DownloadFail)
+    if (self.status == kDownloadStatus_Finished || self.status == kDownloadStatus_DownloadFail || self.status == kDownloadStatus_DownloadCancelled)
         return TRUE;
     
     return FALSE;

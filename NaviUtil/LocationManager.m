@@ -401,15 +401,23 @@ static NSMutableArray *_savedLocations;
     {
         case kLocationManagerLocationUpdateType_Line:
             _locationSimulator.type = kLocationSimulator_Line;
+            // update location for every 1.0s
+            _locationSimulator.locationUpdateInterval = 1000;
             break;
         case kLocationManagerLocationUpdateType_ManualRoute:
             _locationSimulator.type = kLocationManagerLocationUpdateType_ManualRoute;
+            // update location for every 1.0s
+            _locationSimulator.locationUpdateInterval = 1000;
             break;
         case kLocationManagerLocationUpdateType_File:
             _locationSimulator.type = kLocationSimulator_File;
+            // update location for every 0.25s
+            _locationSimulator.locationUpdateInterval = 1000;
             break;
         default:
             _locationSimulator.type = kLocationManagerLocationUpdateType_ManualRoute;
+            // update location for every 1.0s
+            _locationSimulator.locationUpdateInterval = 1000;
             break;
     }
 }

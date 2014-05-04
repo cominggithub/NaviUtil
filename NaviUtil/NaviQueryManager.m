@@ -111,7 +111,6 @@ static CLLocationCoordinate2D _endLocation;
 {
     if(downloadRequest == _currentRouteDownloadRequest)
     {
-
         [self startNavigation];
     }
     else if(downloadRequest == _startLocationDownloadRequest)
@@ -130,14 +129,6 @@ static CLLocationCoordinate2D _endLocation;
         {
             _endLocation = ((Place*)[places objectAtIndex:0]).coordinate;
             _isGetEndLocation = true;
-        }
-    }
-
-    if ( nil != downloadRequest.delegate)
-    {
-        if ( [downloadRequest.delegate respondsToSelector:@selector(downloadRequestStatusChange:)])
-        {
-            [downloadRequest.delegate downloadRequestStatusChange:downloadRequest];
         }
     }
     
@@ -531,4 +522,8 @@ static CLLocationCoordinate2D _endLocation;
     return [SystemManager hostReachable:@"maps.googleapis.com"];
 }
 
++(void) cancelPendingDownload
+{
+    [_downloadManager cancelPendingDownload];
+}
 @end

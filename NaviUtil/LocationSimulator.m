@@ -8,9 +8,10 @@
 
 #import "LocationSimulator.h"
 #import "SystemConfig.h"
+#import "GeoUtil.h"
 
 #define LOCATION_UPDATE_INTERVAL 1000
-#define SIMULATION_SPEED 60 // in kmh
+#define SIMULATION_SPEED KMH_TO_MS(60.0) // in m/s
 
 #if DEBUG
 #define FILE_DEBUG TRUE
@@ -59,7 +60,7 @@
         courseCnt                       = 0;
         _vibrant                        = FALSE;
         curRouteLineNo                  = -1;
-        advanceDistance                 = (_simulationSpeed*1000*1000)/(3600*LOCATION_UPDATE_INTERVAL);
+        advanceDistance                 = _simulationSpeed * _locationUpdateInterval;
         stepCount                       = 0;
         simulateLocationLost            = FALSE;
 
@@ -199,7 +200,7 @@
     CLLocationCoordinate2D nextCoordinate2D = CLLocationCoordinate2DMake(_lastLocationCoordinate2D.latitude, _lastLocationCoordinate2D.longitude);
 
     
-    advanceDistance                 = (_simulationSpeed*1000*1000)/(3600*LOCATION_UPDATE_INTERVAL);
+    advanceDistance                 = _simulationSpeed * LOCATION_UPDATE_INTERVAL/1000.0;
     
     /* get first location from first route line */
     if(curRouteLineNo == -1)
@@ -281,7 +282,7 @@
                                            horizontalAccuracy:1.0
                                              verticalAccuracy:1.0
                                                        course:courseCnt
-                                                        speed:speedCnt
+                                                        speed:_simulationSpeed
                                                     timestamp:[NSDate date]];
     return _currentLocation.coordinate;
 }
@@ -308,7 +309,7 @@
         case kLocationSimulator_ManualRoute:
             locationCoordinate2D = [self getNextRouteLocation];
             location = [[CLLocation alloc] initWithCoordinate:locationCoordinate2D altitude:0.0
-                                           horizontalAccuracy:1.0 verticalAccuracy:1.0 course:courseCnt speed:speedCnt timestamp:[NSDate date]];
+                                           horizontalAccuracy:1.0 verticalAccuracy:1.0 course:courseCnt speed:_simulationSpeed timestamp:[NSDate date]];
             speedCnt   += 0.1;
             courseCnt  += 1;
             courseCnt  = (int)(courseCnt)%362;
@@ -329,15 +330,15 @@
             {
                 /* for every 40 steps, zero location coordinate */
                 //if (stepCount%40 >= 0 && stepCount%40 <= 5)
-                if (1)
+                if ([SystemConfig getBoolValue:CONFIG_H_IS_SIMULATE_OUT_OF_ROUTE_LINE])
                 {
                     location = [[CLLocation alloc] initWithCoordinate:CLLocationCoordinate2DMake(locationCoordinate2D.latitude, locationCoordinate2D.longitude+0.03)
                                                              altitude:0.0
                                                    horizontalAccuracy:1.0 verticalAccuracy:1.0 course:courseCnt speed:speedCnt timestamp:[NSDate date]];
-                    mlogDebug(@"simulate out of location");
+                    mlogDebug(@"simulate out of route line");
                 }
                 /* for every 20 steps, skip update location */
-                else
+                else if ([SystemConfig getBoolValue:CONFIG_H_IS_SIMULATE_LOCATION_LOST])
                 {
                     mlogDebug(@"simulate location lost");
                     shouldNotify = FALSE;

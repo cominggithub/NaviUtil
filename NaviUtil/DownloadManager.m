@@ -76,10 +76,10 @@
     else
     {
         downloadRequest         = [self getDownloadRequest:fileDownloader.downloadId];
-        downloadRequest.status  = kDownloadStatus_DownloadFail;
         
         [self.downloadingQueue removeObject:downloadRequest];
-        [downloadRequest.delegate downloadRequestStatusChange:downloadRequest];
+        
+        downloadRequest.status  = kDownloadStatus_DownloadFail;
 
 
         mlogDebug(@"%@\n", downloadRequest);
@@ -127,11 +127,10 @@
 {
     FileDownloader* fileDownloader  = [[FileDownloader alloc] init];
 
-    downloadRequest.status          = kDownloadStatus_Downloading;
-    [downloadRequest.delegate downloadRequestStatusChange:downloadRequest];
+
     [fileDownloader download:downloadRequest delegate:self];
     [fileDownloader start];
-
+    downloadRequest.status          = kDownloadStatus_Downloading;
 
     mlogDebug(@"%@", downloadRequest);
 }
@@ -188,4 +187,13 @@
     return result;
 }
 
+-(void) cancelPendingDownload
+{
+    for(DownloadRequest *r in self.pendingQueue)
+    {
+        [self.downloadingQueue removeObject:r];
+        r.status  = kDownloadStatus_DownloadCancelled;
+        
+    }
+}
 @end

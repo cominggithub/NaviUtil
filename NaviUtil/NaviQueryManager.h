@@ -91,6 +91,7 @@ typedef enum DownloadFileFormat {
 +(DownloadRequest*) getRouteDownloadRequestFrom:(CLLocationCoordinate2D) start To:(CLLocationCoordinate2D) end;
 +(void) download:(DownloadRequest*) dr;
 +(void) downloadSpeech:(Route*) route;
++(void) cancelPendingDownload;
 @end
 
 

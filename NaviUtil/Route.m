@@ -9,7 +9,14 @@
 #import "Route.h"
 #import "SystemConfig.h"
 
+#if DEBUG
 #define FILE_DEBUG FALSE
+#elif RELEASE_TEST
+#define FILE_DEBUG FALSE
+#else
+#define FILE_DEBUG FALSE
+#endif
+
 #include "Log.h"
 
 #define DISTANCE_FROM_ROUTE_LINE_THRESHOLD  10
@@ -51,6 +58,7 @@
     NSError* error;
     NSData *data;
     NSDictionary* root;
+    BOOL startRouteLine;
     
     if ( [GoogleJson getStatus:fileName] != kGoogleJsonStatus_Ok )
     {
@@ -73,10 +81,13 @@
         dic = [[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0];
  
         /* add Start Location */
-        [self addLocationToRouteLinesWithStepNo:i Location:[self getStartLocation]];
-    
+        [self addLocationToRouteLinesWithStepNo:i Location:[self getStartLocation] startRouteLine:FALSE];
+
+
         for(i=0; i<steps.count; i++)
         {
+
+            startRouteLine = TRUE;
             Speech* s = [[Speech alloc] init];
             dic = [steps objectAtIndex:i];
             s.text = [[NSString stringWithString:[dic objectForKey:@"html_instructions"]] stripHTML];
@@ -87,17 +98,23 @@
             /* add points in PolyLie */
             for(CLLocation *location in stepPolyLine)
             {
-                [self addLocationToRouteLinesWithStepNo:i Location:location.coordinate];
+
+                if ([self addLocationToRouteLinesWithStepNo:i Location:location.coordinate startRouteLine:startRouteLine])
+                {
+                    startRouteLine = FALSE;
+                }
             }
+
 
         }
     
         self.status = kRouteStatusCodeOk;
-        [self addLocationToRouteLinesWithStepNo:i-1 Location:[self getEndLocation]];
+        [self addLocationToRouteLinesWithStepNo:i-1 Location:[self getEndLocation] startRouteLine:FALSE];
 
         [self saveRouteLines];
         [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager getPath:kSystemManager_Path_Route], [self getName]]];
-        
+     
+        [self dumpRouteLines];
     }
     @catch (NSException *exception)
     {
@@ -123,11 +140,15 @@
     _cumulativeDistance = 0;
 }
 
--(void) addLocationToRouteLinesWithStepNo:(int) stepNo Location:(CLLocationCoordinate2D) location
+-(BOOL) addLocationToRouteLinesWithStepNo:(int) stepNo Location:(CLLocationCoordinate2D) location startRouteLine:(BOOL) startRouteLine
 {
+    BOOL added;
+    
+
     mlogDebug(@"AddLocationToRouteLinesWithStepNo: %3d, Line: %3d, (%12.7f, %12.7f)", stepNo, routeLineCount, location.latitude, location.longitude);
     
-    routeLineEndLocation = location;
+    routeLineEndLocation    = location;
+    added                   = TRUE;
     
     if(routeLineCount == -1)
     {
@@ -141,7 +162,8 @@
         RouteLine *routeLine = [RouteLine getRouteLineWithStartLocation: routeLineStartLocation
                                                             EndLocation: routeLineEndLocation
                                                                  stepNo: stepNo
-                                                            routeLineNo:routeLineCount];
+                                                            routeLineNo:routeLineCount
+                                                         startRouteLine:startRouteLine];
         routeLine.distance = [GeoUtil getGeoDistanceFromLocation:routeLineStartLocation ToLocation:routeLineEndLocation];
         routeLine.cumulativeDistance = _cumulativeDistance;
         
@@ -152,9 +174,12 @@
     else
     {
         mlogDebug(@"    Skip");
+        added = FALSE;
     }
 
     routeLineStartLocation = routeLineEndLocation;
+    
+    return added;
 }
 
 -(void) saveRouteLines
@@ -162,7 +187,7 @@
     self.routeLines = [NSArray arrayWithArray:tmpRouteLines];
 }
 
--(int) getStepCount
+-(long) getStepCount
 {
     return [steps count];
 }
@@ -693,42 +718,49 @@
 }
 
 /* within 30s or 30 meters */
--(RouteLine*) getNextStepFirstRouteLineByRouteLine:(RouteLine*) currentRouteLine carLocation:(CLLocationCoordinate2D) carLocation
+-(RouteLine*) getNextStepFirstRouteLineByRouteLine:(RouteLine*) currentRouteLine carLocation:(CLLocationCoordinate2D) carLocation speed:(double)speed distanceToNextStep:(double*)distanceToNextStep timeToNextStep:(double*)timeToNextStep
 {
     mlogAssertNotNilR(currentRouteLine, nil);
-    float requireDistance = 0;
+    double minDistance;
+    double minTime;
+    RouteLine *nextStepRouteLine;
     
-    requireDistance = [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE];
-    /* subtract the distance from car location to the current end location */
-    requireDistance -= [GeoUtil getGeoDistanceFromLocation:carLocation ToLocation:currentRouteLine.endLocation];
+    minDistance             = [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_BEFORE_DISTANCE];
+    minTime                 = [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_BEFORE_TIME];
+    *distanceToNextStep     = [GeoUtil getGeoDistanceFromLocation:carLocation ToLocation:currentRouteLine.endLocation];
+    nextStepRouteLine       = nil;
+    
     for(RouteLine* rl in self.routeLines)
     {
         /* accumulate each subsequential route line */
         if (rl.stepNo == currentRouteLine.stepNo && rl.no > currentRouteLine.no)
         {
-            requireDistance -= rl.distance;
-            if (requireDistance < 0)
-            {
-                break;
-            }
+            *distanceToNextStep += rl.distance;
         }
         else if(rl.stepNo == currentRouteLine.stepNo+1)
         {
-            if(requireDistance > 0)
+            nextStepRouteLine = rl;
+            if (speed > 0)
             {
-
-                return rl;
+                *timeToNextStep = *distanceToNextStep/speed;
             }
-            /* not reach the required distance yet */
             else
             {
-                break;
+                *timeToNextStep = minTime+1;
             }
         }
     }
     
-    return nil;
+    /* if car is not approaching the route line of next step, then just return nil */
+    if (*distanceToNextStep > minDistance && *timeToNextStep > minTime)
+    {
+        nextStepRouteLine = nil;
+    }
+    
+    
+    return nextStepRouteLine;
 }
+
 
 -(void) dumpRouteLines
 {
@@ -879,4 +911,9 @@
     return 0;
 }
 
+/* the the distance from car location to the target route line by following the route */
+-(double) getDistanceFromLocation:(CLLocationCoordinate2D) location routeLineNo:routeLineNo toRouteLineNo:toLRouteLineNo
+{
+    return 10;
+}
 @end

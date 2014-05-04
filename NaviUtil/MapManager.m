@@ -417,10 +417,17 @@
                 routeDownloadRequest = [NaviQueryManager
                                         getRouteDownloadRequestFrom:self.routeStartPlace.coordinate
                                         To:self.routeEndPlace.coordinate];
+                
                 routeDownloadRequest.delegate = self;
                 
                 if ([GoogleJson getStatus:routeDownloadRequest.fileName] != kGoogleJsonStatus_Ok)
                 {
+                    if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:startRoutePlanning:)])
+                    {
+                        
+                        [self.delegate mapManager:self startRoutePlanning:TRUE];
+                    }
+                    
                     [NaviQueryManager download:routeDownloadRequest];
                 }
             }
@@ -461,9 +468,15 @@
         {
             updateStatus = true;
         }
+        
+        if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:routePlanning:)])
+        {
+            [self.delegate mapManager:self routePlanning:TRUE];
+        }
+        
     }
     /* search failed */
-    else if(routeDownloadRequest.status == kDownloadStatus_DownloadFail)
+    else if(YES == routeDownloadRequest.done)
     {
         updateStatus = true;
         
@@ -906,7 +919,7 @@
 
 #pragma  mark -- Delegate
 
--(void) downloadRequestStatusChange: (DownloadRequest*) downloadRequest
+-(void) downloadRequest:(DownloadRequest*) downloadRequest status:(DownloadStatus) status;
 {
     if (nil == downloadRequest)
         return;

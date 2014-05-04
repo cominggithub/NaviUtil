@@ -18,6 +18,7 @@
 -(void) mapManager: (MapManager*) mapManager placeSearchResult:(NSArray*) places;
 -(void) mapManager: (MapManager*) mapManager updateCurrentPlace:(Place*) place;
 -(void) mapManager: (MapManager*) mapManager routeChangedFrom:(Place*) fromPlace to:(Place*) toPlace;
+-(void) mapManager:(MapManager*) mapManager startRoutePlanning:(BOOL) result;
 -(void) mapManager:(MapManager*) mapManager routePlanning:(BOOL) result;
 -(void) mapManager:(MapManager*) mapManager searchPlaces:(BOOL) result;
 -(void) mapManager:(MapManager *)mapManager connectToServer:(BOOL) result;

@@ -17,8 +17,10 @@
 #import "MessageBoxLabel.h"
 #import "RouteView.h"
 
-#if RELEASE
-#define FILE_DEBUG FALSE
+#if DEBUG
+#define FILE_DEBUG TRUE
+#elif RELEASE_TEST
+#define FILE_DEBUG TRUE
 #else
 #define FILE_DEBUG TRUE
 #endif
@@ -31,7 +33,7 @@
 #define ROUTE_LINE_WIDTH 20
 #define ROUTE_LINE_RECT_SIZE 24
 #define MESSAGE_BOX_DISPLAY_TIME_MIN 1
-#define MAP_RATIO 92000
+#define MAP_RATIO 32000
 
 @implementation GuideRouteUIView
 {
@@ -94,6 +96,8 @@
     NSTimer                 *changeMessageTimer;
     NaviState               *naviState;
     CarStatus               *carStatus;
+    double                  distanceToNextStep;
+    double                  timeToNextStep;
     
 }
 
@@ -237,13 +241,6 @@
 
     _isAutoSimulatorLocationUpdateStarted = FALSE;
 }
-
--(void) downloadRequestStatusChange: (DownloadRequest*) downloadRequest
-{
-    if (downloadRequest == routeDownloadRequest)
-        [self processRouteDownloadRequestStatusChange];
-}
-
 
 #pragma mark - Draw Functions
 
@@ -415,7 +412,7 @@
         startPoint.x    += xOffset;
         
         /* skip circules that are too close to the previous drawed one */
-        if ([GeoUtil getLength:startPoint ToPoint:lastCircle] < roundRectSize)
+        if (!rl.startRouteLine && [GeoUtil getLength:startPoint ToPoint:lastCircle] < roundRectSize)
         {
             continue;
         }
@@ -429,8 +426,18 @@
         CGContextFillEllipseInRect(context, roundRect);
         CGContextFillPath(context);
         CGContextStrokePath(context);
-        
+
+#if DEBUG
+        if (TRUE == rl.startRouteLine)
+            CGContextSetStrokeColorWithColor(context, [UIColor redColor].CGColor);
+        else
+            CGContextSetStrokeColorWithColor(context, self.color.CGColor);
+#elif RELEASE_TEST
         CGContextSetStrokeColorWithColor(context, self.color.CGColor);
+#else
+        CGContextSetStrokeColorWithColor(context, self.color.CGColor);
+#endif
+        
         CGContextSetLineWidth(context, 2.0);
         CGContextBeginPath(context);
         CGContextAddArc(context, startPoint.x, startPoint.y, 12, 0, 2*M_PI, YES);
@@ -592,9 +599,6 @@
     
 }
 
-
-
-
 -(void) drawTurnMessage:(CGContextRef) context
 {
     RouteLine *nextStepRouteLine;
@@ -602,7 +606,12 @@
     if(currentRouteLine != nil)
     {
         /* show turn message within 100 meters */
-        nextStepRouteLine = [route getNextStepFirstRouteLineByRouteLine:currentRouteLine carLocation:currentCarLocation];
+        nextStepRouteLine = [route getNextStepFirstRouteLineByRouteLine:currentRouteLine
+                                                            carLocation:currentCarLocation
+                                                                  speed:carStatus.speed
+                                                     distanceToNextStep:&distanceToNextStep
+                                                         timeToNextStep:&timeToNextStep
+                             ];
         
         if(nextStepRouteLine != nil)
         {
@@ -614,6 +623,28 @@
                 [self playSpeech:text];
             }
         }
+        else
+        {
+            messageBoxLabel.text = @"";
+        }
+
+#if DEBUG
+        if (distanceToNextStep <= [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_BEFORE_DISTANCE] ||
+            timeToNextStep <= [SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_BEFORE_TIME])
+        {
+            debugMsgLabel.textColor = [UIColor redColor];
+        }
+        else
+        {
+            debugMsgLabel.textColor = [UIColor whiteColor];
+        }
+        
+#elif RELEASE_TEST
+        
+#else
+        
+#endif
+        
     }
 }
 
@@ -1130,9 +1161,9 @@
     }
     
     
-    lastGPSSignalTime                       = [[NSDate alloc] init];
-    lastValidGPSSignalTime                  = [[NSDate alloc] init];
-    lastValidRouteLineTime                  = [[NSDate alloc] init];
+    lastGPSSignalTime                       = [NSDate date];
+    lastValidGPSSignalTime                  = [NSDate date];
+    lastValidRouteLineTime                  = [NSDate date];
     
     refreshCount                            = 0;
     // configure debug option
@@ -1140,7 +1171,7 @@
     outOfRouteLineCount                     = 0;
     
     /* trigger a fake car location from start location */
-    [self updateCarLocation:routeStartPlace.coordinate];
+    [self updateCarLocation:routeStartPlace.coordinate speed:0 heading:0];
     
     [self setNeedsDisplay];
 
@@ -1236,24 +1267,24 @@
 
 -(void) processRouteDownloadRequestStatusChange
 {
-    logfn();
     if (GR_STATE_ROUTE_PLANNING == naviState.state || GR_STATE_ROUTE_REPLANNING == naviState.state)
     {
-        logfn();
         /* search place finished */
         if (routeDownloadRequest.status == kDownloadStatus_Finished)
         {
             [self startRouteNavigation];
         }
         /* search failed */
-        else if(routeDownloadRequest.status == kDownloadStatus_DownloadFail)
+        else if(YES == routeDownloadRequest.done)
         {
-            logfn();
             [naviState sendEvent:GR_EVENT_LOCATION_LOST];
         }
+        
+        if (YES == routeDownloadRequest.done)
+        {
+            [self stopRoutePlanTimer];
+        }
     }
-    
-    [self stopRoutePlanTimer];
 }
 
 
@@ -1371,25 +1402,15 @@
         }
         else if (![routeStartPlace isCoordinateEqualTo:routeEndPlace])
         {
+            /* we should clear all pending download to prevent lots of pending download block the new route plan request */
+            [NaviQueryManager cancelPendingDownload];
             routeDownloadRequest = [NaviQueryManager
                                     getRouteDownloadRequestFrom:routeStartPlace.coordinate
                                     To:routeEndPlace.coordinate];
             routeDownloadRequest.delegate = self;
-            
-#if DEBUG
-            if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT] ||
-                !(TRUE == isSimulateSlowWifi && planRouteCount > 2 && planRouteCount%3==0))
-            {
-                [self startRoutePlanTimer];
-                [NaviQueryManager download:routeDownloadRequest];
-            }
-            else
-            {
-                mlogDebug(@"simulate skip plan route");
-            }
-#else
+            [self startRoutePlanTimer];
+            mlogInfo(@"plan route\n");
             [NaviQueryManager download:routeDownloadRequest];
-#endif
         }
         else
         {
@@ -1401,8 +1422,6 @@
         [naviState sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
     }
 }
-
-
 
 -(void) dumpWatchDog
 {
@@ -1424,21 +1443,21 @@
     //    printf("toScreenOffset (%.8f, %.8f)\n", toScreenOffset.x, toScreenOffset.y);
 }
 
-#if 1
--(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
+-(void) updateCarLocation:(CLLocationCoordinate2D) location speed:(double)speed heading:(double)heading
 {
-    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
+    mlogDebug(@"update car location: %.8f, %.8f\n", location.latitude, location.longitude);
     PointD nextCarPoint;
     float distanceFromCarToRouteStart;
     RouteLine* firstRouteLine;
     lastCarLocation     = currentCarLocation;
-    currentCarLocation  = newCarLocation;
-
+    currentCarLocation  = location;
 
 
     firstRouteLine              = [route.routeLines objectAtIndex:0];
     lastRouteLine               = currentRouteLine;
-    distanceFromCarToRouteStart = [GeoUtil getGeoDistanceFromLocation:newCarLocation ToLocation:firstRouteLine.startLocation];
+    distanceFromCarToRouteStart = [GeoUtil getGeoDistanceFromLocation:location ToLocation:firstRouteLine.startLocation];
+
+    [carStatus updateLocation:location speed:speed heading:heading];
     
     currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
 
@@ -1446,6 +1465,7 @@
     if (nil == currentRouteLine && (nil == lastRouteLine || 0 == lastRouteLine.no) && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
         currentRouteLine = firstRouteLine;
+        lastValidRouteLineTime = [[NSDate init] alloc];
         [naviState sendEvent:GR_EVENT_ROUTE_LINE_READY];
     }
     /* found matched route line */
@@ -1457,33 +1477,46 @@
         
         if ([GeoUtil getGeoDistanceFromLocation:currentCarLocation ToLocation:endRouteLineEndPoint] < ARRIVAL_REGION)
         {
+            lastValidRouteLineTime = [NSDate date];
             [naviState sendEvent:GR_EVENT_ARRIVAL];
         }
         else
         {
+            lastValidRouteLineTime = [NSDate date];
             [naviState sendEvent:GR_EVENT_ROUTE_LINE_READY];
         }
+        
+        
     }
     /* cannot find matched route line */
     else
     {
+        NSTimeInterval duration;
         /* let the current route line be the last route line */
         currentCarLocation  = lastCarLocation;
         currentRouteLine    = lastRouteLine;
         
         outOfRouteLineCount++;
-        /* stay at GPS_READY if missing GPS signal is less than the CONFIG_MAX_OUT_OF_ROUTELINE_COUNT */
-        if (outOfRouteLineCount < maxOutOfRouteLineCount)
+        
+        if (nil != lastValidRouteLineTime)
         {
-            [naviState sendEvent:GR_EVENT_GPS_READY];
-        }
-        /* location lost */
-        else
-        {
-            [naviState sendEvent:GR_EVENT_LOCATION_LOST];
+            duration = -[lastValidRouteLineTime timeIntervalSinceNow];
+            /* stay at GPS_READY if missing GPS signal is less than the CONFIG_MAX_OUT_OF_ROUTELINE_COUNT */
+            if (duration < [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_TIME])
+            {
+                [naviState sendEvent:GR_EVENT_GPS_READY];
+            }
+            /* location lost */
+            else
+            {
+                mlogInfo(@"exceed out of route line time\n");
+                [naviState sendEvent:GR_EVENT_LOCATION_LOST];
+                lastValidRouteLineTime = nil;
+            }
         }
     }
 
+    
     /* event we lost location now, we still use last route line to draw current navigation map */
     if(currentRouteLine != nil)
     {
@@ -1497,7 +1530,9 @@
         routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
         targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
 
-        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]+100];
+        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation
+                                                        routeLineNo:currentRouteLine.no
+                                                     withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_BEFORE_DISTANCE]+100];
 
     }
     
@@ -1520,71 +1555,6 @@
     }
     
 }
-
-#else
--(void) updateCarLocation:(CLLocationCoordinate2D) newCarLocation
-{
-    mlogDebug(@"update car location: %.8f, %.8f\n", newCarLocation.latitude, newCarLocation.longitude);
-    PointD nextCarPoint;
-    currentCarLocation = newCarLocation;
-    nextCarPoint.x = newCarLocation.longitude;
-    nextCarPoint.y = newCarLocation.latitude;
-    float distanceFromCarToRouteStart;
-    RouteLine* firstRouteLine;
-    carPoint = nextCarPoint;
-    [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
-    [self updateTranslationConstant];
-    
-    
-    firstRouteLine = [route.routeLines objectAtIndex:0];
-    
-    
-    distanceFromCarToRouteStart = [GeoUtil getGeoDistanceFromLocation:newCarLocation ToLocation:firstRouteLine.startLocation];
-    
-    currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
-    
-    if (nil == currentRouteLine && nil == lastRouteLine && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
-    {
-        currentRouteLine = firstRouteLine;
-    }
-    
-    if(currentRouteLine != nil)
-    {
-        routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
-        routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
-        targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
-        _turnAngle      = [route getAngleFromCLLocationCoordinate2D:newCarLocation routeLineNo:currentRouteLine.no withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_DISTANCE]];
-        outOfRouteLineCount = 0;
-        
-        if ([GeoUtil getGeoDistanceFromLocation:currentCarLocation ToLocation:endRouteLineEndPoint] < ARRIVAL_REGION)
-        {
-            [self sendEvent:GR_EVENT_ARRIVAL];
-        }
-        else
-        {
-            [self sendEvent:GR_EVENT_GPS_READY];
-        }
-        
-        
-    }
-    else
-    {
-        _turnAngle      = 0;
-        outOfRouteLineCount++;
-        if (outOfRouteLineCount < maxOutOfRouteLineCount)
-        {
-            outOfRouteLineCount = 0;
-            [self sendEvent:GR_EVENT_GPS_READY];
-            
-        }
-        else
-        {
-            
-            [self sendEvent:GR_EVENT_LOCATION_LOST];
-        }
-    }
-}
-#endif
 
 #pragma location update
 
@@ -1747,39 +1717,6 @@
 }
 #endif
 
-
--(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
-{
-
-    currentStep++;
-//    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
-
-    /* keep track of last GPS signal update time */
-    lastGPSSignalTime = [[NSDate alloc] init];
-    
-    if (GR_STATE_NAVIGATION == naviState.state || GR_STATE_ROUTE_REPLANNING == naviState.state || GR_STATE_ROUTE_REPLANNING == naviState.state)
-    {
-        [self updateCarLocation:location];
-        [self setNeedsDisplay];
-    }
-    else
-    {
-        [naviState sendEvent:GR_EVENT_GPS_READY];
-    }
-    
-//    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
-    
-    debugMsgLabel.text = [NSString stringWithFormat:@"%.8f, %.8f, %.1f, %.1f \n%@ %@",
-                               location.latitude,
-                               location.longitude,
-                               speed,
-                               heading,
-                               [naviState GR_StateStr:naviState.state],
-                               [naviState GR_EventStr:lastEvent]
-                               ];
-}
-
-
 #pragma mark - UI Control
 -(void) addUIComponents
 {
@@ -1819,8 +1756,8 @@
     debugMsgLabel.text              = @"";
     debugMsgLabel.textColor         = [UIColor whiteColor];
     debugMsgLabel.backgroundColor   = [UIColor clearColor];
-    debugMsgLabel.frame             = CGRectMake(8, 260, 480, 60);
-    debugMsgLabel.numberOfLines     = 2;
+    debugMsgLabel.frame             = CGRectMake(8, 230, 480, 90);
+    debugMsgLabel.numberOfLines     = 3;
     [clockView update];
 
     
@@ -2032,6 +1969,47 @@
 }
 
 #pragma mark -- delegate
+-(void) downloadRequest:(DownloadRequest*) downloadRequest status:(DownloadStatus) status;
+{
+    if (downloadRequest == routeDownloadRequest)
+        [self processRouteDownloadRequestStatusChange];
+}
+
+-(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
+{
+    
+    currentStep++;
+    //    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+    
+    /* keep track of last GPS signal update time */
+    lastGPSSignalTime = [[NSDate alloc] init];
+    
+    if (GR_STATE_NAVIGATION == naviState.state || GR_STATE_ROUTE_REPLANNING == naviState.state || GR_STATE_ROUTE_REPLANNING == naviState.state)
+    {
+        [self updateCarLocation:location speed:speed heading:heading];
+        [self setNeedsDisplay];
+    }
+    else
+    {
+        [naviState sendEvent:GR_EVENT_GPS_READY];
+    }
+    
+    //    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
+    
+    debugMsgLabel.text = [NSString stringWithFormat:@"%.1f(%.1f) %.1f(%.1f)\n%.8f, %.8f, %.1f, %.1f \n%@ %@",
+                          distanceToNextStep,
+                          [SystemConfig getFloatValue:CONFIG_TURN_ANGLE_BEFORE_DISTANCE],
+                          timeToNextStep,
+                          [SystemConfig getFloatValue:CONFIG_TURN_ANGLE_BEFORE_TIME],
+                          location.latitude,
+                          location.longitude,
+                          speed,
+                          heading,
+                          [naviState GR_StateStr:naviState.state],
+                          [naviState GR_EventStr:naviState.event]
+                          ];
+}
+
 -(void) naviState:(NaviState*) ns newState:(GR_STATE) newState;
 {
     mlogDebug(@"state %@",[naviState GR_StateStr:newState]);
@@ -2089,20 +2067,33 @@
 #pragma mark -- timer
 -(void) routePlanTimeout:(NSTimer *)theTimer
 {
+    mlogInfo(@"route plan timeout\n");
+    /* send no gps signal event to force re-out */
+    if (nil != routeDownloadRequest)
+    {
+        mlogInfo(@"route download request status: %@", routeDownloadRequest);
+    }
+    
     routeDownloadRequest = nil;
     [naviState sendEvent:GR_EVENT_GPS_NO_SIGNAL];
+    
 }
 
 -(void) startRoutePlanTimer
 {
-    routePlanTimer     = [NSTimer scheduledTimerWithTimeInterval:[SystemConfig getIntValue:CONFIG_ROUTE_PLAN_TIMEOUT] target:self
+    if (nil == routePlanTimer)
+    {
+        mlogDebug(@"start route plan timer");
+        routePlanTimer     = [NSTimer scheduledTimerWithTimeInterval:[SystemConfig getIntValue:CONFIG_ROUTE_PLAN_TIMEOUT] target:self
                                                         selector:@selector(routePlanTimeout:)
                                                         userInfo:nil
-                                                         repeats:YES];
+                                                         repeats:NO];
+    }
 
 }
 -(void) stopRoutePlanTimer
 {
+    mlogDebug(@"stop route plan timer");
     if (routePlanTimer != nil && [routePlanTimer isValid])
     {
         [routePlanTimer invalidate];
@@ -2127,7 +2118,7 @@
         changeMessageTimer     = [NSTimer scheduledTimerWithTimeInterval:2 target:self
                                                             selector:@selector(changeMessageTimeout:)
                                                             userInfo:nil
-                                                             repeats:YES];
+                                                             repeats:NO];
     }
 }
 -(void) invalidateChangeMessageTimer

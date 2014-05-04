@@ -28,7 +28,7 @@ typedef enum
 }
 @property (nonatomic, weak) id<CLLocationManagerDelegate> delegate;
 @property (nonatomic) NSTimeInterval locationUpdateInterval;
-@property (nonatomic) int simulationSpeed;
+@property (nonatomic) double simulationSpeed;
 
 @property (readonly) bool isStart;
 @property (nonatomic) LocationSimulator_Type type;

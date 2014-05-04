@@ -28,8 +28,9 @@
                                 EndLocation:(CLLocationCoordinate2D) endLocation
                                      stepNo:(int) stepNo
                                 routeLineNo:(int) routeLineNo
+                             startRouteLine:(BOOL) startRouteLine
 {
-    RouteLine *rl = [[RouteLine alloc] initWithStartLocation:startLocation EndLocation:endLocation stepNo:stepNo routeLineNo:routeLineNo];
+    RouteLine *rl = [[RouteLine alloc] initWithStartLocation:startLocation EndLocation:endLocation stepNo:stepNo routeLineNo:routeLineNo startRouteLine:startRouteLine];
     return rl;
 }
 
@@ -37,6 +38,7 @@
                   EndLocation:(CLLocationCoordinate2D) endLocation
                      stepNo:(int) stepNo
                      routeLineNo:(int) no
+             startRouteLine:(BOOL) startRouteLine
 {
     self = [super init];
     if(self)
@@ -49,8 +51,10 @@
         self.isSlopeUndefined   = false;
         self.distance           = 0;
         self.cumulativeDistance = 0;
+        self.startRouteLine     = startRouteLine;
         
         [self calculateLineEquation];
+
     }
     
     return self;
@@ -166,9 +170,10 @@
     
     if( self.isSlopeUndefined )
     {
-        return [NSString stringWithFormat:@"Step:%2d, Line:%3d, distance: %.2f, angle:%4.0f, slope:    Undefine, x:%13.7f, (%11.7f, %11.7f) -> (%11.7f, %11.7f)",
+        return [NSString stringWithFormat:@"Step:%2d, Line:%3d%@, distance: %.2f, angle:%4.0f, slope:    Undefine, x:%13.7f, (%11.7f, %11.7f) -> (%11.7f, %11.7f)",
                 self.stepNo,
                 self.no,
+                self.startRouteLine ? @"*":@"-",
                 self.distance,
                 TO_ANGLE(self.angle),
                 self.xOffset,
@@ -180,9 +185,10 @@
                 ];
     }
     
-    return [NSString stringWithFormat:@"Step:%2d, Line:%3d, distance: %.2f, angle:%4.0f, slope:%12.7f, x:%13.7f, (%11.7f, %11.7f) -> (%11.7f, %11.7f)",
+    return [NSString stringWithFormat:@"Step:%2d, Line:%3d%@, distance: %.2f, angle:%4.0f, slope:%12.7f, x:%13.7f, (%11.7f, %11.7f) -> (%11.7f, %11.7f)",
         self.stepNo,
         self.no,
+        self.startRouteLine ? @"*":@"-",
         self.distance,            
         TO_ANGLE(self.angle),
         self.slope,

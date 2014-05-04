@@ -28,16 +28,13 @@
 @property int stepNo;
 @property int no;
 @property PointD unitVector;
+@property BOOL startRouteLine;
 
 +(RouteLine*) getRouteLineWithStartLocation:(CLLocationCoordinate2D) startLocation
                             EndLocation:(CLLocationCoordinate2D) endLocation
                                  stepNo:(int) stepNo
-                            routeLineNo:(int) routeLineNo;
-
--(id) initWithStartLocation:(CLLocationCoordinate2D) startLocation
-                  EndLocation:(CLLocationCoordinate2D) endLocation
-                       stepNo:(int) stepNo
-                  routeLineNo:(int) routeLineNo;
+                            routeLineNo:(int) routeLineNo
+                             startRouteLine:(BOOL) startRouteLine;
 
 -(double) getGeoDistanceToLocation:(CLLocationCoordinate2D) location;
 -(double) getAngleToStartLocation:(CLLocationCoordinate2D) location;

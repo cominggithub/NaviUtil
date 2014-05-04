@@ -52,7 +52,7 @@ typedef enum
 +(Route*) parseJson:(NSString*) fileName;
 
 -(id) initWithJsonRouteFile: (NSString*) fileName;
--(int) getStepCount;
+-(long) getStepCount;
 -(NSArray*) getRoutePolyLineCLLocationCoordinate2D;
 -(NSArray*) getRoutePolyLineCLLocation;
 -(NSArray*) getRoutePolyLinePointD;
@@ -69,7 +69,7 @@ typedef enum
 -(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine;
 -(CLLocationCoordinate2D) getStartLocation;
 -(CLLocationCoordinate2D) getEndLocation;
--(RouteLine*) getNextStepFirstRouteLineByRouteLine:(RouteLine*)currentRouteLine carLocation:(CLLocationCoordinate2D) carLocation;
+-(RouteLine*) getNextStepFirstRouteLineByRouteLine:(RouteLine*) currentRouteLine carLocation:(CLLocationCoordinate2D) carLocation speed:(double)speed distanceToNextStep:(double*)distanceToNextStep timeToNextStep:(double*)timeToNextStep;
 -(double) getAngleFromCLLocationCoordinate2D:(CLLocationCoordinate2D) location routeLineNo:(int) routeLineNo withInDistance:(double) distance;
 -(double) getCorrectedTargetAngle:(int) routeLineNo distance:(int) distance;
 

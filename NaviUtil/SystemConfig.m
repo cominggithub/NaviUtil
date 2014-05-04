@@ -205,40 +205,44 @@ static JsonFile *_hiddenConfigFile;
 {
 
 #if DEBUG
-    [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST     defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT      defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_DEBUG                        defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_AD                           defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_USER_PLACE                   defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW             defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_MANUAL_PLACE                 defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER       defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR           defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST       defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_OUT_OF_ROUTE_LINE   defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT        defaultValue:[NSString stringFromBOOL:FALSE]];
 #elif RELEASE_TEST
-    [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST     defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT      defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_DEBUG                        defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_AD                           defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_USER_PLACE                   defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW             defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_MANUAL_PLACE                 defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER       defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR           defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST       defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_OUT_OF_ROUTE_LINE   defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT        defaultValue:[NSString stringFromBOOL:FALSE]];
 #else
-    [self checkKey:CONFIG_H_IS_DEBUG                      defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_AD                         defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_USER_PLACE                 defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW           defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_MANUAL_PLACE               defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER     defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR         defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST     defaultValue:[NSString stringFromBOOL:FALSE]];
-    [self checkKey:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT      defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_DEBUG                        defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_AD                           defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_USER_PLACE                   defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_H_IS_DEBUG_ROUTE_DRAW             defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_MANUAL_PLACE                 defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_UPDATE_FILTER       defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_LOCATION_SIMULATOR           defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_LOCATION_LOST       defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_OUT_OF_ROUTE_LINE   defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_H_IS_SIMULATE_CAR_MOVEMENT        defaultValue:[NSString stringFromBOOL:FALSE]];
 #endif
     
 
     [self checkKey:CONFIG_IS_SPEECH                     defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_TURN_ANGLE_DISTANCE           defaultValue:[NSString stringFromFloat:130.0]];
+    [self checkKey:CONFIG_TURN_ANGLE_BEFORE_DISTANCE    defaultValue:[NSString stringFromFloat:180.0]];
+    [self checkKey:CONFIG_TURN_ANGLE_BEFORE_TIME        defaultValue:[NSString stringFromFloat:20.0]];
     [self checkKey:CONFIG_TARGET_ANGLE_DISTANCE         defaultValue:[NSString stringFromFloat:5.0]];
     [self checkKey:CONFIG_TRIGGER_LOCATION_INTERVAL     defaultValue:[NSString stringFromInt:500]];
     [self checkKey:CONFIG_IS_SPEED_UNIT_MPH             defaultValue:[NSString stringFromBOOL:FALSE]];
@@ -255,10 +259,11 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_RN1_IS_COURSE                 defaultValue:[NSString stringFromBOOL:TRUE]];
     
     [self checkKey:CONFIG_MAX_OUT_OF_ROUTELINE_COUNT    defaultValue:[NSString stringFromInt:10]];
+    [self checkKey:CONFIG_MAX_OUT_OF_ROUTELINE_TIME     defaultValue:[NSString stringFromInt:3]];
     [self checkKey:CONFIG_DEFAULT_TRACK_FILE            defaultValue:@"Track.tr"];
     [self checkKey:CONFIG_DEFAULT_ROUTE_FILE            defaultValue:@"Route.json"];
     [self checkKey:CONFIG_IS_TRACK_FILE                 defaultValue:[NSString stringFromBOOL:TRUE]];
-    [self checkKey:CONFIG_IS_TRACK_LOCATION                 defaultValue:[NSString stringFromBOOL:TRUE]];
+    [self checkKey:CONFIG_IS_TRACK_LOCATION             defaultValue:[NSString stringFromBOOL:TRUE]];
     [self checkKey:CONFIG_DEFAULT_BRIGHTNESS            defaultValue:[NSString stringFromFloat:.5]];
     
     [self checkKey:CONFIG_NAVIER_NAME                   defaultValue:@"NavierHUD"];
@@ -269,7 +274,7 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_DEVICE_SCREEN                 defaultValue:@"unknown"];
     [self checkKey:CONFIG_LOCALE                        defaultValue:@"unknown"];
     [self checkKey:CONFIG_TRIGGER_LOCATION_INTERVAL     defaultValue:[NSString stringFromInt:0]];
-    [self checkKey:CONFIG_ROUTE_PLAN_TIMEOUT            defaultValue:[NSString stringFromInt:10]];
+    [self checkKey:CONFIG_ROUTE_PLAN_TIMEOUT            defaultValue:[NSString stringFromInt:6]];
     
     [self save];
 

@@ -9,7 +9,15 @@
 
 #import "FileDownloader.h"
 
-#define FILE_DEBUG FALSE
+
+#if DEBUG
+#define FILE_DEBUG TRUE
+#elif RELEASE_TEST
+#define FILE_DEBUG TRUE
+#else
+#define FILE_DEBUG TRUE
+#endif
+
 #include "Log.h"
 
 @implementation FileDownloader

@@ -48,6 +48,7 @@ typedef enum
 @interface NaviState : NSObject
 
 @property (nonatomic, readonly) GR_STATE state;
+@property (nonatomic, readonly) GR_EVENT event;
 @property (nonatomic, weak) id<NaviStateDelegate> delegate;
 -(NSString*) GR_EventStr:(GR_EVENT) event;
 -(NSString*) GR_StateStr:(GR_STATE) state;

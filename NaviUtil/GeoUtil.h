@@ -15,6 +15,7 @@
 #define TO_RADIUS(a) ((a*M_PI)/180.0)
 #define MS_TO_KMH(m) (m*3.6)
 #define MS_TO_MPH(m) (m*2.23693)
+#define KMH_TO_MS(m) (m/3.6)
 
 #define MAX_LEVEL 20
 typedef struct PointD

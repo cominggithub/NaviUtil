@@ -104,7 +104,11 @@
 -(PointD) getDrawPoint:(PointD) location;
 -(BOOL) startRouteNavigationFrom:(Place*) s To:(Place*) e;
 -(void) triggerLocationUpdate;
--(void) updateCarLocation:(CLLocationCoordinate2D)  newCarLocation;
+-(void) updateCarLocation:(CLLocationCoordinate2D) location speed:(double)speed heading:(double)heading;
+
+/* DownloadRequest delegate */
+-(void) downloadRequest:(DownloadRequest*) downloadRequest status:(DownloadStatus) status;
+
 /* LocationManager delegate */
 -(void) locationManager:(LocationManager*) locationManager update:(CLLocationCoordinate2D) location speed:(double) speed distance:(int) distance heading:(double) heading;
 

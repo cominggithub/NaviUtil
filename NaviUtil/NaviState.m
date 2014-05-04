@@ -44,6 +44,11 @@
     return currentState;
 }
 
+-(GR_EVENT) event
+{
+    return lastEvent;
+}
+
 -(NSString*) GR_EventStr:(GR_EVENT) event
 {
     lastEvent = event;
@@ -51,31 +56,31 @@
     switch (event)
     {
         case GR_EVENT_GPS_NO_SIGNAL:
-            return @"GR_EVENT_GPS_NO_SIGNAL";
+            return @"E_GPS_NO_SIGNAL";
         case GR_EVENT_NETWORK_NO_SIGNAL:
-            return @"GR_EVENT_NETWORK_NO_SIGNAL";
+            return @"E_NETWORK_NO_SIGNAL";
         case GR_EVENT_ROUTE_DESTINATION_ERROR:
-            return @"GR_EVENT_ROUTE_DESTINATION_ERROR";
+            return @"E_ROUTE_DESTINATION_ERROR";
         case GR_EVENT_ARRIVAL:
-            return @"GR_EVENT_ARRIVAL";
+            return @"E_ARRIVAL";
         case GR_EVENT_GPS_READY:
-            return @"GR_EVENT_GPS_READY";
+            return @"E_GPS_READY";
         case GR_EVENT_NETWORK_READY:
-            return @"GR_EVENT_NETWORK_READY";
+            return @"E_NETWORK_READY";
         case GR_EVENT_LOCATION_LOST:
-            return @"GR_EVENT_LOCATION_LOST";
+            return @"E_LOCATION_LOST";
         case GR_EVENT_ACTIVE:
-            return @"GR_EVENT_ACTIVE";
+            return @"E_ACTIVE";
         case GR_EVENT_INACTIVE:
-            return @"GR_EVENT_INACTIVE";
+            return @"E_INACTIVE";
         case GR_EVENT_ALL_READY:
-            return @"GR_EVENT_ALL_READY";
+            return @"E_ALL_READY";
         case GR_EVENT_START_NAVIGATION:
-            return @"GR_EVENT_START_NAVIGATION";
+            return @"E_START_NAVIGATION";
         case GR_EVENT_ROUTE_LINE_READY:
-            return @"GR_EVENT_ROUTE_LINE_READY";
+            return @"E_ROUTE_LINE_READY";
         case GR_EVENT_NO_ROUTE:
-            return @"GR_EVENT_NO_ROUTE";
+            return @"E_NO_ROUTE";
     }
     
 }
@@ -85,25 +90,25 @@
     switch (state)
     {
         case GR_STATE_INIT:
-            return @"GR_STATE_INIT";
+            return @"S_INIT";
         case GR_STATE_NAVIGATION:
-            return @"GR_STATE_NAVIGATION";
+            return @"S_NAVIGATION";
         case GR_STATE_ROUTE_PLANNING:
-            return @"GR_STATE_ROUTE_PLANNING";
+            return @"S_ROUTE_PLANNING";
         case GR_STATE_ROUTE_REPLANNING:
-            return @"GR_STATE_ROUTE_REPLANNING";
+            return @"S_ROUTE_REPLANNING";
         case GR_STATE_GPS_NO_SIGNAL:
-            return @"GR_STATE_GPS_NO_SIGNAL";
+            return @"S_GPS_NO_SIGNAL";
         case GR_STATE_NETWORK_NO_SIGNAL:
-            return @"GR_STATE_NETWORK_NO_SIGNAL";
+            return @"S_NETWORK_NO_SIGNAL";
         case GR_STATE_ARRIVAL:
-            return @"GR_STATE_ARRIVAL";
+            return @"S_ARRIVAL";
         case GR_STATE_ROUTE_DESTINATION_ERROR:
-            return @"GR_STATE_ROUTE_DESTINATION_ERROR";
+            return @"S_ROUTE_DESTINATION_ERROR";
         case GR_STATE_LOOKUP:
-            return @"GR_STATE_LOOKUP";
+            return @"S_LOOKUP";
         case GR_STATE_NO_ROUTE:
-            return @"GR_STATE_NO_ROUTE";
+            return @"S_NO_ROUTE";
     }
     
 }
@@ -173,12 +178,9 @@
 
 -(void) notifyDelegate
 {
-    logfn();
     if (nil != self.delegate && [self.delegate respondsToSelector:@selector(naviState:newState:)])
     {
-        logfn();
         [self.delegate naviState:self newState:self.state];
     }
-    logfn();
 }
 @end

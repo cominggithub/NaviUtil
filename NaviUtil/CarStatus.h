@@ -11,10 +11,10 @@
 
 @interface CarStatus : NSObject
 
-@property (nonatomic, readonly) float speed;
+@property (nonatomic, readonly) double speed;
 @property (nonatomic, readonly) CLLocationCoordinate2D location;
-@property (nonatomic, readonly) float orientation;
+@property (nonatomic, readonly) double heading;
 
--(void) updateLocation:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading;
--(float) getMoveTimeByDistance:(float) distance;
+-(void) updateLocation:(CLLocationCoordinate2D)location speed:(double)speed heading:(double)heading;
+-(float) getMoveTimeByDistance:(double) distance;
 @end
