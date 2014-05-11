@@ -526,4 +526,9 @@ static CLLocationCoordinate2D _endLocation;
 {
     [_downloadManager cancelPendingDownload];
 }
+
++(void) dumpDownloadStatus
+{
+    [_downloadManager dumpDownloadStatus];
+}
 @end

@@ -63,18 +63,13 @@
         advanceDistance                 = _simulationSpeed * _locationUpdateInterval;
         stepCount                       = 0;
         simulateLocationLost            = FALSE;
-
-        [self loadLocationFromTraceFile:
-         
-            [NSString stringWithFormat:@"%@/%@",
-                [[NSBundle mainBundle] resourcePath],
-             [SystemConfig getStringValue:CONFIG_DEFAULT_TRACK_FILE]]];
     }
     return self;
 }
 
 -(void) loadLocationFromTraceFile:(NSString*) fileName
 {
+    
     NSString *fileContents = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL];
     CLLocation *location;
     NSDateFormatter *formatter;
@@ -93,6 +88,7 @@
             continue;
         
         dateStr = [[[fields objectAtIndex:0] componentsSeparatedByString:@" "] objectAtIndex:0];
+
         location = [[CLLocation alloc]
                     initWithCoordinate:CLLocationCoordinate2DMake([[fields objectAtIndex:1] doubleValue], [[fields objectAtIndex:2] doubleValue])
                     altitude:[[fields objectAtIndex:3] doubleValue]
@@ -104,6 +100,7 @@
                     ];
         [_locationsOfTraceFile addObject:location];
     }
+
 }
 
 -(CLLocation *) getNextLocationFromFile
@@ -381,9 +378,12 @@
     _isStart                = TRUE;
     stepCount               = 0;
     simulateLocationLost    = [SystemConfig getBoolValue:CONFIG_H_IS_SIMULATE_LOCATION_LOST];
-
-   _timer                   = [NSTimer scheduledTimerWithTimeInterval:self.locationUpdateInterval/1000.0
+    _timer                  = [NSTimer scheduledTimerWithTimeInterval:self.locationUpdateInterval/1000.0
                                                                target:self selector:@selector(timeout:) userInfo:nil repeats:YES];
+    
+    logO(self.trackFile);
+    self.trackFile          = [SystemConfig getStringValue:CONFIG_DEFAULT_TRACK_FILE];
+    logO(self.trackFile);
 }
 
 -(void) stop
@@ -407,5 +407,14 @@
     stepCount               = 0;
     route                   = r;
     routeLineCoordinates    = [r getRoutePolyLineCLLocationCoordinate2D];
+}
+
+-(void) setTrackFile:(NSString *)trackFile
+{
+    [self loadLocationFromTraceFile:
+        [NSString stringWithFormat:@"%@/%@", [[NSBundle mainBundle] resourcePath], trackFile]];
+    
+    _trackFile = trackFile;
+    
 }
 @end

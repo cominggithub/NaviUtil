@@ -38,6 +38,7 @@ enum FileType {
 -(void) downloadFail: (FileDownloader*) fileDownloader;
 -(void) download:(DownloadRequest*) downloadRequest;
 -(void) cancelPendingDownload;
+-(void) dumpDownloadStatus;
 
 
 @end

@@ -516,6 +516,19 @@ static NSMutableArray *_savedLocations;
     [content appendString:@"</LineString>\n"];
     [content appendString:@"</MultiGeometry>\n"];
     [content appendString:@"</Placemark>\n"];
+    
+    for(int i=0; i<_savedLocations.count; i++)
+    {
+        CLLocation *cl = [_savedLocations objectAtIndex:i];
+        CLLocationCoordinate2D location = cl.coordinate;
+        [content appendString:@"<Placemark>\n"];
+        [content appendString:[NSString stringWithFormat:@"<name>%d</name>", i]];
+        [content appendString:@"<Point>\n"];
+        [content appendString:[NSString stringWithFormat:@"<name>%d</name>", i]];
+        [content appendString:[NSString stringWithFormat:@"<coordinates>%.8f,%.8f</coordinates>", location.longitude, location.latitude]];
+        [content appendString:@"</Point>\n"];
+        [content appendString:@"</Placemark>\n"];
+    }
     [content appendString:@"</Document>\n"];
     [content appendString:@"</kml>"];
     

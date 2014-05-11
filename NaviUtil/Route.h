@@ -42,6 +42,7 @@ typedef enum
 @property (nonatomic) int distanceValue;
 @property (nonatomic) int durationValue;
 @property (nonatomic) int numOfStep;
+@property (nonatomic, weak) NSString *name;
 @property (nonatomic, strong) NSDictionary *root;
 @property (nonatomic, strong) NSArray *routeLines;
 
@@ -66,7 +67,7 @@ typedef enum
 -(NSString*) getEndAddress;
 -(NSString*) getDurationString;
 -(NSString*) getDistanceString;
--(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine;
+-(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine distance:(double*) outDistance;
 -(CLLocationCoordinate2D) getStartLocation;
 -(CLLocationCoordinate2D) getEndLocation;
 -(RouteLine*) getNextStepFirstRouteLineByRouteLine:(RouteLine*) currentRouteLine carLocation:(CLLocationCoordinate2D) carLocation speed:(double)speed distanceToNextStep:(double*)distanceToNextStep timeToNextStep:(double*)timeToNextStep;

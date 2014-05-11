@@ -29,7 +29,7 @@
     if(self)
     {
         self.activeDownload     = 0;
-        self.maxDownload        = 1;
+        self.maxDownload        = 2;
         self.maxRetryCount      = 2;
         self.currentDownloadId  = 1;
         self.currentLocation    = [SystemManager getDefaultLocation];
@@ -189,11 +189,18 @@
 
 -(void) cancelPendingDownload
 {
-    for(DownloadRequest *r in self.pendingQueue)
+    for (int i=0; i<self.pendingQueue.count; i++)
     {
-        [self.downloadingQueue removeObject:r];
+        DownloadRequest *r = [self.pendingQueue objectAtIndex:i];
+
+        [self.pendingQueue removeObject:r];
         r.status  = kDownloadStatus_DownloadCancelled;
-        
+        i--;
     }
+}
+
+-(void) dumpDownloadStatus
+{
+    mlogInfo([self description]);
 }
 @end

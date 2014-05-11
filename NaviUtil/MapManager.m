@@ -108,12 +108,15 @@
 
 }
 
-- (void)dealloc {
+- (void)dealloc
+{
     if (_mapView != nil)
     {
         [_mapView removeObserver:self
                      forKeyPath:@"myLocation"
                         context:NULL];
+        _mapView.delegate   = nil;
+        _mapView            = nil;
     }
 }
 
@@ -978,7 +981,7 @@
 -(void)mapView:(GMSMapView *)mapView didLongPressAtCoordinate:(CLLocationCoordinate2D)coordinate
 {
     Place *newPlace = [[Place alloc] initWithName:
-                        [NSString stringWithFormat:@"%@%d", [SystemManager getLanguageString:@"New Location"], newLocationCount++]
+                        [NSString stringWithFormat:@"%@%d", [SystemManager getLanguageString:@"New Place"], newLocationCount++]
                         address:@""
                      coordinate:CLLocationCoordinate2DMake(coordinate.latitude, coordinate.longitude)];
 

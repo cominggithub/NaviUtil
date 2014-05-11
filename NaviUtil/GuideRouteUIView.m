@@ -16,6 +16,7 @@
 #import "SpeedView.h"
 #import "MessageBoxLabel.h"
 #import "RouteView.h"
+#import "RouteTrack.h"
 
 #if DEBUG
 #define FILE_DEBUG TRUE
@@ -98,6 +99,8 @@
     CarStatus               *carStatus;
     double                  distanceToNextStep;
     double                  timeToNextStep;
+    double                  distanceToRouteLine;
+    RouteTrack              *routeTrack;
     
 }
 
@@ -1169,11 +1172,13 @@
     // configure debug option
     _isAutoSimulatorLocationUpdateStarted   = FALSE;
     outOfRouteLineCount                     = 0;
-    
+    distanceToRouteLine                     = 0;
     /* trigger a fake car location from start location */
     [self updateCarLocation:routeStartPlace.coordinate speed:0 heading:0];
     
     [self setNeedsDisplay];
+    
+    [routeTrack addRoute:route];
 
 }
 
@@ -1369,6 +1374,8 @@
     routeEndPlace   = e;
     route           = nil;
     
+    routeTrack.name = [NSString stringWithFormat:@"Dest.%.8f,%.8f", e.coordinate.latitude, e.coordinate.longitude];
+    
     [naviState sendEvent:GR_EVENT_GPS_NO_SIGNAL];
     [naviState sendEvent:GR_EVENT_ALL_READY];
     
@@ -1445,7 +1452,7 @@
 
 -(void) updateCarLocation:(CLLocationCoordinate2D) location speed:(double)speed heading:(double)heading
 {
-    mlogDebug(@"update car location: %.8f, %.8f\n", location.latitude, location.longitude);
+//    mlogDebug(@"update car location: %.8f, %.8f\n", location.latitude, location.longitude);
     PointD nextCarPoint;
     float distanceFromCarToRouteStart;
     RouteLine* firstRouteLine;
@@ -1459,13 +1466,13 @@
 
     [carStatus updateLocation:location speed:speed heading:heading];
     
-    currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine];
+    currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine distance:&distanceToRouteLine];
 
     /* head to first route line */
     if (nil == currentRouteLine && (nil == lastRouteLine || 0 == lastRouteLine.no) && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
         currentRouteLine = firstRouteLine;
-        lastValidRouteLineTime = [[NSDate init] alloc];
+        lastValidRouteLineTime = [NSDate date];
         [naviState sendEvent:GR_EVENT_ROUTE_LINE_READY];
     }
     /* found matched route line */
@@ -1502,14 +1509,15 @@
         {
             duration = -[lastValidRouteLineTime timeIntervalSinceNow];
             /* stay at GPS_READY if missing GPS signal is less than the CONFIG_MAX_OUT_OF_ROUTELINE_COUNT */
-            if (duration < [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_TIME])
+            if (duration < [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_TIME] && outOfRouteLineCount <= 3)
             {
                 [naviState sendEvent:GR_EVENT_GPS_READY];
             }
             /* location lost */
             else
             {
-                mlogInfo(@"exceed out of route line time\n");
+                mlogInfo(@"exceed out of route line time, duration: %.1f, outOfRouteLineCount: %d\n", duration, outOfRouteLineCount);
+                outOfRouteLineCount = 0;
                 [naviState sendEvent:GR_EVENT_LOCATION_LOST];
                 lastValidRouteLineTime = nil;
             }
@@ -1785,7 +1793,8 @@
     debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_H_IS_DEBUG];
     self.isNetwork  = [SystemManager getNetworkStatus] > 0;
     self.isGps      = [SystemManager getGpsStatus] > 0;
-    
+
+    routeTrack      = [[RouteTrack alloc] init];
 //    self.isDebugRouteLineAngle  = TRUE;
 //    self.isDebugNormalLine      = TRUE;
 
@@ -1802,6 +1811,8 @@
 
     /* clear the last played speech */
     lastPlayedSpeech = @"";
+
+    [routeTrack save];
 }
 
 
@@ -1971,6 +1982,7 @@
 #pragma mark -- delegate
 -(void) downloadRequest:(DownloadRequest*) downloadRequest status:(DownloadStatus) status;
 {
+ 
     if (downloadRequest == routeDownloadRequest)
         [self processRouteDownloadRequestStatusChange];
 }
@@ -1979,7 +1991,7 @@
 {
     
     currentStep++;
-    //    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
+    mlogDebug(@"location update (%.7f, %.7f), step: %d", location.latitude, location.longitude, currentStep);
     
     /* keep track of last GPS signal update time */
     lastGPSSignalTime = [[NSDate alloc] init];
@@ -1996,7 +2008,9 @@
     
     //    mlogDebug(@" current route, (%.7f, %.7f) - > (%.7f, %.7f), step: %d\n", routeStartPoint.y, routeStartPoint.x, routeEndPoint.y, routeEndPoint.x, locationIndex);
     
-    debugMsgLabel.text = [NSString stringWithFormat:@"%.1f(%.1f) %.1f(%.1f)\n%.8f, %.8f, %.1f, %.1f \n%@ %@",
+    [routeTrack addLocation:[[CLLocation alloc] initWithLatitude:location.latitude longitude:location.longitude] event:naviState.event];
+    debugMsgLabel.text = [NSString stringWithFormat:@"%.1f, %.1f(%.1f) %.1f(%.1f)\n%.8f, %.8f, %.1f, %.1f \n%@ %@",
+                          distanceToRouteLine,
                           distanceToNextStep,
                           [SystemConfig getFloatValue:CONFIG_TURN_ANGLE_BEFORE_DISTANCE],
                           timeToNextStep,
@@ -2072,6 +2086,7 @@
     if (nil != routeDownloadRequest)
     {
         mlogInfo(@"route download request status: %@", routeDownloadRequest);
+        [NaviQueryManager cancelPendingDownload];
     }
     
     routeDownloadRequest = nil;

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B13073E191E793500F83D52 /* RouteTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B13073D191E793500F83D52 /* RouteTrack.m */; };
 		2B1372FF189510B300B398FD /* RSSecrets.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1372FE189510B300B398FD /* RSSecrets.m */; };
 		2B1373021895356900B398FD /* SKProduct+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1373011895356900B398FD /* SKProduct+category.m */; };
 		2B18AA911748D19700277F52 /* UILabel+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B18AA901748D19700277F52 /* UILabel+category.m */; };
@@ -109,6 +110,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2B13073C191E793500F83D52 /* RouteTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouteTrack.h; sourceTree = "<group>"; };
+		2B13073D191E793500F83D52 /* RouteTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RouteTrack.m; sourceTree = "<group>"; };
 		2B1372FD189510B300B398FD /* RSSecrets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSSecrets.h; sourceTree = "<group>"; };
 		2B1372FE189510B300B398FD /* RSSecrets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSSecrets.m; sourceTree = "<group>"; };
 		2B1373001895356900B398FD /* SKProduct+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SKProduct+category.h"; sourceTree = "<group>"; };
@@ -348,6 +351,8 @@
 				2BFAC08F190B487C006FFD94 /* NaviState.m */,
 				2BFAC094190B6557006FFD94 /* CarStatus.h */,
 				2BFAC095190B6557006FFD94 /* CarStatus.m */,
+				2B13073C191E793500F83D52 /* RouteTrack.h */,
+				2B13073D191E793500F83D52 /* RouteTrack.m */,
 			);
 			name = GeoNavigation;
 			sourceTree = "<group>";
@@ -624,6 +629,7 @@
 				2B6CBFE616DFA6FD0095CBD4 /* DownloadRequest.m in Sources */,
 				2B6CBFE716DFA6FD0095CBD4 /* FileDownloader.m in Sources */,
 				2B6CBFE816DFA6FD0095CBD4 /* GeoUtil.m in Sources */,
+				2B13073E191E793500F83D52 /* RouteTrack.m in Sources */,
 				2B6CBFE916DFA6FD0095CBD4 /* GuideRouteUIView.m in Sources */,
 				2B6CBFEA16DFA6FD0095CBD4 /* NaviQueryManager.m in Sources */,
 				2B6CBFEB16DFA6FD0095CBD4 /* NSString+category.m in Sources */,

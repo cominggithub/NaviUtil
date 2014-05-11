@@ -82,12 +82,19 @@
 -(void) setStatus:(DownloadStatus)status
 {
     _status = status;
+    
+
     if (self.delegate != NULL)
     {
         if (nil != self.delegate && [self.delegate respondsToSelector:@selector(downloadRequest:status:)])
         {
             [self.delegate downloadRequest:self status:self.status];
         }
+    }
+    
+    if (self.done)
+    {
+        mlogInfo([self description]);
     }
 }
 -(BOOL) done

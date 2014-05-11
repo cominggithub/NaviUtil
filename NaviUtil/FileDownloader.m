@@ -13,9 +13,9 @@
 #if DEBUG
 #define FILE_DEBUG TRUE
 #elif RELEASE_TEST
-#define FILE_DEBUG TRUE
+#define FILE_DEBUG FALSE
 #else
-#define FILE_DEBUG TRUE
+#define FILE_DEBUG FALSE
 #endif
 
 #include "Log.h"
@@ -62,7 +62,7 @@
     [self deleteFile];
     [self createFile];
     self.retryCount++;
-    mlogDebug(@"%lu starts to download %@\nfrom\n%@\n", self.downloadId, self.filePath, self.url);
+    mlogInfo(@"%lu starts to download %@\nfrom\n%@\n", self.downloadId, self.filePath, self.url);
     [NSURLConnection connectionWithRequest:urlRequest delegate:self];
 }
 
@@ -89,7 +89,7 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-    mlogDebug(@"%lu didFailWithError %@\n", self.downloadId, error);
+    mlogInfo(@"%lu didFailWithError %@\n", self.downloadId, error);
     
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFail:)])
         [self.delegate downloadFail: self];
@@ -104,7 +104,7 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection
 {
-    mlogDebug(@"FileDownloader %lu finish download\n", self.downloadId);
+    mlogInfo(@"FileDownloader %lu finish download\n", self.downloadId);
     
     if(self.delegate != nil && [self.delegate respondsToSelector:@selector(downloadFinish:)])
     {

@@ -92,6 +92,7 @@ typedef enum DownloadFileFormat {
 +(void) download:(DownloadRequest*) dr;
 +(void) downloadSpeech:(Route*) route;
 +(void) cancelPendingDownload;
++(void) dumpDownloadStatus;
 @end
 
 

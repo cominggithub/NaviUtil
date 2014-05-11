@@ -19,7 +19,7 @@
 
 #include "Log.h"
 
-#define DISTANCE_FROM_ROUTE_LINE_THRESHOLD  10
+#define DISTANCE_FROM_ROUTE_LINE_THRESHOLD  20
 #define DISTANCE_FROM_START_POINT_THRESHOLD 10
 
 @implementation Route
@@ -60,6 +60,8 @@
     NSDictionary* root;
     BOOL startRouteLine;
     
+    self.name = [[fileName lastPathComponent] stringByDeletingPathExtension];
+
     if ( [GoogleJson getStatus:fileName] != kGoogleJsonStatus_Ok )
     {
         return nil;
@@ -71,7 +73,7 @@
         data  = [[NSFileManager defaultManager] contentsAtPath:fileName];
         root  = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
         array = [root objectForKey:@"results"];
-        dic = [array objectAtIndex:0];
+        dic     = [array objectAtIndex:0];
     
         legs    = [[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"];
         steps   = [[[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0] objectForKey:@"steps"];
@@ -112,9 +114,9 @@
         [self addLocationToRouteLinesWithStepNo:i-1 Location:[self getEndLocation] startRouteLine:FALSE];
 
         [self saveRouteLines];
-        [self saveToKMLFileName:[self getName] filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager getPath:kSystemManager_Path_Route], [self getName]]];
+        [self saveToKMLFileName:self.name filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager getPath:kSystemManager_Path_Route], self.name]];
      
-        [self dumpRouteLines];
+     
     }
     @catch (NSException *exception)
     {
@@ -450,6 +452,11 @@
     return [[[legs objectAtIndex:0] objectForKey:@"distance"] objectForKey:@"text"];
 }
 
+-(NSString*) getStartLocationString
+{
+    CLLocationCoordinate2D location = [self getStartLocation];
+    return [NSString stringWithFormat:@"%.8f,%.8f", location.latitude, location.longitude];
+}
 -(CLLocationCoordinate2D) getStartLocation
 {
     NSDictionary *location = [[legs objectAtIndex:0] objectForKey:@"start_location"];
@@ -460,6 +467,11 @@
     return result;
 }
 
+-(NSString*) getEndLocationString
+{
+    CLLocationCoordinate2D location = [self getEndLocation];
+    return [NSString stringWithFormat:@"%.8f,%.8f", location.latitude, location.longitude];
+}
 -(CLLocationCoordinate2D) getEndLocation
 {
     NSDictionary *location = [[legs objectAtIndex:0] objectForKey:@"end_location"];
@@ -468,15 +480,6 @@
                                                                [[location objectForKey:@"lng"] doubleValue]);
     
     return result;
-}
-
--(NSString *) getName
-{
-    return [NSString stringWithFormat:@"%@_to_%@",
-            [self getStartAddress],
-            [self getEndAddress]
-            ];
-    
 }
 
 -(NSString *) getNameWithCoordinate
@@ -551,7 +554,7 @@
     
 }
 
--(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine
+-(RouteLine*) findClosestRouteLineByLocation:(CLLocationCoordinate2D) location LastRouteLine:(RouteLine*)lastRouteLine distance:(double*) outDistance
 {
     int i=0;
     int radius = 20;
@@ -562,13 +565,14 @@
     
     RouteLine* matchedRouteLine             = nil;
     RouteLine* matchedRouteLineWithEndPoint = nil;
-//    RouteLine* carCurrentRouteLine          = nil;
+
     double distance                         = DISTANCE_FROM_ROUTE_LINE_THRESHOLD;
     double distanceFromStartPoint           = DISTANCE_FROM_START_POINT_THRESHOLD;
     double tmpDistance                      = 0.0;
     double tmpStartDistance                 = 0.0;
     double angleStart                       = 0.0;
     double angleEnd                         = 0.0;
+    double closestDistance                  = 99999.0;
 
     startTime = [NSDate date];
     NSString *matchFlag;
@@ -610,6 +614,10 @@
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
             }
 
+            if (tmpDistance < closestDistance)
+            {
+                closestDistance = tmpDistance;
+            }
             mlogDebug(@"rlno:%3d (%12.8f, %12.8f) ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
                       rl.no,
                       rl.startLocation.latitude,
@@ -654,6 +662,10 @@
                 matchedRouteLineWithEndPoint = rl;
                 distanceFromStartPoint = tmpStartDistance;
                 matchFlag = [NSString stringWithFormat:@"%@%@", matchFlag, @"E"];
+            }
+            if (tmpDistance < closestDistance)
+            {
+                closestDistance = tmpDistance;
             }
             
             mlogDebug(@"rlno:%3d (%12.8f, %12.8f) ag:%3.0f agS:%3.0f agE:%3.0f d:%3.0f dS:%3.0f %@",
@@ -703,6 +715,7 @@
              duration
              );
 
+    *outDistance = closestDistance;
     return matchedRouteLine;
         
 }
