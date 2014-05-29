@@ -85,6 +85,7 @@ static BOOL _alwaysUseMainBundle = NO;
 
 @synthesize ratingAlert;
 
+
 + (void) setAppId:(NSString *)appId {
     _appId = appId;
 }
@@ -277,6 +278,16 @@ static BOOL _alwaysUseMainBundle = NO;
 	return YES;
 }
 
+/* begin linms */
+-(NSUInteger) useCount
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+
+	// check if the app has been used enough
+    return [userDefaults integerForKey:kAppiraterUseCount];
+}
+
+/* end linms */
 - (void)incrementUseCount {
 	// get the app's version
 	NSString *version = [[[NSBundle mainBundle] infoDictionary] objectForKey:(NSString*)kCFBundleVersionKey];
@@ -620,4 +631,8 @@ static BOOL _alwaysUseMainBundle = NO;
 	}
 }
 
++(NSInteger) useCount
+{
+    return [[Appirater sharedInstance] useCount];
+}
 @end

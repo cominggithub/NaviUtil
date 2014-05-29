@@ -92,6 +92,9 @@ extern NSString *const kAppiraterReminderRequestDate;
 
 @property(nonatomic, strong) UIAlertView *ratingAlert;
 @property(nonatomic) BOOL openInAppStore;
+/* begi linms */
+@property(nonatomic, readonly) NSUInteger useCount;
+/* end linms */
 #if __has_feature(objc_arc_weak)
 @property(nonatomic, weak) NSObject <AppiraterDelegate> *delegate;
 #else
@@ -257,6 +260,8 @@ extern NSString *const kAppiraterReminderRequestDate;
  in your main bundle.  Default is NO.
  */
 + (void)setAlwaysUseMainBundle:(BOOL)useMainBundle;
+
++(NSInteger) useCount;
 
 @end
 

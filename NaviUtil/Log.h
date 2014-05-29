@@ -21,6 +21,7 @@
 #define logObjNoName(o) printf("%s\n",[[o description] UTF8String])
 #define logOS(o, args...) do{printf("%s", #o); printf(args);}while(0)
 #define logI(o) printf("%s(%d), %s: %d\n", __FUNCTION__, __LINE__, #o, o)
+#define logL(o) printf("%s(%ld), %s: %d\n", __FUNCTION__, __LINE__, #o, o)
 #define logF(o) printf("%s(%d), %s: %f\n", __FUNCTION__, __LINE__, #o, o)
 #define logS(o) printf("%s(%d), %s: %s\n", __FUNCTION__, __LINE__, #o, o)
 #define logCoor(o) printf("%s(%d), %s: (%f, %f)\n", __FUNCTION__, __LINE__, #o, o.latitude, o.longitude)
