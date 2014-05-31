@@ -628,7 +628,7 @@
         }
         else
         {
-            messageBoxLabel.text = @"";
+            // messageBoxLabel.text = @"";
         }
 
 #if DEBUG
@@ -1011,29 +1011,47 @@
     NSString* sampleText = @"OK";
     double oneLineHeight = 0;
     int currentLineNo = 1;
+    int minFontSize = 24;
     CGRect resultRect;
     
     
     font = [UIFont boldSystemFontOfSize:tmpFontSize];
+    // measure the line height from the sample text
     actualSize = [sampleText sizeWithFont:font constrainedToSize:rect.size lineBreakMode:NSLineBreakByClipping];
     oneLineHeight = actualSize.height;
-    while (tmpFontSize >= 24 && currentLineNo <=2)
+    
+    // measure the rect for the message
+    while (tmpFontSize >= minFontSize && currentLineNo <=2)
     {
         font = [UIFont boldSystemFontOfSize:tmpFontSize];
+        // measure the actual size
         actualSize = [message sizeWithFont:font constrainedToSize:rect.size lineBreakMode:NSLineBreakByClipping];
-
+        
+        // if the acutal rect size fits the given rect, then break;
         if (actualSize.width <= rect.size.width && actualSize.height <= oneLineHeight*currentLineNo)
             break;
         
-        if (tmpFontSize == 24)
-            currentLineNo++;
+        // cannot find a match rect, adjust the font size
         
-        tmpFontSize--;
+        
+        // increase line count
+        if (tmpFontSize == minFontSize)
+        {
+            currentLineNo++;
+            tmpFontSize = *fontSize;
+        }
+        // decrease font size
+        else
+        {
+            tmpFontSize--;
+        }
     }
     
-    *fontSize   = tmpFontSize;
-    resultRect  = rect;
+    *fontSize       = tmpFontSize;
+    resultRect      = rect;
     resultRect.size = actualSize;
+    
+    printf("font size: %d, line count: %d", *fontSize, currentLineNo);
     
     if (currentLineNo > 1)
         resultRect.size.height += (currentLineNo-1)*oneLineHeight;
@@ -1061,7 +1079,8 @@
             break;
         fontSize--;
     }
-    
+
+    printf("font size: %d", fontSize);
     mlogDebug(@"font size: %d\n", fontSize);
     return fontSize;
 }
@@ -1882,6 +1901,9 @@
 
 -(void) setMessageBoxText:(NSString *)messageBoxText
 {
+    if (messageBoxText.length > 0)
+        messageBoxLabel.text = messageBoxText;
+    /*
     NSDate *now = [NSDate date];
     BOOL update = FALSE;
     
@@ -1924,7 +1946,7 @@
     {
         [self stopRoutePlanTimer];
     }
-
+     */
 }
 
 

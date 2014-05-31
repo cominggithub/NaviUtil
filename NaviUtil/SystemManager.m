@@ -6,6 +6,7 @@
 //  Copyright (c) 2013年 Coming. All rights reserved.
 //
 
+#define DEFAULT_GOOGLE_LANGUAGE @"en"
 #import "SystemManager.h"
 #import "NaviQueryManager.h"
 #import <mach/mach.h>
@@ -83,7 +84,7 @@ static NSDictionary *_googleLanguage;
     mlogInfo(@"systemVersion: %@", device.systemVersion);
     mlogInfo(@"userInterfaceIdiom: %d", device.userInterfaceIdiom);
     mlogInfo(@"screen %.0f X %.0f %s", screenBounds.size.width, screenBounds.size.height, screenScale > 1.0 ? "Retina":"");
-
+    mlogInfo(@"Language: %@", [[NSLocale preferredLanguages] objectAtIndex:0]);
     
 
 /*
@@ -282,6 +283,11 @@ static NSDictionary *_googleLanguage;
                           @"en", @"en",
                           @"zh-TW", @"zh-Hant",
                           @"zh-CN", @"zh-Hans",
+//                          @"ja", @"ja",
+                          @"fr", @"fr",
+                          @"ko", @"ko",
+                          @"es", @"es",
+                          @"en", @"en-GB",
                           nil
                           ];
     
@@ -360,6 +366,8 @@ static NSDictionary *_googleLanguage;
     mlogInfo(@"   Log File Path: %@", [self getPath:kSystemManager_Path_Log]);
     mlogInfo(@"   tmp File Path: %@", [self getPath:kSystemManager_Path_Tmp]);
 
+    
+
 }
 
 +(NSString *) getFilePathInDocument:(NSString*) fileName
@@ -395,8 +403,6 @@ static NSDictionary *_googleLanguage;
     if([fileManager fileExistsAtPath:path]) {
         [fileManager removeItemAtPath:path error:nil];
     }
-
-
 }
 
 +(void) makeDirectory:(NSString*) path
@@ -416,7 +422,17 @@ static NSDictionary *_googleLanguage;
 
 +(NSString *) getGoogleLanguage
 {
-    return [_googleLanguage objectForKey:[[NSLocale preferredLanguages] objectAtIndex:0]];
+    NSString *language;
+    language = [_googleLanguage objectForKey:[[NSLocale preferredLanguages] objectAtIndex:0]];
+
+    if (nil == language)
+    {
+        logfn();
+        language = DEFAULT_GOOGLE_LANGUAGE;
+    }
+
+    
+    return language;
 }
 
 /*
@@ -482,6 +498,9 @@ static NSDictionary *_googleLanguage;
 {
     
     NSString *result = NSLocalizedString(stringIndex, nil);
+
+    if (nil  == result)
+        return stringIndex;
     
     return result;
 
