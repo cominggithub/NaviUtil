@@ -81,6 +81,8 @@
             return @"E_ROUTE_LINE_READY";
         case GR_EVENT_NO_ROUTE:
             return @"E_NO_ROUTE";
+        case GR_EVENT_RESTART:
+            return @"E_RESTART";
     }
     
 }
@@ -164,6 +166,8 @@
         case GR_EVENT_NO_ROUTE:
             [self setState:GR_STATE_NO_ROUTE];
             break;
+        case GR_EVENT_RESTART:
+            [self setState:GR_STATE_GPS_NO_SIGNAL];
     }
     
 }

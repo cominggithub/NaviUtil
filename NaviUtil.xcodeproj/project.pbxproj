@@ -31,6 +31,8 @@
 		2B24473B1843949E00813A0F /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B24472F1843949E00813A0F /* SystemConfiguration.framework */; };
 		2B27CEA31894990D00FBE5FF /* IAPHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B27CEA21894990D00FBE5FF /* IAPHelper.m */; };
 		2B27CEA618949A0D00FBE5FF /* NavierHUDIAPHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B27CEA518949A0D00FBE5FF /* NavierHUDIAPHelper.m */; };
+		2B4D5E06193B647900442F2A /* CoordinateTranslator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4D5E05193B647900442F2A /* CoordinateTranslator.m */; };
+		2B4D5E09193B690100442F2A /* NaviStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4D5E08193B690100442F2A /* NaviStatus.m */; };
 		2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B61D8661771E64400ACB1AA /* SystemConfig.m */; };
 		2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */; };
 		2B6CBFA716DFA6D90095CBD4 /* NaviUtil.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */; };
@@ -145,6 +147,10 @@
 		2B27CEA418949A0D00FBE5FF /* NavierHUDIAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavierHUDIAPHelper.h; sourceTree = "<group>"; };
 		2B27CEA518949A0D00FBE5FF /* NavierHUDIAPHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavierHUDIAPHelper.m; sourceTree = "<group>"; };
 		2B27CEA71894A36F00FBE5FF /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		2B4D5E04193B647900442F2A /* CoordinateTranslator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoordinateTranslator.h; sourceTree = "<group>"; };
+		2B4D5E05193B647900442F2A /* CoordinateTranslator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CoordinateTranslator.m; sourceTree = "<group>"; };
+		2B4D5E07193B690100442F2A /* NaviStatus.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NaviStatus.h; sourceTree = "<group>"; };
+		2B4D5E08193B690100442F2A /* NaviStatus.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NaviStatus.m; sourceTree = "<group>"; };
 		2B61D8651771E64400ACB1AA /* SystemConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemConfig.h; sourceTree = "<group>"; };
 		2B61D8661771E64400ACB1AA /* SystemConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SystemConfig.m; sourceTree = "<group>"; };
 		2B6CBF9E16DFA6D90095CBD4 /* libNaviUtil.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libNaviUtil.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -353,6 +359,10 @@
 				2BFAC095190B6557006FFD94 /* CarStatus.m */,
 				2B13073C191E793500F83D52 /* RouteTrack.h */,
 				2B13073D191E793500F83D52 /* RouteTrack.m */,
+				2B4D5E04193B647900442F2A /* CoordinateTranslator.h */,
+				2B4D5E05193B647900442F2A /* CoordinateTranslator.m */,
+				2B4D5E07193B690100442F2A /* NaviStatus.h */,
+				2B4D5E08193B690100442F2A /* NaviStatus.m */,
 			);
 			name = GeoNavigation;
 			sourceTree = "<group>";
@@ -628,6 +638,7 @@
 				2B6CBFE516DFA6FD0095CBD4 /* DownloadManager.m in Sources */,
 				2B6CBFE616DFA6FD0095CBD4 /* DownloadRequest.m in Sources */,
 				2B6CBFE716DFA6FD0095CBD4 /* FileDownloader.m in Sources */,
+				2B4D5E09193B690100442F2A /* NaviStatus.m in Sources */,
 				2B6CBFE816DFA6FD0095CBD4 /* GeoUtil.m in Sources */,
 				2B13073E191E793500F83D52 /* RouteTrack.m in Sources */,
 				2B6CBFE916DFA6FD0095CBD4 /* GuideRouteUIView.m in Sources */,
@@ -635,6 +646,7 @@
 				2B6CBFEB16DFA6FD0095CBD4 /* NSString+category.m in Sources */,
 				2B6CBFEC16DFA6FD0095CBD4 /* NSValue+category.m in Sources */,
 				2B6CBFED16DFA6FD0095CBD4 /* Place.m in Sources */,
+				2B4D5E06193B647900442F2A /* CoordinateTranslator.m in Sources */,
 				2B6CBFEE16DFA6FD0095CBD4 /* Route.m in Sources */,
 				2B6CBFEF16DFA6FD0095CBD4 /* RouteInstruction.m in Sources */,
 				2B6CBFF016DFA6FD0095CBD4 /* Speech.m in Sources */,

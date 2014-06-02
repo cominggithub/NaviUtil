@@ -269,4 +269,12 @@
 }
 
 
++(PointD)getPointDFromCGPoint:(CGPoint)p
+{
+    PointD pd;
+    pd.x = p.x;
+    pd.y = p.y;
+    
+    return pd;
+}
 @end

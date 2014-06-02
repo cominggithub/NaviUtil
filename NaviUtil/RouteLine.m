@@ -7,6 +7,7 @@
 //
 
 #import "RouteLine.h"
+#import "CoordinateTranslator.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
@@ -31,6 +32,8 @@
                              startRouteLine:(BOOL) startRouteLine
 {
     RouteLine *rl = [[RouteLine alloc] initWithStartLocation:startLocation EndLocation:endLocation stepNo:stepNo routeLineNo:routeLineNo startRouteLine:startRouteLine];
+    
+
     return rl;
 }
 
@@ -46,12 +49,15 @@
         self.startLocation      = startLocation;
         self.endLocation        = endLocation;
         self.stepNo             = stepNo;
-        self.no        = no;
+        self.no                 = no;
         self.slope              = 0.0;
         self.isSlopeUndefined   = false;
         self.distance           = 0;
         self.cumulativeDistance = 0;
         self.startRouteLine     = startRouteLine;
+     
+        _startPoint             = [CoordinateTranslator projectCoordinate:startLocation];
+        _endPoint               = [CoordinateTranslator projectCoordinate:endLocation];
         
         [self calculateLineEquation];
 

@@ -30,8 +30,7 @@
     double ratio;
     double fitRatio;
     int locationIndex;
-    PointD carPoint;
-    PointD carDrawPoint;
+
 
     PointD screenOffsetPoint;
     

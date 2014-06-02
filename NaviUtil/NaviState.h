@@ -22,7 +22,8 @@ typedef enum
     GR_EVENT_ACTIVE,
     GR_EVENT_INACTIVE,
     GR_EVENT_ARRIVAL,
-    GR_EVENT_NO_ROUTE
+    GR_EVENT_NO_ROUTE,
+    GR_EVENT_RESTART
 }GR_EVENT;
 
 typedef enum

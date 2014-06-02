@@ -63,7 +63,8 @@
         {
 
         }
-
+        
+        logI(status);
     
     }
     return status;
