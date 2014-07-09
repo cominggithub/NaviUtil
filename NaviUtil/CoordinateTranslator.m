@@ -20,6 +20,7 @@
 
 @implementation CoordinateTranslator
 
+
 +(CGPoint) projectCoordinate:(CLLocationCoordinate2D) coordinate
 {
     CGPoint p;
@@ -54,6 +55,7 @@
     return rotatedPoint;
 }
 
+/* translate projected point (0,0 at left bottom) into draw point (0,0 at left-top) according to carCenterPoint */ 
 +(CGPoint) translateToDrawPointByPoint:(CGPoint)point screenOffset:(CGPoint)screenOffset carCenterPoint:(CGPoint)carCenterPoint
 {
     CGPoint drawPoint;
@@ -89,79 +91,5 @@
     
     return mirroredPoint;
 }
-
-
-/*
--(PointD) getDrawPoint:(PointD)p
-{
-    
-    PointD tmpPoint;
-    PointD translatedPoint;
-    
-    // step 1: rotate
-    // let carPoint be the origin
-    tmpPoint.x = (p.x - carPoint.x);
-    tmpPoint.y = (p.y - carPoint.y);
-    
-    
-    // rotate and move back
-    //    translatedPoint.x = tmpPoint.x*cos(directionAngle) - tmpPoint.y*sin(directionAngle) + carPoint.x;
-    //    translatedPoint.y = tmpPoint.x*sin(directionAngle) + tmpPoint.y*cos(directionAngle) + carPoint.y;
-    
-    translatedPoint.x = tmpPoint.x*cos(currentDrawAngle) - tmpPoint.y*sin(currentDrawAngle) + carPoint.x;
-    translatedPoint.y = tmpPoint.x*sin(currentDrawAngle) + tmpPoint.y*cos(currentDrawAngle) + carPoint.y;
-    
-    // step2: scale and move to car screen point.
-    translatedPoint.x = translatedPoint.x*ratio + toScreenOffset.x;
-    translatedPoint.y = translatedPoint.y*ratio + toScreenOffset.y;
-    
-    
-    //    printf("translatedPoint (%.8f, %.8f)\n", translatedPoint.x, translatedPoint.y);
-    
-    // step3: mirror around the y axis of car center point
-    // 1. move to origin (-carCenterPoint)
-    // 2. mirror, y=-y
-    // 3. move back (+carCenterPoint)
-    translatedPoint.y = carCenterPoint.y - translatedPoint.y + carCenterPoint.y;
-    
-    //    printf("     draw point (%.5f, %.5f) - > (%.0f, %.0f)\n\n", p.x, p.y, translatedPoint.x, translatedPoint.y);
-    
-    return translatedPoint;
-}
-*/
-
-/*
--(PointD) translateDrawPoint:(PointD) p
-{
-    PointD tmpPoint;
-    PointD translatedPoint;
-    
-    // step 1: rotate
-    // let carPoint be the origin
-    tmpPoint.x = (p.x - carPoint.x);
-    tmpPoint.y = (p.y - carPoint.y);
-    
-    
-    // rotate and move back
-    //    translatedPoint.x = tmpPoint.x*cos(directionAngle) - tmpPoint.y*sin(directionAngle) + carPoint.x;
-    //    translatedPoint.y = tmpPoint.x*sin(directionAngle) + tmpPoint.y*cos(directionAngle) + carPoint.y;
-    
-    translatedPoint.x = tmpPoint.x*cos(currentDrawAngle) - tmpPoint.y*sin(currentDrawAngle) + carPoint.x;
-    translatedPoint.y = tmpPoint.x*sin(currentDrawAngle) + tmpPoint.y*cos(currentDrawAngle) + carPoint.y;
-    
-    // step2: move to car screen point.
-    translatedPoint.x = translatedPoint.x + toScreenOffset.x;
-    translatedPoint.y = translatedPoint.y + toScreenOffset.y;
-    
-    // step3: mirror around the y axis of car center point
-    // 1. move to origin (-carCenterPoint)
-    // 2. mirror, y=-y
-    // 3. move back (+carCenterPoint)
-    translatedPoint.y = carCenterPoint.y - translatedPoint.y + carCenterPoint.y;
-    
-    return
-}
- */
-
 
 @end

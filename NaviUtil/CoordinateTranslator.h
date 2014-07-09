@@ -11,6 +11,7 @@
 #import <QuartzCore/QuartzCore.h>
 @interface CoordinateTranslator : NSObject
 
+/* multiply MAP_RATIO and apply cosin adjustment on longitude */
 +(CGPoint) projectCoordinate:(CLLocationCoordinate2D) coordinate;
 +(CGPoint) rotatePoint:(CGPoint) point at:(CGPoint)origin angle:(double)angle;
 +(CGPoint) translateToDrawPointByPoint:(CGPoint)point screenOffset:(CGPoint)screenOffset carCenterPoint:(CGPoint)carCenterPoint;

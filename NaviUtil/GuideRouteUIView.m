@@ -287,7 +287,7 @@
     PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
     xOffset = tmpCarDrawPoint.x - startPoint.x + _routeComponentRect.origin.x;
 
-    CGPoint cstartPoint = [self getDrawCGPoint:currentRouteLine.startPoint];
+    CGPoint cstartPoint = [self getDrawCGPoint:currentRouteLine.startProjectedPoint];
 //    logfns("PointD (%.2f, %.2f), CGPoint (%.2f, %.2f)\n", startPoint.x, startPoint.y, cstartPoint.x, cstartPoint.y);
     
     xOffset = ccarDrawPoint.x - cstartPoint.x + _routeComponentRect.origin.x;
@@ -308,7 +308,7 @@
     /* draw debug information */
     if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG_ROUTE_DRAW])
     {
-        [self drawCar:context];
+//        [self drawCar:context];
         [self drawCurrentRouteLine:context];
         [self drawCarFootPrint:context];
         [self drawRouteLabel:context];
@@ -379,8 +379,8 @@
     {
         RouteLine *rl;
         rl              = [route.routeLines objectAtIndex:i];
-        startPoint      = [self getDrawCGPoint:rl.startPoint];
-        endPoint        = [self getDrawCGPoint:rl.endPoint];
+        startPoint      = [self getDrawCGPoint:rl.startProjectedPoint];
+        endPoint        = [self getDrawCGPoint:rl.endProjectedPoint];
         startPoint.x    += xOffset;
         endPoint.x      += xOffset;
         
@@ -406,8 +406,8 @@
     {
         RouteLine *rl = [route.routeLines objectAtIndex:i];
         
-        startPoint      = [self getDrawCGPoint:rl.startPoint];
-        endPoint        = [self getDrawCGPoint:rl.endPoint];
+        startPoint      = [self getDrawCGPoint:rl.startProjectedPoint];
+        endPoint        = [self getDrawCGPoint:rl.endProjectedPoint];
         startPoint.x    += xOffset;
         endPoint.x      += xOffset;
         
@@ -428,7 +428,7 @@
     // add circle to the edge of route line
     for(RouteLine *rl in drawedRouteLines)
     {
-        startPoint      = [self getDrawCGPoint:rl.startPoint];
+        startPoint      = [self getDrawCGPoint:rl.startProjectedPoint];
         startPoint.x    += xOffset;
         
         /* skip circules that are too close to the previous drawed one */
@@ -488,8 +488,8 @@
         tmpRouteLine = [route.routeLines objectAtIndex:0];
     }
     
-    startPoint      = [self getDrawCGPoint:tmpRouteLine.startPoint];
-    endPoint        = [self getDrawCGPoint:tmpRouteLine.endPoint];
+    startPoint      = [self getDrawCGPoint:tmpRouteLine.startProjectedPoint];
+    endPoint        = [self getDrawCGPoint:tmpRouteLine.endProjectedPoint];
     
     
     startPoint.x    += xOffset;
@@ -517,8 +517,8 @@
     
     // draw end point
     tmpRouteLine = [route.routeLines lastObject];
-    startPoint      = [self getDrawCGPoint:tmpRouteLine.startPoint];
-    endPoint        = [self getDrawCGPoint:tmpRouteLine.endPoint];
+    startPoint      = [self getDrawCGPoint:tmpRouteLine.startProjectedPoint];
+    endPoint        = [self getDrawCGPoint:tmpRouteLine.endProjectedPoint];
     startPoint.x    += xOffset;
     endPoint.x      += xOffset;
     
@@ -750,7 +750,7 @@
 }
 
 #endif
-
+/*
 -(void) drawCar:(CGContextRef) context
 {
 
@@ -807,7 +807,7 @@
     }
     
 }
-
+*/
 -(void) drawCurrentRouteLine:(CGContextRef) context
 {
     PointD curPoint;
@@ -884,8 +884,8 @@
 {
     // Drawing code
     int i;
-    PointD startPoint;
-    PointD endPoint;
+    CGPoint startPoint;
+    CGPoint endPoint;
     CGRect routeLineLabelRect;
     NSString *routeLineLabel;
     RouteLine *tmpCurrentRouteLine;
@@ -901,8 +901,8 @@
             nextRouteLine = [drawedRouteLines objectAtIndex:i+1];
         }
         
-        startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpCurrentRouteLine.startLocation]];
-        endPoint    = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:tmpCurrentRouteLine.endLocation]];
+        startPoint  = [self getDrawCGPoint:tmpCurrentRouteLine.startProjectedPoint];
+        endPoint    = [self getDrawCGPoint:tmpCurrentRouteLine.endProjectedPoint];
         
         startPoint.x    += xOffset;
         endPoint.x      += xOffset;
@@ -1320,6 +1320,7 @@
     return [CoordinateTranslator getDrawPointByPoint:p at:ccarPoint angle:currentDrawAngle screenOffset:ctoScreenOffset carCenterPoint:ccarCenterPoint];
 }
 
+
 -(PointD) getDrawPoint:(PointD)p
 {
     
@@ -1430,7 +1431,7 @@
     
     [routeTrack addRoute:route];
     cosN   = cos(firstRouteLine.startLocation.latitude);
-
+    logF(cosN);
 }
 
 

@@ -56,8 +56,8 @@
         self.cumulativeDistance = 0;
         self.startRouteLine     = startRouteLine;
      
-        _startPoint             = [CoordinateTranslator projectCoordinate:startLocation];
-        _endPoint               = [CoordinateTranslator projectCoordinate:endLocation];
+        _startProjectedPoint             = [CoordinateTranslator projectCoordinate:startLocation];
+        _endProjectedPoint               = [CoordinateTranslator projectCoordinate:endLocation];
         
         [self calculateLineEquation];
 

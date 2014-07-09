@@ -278,7 +278,10 @@ static NSDictionary *_googleLanguage;
                           @"TRUE", @"zh-TW",
                           nil
                           ];
+    
+    [self initGoogleLanguageSetting];
 
+    /*
     _googleLanguage = [[NSDictionary alloc] initWithObjectsAndKeys:
                           @"en", @"en",
                           @"zh-TW", @"zh-Hant",
@@ -291,7 +294,7 @@ static NSDictionary *_googleLanguage;
                           nil
                           ];
     
-
+     */
 }
 
 +(void) initDirectory
@@ -370,6 +373,19 @@ static NSDictionary *_googleLanguage;
 
 }
 
++(void) initGoogleLanguageSetting
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    NSString *fileName;
+    
+    fileName = [[NSBundle mainBundle] pathForResource:@"googleLanguage" ofType:@"plist"];
+
+    if (![fileManager fileExistsAtPath:fileName]){
+        mlogError(@"cannot get configuration file: gogoleLanguage.plist\n");
+    }
+    
+    _googleLanguage = [[NSDictionary alloc] initWithContentsOfFile:fileName];
+}
 +(NSString *) getFilePathInDocument:(NSString*) fileName
 {
     return [NSString stringWithFormat:@"%@/%@", _documentPath, fileName];
@@ -423,12 +439,17 @@ static NSDictionary *_googleLanguage;
 +(NSString *) getGoogleLanguage
 {
     NSString *language;
-    language = [_googleLanguage objectForKey:[[NSLocale preferredLanguages] objectAtIndex:0]];
-
-    if (nil == language)
+    language = DEFAULT_GOOGLE_LANGUAGE;
+    
+    if (nil != _googleLanguage)
     {
-        logfn();
-        language = DEFAULT_GOOGLE_LANGUAGE;
+
+        language = [_googleLanguage objectForKey:[[NSLocale preferredLanguages] objectAtIndex:0]];
+
+        if (nil == language)
+        {
+            language = DEFAULT_GOOGLE_LANGUAGE;
+        }
     }
 
     
@@ -529,7 +550,6 @@ static NSDictionary *_googleLanguage;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
-
 
 @end
 

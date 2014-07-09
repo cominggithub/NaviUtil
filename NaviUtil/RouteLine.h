@@ -18,8 +18,8 @@
 
 @property CLLocationCoordinate2D startLocation;
 @property CLLocationCoordinate2D endLocation;
-@property (nonatomic, readonly) CGPoint startPoint;     // projected point
-@property (nonatomic, readonly) CGPoint endPoint;       // projected point
+@property (nonatomic, readonly) CGPoint startProjectedPoint;     // projected point
+@property (nonatomic, readonly) CGPoint endProjectedPoint;       // projected point
 @property double slope;
 @property bool isSlopeUndefined;
 @property double xOffset;
