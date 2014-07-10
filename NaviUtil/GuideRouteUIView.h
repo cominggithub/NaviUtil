@@ -52,8 +52,10 @@
     bool isRouteLineMUndefind;
     double routeLineB;
 
-    PointD routeStartPoint;
-    PointD routeEndPoint;
+    PointD routeStartPoint; // old
+    PointD routeEndPoint;   // old
+    CGPoint routeStartProjectedPoint;
+    CGPoint routeEndProjectedPoint;
     PointD directionStep;
     double oneStep;
     PointD routeUnitVector;

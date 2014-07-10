@@ -51,7 +51,7 @@
     CGRect                  _routeComponentRect;
     CGRect                  speedComponentRect;
     PointD                  carCenterPoint;     // screen center point, x,y
-    PointD                  carPoint;           // car coordinate
+    PointD                  carPoint;           // car coordinate, old
     PointD                  carDrawPoint;       // car draw point, x, y
     
     CGPoint                 ccarPoint;          // car projected point
@@ -810,7 +810,7 @@
 */
 -(void) drawCurrentRouteLine:(CGContextRef) context
 {
-    PointD curPoint;
+    CGPoint curPoint;
     
     if(currentRouteLine == nil)
         return;
@@ -819,11 +819,11 @@
     CGContextSetFillColorWithColor(context, [UIColor purpleColor].CGColor);
     CGContextSetLineWidth(context, 5.0);
     
-    curPoint = [self getDrawPoint:routeStartPoint];
+    curPoint = [self getDrawCGPoint:currentRouteLine.startProjectedPoint];
     curPoint.x += xOffset;
     
     CGContextMoveToPoint(context, curPoint.x, curPoint.y);
-    curPoint = [self getDrawPoint:routeEndPoint];
+    curPoint = [self getDrawCGPoint:currentRouteLine.endProjectedPoint];
     curPoint.x += xOffset;
     CGContextAddLineToPoint(context, curPoint.x, curPoint.y);
     CGContextStrokePath(context);
@@ -929,7 +929,8 @@
 -(void) drawCarFootPrint:(CGContextRef) context
 {
     int i;
-    PointD curPoint;
+//    PointD curPoint;
+    CGPoint curPoint;
     CGRect rect;
     NSTextAlignment aligment;
     NSMutableArray* drawedPoint = [[NSMutableArray alloc] init];
@@ -939,8 +940,7 @@
     for(i=0; i<carFootPrint.count; i++)
     {
         int size = 4;
-        NSValue* v = [carFootPrint objectAtIndex:i];
-        curPoint = [self getDrawPoint:[v PointDValue]];
+        curPoint = [self getDrawCGPoint:[[carFootPrint objectAtIndex:i] CGPointValue]];
         curPoint.x += xOffset;
         
         if (i == carFootPrint.count-1)
@@ -974,7 +974,7 @@
         
         [num drawInRect:rect withFont:[UIFont boldSystemFontOfSize:10.0] lineBreakMode:NSLineBreakByCharWrapping alignment:aligment];
         
-        [drawedPoint addObject:[NSValue valueWithPointD:curPoint]];
+        [drawedPoint addObject:[NSValue valueWithCGPoint:curPoint]];
     }
 }
 
@@ -1389,7 +1389,6 @@
     lastCarLocationForCarAngle      = CLLocationCoordinate2DMake(lastCarLocation.latitude, lastCarLocation.longitude);
     distanceFromCarInitToRouteStart = [GeoUtil getGeoDistanceFromLocation:routeStartPlace.coordinate ToLocation:firstRouteLine.startLocation];
     
-    [self nextRouteLine];
     carPoint = routeStartPoint;
     [self updateTranslationConstant];
     [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
@@ -1434,45 +1433,6 @@
     logF(cosN);
 }
 
-
--(void) nextRouteLine
-{
-    PointD tmpPoint;
-    routeStartPoint = [[routePoints objectAtIndex:locationIndex] PointDValue];
-    routeEndPoint = [[routePoints objectAtIndex:locationIndex+1] PointDValue];
-    
-    // x = ??
-    if((routeStartPoint.x - routeEndPoint.x) == 0)
-    {
-        routeLineM = 0;
-        isRouteLineMUndefind = true;
-    }
-    // y = mx+b
-    else
-    {
-        routeLineM = (routeStartPoint.y - routeEndPoint.y)/(routeStartPoint.x - routeEndPoint.x);
-        routeLineB = routeEndPoint.y - routeLineM*routeEndPoint.x;
-        isRouteLineMUndefind = false;
-    }
-    
-    tmpPoint.x = routeStartPoint.x;
-    tmpPoint.y = routeStartPoint.y;
-    tmpPoint.y++;
-
-    
-    if(tmpPoint.x > routeEndPoint.x)
-    {
-        targetAngle *= -1;
-    }
-
-    locationIndex++;
-    if(locationIndex >= routePoints.count -1)
-        locationIndex = 0;
-  
-    routeDistance = [GeoUtil getLength:routeStartPoint ToPoint:routeEndPoint];
-    routeUnitVector.x = (routeEndPoint.x - routeStartPoint.x)/routeDistance;
-    routeUnitVector.y = (routeEndPoint.y - routeStartPoint.y)/routeDistance;
-}
 
 -(void) playSpeech:(NSString*) text
 {
@@ -1802,7 +1762,7 @@
         nextCarPoint.x      = currentCarLocation.longitude;
         nextCarPoint.y      = currentCarLocation.latitude;
         carPoint            = nextCarPoint;
-        [carFootPrint addObject:[NSValue valueWithPointD:carPoint]];
+        [carFootPrint addObject:[NSValue valueWithCGPoint:ccarPoint]];
         [self updateTranslationConstant];
         
         routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
