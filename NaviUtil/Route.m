@@ -8,6 +8,7 @@
 
 #import "Route.h"
 #import "SystemConfig.h"
+#import "CoordinateTranslator.h"
 
 #if DEBUG
 #define FILE_DEBUG FALSE
@@ -70,18 +71,20 @@
     @try
     {
         
-        data  = [[NSFileManager defaultManager] contentsAtPath:fileName];
-        root  = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-        array = [root objectForKey:@"results"];
+        data    = [[NSFileManager defaultManager] contentsAtPath:fileName];
+        root    = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+        array   = [root objectForKey:@"results"];
         dic     = [array objectAtIndex:0];
     
         legs    = [[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"];
         steps   = [[[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0] objectForKey:@"steps"];
-        speech = [[NSMutableArray alloc] initWithCapacity:steps.count];
+        speech  = [[NSMutableArray alloc] initWithCapacity:steps.count];
         [self initRouteLines];
 
         dic = [[[[root objectForKey:@"routes"] objectAtIndex:0] objectForKey:@"legs"] objectAtIndex:0];
  
+        /* configurate reference angle for coordinate translation */
+        [CoordinateTranslator setRefAngleByLatitude:[self getStartLocation].latitude];
         /* add Start Location */
         [self addLocationToRouteLinesWithStepNo:i Location:[self getStartLocation] startRouteLine:FALSE];
 
@@ -116,7 +119,7 @@
         [self saveRouteLines];
         [self saveToKMLFileName:self.name filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager getPath:kSystemManager_Path_Route], self.name]];
      
-     
+        [self dumpRouteLines];
     }
     @catch (NSException *exception)
     {
@@ -499,15 +502,15 @@
 
 -(NSString *) description
 {
-    return [NSString stringWithFormat:@"%@ to %@ (%.7f,%.7f) -> (%.7f,%.7f), Step:%d, RouteLines:%d",
+    return [NSString stringWithFormat:@"%@ to %@ (%.7f,%.7f) -> (%.7f,%.7f), Step:%ld, RouteLines:%ld",
             [self getStartAddress],
             [self getEndAddress],
             [self getStartLocation].latitude,
             [self getStartLocation].longitude,
             [self getEndLocation].latitude,
             [self getEndLocation].longitude,
-            steps.count,
-            self.routeLines.count
+            (unsigned long)steps.count,
+            (unsigned long)self.routeLines.count
             ];
 }
 
@@ -809,7 +812,7 @@
     
 }
 
-
+#if 0
 -(double) getAngleFromCLLocationCoordinate2D:(CLLocationCoordinate2D) location routeLineNo:(int) routeLineNo withInDistance:(double) distance;
 {
     int i;
@@ -886,8 +889,89 @@
 //              cumulativeDistance);
     
     return turnAngle;
-    
 }
+#endif
+
+-(double) getAngleFromCLLocationCoordinate2D:(CLLocationCoordinate2D) location routeLineNo:(int) routeLineNo withInDistance:(double) distance;
+{
+    int i;
+    
+    double cumulativeDistance           = 0;
+    double startAngleCumulativeDistance = 0;
+    double endAngleCumulativeDistance   = 0;
+    double startAngle                   = 0;
+    double endAngle                     = 0;
+    double turnAngle                    = 0;
+    double distanceToNextRouteLine      = 0;
+    bool isStartAngleUndfined           = TRUE;
+    RouteLine *r;
+    
+    if (routeLineNo < 0 || routeLineNo > self.routeLines.count)
+        return 0;
+    
+    r = (RouteLine*) [self.routeLines objectAtIndex:routeLineNo];
+    distanceToNextRouteLine = [GeoUtil getGeoDistanceFromLocation:location ToLocation:r.endLocation];
+    
+    // look backward to decide start angle
+    for (i=routeLineNo; i >= 0 && cumulativeDistance < distance; i--)
+    {
+        r = (RouteLine*) [self.routeLines objectAtIndex:routeLineNo];
+        if (r.distance > 1)
+        {
+            startAngle                      = r.angle;
+            endAngle                        = r.angle;
+            startAngleCumulativeDistance    += r.distance;
+            endAngleCumulativeDistance      += r.distance;
+            cumulativeDistance  += [GeoUtil getGeoDistanceFromLocation:location ToLocation:r.endLocation];
+            isStartAngleUndfined = FALSE;
+            //            mlogDebug(@"Start Angle: %.2f at r:%d, cdistance: %.2f", startAngle, r.no, cumulativeDistance);
+            break;
+        }
+        
+    }
+    
+    
+    // look forward to decide end angle
+    for (i=routeLineNo+1; i<self.routeLines.count && cumulativeDistance < distance; i++)
+    {
+        r = [self.routeLines objectAtIndex:i];
+        
+        if (r.distance > 3)
+        {
+            if (TRUE == isStartAngleUndfined)
+            {
+                startAngle                      = r.angle;
+                startAngleCumulativeDistance    += r.distance;
+                //            mlogDebug(@"Start Angle: %.2f at r:%d, cdistance: %.2f", startAngle, r.no, cumulativeDistance);
+                isStartAngleUndfined = FALSE;
+            }
+            endAngle                    = r.angle;
+            endAngleCumulativeDistance  += r.distance;
+            
+            cumulativeDistance          += r.no == routeLineNo ? distanceToNextRouteLine : r.distance;
+            
+            /* if we get an angle that is greater than 90 degress, then break the loop */
+            if (fabs([GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle]) >= M_PI_4 + 0.1)
+            {
+                break;
+            }
+        }
+        //        mlogDebug(@"End Angle: %.2f at r:%d, cdistance: %.2f", endAngle, r.no, cumulativeDistance);
+    }
+    
+    turnAngle = [GeoUtil getTurnAngleFrom:startAngle toAngle:endAngle];
+    
+    //    mlogDebug(@"StartAngle: %.0f, EndAngle: %.0f, turnAngle: %.0f, cdistance: %.2f",
+    //              TO_ANGLE(startAngle),
+    //              TO_ANGLE(endAngle),
+    //              TO_ANGLE(turnAngle),
+    //              cumulativeDistance);
+    
+    return turnAngle;
+}
+
+
+
 
 -(double) getCorrectedTargetAngle:(int) routeLineNo distance:(int) distance
 {

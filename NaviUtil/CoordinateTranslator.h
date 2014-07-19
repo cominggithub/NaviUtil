@@ -12,8 +12,11 @@
 @interface CoordinateTranslator : NSObject
 
 /* multiply MAP_RATIO and apply cosin adjustment on longitude */
+
++(void) setRefAngleByLatitude:(float) latitude;
 +(CGPoint) projectCoordinate:(CLLocationCoordinate2D) coordinate;
++(CGPoint) projectCoordinate:(CLLocationCoordinate2D) coordinate refAngle:(float)angle;
 +(CGPoint) rotatePoint:(CGPoint) point at:(CGPoint)origin angle:(double)angle;
-+(CGPoint) translateToDrawPointByPoint:(CGPoint)point screenOffset:(CGPoint)screenOffset carCenterPoint:(CGPoint)carCenterPoint;
-+(CGPoint) getDrawPointByPoint:(CGPoint)point at:(CGPoint)origin angle:(double)angle screenOffset:(CGPoint)screenOffset carCenterPoint:(CGPoint)carCenterPoint;
++(CGPoint) translateToDrawPointByPoint:(CGPoint)point projectedToScreenOffset:(CGPoint)projectedToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint;
++(CGPoint) getDrawPointByPoint:(CGPoint)point at:(CGPoint)origin angle:(double)angle projectedToScreenOffset:(CGPoint)projectedToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint;
 @end

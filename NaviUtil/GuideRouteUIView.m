@@ -283,15 +283,9 @@
     }
 
     /* get draw point, can calculate offset */
-    PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
-    PointD startPoint  = [self getDrawPoint:[GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation]];
-    xOffset = tmpCarDrawPoint.x - startPoint.x + _routeComponentRect.origin.x;
 
     CGPoint cstartPoint = [self getDrawCGPoint:currentRouteLine.startProjectedPoint];
-//    logfns("PointD (%.2f, %.2f), CGPoint (%.2f, %.2f)\n", startPoint.x, startPoint.y, cstartPoint.x, cstartPoint.y);
-    
     xOffset = ccarDrawPoint.x - cstartPoint.x + _routeComponentRect.origin.x;
-//    xOffset = 0;
 
     /* draw route */
     [self drawRoute:context Rectangle:rect];
@@ -308,7 +302,6 @@
     /* draw debug information */
     if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG_ROUTE_DRAW])
     {
-//        [self drawCar:context];
         [self drawCurrentRouteLine:context];
         [self drawCarFootPrint:context];
         [self drawRouteLabel:context];
@@ -1317,9 +1310,8 @@
 
 -(CGPoint) getDrawCGPoint:(CGPoint)p
 {
-    return [CoordinateTranslator getDrawPointByPoint:p at:ccarPoint angle:currentDrawAngle screenOffset:ctoScreenOffset carCenterPoint:ccarCenterPoint];
+    return [CoordinateTranslator getDrawPointByPoint:p at:ccarPoint angle:currentDrawAngle projectedToScreenOffset:ctoScreenOffset screenMirrorPoint:ccarCenterPoint];
 }
-
 
 -(PointD) getDrawPoint:(PointD)p
 {
@@ -1494,7 +1486,6 @@
         /* search failed */
         else if(YES == routeDownloadRequest.done)
         {
-            logfn();
             [naviState sendEvent:GR_EVENT_LOCATION_LOST];
         }
         
@@ -1526,13 +1517,17 @@
     {
         self.messageBoxText = pendingMessage;
     }
+
+    
     
     if(TRUE == [self updateCurrentDrawAngle])
     {
-//        mlogDebug(@"car: %.0f, draw:%.0f", TO_ANGLE(carTargetAngle), TO_ANGLE(currentDrawAngle));
+
         currentLocationImage.transform  = CGAffineTransformMakeRotation(carTargetAngle - currentDrawAngle);
         [self setNeedsDisplay];
     }
+    
+    mlogDebug(@"car: %.0f, draw:%.0f，target:%.0f", TO_ANGLE(carTargetAngle), TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle));
     
     if (refreshCount++%5==0)
     {
@@ -1671,12 +1666,10 @@
     ctoScreenOffset.x = carCenterPoint.x - ccarPoint.x;
     ctoScreenOffset.y = carCenterPoint.y - ccarPoint.y;
 
-    PointD tmpCarDrawPoint = [self getDrawPoint:carPoint];
-
     ccarDrawPoint     = [self getDrawCGPoint:ccarPoint];
+
     logfns("-------------------------- \n");
     logfns("       carPoint: (%.2f, %.2f)\n", carPoint.x, carPoint.y);
-    logfns("tmpCarDrawPoint: (%.2f, %.2f)\n", tmpCarDrawPoint.x, tmpCarDrawPoint.y);
     logfns("  ccarDrawPoint: (%.2f, %.2f)\n", ccarDrawPoint.x, ccarDrawPoint.y);
 
 }
@@ -1773,6 +1766,7 @@
                                                         routeLineNo:currentRouteLine.no
                                                      withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_BEFORE_DISTANCE]+100];
 
+//        targetAngle     = 0;
     }
     
 
@@ -1780,9 +1774,10 @@
     if ([GeoUtil getGeoDistanceFromLocation:lastCarLocationForCarAngle ToLocation:currentCarLocation] > 6.0)
     {
         /* far top point -> last car location -> current car location */
-        carTargetAngle  = [GeoUtil getAngle360ByLocation1:CLLocationCoordinate2DMake(lastCarLocation.latitude+1, lastCarLocation.longitude)
+        carTargetAngle  = [GeoUtil getAngle360ByLocation1:CLLocationCoordinate2DMake(lastCarLocation.latitude+0.00001, lastCarLocation.longitude)
                                              Location2:lastCarLocation
                                              Location3:currentCarLocation];
+
         currentLocationImage.transform  = CGAffineTransformMakeRotation(carTargetAngle - currentDrawAngle);
         
         lastCarLocationForCarAngle = currentCarLocation;
@@ -1836,13 +1831,13 @@
             turnAngle = 2*M_PI + turnAngle;
     }
     
-//    mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f, step:%.0f\n",
-//           TO_ANGLE(currentDrawAngle),
-//           TO_ANGLE(targetAngle),
-//           TO_ANGLE(turnAngle),
-//           TO_ANGLE(angleOffset),
-//           TO_ANGLE(angleRotateStep)
-//           );
+    mlogDebug(@"1 cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f, step:%.0f\n",
+           TO_ANGLE(currentDrawAngle),
+           TO_ANGLE(targetAngle),
+           TO_ANGLE(turnAngle),
+           TO_ANGLE(angleOffset),
+           TO_ANGLE(angleRotateStep)
+           );
     
     
     if(fabs(turnAngle) <= angleRotateStep)
@@ -1861,12 +1856,12 @@
         }
     }
     
-//    mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f\n",
-//           TO_ANGLE(currentDrawAngle),
-//           TO_ANGLE(targetAngle),
-//           TO_ANGLE(turnAngle),
-//           TO_ANGLE(angleOffset)
-//           );
+    mlogDebug(@"2 cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f\n",
+           TO_ANGLE(currentDrawAngle),
+           TO_ANGLE(targetAngle),
+           TO_ANGLE(turnAngle),
+           TO_ANGLE(angleOffset)
+           );
     
     
     currentDrawAngle = [self adjustAngle:currentDrawAngle];

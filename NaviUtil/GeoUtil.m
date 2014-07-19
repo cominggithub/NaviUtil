@@ -7,6 +7,7 @@
 //
 
 #import "GeoUtil.h"
+#import "CoordinateTranslator.h"
 
 #define FILE_DEBUG FALSE
 #include "Log.h"
@@ -22,20 +23,52 @@
 }
 
 /* return 0 ~ 3.14 (0-180) */
+
++(float) getAngleByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3
+{
+    CGPoint p1, p2, p3;
+    
+    p1  = [CoordinateTranslator projectCoordinate:l1];
+    p2  = [CoordinateTranslator projectCoordinate:l2];
+    p3  = [CoordinateTranslator projectCoordinate:l3];
+    
+    return [self getAngleByCGPoint1:p1 CGPoint2:p2 CGPoint3:p3];
+}
+
+#if 0
 +(float) getAngleByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3
 {
     PointD p1, p2, p3;
     p1.x = l1.longitude;
     p1.y = l1.latitude;
-
+    
     p2.x = l2.longitude;
     p2.y = l2.latitude;
-
+    
     p3.x = l3.longitude;
     p3.y = l3.latitude;
     return [self getAngleByPoint1:p1 Point2:p2 Point3:p3];
 }
 
+
+
+#endif
+
++(float) getAngle360ByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3
+{
+    CGPoint p1, p2, p3;
+    float angle;
+    
+    p1  = [CoordinateTranslator projectCoordinate:l1];
+    p2  = [CoordinateTranslator projectCoordinate:l2];
+    p3  = [CoordinateTranslator projectCoordinate:l3];
+    
+    angle = [self getAngleByCGPoint1:p1 CGPoint2:p2 CGPoint3:p3];
+    
+    return p1.x < p3.x ? angle : 2*M_PI - angle;
+}
+
+#if 0
 +(float) getAngle360ByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3
 {
     PointD p1, p2, p3;
@@ -52,6 +85,7 @@
     
     return p1.x < p3.x ? angle : 2*M_PI - angle;
 }
+#endif
 
 /* return 0 ~ 3.14 (0-180) */
 +(float) getAngleByPoint1: (PointD) p1 Point2:(PointD) p2 Point3:(PointD) p3;
@@ -91,6 +125,46 @@
     
     return angle;
 }
+
+/* return 0 ~ 3.14 (0-180) */
++(float) getAngleByCGPoint1: (CGPoint) p1 CGPoint2:(CGPoint) p2 CGPoint3:(CGPoint) p3;
+{
+    float length12, length13, length23;
+    double angle = 0;
+    double cosValue = 0;
+    length12 = [self getLengthFromCGPoint1:p1 ToCGPoint2:p2];
+    length13 = [self getLengthFromCGPoint1:p1 ToCGPoint2:p3];
+    length23 = [self getLengthFromCGPoint1:p2 ToCGPoint2:p3];
+    
+    
+    if( length12*length23 != 0)
+    {
+        cosValue = (pow(length12, 2) + pow(length23, 2) - pow(length13, 2))/(2*length12*length23);
+        
+        // fix precision problem of double data type
+        if (cosValue > 1.0 )
+        {
+            cosValue = 1.0;
+        }
+        else if (cosValue < -1.0)
+        {
+            cosValue = -1.0;
+        }
+        
+        angle = acos(cosValue);
+        if (isnan(angle))
+        {
+            angle = 0;
+        }
+    }
+    else
+    {
+        angle = 0;
+    }
+    
+    return angle;
+}
+
 #if 0
 +(float) getAngleByCenterPoint: (PointD) c SidePoint1:(PointD) p1 SidePoint2:(PointD) p2
 {
@@ -111,6 +185,17 @@
 
 #endif
 +(float) getLength: (PointD) p1 ToPoint:(PointD) p2
+{
+    float length = 0;
+    float r1 = pow((p1.x - p2.x), 2);
+    float r2 = pow((p1.y - p2.y), 2);
+    length = sqrtf((r1+r2));
+    //    printf("p1(%.2f, %.2f), p2(%.2f, %.2f)", p1.x, p1.y, p2.x, p2.y);
+    //    printf("r1: %.2f, r2: % .2f, r1+r2: %.2f", r1, r2, r1+r2);
+    return sqrt(r1+r2);
+}
+
++(float) getLengthFromCGPoint1: (CGPoint) p1 ToCGPoint2:(CGPoint) p2
 {
     float length = 0;
     float r1 = pow((p1.x - p2.x), 2);

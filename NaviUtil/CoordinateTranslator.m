@@ -20,11 +20,23 @@
 
 @implementation CoordinateTranslator
 
+static float refAngle;
+
++(void) setRefAngleByLatitude:(float) latitude;
+{
+    refAngle = TO_RADIUS(latitude);
+}
 
 +(CGPoint) projectCoordinate:(CLLocationCoordinate2D) coordinate
 {
+    return [self projectCoordinate:coordinate refAngle:refAngle];
+}
+
++(CGPoint) projectCoordinate:(CLLocationCoordinate2D) coordinate refAngle:(float)angle
+{
     CGPoint p;
-    p.x = coordinate.longitude * MAP_RATIO * cos(TO_RADIUS(coordinate.latitude));
+    p.x = coordinate.longitude * MAP_RATIO * cos(angle);
+//    p.x = coordinate.longitude * MAP_RATIO;
     p.y = coordinate.latitude * MAP_RATIO;
     
     return p;
@@ -56,29 +68,29 @@
 }
 
 /* translate projected point (0,0 at left bottom) into draw point (0,0 at left-top) according to carCenterPoint */ 
-+(CGPoint) translateToDrawPointByPoint:(CGPoint)point screenOffset:(CGPoint)screenOffset carCenterPoint:(CGPoint)carCenterPoint
++(CGPoint) translateToDrawPointByPoint:(CGPoint)point projectedToScreenOffset:(CGPoint)projectedToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint
 {
     CGPoint drawPoint;
     //    translatedPoint.x = translatedPoint.x*ratio*cos(TO_RADIUS(p.y)) + toScreenOffset.x;
-    drawPoint.x = point.x + screenOffset.x;
-    drawPoint.y = point.y + screenOffset.y;
+    drawPoint.x = point.x + projectedToScreenOffset.x;
+    drawPoint.y = point.y + projectedToScreenOffset.y;
 
     // step3: mirror around the y axis of car center point
     // 1. move to origin (-carCenterPoint)
     // 2. mirror, y=-y
     // 3. move back (+carCenterPoint)
-    drawPoint.y = carCenterPoint.y - drawPoint.y + carCenterPoint.y;
+    drawPoint.y = screenMirrorPoint.y - drawPoint.y + screenMirrorPoint.y;
     
     //    printf("     draw point (%.5f, %.5f) - > (%.0f, %.0f)\n\n", p.x, p.y, translatedPoint.x, translatedPoint.y);
 
     return drawPoint;
 }
 
-+(CGPoint) getDrawPointByPoint:(CGPoint)point at:(CGPoint)origin angle:(double)angle screenOffset:(CGPoint)screenOffset carCenterPoint:(CGPoint)carCenterPoint
++(CGPoint) getDrawPointByPoint:(CGPoint)point at:(CGPoint)origin angle:(double)angle projectedToScreenOffset:(CGPoint)projectedToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint
 {
     CGPoint drawPoint;
     drawPoint = [self rotatePoint:point at:origin angle:angle];
-    drawPoint = [self translateToDrawPointByPoint:drawPoint screenOffset:screenOffset carCenterPoint:carCenterPoint];
+    drawPoint = [self translateToDrawPointByPoint:drawPoint projectedToScreenOffset:projectedToScreenOffset screenMirrorPoint:screenMirrorPoint];
     
     return drawPoint;
 }

@@ -70,7 +70,7 @@
 -(void) calculateLineEquation
 {
     
-    CLLocationCoordinate2D tmpLocation = CLLocationCoordinate2DMake(self.startLocation.latitude+1, self.startLocation.longitude);
+    CLLocationCoordinate2D tmpLocation = CLLocationCoordinate2DMake(self.startLocation.latitude+0.00001, self.startLocation.longitude);
 
     // x = ??
     if((self.startLocation.longitude - self.endLocation.longitude) == 0)
@@ -87,6 +87,7 @@
     }
     
     self.angle = [GeoUtil getAngleByLocation1:tmpLocation Location2:self.startLocation Location3:self.endLocation];
+
 #if 1
     if(tmpLocation.longitude > self.endLocation.longitude)
     {
