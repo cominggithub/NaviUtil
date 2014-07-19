@@ -113,13 +113,33 @@
     /* distance from a point x to a line
      * distance from x to start location * sin(angle(x->startLocation->EndLocation))
      */
-#if 0
-    double length = [GeoUtil getLengthFromLocation:location ToLocation:self.startLocation];
+
+    double angle;
+    double distanceToStartLocation;
+    double distanceToEndLocation;
+    angle                   = [self getAngleToStartLocation:location];
+    distanceToStartLocation = [GeoUtil getGeoDistanceFromLocation:location ToLocation:self.startLocation];
+    distanceToEndLocation   = [GeoUtil getGeoDistanceFromLocation:location ToLocation:self.endLocation];
     
-    double angle = [self getAngleToStartLocation:location];
-    double distance = [GeoUtil getLengthFromLocation:location ToLocation:self.startLocation] * sin([self getAngleToStartLocation:location]);
-#endif
-    return [GeoUtil getGeoDistanceFromLocation:location ToLocation:self.startLocation] * sin([self getAngleToStartLocation:location]);
+    if (angle != 0)
+    {
+        return distanceToStartLocation * sin(angle);
+    }
+    else
+    {
+        // location -> start -> end
+        if (distanceToEndLocation > self.distance)
+        {
+            logfn();
+            return distanceToStartLocation;
+        }
+        // start -> location -> end
+        else
+        {
+            logfn();
+            return 0;
+        }
+    }
 }
 
 -(double) getAngleToStartLocation:(CLLocationCoordinate2D) location

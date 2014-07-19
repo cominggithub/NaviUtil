@@ -17,6 +17,6 @@
 +(CGPoint) projectCoordinate:(CLLocationCoordinate2D) coordinate;
 +(CGPoint) projectCoordinate:(CLLocationCoordinate2D) coordinate refAngle:(float)angle;
 +(CGPoint) rotatePoint:(CGPoint) point at:(CGPoint)origin angle:(double)angle;
-+(CGPoint) translateToDrawPointByPoint:(CGPoint)point projectedToScreenOffset:(CGPoint)projectedToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint;
-+(CGPoint) getDrawPointByPoint:(CGPoint)point at:(CGPoint)origin angle:(double)angle projectedToScreenOffset:(CGPoint)projectedToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint;
++(CGPoint) translateToDrawPointByPoint:(CGPoint)point projectionToScreenOffset:(CGPoint)projectionToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint;
++(CGPoint) getDrawPointByPoint:(CGPoint)point at:(CGPoint)origin angle:(double)angle projectionToScreenOffset:(CGPoint)projectionToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint;
 @end

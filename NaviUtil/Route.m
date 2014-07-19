@@ -118,8 +118,6 @@
 
         [self saveRouteLines];
         [self saveToKMLFileName:self.name filePath:[NSString stringWithFormat:@"%@/%@.kml", [SystemManager getPath:kSystemManager_Path_Route], self.name]];
-     
-        [self dumpRouteLines];
     }
     @catch (NSException *exception)
     {
@@ -711,7 +709,7 @@
     duration = [endTime timeIntervalSinceDate:startTime];
 
     
-    mlogDebug(@"Matched: %d(%.1f), RouteLine %d searched, in %f seconds",
+    mlogDebug(@"Matched: rlno: %d distance: %.1f, RouteLine %d searched, in %f seconds",
              matchedRouteLine != nil ? matchedRouteLine.no : -1,
              distance,
              searchCount,

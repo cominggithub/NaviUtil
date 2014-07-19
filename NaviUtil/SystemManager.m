@@ -456,19 +456,6 @@ static NSDictionary *_googleLanguage;
     return language;
 }
 
-/*
-+(NSString *) getSupportLanguage
-{
-    NSString *sysLanguage = [self getSystemLanguage];
-    if ([self isLanguageSupported:sysLanguage] == true)
-    {
-        return sysLanguage;
-    }
-    
-    return [self getDefaultLanguage];
-}
- */
-
 +(NSString *) getDefaultLanguage;
 {
     return _defaultLanguage;
@@ -518,7 +505,7 @@ static NSDictionary *_googleLanguage;
 +(NSString *) getLanguageString:(NSString*) stringIndex
 {
     
-    NSString *result = NSLocalizedString(stringIndex, nil);
+    NSString *result = NSLocalizedString(stringIndex, stringIndex);
 
     if (nil  == result)
         return stringIndex;

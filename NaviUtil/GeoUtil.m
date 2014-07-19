@@ -35,25 +35,6 @@
     return [self getAngleByCGPoint1:p1 CGPoint2:p2 CGPoint3:p3];
 }
 
-#if 0
-+(float) getAngleByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3
-{
-    PointD p1, p2, p3;
-    p1.x = l1.longitude;
-    p1.y = l1.latitude;
-    
-    p2.x = l2.longitude;
-    p2.y = l2.latitude;
-    
-    p3.x = l3.longitude;
-    p3.y = l3.latitude;
-    return [self getAngleByPoint1:p1 Point2:p2 Point3:p3];
-}
-
-
-
-#endif
-
 +(float) getAngle360ByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3
 {
     CGPoint p1, p2, p3;
@@ -67,25 +48,6 @@
     
     return p1.x < p3.x ? angle : 2*M_PI - angle;
 }
-
-#if 0
-+(float) getAngle360ByLocation1: (CLLocationCoordinate2D) l1 Location2:(CLLocationCoordinate2D) l2 Location3:(CLLocationCoordinate2D) l3
-{
-    PointD p1, p2, p3;
-    float angle;
-    p1.x = l1.longitude;
-    p1.y = l1.latitude;
-    
-    p2.x = l2.longitude;
-    p2.y = l2.latitude;
-    
-    p3.x = l3.longitude;
-    p3.y = l3.latitude;
-    angle = [self getAngleByPoint1:p1 Point2:p2 Point3:p3];
-    
-    return p1.x < p3.x ? angle : 2*M_PI - angle;
-}
-#endif
 
 /* return 0 ~ 3.14 (0-180) */
 +(float) getAngleByPoint1: (PointD) p1 Point2:(PointD) p2 Point3:(PointD) p3;
@@ -136,7 +98,6 @@
     length13 = [self getLengthFromCGPoint1:p1 ToCGPoint2:p3];
     length23 = [self getLengthFromCGPoint1:p2 ToCGPoint2:p3];
     
-    
     if( length12*length23 != 0)
     {
         cosValue = (pow(length12, 2) + pow(length23, 2) - pow(length13, 2))/(2*length12*length23);
@@ -165,25 +126,6 @@
     return angle;
 }
 
-#if 0
-+(float) getAngleByCenterPoint: (PointD) c SidePoint1:(PointD) p1 SidePoint2:(PointD) p2
-{
-    float cp1Lengh, cp2Lengh, p1p2Length;
-    double angle = 0;
-    float cr = 0;
-    cp1Lengh = [self getLength:c ToPoint:p1];
-    cp2Lengh = [self getLength:c ToPoint:p2];
-    p1p2Length = [self getLength:p1 ToPoint:p2];
-    
-    
-    cr = (pow(cp1Lengh, 2) + pow(cp2Lengh, 2) - pow(p1p2Length, 2))/(2*cp1Lengh*cp2Lengh);
-    angle = acos(cr);
-    
-    mlogInfo(GEOUTIL, @"angle: %.2f (%.2f, %.2f, %.2f)", TO_ANGLE(angle), cp1Lengh, cp2Lengh, p1p2Length);
-    return angle;
-}
-
-#endif
 +(float) getLength: (PointD) p1 ToPoint:(PointD) p2
 {
     float length = 0;
@@ -201,8 +143,8 @@
     float r1 = pow((p1.x - p2.x), 2);
     float r2 = pow((p1.y - p2.y), 2);
     length = sqrtf((r1+r2));
-    //    printf("p1(%.2f, %.2f), p2(%.2f, %.2f)", p1.x, p1.y, p2.x, p2.y);
-    //    printf("r1: %.2f, r2: % .2f, r1+r2: %.2f", r1, r2, r1+r2);
+//    printf("p1(%.8f, %.8f), p2(%.8f, %.8f)\n", p1.x, p1.y, p2.x, p2.y);
+//    printf("r1: %.8f, r2: % .2f, r1+r2: %.8f\n", r1, r2, r1+r2);
     return sqrt(r1+r2);
 }
 

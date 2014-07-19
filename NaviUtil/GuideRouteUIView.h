@@ -26,46 +26,18 @@
     NSMutableArray *routePoints;
     NSMutableArray *carFootPrint;
 
-    double margin;
-    double ratio;
-    double fitRatio;
-    int locationIndex;
-
-
-    PointD screenOffsetPoint;
-    
-    PointD leftMost, rightMost, topMost, bottomMost;
-    PointD currentLocation;
-    PointD startLocation;
-    PointD toScreenOffset;
     CGSize screenSize;
-    double distanceWidth;
-    double distanceHeight;
 
     CGRect routeDisplayBound;
-    NSTimer *timer;
 
     UIImage *carImage;
     
-
-    double routeLineM;
-    bool isRouteLineMUndefind;
-    double routeLineB;
-
-    PointD routeStartPoint; // old
-    PointD routeEndPoint;   // old
     CGPoint routeStartProjectedPoint;
     CGPoint routeEndProjectedPoint;
-    PointD directionStep;
-    double oneStep;
-    PointD routeUnitVector;
-    double routeDistance;
     
     CGRect msgRect;
     int currentStep;
     RouteLine *currentRouteLine;
-
-
     double angleRotateStep;
     double rotateInterval;
 
@@ -73,8 +45,6 @@
     double xOffset;
     Place *routeStartPlace;
     Place *routeEndPlace;
-    
-
     
 }
 @property (nonatomic) bool isAutoSimulatorLocationUpdateStarted;
@@ -100,9 +70,7 @@
 -(void) autoSimulatorLocationUpdateStart;
 -(void) autoSimulatorLocationUpdateStop;
 -(void) initSelf;
--(void) generateRoutePoints;
 -(UIImage*) getCarImage;
--(PointD) getDrawPoint:(PointD) location;
 -(BOOL) startRouteNavigationFrom:(Place*) s To:(Place*) e;
 -(void) triggerLocationUpdate;
 -(void) updateCarLocation:(CLLocationCoordinate2D) location speed:(double)speed heading:(double)heading;

@@ -50,14 +50,12 @@
     
     CGRect                  _routeComponentRect;
     CGRect                  speedComponentRect;
-    PointD                  carCenterPoint;     // screen center point, x,y
-    PointD                  carPoint;           // car coordinate, old
-    PointD                  carDrawPoint;       // car draw point, x, y
+    CGPoint                 carScreenCenterPoint;     // screen center point, x,y
     
-    CGPoint                 ccarPoint;          // car projected point
-    CGPoint                 ccarDrawPoint;      // car draw pint
-    CGPoint                 ctoScreenOffset;     // toScreenOffset
-    CGPoint                 ccarCenterPoint;     // screen center point, x,y
+    CGPoint                 carProjectedPoint;          // car projected point
+    CGPoint                 carDrawPoint;      // car draw pint
+    CGPoint                 projectionToScreenOffset;     // toScreenOffset
+
 
     CGRect                  turnArrowFrame;
 
@@ -107,7 +105,6 @@
     double                  distanceToNextStep;
     double                  timeToNextStep;
     double                  distanceToRouteLine;
-    double                  cosN;
     RouteTrack              *routeTrack;
     
 }
@@ -170,10 +167,8 @@
     _routeComponentRect.size.width  = [SystemManager lanscapeScreenRect].size.width - speedComponentRect.size.width;
     _routeComponentRect.size.height = [SystemManager lanscapeScreenRect].size.height;
    
-    carCenterPoint.x                = _routeComponentRect.size.width/2;
-    carCenterPoint.y                = 250;
-    ccarCenterPoint.x               = _routeComponentRect.size.width/2;
-    ccarCenterPoint.y               = 250;
+    carScreenCenterPoint.x                = _routeComponentRect.size.width/2;
+    carScreenCenterPoint.y                = 250;
     
     hasMessage                      = FALSE;
     pendingMessage                  = @"";
@@ -262,7 +257,6 @@
 // An empty implementation adversely affects performance during animation.
 - (void)drawRect:(CGRect)rect
 {
-    CGPoint startDrawPoint;
     CGContextRef context = UIGraphicsGetCurrentContext();
     [super drawRect:rect];
     
@@ -285,7 +279,7 @@
     /* get draw point, can calculate offset */
 
     CGPoint cstartPoint = [self getDrawCGPoint:currentRouteLine.startProjectedPoint];
-    xOffset = ccarDrawPoint.x - cstartPoint.x + _routeComponentRect.origin.x;
+    xOffset = carDrawPoint.x - cstartPoint.x + _routeComponentRect.origin.x;
 
     /* draw route */
     [self drawRoute:context Rectangle:rect];
@@ -1075,37 +1069,6 @@
 }
 
 
-
-
--(PointD) getNextCarPoint
-{
-    PointD nextCarPoint = carPoint;
-#if 0
-    // x = ?
-    if(true == isRouteLineMUndefind)
-    {
-        nextCarPoint.y += directionStep.y;
-        nextCarPoint.x = routeStartPoint.x;
-    }
-    // y = ?
-    else if(routeLineM == 0)
-    {
-        nextCarPoint.y = routeLineB;
-        nextCarPoint.x += directionStep.x;
-    }
-    // y = mx+b;
-    else
-    {
-        nextCarPoint.y += directionStep.y;
-        nextCarPoint.x = (nextCarPoint.y - routeLineB)/routeLineM;
-    }
-#endif
-    nextCarPoint.x += routeUnitVector.x*oneStep;
-    nextCarPoint.y += routeUnitVector.y*oneStep;
-    
-    return nextCarPoint;
-}
-
 -(UIImage*) getTurnImage
 {
     UIImage* turnImage;
@@ -1142,90 +1105,6 @@
     return [turnImage imageTintedWithColor:_color];
 }
 
-/*
-
--(void) generateRoutePoints
-{
-    double widthRatio;
-    double heightRatio;
-    
-    if (nil == route )
-    {
-        mlogWarning(@"Cannot generate route point, route is nil");
-        return;
-    }
-        
-    if ( kGoogleJsonStatus_Ok != route.status )
-    {
-        mlogWarning(@"Cannot generate route point, route status: %d", route.status);
-        return;
-    }
-    
-    
-    routePoints = [[NSMutableArray alloc] initWithArray:[route getRoutePolyLinePointD]];
-    
-    distanceWidth   = 0;
-    distanceHeight  = 0;
-    widthRatio      = 0;
-    heightRatio     = 0;
-    
-    
-    leftMost = [[routePoints objectAtIndex:0] PointDValue];
-    rightMost = leftMost;
-    topMost = leftMost;
-    bottomMost = leftMost;
-    
-    //    for(NSArray *stepPolyPoints in routePoints)
-    {
-        for(NSValue *tmpValue in routePoints)
-        {
-            PointD tmpLocation = [tmpValue PointDValue];
-            if (leftMost.x >= tmpLocation.x)
-            {
-                leftMost = tmpLocation;
-            }
-            
-            if (rightMost.x <= tmpLocation.x)
-            {
-                rightMost = tmpLocation;
-            }
-            
-            if (topMost.y <= tmpLocation.y)
-            {
-                topMost = tmpLocation;
-            }
-            
-            if (bottomMost.y >= tmpLocation.y)
-            {
-                bottomMost = tmpLocation;
-            }
-            
-        }
-    }
-    
-    
-    widthRatio = 320.0/fabs((leftMost.x - rightMost.x));
-    heightRatio = 480.0/fabs((topMost.y - topMost.y));
-    
-    fitRatio = MIN(widthRatio, heightRatio);
-}
-*/
-/*
--(PointD) getRawDrawPoint:(PointD) p
-{
-    PointD tmpPoint;
-    PointD translatedPoint;
-    
-    // let carPoint be the origin
-    tmpPoint.x = (p.x - leftMost.x)*ratio;
-    tmpPoint.y = (p.y - topMost.y)*ratio;
-    
-    translatedPoint.y = (-1)*translatedPoint.y;
-    
-    return translatedPoint;
-    
-}
-*/
 -(CGRect) getFitSizeRect:(CGRect) rect Message:(NSString*) message FontSize:(int*) fontSize
 {
     int tmpFontSize = *fontSize;
@@ -1310,67 +1189,18 @@
 
 -(CGPoint) getDrawCGPoint:(CGPoint)p
 {
-    return [CoordinateTranslator getDrawPointByPoint:p at:ccarPoint angle:currentDrawAngle projectedToScreenOffset:ctoScreenOffset screenMirrorPoint:ccarCenterPoint];
-}
-
--(PointD) getDrawPoint:(PointD)p
-{
-    
-    PointD tmpPoint;
-    PointD translatedPoint;
-    
-    // step 1: rotate
-    // let carPoint be the origin
-    tmpPoint.x = (p.x - carPoint.x);
-    tmpPoint.y = (p.y - carPoint.y);
-    
-    
-    // rotate and move back
-    //    translatedPoint.x = tmpPoint.x*cos(directionAngle) - tmpPoint.y*sin(directionAngle) + carPoint.x;
-    //    translatedPoint.y = tmpPoint.x*sin(directionAngle) + tmpPoint.y*cos(directionAngle) + carPoint.y;
-    
-    translatedPoint.x = tmpPoint.x*cos(currentDrawAngle) - tmpPoint.y*sin(currentDrawAngle) + carPoint.x;
-    translatedPoint.y = tmpPoint.x*sin(currentDrawAngle) + tmpPoint.y*cos(currentDrawAngle) + carPoint.y;
-
-    // step2: scale and move to car screen point.
-    translatedPoint.x = translatedPoint.x*ratio + toScreenOffset.x;
-    translatedPoint.y = translatedPoint.y*ratio + toScreenOffset.y;
-    
-
-    //    printf("translatedPoint (%.8f, %.8f)\n", translatedPoint.x, translatedPoint.y);
-    
-    // step3: mirror around the y axis of car center point
-    // 1. move to origin (-carCenterPoint)
-    // 2. mirror, y=-y
-    // 3. move back (+carCenterPoint)
-    translatedPoint.y = carCenterPoint.y - translatedPoint.y + carCenterPoint.y;
-
-    //    printf("     draw point (%.5f, %.5f) - > (%.0f, %.0f)\n\n", p.x, p.y, translatedPoint.x, translatedPoint.y);
-    
-    return translatedPoint;
+    return [CoordinateTranslator getDrawPointByPoint:p at:carProjectedPoint angle:currentDrawAngle projectionToScreenOffset:projectionToScreenOffset screenMirrorPoint:carScreenCenterPoint];
 }
 
 #pragma mark - Navigation
 -(void) initNewRouteNavigation
 {
     RouteLine *firstRouteLine;
-    ratio = 1;
-//    [self generateRoutePoints];
-    
-    oneStep                         = 0.00013;
-    
+
     targetAngle                     = 0;
     screenSize.width                = 480;
     screenSize.height               = 320;
 
-    
-    carPoint.x                      = 0;
-    carPoint.y                      = 0;
-    locationIndex                   = 0;
-    routeLineM                      = 0;
-    routeLineB                      = 0;
-    isRouteLineMUndefind            = false;
-    ratio                           = MAP_RATIO;
     angleRotateStep                 = 0.1;
     rotateInterval                  = 0.1;
     firstRouteLine                  = [route.routeLines objectAtIndex:0];
@@ -1381,7 +1211,6 @@
     lastCarLocationForCarAngle      = CLLocationCoordinate2DMake(lastCarLocation.latitude, lastCarLocation.longitude);
     distanceFromCarInitToRouteStart = [GeoUtil getGeoDistanceFromLocation:routeStartPlace.coordinate ToLocation:firstRouteLine.startLocation];
     
-    carPoint = routeStartPoint;
     [self updateTranslationConstant];
     [self setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:1.0]];
     currentStep     = 0;
@@ -1421,8 +1250,7 @@
     [self setNeedsDisplay];
     
     [routeTrack addRoute:route];
-    cosN   = cos(firstRouteLine.startLocation.latitude);
-    logF(cosN);
+
 }
 
 
@@ -1527,7 +1355,7 @@
         [self setNeedsDisplay];
     }
     
-    mlogDebug(@"car: %.0f, draw:%.0f，target:%.0f", TO_ANGLE(carTargetAngle), TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle));
+//    mlogDebug(@"car: %.0f, draw:%.0f，target:%.0f", TO_ANGLE(carTargetAngle), TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle));
     
     if (refreshCount++%5==0)
     {
@@ -1653,31 +1481,18 @@
 #pragma mark - Location Update
 -(void) updateTranslationConstant
 {
-//    toScreenOffset.x = carCenterPoint.x - carPoint.x*ratio*cos(TO_RADIUS(carPoint.y));
 
+    carProjectedPoint         = [CoordinateTranslator projectCoordinate:carStatus.location];
+    projectionToScreenOffset.x = carScreenCenterPoint.x - carProjectedPoint.x;
+    projectionToScreenOffset.y = carScreenCenterPoint.y - carProjectedPoint.y;
 
-    ccarPoint         = [CoordinateTranslator projectCoordinate:carStatus.location];
-    
-    toScreenOffset.x = carCenterPoint.x - carPoint.x*ratio;
-    toScreenOffset.y = carCenterPoint.y - carPoint.y*ratio;
-    
-
-    
-    ctoScreenOffset.x = carCenterPoint.x - ccarPoint.x;
-    ctoScreenOffset.y = carCenterPoint.y - ccarPoint.y;
-
-    ccarDrawPoint     = [self getDrawCGPoint:ccarPoint];
-
-    logfns("-------------------------- \n");
-    logfns("       carPoint: (%.2f, %.2f)\n", carPoint.x, carPoint.y);
-    logfns("  ccarDrawPoint: (%.2f, %.2f)\n", ccarDrawPoint.x, ccarDrawPoint.y);
+    carDrawPoint     = [self getDrawCGPoint:carProjectedPoint];
 
 }
 
 -(void) updateCarLocation:(CLLocationCoordinate2D) location speed:(double)speed heading:(double)heading
 {
 //    mlogDebug(@"update car location: %.8f, %.8f\n", location.latitude, location.longitude);
-    PointD nextCarPoint;
     float distanceFromCarToRouteStart;
     RouteLine* firstRouteLine;
     lastCarLocation     = currentCarLocation;
@@ -1692,17 +1507,30 @@
     
     currentRouteLine = [route findClosestRouteLineByLocation:currentCarLocation LastRouteLine:currentRouteLine distance:&distanceToRouteLine];
 
-    /* head to first route line */
-    if (nil == currentRouteLine && (nil == lastRouteLine || 0 == lastRouteLine.no) && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
+    logO(currentRouteLine);
+    logO(firstRouteLine);
+    
+    logF(distanceFromCarInitToRouteStart);
+    logF(distanceFromCarToRouteStart);
+    /* head to first route line
+     * 1. current route line is nil
+     * 2. no last route line
+     * 3. near to the start location
+     */
+    
+    
+    if (nil == currentRouteLine && nil == lastRouteLine && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
+        logfn();
         currentRouteLine = firstRouteLine;
         lastValidRouteLineTime = [NSDate date];
         [naviState sendEvent:GR_EVENT_ROUTE_LINE_READY];
     }
+    
     /* found matched route line */
     else if (nil != currentRouteLine)
     {
-
+        logfn();
         /* reset the out of route line count */
         outOfRouteLineCount = 0;
         
@@ -1722,6 +1550,7 @@
     /* cannot find matched route line */
     else
     {
+        logfn();
         NSTimeInterval duration;
         /* let the current route line be the last route line */
         currentCarLocation  = lastCarLocation;
@@ -1735,6 +1564,7 @@
             /* stay at GPS_READY if missing GPS signal is less than the CONFIG_MAX_OUT_OF_ROUTELINE_COUNT */
             if (duration < [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_TIME] && outOfRouteLineCount <= 3)
             {
+                logfn();
                 [naviState sendEvent:GR_EVENT_GPS_READY];
             }
             /* location lost */
@@ -1752,21 +1582,13 @@
     /* event we lost location now, we still use last route line to draw current navigation map */
     if(currentRouteLine != nil)
     {
-        nextCarPoint.x      = currentCarLocation.longitude;
-        nextCarPoint.y      = currentCarLocation.latitude;
-        carPoint            = nextCarPoint;
-        [carFootPrint addObject:[NSValue valueWithCGPoint:ccarPoint]];
+        [carFootPrint addObject:[NSValue valueWithCGPoint:carProjectedPoint]];
         [self updateTranslationConstant];
-        
-        routeStartPoint = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.startLocation];
-        routeEndPoint   = [GeoUtil makePointDFromCLLocationCoordinate2D:currentRouteLine.endLocation];
         targetAngle     = [route getCorrectedTargetAngle:currentRouteLine.no distance:[SystemConfig getDoubleValue:CONFIG_TARGET_ANGLE_DISTANCE]];
 
         _turnAngle      = [route getAngleFromCLLocationCoordinate2D:currentCarLocation
                                                         routeLineNo:currentRouteLine.no
                                                      withInDistance:[SystemConfig getDoubleValue:CONFIG_TURN_ANGLE_BEFORE_DISTANCE]+100];
-
-//        targetAngle     = 0;
     }
     
 
@@ -1791,8 +1613,6 @@
 }
 
 #pragma location update
-
-#if 1
 
 -(bool) updateCurrentDrawAngle
 {
@@ -1831,14 +1651,15 @@
             turnAngle = 2*M_PI + turnAngle;
     }
     
-    mlogDebug(@"1 cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f, step:%.0f\n",
+/*
+    mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f, step:%.0f\n",
            TO_ANGLE(currentDrawAngle),
            TO_ANGLE(targetAngle),
            TO_ANGLE(turnAngle),
            TO_ANGLE(angleOffset),
            TO_ANGLE(angleRotateStep)
            );
-    
+*/
     
     if(fabs(turnAngle) <= angleRotateStep)
     {
@@ -1855,14 +1676,14 @@
             currentDrawAngle -= angleRotateStep;
         }
     }
-    
+/*
     mlogDebug(@"2 cur angle: %.0f, directionAngle: %.0f, turnAngle:%.0f angleOffset:%.0f\n",
            TO_ANGLE(currentDrawAngle),
            TO_ANGLE(targetAngle),
            TO_ANGLE(turnAngle),
            TO_ANGLE(angleOffset)
            );
-    
+*/
     
     currentDrawAngle = [self adjustAngle:currentDrawAngle];
     
@@ -1870,86 +1691,6 @@
     
     return true;
 }
-
-#else
--(bool) updateCurrentDrawAngle
-{
-    int reverseDirection = 1;
-    double angleOffset = fabs(currentDrawAngle - targetAngle);
-    
-    
-    /* if angle offset > 180 || angle offset < -180
-     then turn right + becomes turn left - and
-     turn left - becomes turn right +
-     */
-    reverseDirection = angleOffset > (M_PI)? (-1):(1);
-    
-    
-    if(angleOffset == 0 || angleOffset == 2*M_PI)
-        return false;
-    
-    mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
-    
-    if(angleOffset <= angleRotateStep)
-        currentDrawAngle = targetAngle;
-    else
-    {
-        /* should be turn right + */
-        if(currentDrawAngle < targetAngle)
-        {
-            currentDrawAngle = currentDrawAngle + reverseDirection*angleRotateStep;
-            
-        }
-        /* should be turn left - */
-        else
-        {
-            currentDrawAngle = currentDrawAngle - reverseDirection*angleRotateStep;
-        }
-    }
-    
-    currentDrawAngle = [self adjustAngle:currentDrawAngle];
-    
-    return true;
-}
-
--(bool) updateCurrentDrawAngle
-{
-    double angleOffset = fabs(currentDrawAngle - targetAngle);
-    double direction = 1;
-    
-    
-    if(angleOffset <= angleRotateStep)
-    {
-        if (currentDrawAngle != targetAngle)
-        {
-            mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
-        }
-        currentDrawAngle = targetAngle;
-
-        return false;
-    }
-    
-    mlogDebug(@"cur angle: %.0f, directionAngle: %.0f, angleOffset:%.0f\n", TO_ANGLE(currentDrawAngle), TO_ANGLE(targetAngle), TO_ANGLE(angleOffset));
-    
-    if (currentDrawAngle >= targetAngle)
-    {
-        direction = -1;
-    }
-    
-    if (angleOffset <= M_PI)
-    {
-        currentDrawAngle += direction*angleRotateStep;
-    }
-    else
-    {
-        currentDrawAngle -= direction*angleRotateStep;
-    }
-    
-    currentDrawAngle = [self adjustAngle:currentDrawAngle];
-    
-    return true;
-}
-#endif
 
 #pragma mark - UI Control
 -(void) addUIComponents
@@ -1969,7 +1710,7 @@
     turnArrowImage.contentMode      = UIViewContentModeScaleAspectFit;
 //    turnArrowImage.backgroundColor  = [UIColor grayColor];
     currentLocationImage            = [[UIImageView alloc] initWithFrame:
-                                       CGRectMake(carCenterPoint.x + _routeComponentRect.origin.x-15, carCenterPoint.y-15, 30, 60)];
+                                       CGRectMake(carScreenCenterPoint.x + _routeComponentRect.origin.x-15, carScreenCenterPoint.y-15, 30, 60)];
 
 //    currentLocationImage.image      = [[UIImage imageNamed:@"route_current_location.png"] imageTintedWithColor:[UIColor redColor]];
     currentLocationImage.image      = [UIImage imageNamed:@"car_location.png"];

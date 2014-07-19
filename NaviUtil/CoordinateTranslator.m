@@ -36,9 +36,8 @@ static float refAngle;
 {
     CGPoint p;
     p.x = coordinate.longitude * MAP_RATIO * cos(angle);
-//    p.x = coordinate.longitude * MAP_RATIO;
     p.y = coordinate.latitude * MAP_RATIO;
-    
+
     return p;
 }
 
@@ -68,12 +67,12 @@ static float refAngle;
 }
 
 /* translate projected point (0,0 at left bottom) into draw point (0,0 at left-top) according to carCenterPoint */ 
-+(CGPoint) translateToDrawPointByPoint:(CGPoint)point projectedToScreenOffset:(CGPoint)projectedToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint
++(CGPoint) translateToDrawPointByPoint:(CGPoint)point projectionToScreenOffset:(CGPoint)projectionToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint
 {
     CGPoint drawPoint;
     //    translatedPoint.x = translatedPoint.x*ratio*cos(TO_RADIUS(p.y)) + toScreenOffset.x;
-    drawPoint.x = point.x + projectedToScreenOffset.x;
-    drawPoint.y = point.y + projectedToScreenOffset.y;
+    drawPoint.x = point.x + projectionToScreenOffset.x;
+    drawPoint.y = point.y + projectionToScreenOffset.y;
 
     // step3: mirror around the y axis of car center point
     // 1. move to origin (-carCenterPoint)
@@ -86,11 +85,11 @@ static float refAngle;
     return drawPoint;
 }
 
-+(CGPoint) getDrawPointByPoint:(CGPoint)point at:(CGPoint)origin angle:(double)angle projectedToScreenOffset:(CGPoint)projectedToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint
++(CGPoint) getDrawPointByPoint:(CGPoint)point at:(CGPoint)origin angle:(double)angle projectionToScreenOffset:(CGPoint)projectionToScreenOffset screenMirrorPoint:(CGPoint)screenMirrorPoint
 {
     CGPoint drawPoint;
     drawPoint = [self rotatePoint:point at:origin angle:angle];
-    drawPoint = [self translateToDrawPointByPoint:drawPoint projectedToScreenOffset:projectedToScreenOffset screenMirrorPoint:screenMirrorPoint];
+    drawPoint = [self translateToDrawPointByPoint:drawPoint projectionToScreenOffset:projectionToScreenOffset screenMirrorPoint:screenMirrorPoint];
     
     return drawPoint;
 }
