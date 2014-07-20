@@ -20,8 +20,8 @@
 static bool isInit = false;
 static NSString *_documentPath=@"";
 static NSString *_tmpPath=@"";
-static NSString *_defaultLanguage=@"zh-TW";
-static NSDictionary *_supportedLanguage;
+static NSString *_defaultLanguage=@"en";
+static NSArray *_supportedLanguage;
 static CLLocationCoordinate2D _defaultLocation;
 static CGRect _screenRect;
 static CGRect _lanscapeScreenRect;
@@ -33,6 +33,7 @@ static float _threeGStatus;
 static float _batteryLife;
 static float _networkStatus;
 static NSDictionary *_googleLanguage;
+static NSDictionary *_defaultLanguageDic;
 
 
 @implementation SystemManager
@@ -119,6 +120,10 @@ static NSDictionary *_googleLanguage;
                                              selector:@selector(updateSystemStatus)
                                                  name:@"applicationDidBecomeActive"
                                                object:nil];
+    
+    
+    
+
     
 }
 
@@ -273,28 +278,21 @@ static NSDictionary *_googleLanguage;
 
 +(void) initSupportedLanguage
 {
-    _supportedLanguage = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          @"TRUE", @"en-US",
-                          @"TRUE", @"zh-TW",
-                          nil
-                          ];
+    NSString *path;
+    _supportedLanguage = [[NSArray alloc] initWithObjects:@"en", @"zh-Hant", @"zh-Hans", nil];
+    if ([_supportedLanguage containsObject:[self getSystemLanguage]])
+    {
+        _defaultLanguage = [self getSystemLanguage];
+    }
+         
+    path = [[NSBundle mainBundle] pathForResource:@"Localizable"
+                                           ofType:@"strings"
+                                      inDirectory:nil
+                                  forLocalization:self.defaultLanguage];
+    _defaultLanguageDic = [NSDictionary dictionaryWithContentsOfFile:path];
     
     [self initGoogleLanguageSetting];
 
-    /*
-    _googleLanguage = [[NSDictionary alloc] initWithObjectsAndKeys:
-                          @"en", @"en",
-                          @"zh-TW", @"zh-Hant",
-                          @"zh-CN", @"zh-Hans",
-//                          @"ja", @"ja",
-                          @"fr", @"fr",
-                          @"ko", @"ko",
-                          @"es", @"es",
-                          @"en", @"en-GB",
-                          nil
-                          ];
-    
-     */
 }
 
 +(void) initDirectory
@@ -456,17 +454,11 @@ static NSDictionary *_googleLanguage;
     return language;
 }
 
-+(NSString *) getDefaultLanguage;
++(NSString *) defaultLanguage;
 {
     return _defaultLanguage;
 }
 
-+(bool) isLanguageSupported:(NSString*) language
-{
-    if([_supportedLanguage.allKeys containsObject:language] == true)
-        return true;
-    return false;
-}
 
 +(CLLocationCoordinate2D) getDefaultLocation
 {
@@ -504,6 +496,14 @@ static NSDictionary *_googleLanguage;
 
 +(NSString *) getLanguageString:(NSString*) stringIndex
 {
+    NSString *string = [_defaultLanguageDic valueForKey:stringIndex];
+    
+    return string != nil ? string : stringIndex;
+}
+
+#if 0
++(NSString *) getLanguageString:(NSString*) stringIndex
+{
     
     NSString *result = NSLocalizedString(stringIndex, stringIndex);
 
@@ -514,6 +514,8 @@ static NSDictionary *_googleLanguage;
 
     
 }
+
+#endif
 
 +(NSString *) getPath:(SystemManagerPathType) pathType
 {
