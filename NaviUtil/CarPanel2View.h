@@ -13,6 +13,7 @@
 
 @property (weak, nonatomic) UIColor* color;
 @property (nonatomic) double speed;
+@property (nonatomic) double heading;
 @property (nonatomic) BOOL isSpeedUnitMph;
 
 @end

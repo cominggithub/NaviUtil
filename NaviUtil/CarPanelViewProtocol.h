@@ -9,9 +9,22 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-#import "CarPanelSpeedProtocol.h"
-#import "CarPanelColorProtocol.h"
 
-@protocol CarPanelViewProtocol <CarPanelSpeedProtocol, CarPanelColorProtocol>
+@protocol CarPanelSpeedProtocol <NSObject>
+-(void)setSpeed:(double) speed;
+-(void)setIsSpeedUnitMph:(BOOL)isSpeedUnitMph;
+@end
+
+@protocol CarPanelColorProtocol <NSObject>
+-(void)setColor:(UIColor*) color;
+@end
+
+@protocol CarPanelHeadingProtocol <NSObject>
+-(void)setHeading:(double) heading;
+@end
+
+
+@protocol CarPanelViewProtocol <CarPanelSpeedProtocol, CarPanelColorProtocol, CarPanelHeadingProtocol>
 
 @end
+

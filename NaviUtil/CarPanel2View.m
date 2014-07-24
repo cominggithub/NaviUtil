@@ -9,6 +9,7 @@
 #import "CarPanel2View.h"
 #import "SystemStatusView.h"
 #import "CarPanel2SpeedView.h"
+#import "CarPanel2CircleView.h"
 
 
 #if DEBUG
@@ -26,6 +27,7 @@
 {
     SystemStatusView *systemStatusView;
     CarPanel2SpeedView *speedView;
+    CarPanel2CircleView *circleView;
 }
 @end
 
@@ -72,8 +74,12 @@
 {
     systemStatusView            = [[SystemStatusView alloc] initWithFrame:CGRectMake(0, 0, 180, 50)];
     speedView                   = [[CarPanel2SpeedView alloc] initWithFrame:CGRectMake(0, 100, 200, 200)];
+    circleView                  = [[CarPanel2CircleView alloc] initWithFrame:CGRectMake(250, 100, 200, 200)];
+    
+    
     [self addSubview:systemStatusView];
     [self addSubview:speedView];
+    [self addSubview:circleView];
 }
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -92,6 +98,7 @@
     _color                  = color;
     systemStatusView.color  = self.color;
     speedView.color         = self.color;
+    circleView.color        = self.color;
 }
 
 -(void)setSpeed:(double)speed
@@ -104,6 +111,12 @@
 {
     _isSpeedUnitMph             = isSpeedUnitMph;
     speedView.isSpeedUnitMph    = self.isSpeedUnitMph;
+}
+
+-(void)setHeading:(double)heading
+{
+    logfn();
+    circleView.heading = heading;
 }
 
 #pragma -- operation

@@ -7,13 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CarPanelColorProtocol.h"
-#import "CarPanelSpeedProtocol.h"
+#import "CarPanelViewProtocol.h"
 
 @interface CarPanel2SpeedView : UIView<CarPanelColorProtocol, CarPanelSpeedProtocol>
 
 @property (weak, nonatomic) UIColor* color;
 @property (nonatomic) double speed;
+@property (nonatomic) double heading;
 @property (nonatomic) BOOL isSpeedUnitMph;
 
 
