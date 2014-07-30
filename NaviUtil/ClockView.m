@@ -67,7 +67,6 @@
     [self addSubview:_unitLabel];
     
 
-    [self updateUIByLanguage:[SystemManager getSystemLanguage]];
     [self update];
     
 }
@@ -82,11 +81,11 @@
     if (hour >= 12)
     {
         hour -= 12;
-        _unitLabel.text = [SystemManager getLanguageString:@"pm"];
+        _unitLabel.text = @"pm";
     }
     else
     {
-        _unitLabel.text = [SystemManager getLanguageString:@"am"];
+        _unitLabel.text = @"am";
     }
     
     _hourLabel.text        = [NSString stringFromLong:hour numOfDigits:2];
@@ -120,18 +119,6 @@
     _secondLabel.textColor  = _color;
     _unitLabel.textColor    = _color;
 }
-
--(void) updateUIByLanguage:(NSString*) language
-{
-    if ([language isEqualToString:@"zh-Hant"] || [language isEqualToString:@"zh-Hans"])
-    {
-
-        _unitLabel.font = [_unitLabel.font newFontsize:15];
-        _unitLabel.frame = CGRectMake(_unitLabelFrame.origin.x, _unitLabelFrame.origin.y+5, _unitLabelFrame.size.width, _unitLabelFrame.size.height);
-        
-    }
-}
-
 
 -(void) dealloc
 {

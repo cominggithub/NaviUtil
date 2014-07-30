@@ -92,7 +92,7 @@ static NSMutableArray *_savedLocations;
         return;
     
     // Use the true heading if it is valid.
-    _currentHeading = ((newHeading.trueHeading > 0) ? newHeading.trueHeading : newHeading.magneticHeading);
+    _currentHeading = ((newHeading.trueHeading >= 0) ? newHeading.trueHeading : newHeading.magneticHeading);
     
 }
 
@@ -216,6 +216,7 @@ static NSMutableArray *_savedLocations;
                 updateLocationCount++;
             }
             
+            logF(c.course);
             heading = TO_RADIUS(c.course);
             hasNewLocationInThisUpdate  = TRUE;
             lastUpdatedLocation         = c.coordinate;
@@ -269,7 +270,7 @@ static NSMutableArray *_savedLocations;
 
 +(int) getManualPlaceCount;
 {
-    return _manualPlaces.count;
+    return (int)_manualPlaces.count;
 }
 
 +(Place*) getManualPlaceByIndex:(int) index

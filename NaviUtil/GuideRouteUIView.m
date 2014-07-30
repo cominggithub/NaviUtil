@@ -2021,7 +2021,7 @@
             hasMessage      = TRUE;
             break;
         case GR_STATE_ARRIVAL:
-            pendingMessage = [SystemManager getLanguageString:@"Arrive Desitnation"];
+            pendingMessage = [SystemManager getLanguageString:@"Arrive Destination"];
             hasMessage      = TRUE;
             break;
         case GR_STATE_ROUTE_DESTINATION_ERROR:

@@ -31,6 +31,7 @@
     double courseCnt;
     BOOL _isTrackFileLoaded;
     NSMutableArray *_locationsOfTraceFile;
+    NSMutableArray *headingsOfTraceFile;
     int _locationIndexOfTrackFile;
     
     NSArray *routeLineCoordinates;
@@ -73,12 +74,14 @@
     NSString *fileContents = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL];
     CLLocation *location;
     NSDateFormatter *formatter;
+    double heading;
 
     _locationIndexOfTrackFile       = 0;
     
     formatter = [[NSDateFormatter alloc]init];
     [formatter setDateFormat:@"HH:mm:ss"];
-    _locationsOfTraceFile = [[NSMutableArray alloc] initWithCapacity:0];
+    _locationsOfTraceFile = [[NSMutableArray alloc] initWithCapacity:100];
+    headingsOfTraceFile = [[NSMutableArray alloc] initWithCapacity:100];
     
     for (NSString *line in [fileContents componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]])
     {
