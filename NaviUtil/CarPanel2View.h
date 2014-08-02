@@ -15,5 +15,7 @@
 @property (nonatomic) double speed;
 @property (nonatomic) double heading;
 @property (nonatomic) BOOL isSpeedUnitMph;
+@property (nonatomic) BOOL isHud;
+@property (nonatomic) CLLocationCoordinate2D location;
 
 @end

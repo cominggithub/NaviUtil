@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "CarPanelViewProtocol.h"
 
-@interface CarPanel2CircleView : UIImageView<CarPanelColorProtocol>
+@interface CarPanelCircleView : UIImageView<CarPanelColorProtocol>
 
 @property (weak, nonatomic) UIColor* color;
 @property (weak, nonatomic) UIImage *circleImage;

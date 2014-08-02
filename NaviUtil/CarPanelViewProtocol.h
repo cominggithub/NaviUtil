@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
+#import <CoreLocation/CoreLocation.h>
 
 
 @protocol CarPanelSpeedProtocol <NSObject>
@@ -23,8 +24,17 @@
 -(void)setHeading:(double) heading;
 @end
 
+@protocol CarPanelLocationProtocol <NSObject>
+-(void)setLocation:(CLLocationCoordinate2D) location;
+@end
 
-@protocol CarPanelViewProtocol <CarPanelSpeedProtocol, CarPanelColorProtocol, CarPanelHeadingProtocol>
+@protocol CarPanelActiveProtocol <NSObject>
+-(void)active;
+-(void)inactive;
+@end
 
+
+@protocol CarPanelViewProtocol <CarPanelActiveProtocol, CarPanelSpeedProtocol, CarPanelColorProtocol, CarPanelHeadingProtocol, CarPanelLocationProtocol>
+-(void)setIsHud:(BOOL)isHud;
 @end
 

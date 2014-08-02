@@ -6,9 +6,10 @@
 //  Copyright (c) 2014 Coming. All rights reserved.
 //
 
-#import "CarPanel2CircleView.h"
+#import "CarPanelCircleView.h"
 #import "UIImage+category.h"
 #import "UIImageView+category.h"
+#import "GeoUtil.h"
 
 
 #if DEBUG
@@ -22,7 +23,7 @@
 #include "Log.h"
 
 
-@implementation CarPanel2CircleView
+@implementation CarPanelCircleView
 {
     NSTimer* timer;
     int count;
@@ -103,12 +104,24 @@
 
 -(void)setHeading:(double)heading
 {
-    self.transform = CGAffineTransformMakeRotation(heading);
+    [self rotate:self toAngle:heading];
+    
 }
 
 -(void)targetMethod
 {
     self.transform = CGAffineTransformMakeRotation(0.1*count++);
 }
+
+-(void)rotate:(UIView*) view toAngle:(double)angle
+{
+    CGAffineTransform rotationTransform = CGAffineTransformMakeRotation(angle);
+    
+    [UIView animateWithDuration:0.8
+                     animations:^{
+                         view.transform = rotationTransform;
+                     }];
+}
+
 
 @end

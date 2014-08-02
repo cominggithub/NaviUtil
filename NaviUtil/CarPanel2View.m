@@ -9,7 +9,10 @@
 #import "CarPanel2View.h"
 #import "SystemStatusView.h"
 #import "CarPanel2SpeedView.h"
-#import "CarPanel2CircleView.h"
+#import "CarPanel2HeadingView.h"
+#import "CarPanel2ClockView.h"
+#import "CarPanel2ElapsedTimeView.h"
+#import "CarPanel2CumulativeDistanceView.h"
 
 
 #if DEBUG
@@ -25,9 +28,13 @@
 
 @interface CarPanel2View ()
 {
-    SystemStatusView *systemStatusView;
-    CarPanel2SpeedView *speedView;
-    CarPanel2CircleView *circleView;
+    SystemStatusView                *systemStatusView;
+    CarPanel2SpeedView              *speedView;
+    CarPanel2HeadingView            *headingView;
+    CarPanel2ClockView              *clockView;
+    CarPanel2ElapsedTimeView        *elapsedTimeView;
+    CarPanel2CumulativeDistanceView *cumulativeDistanceView;
+
 }
 @end
 
@@ -65,21 +72,30 @@
 
 -(void) initSelf
 {
-
     [self addUIComponents];
 }
 
 #pragma mark -- UI Component
 -(void) addUIComponents
 {
+    int xOffset;
+    xOffset                     = ([SystemManager lanscapeScreenRect].size.width - 480)/2;
+    clockView                   = [[CarPanel2ClockView alloc] initWithFrame:CGRectMake(0, 50, 180, 50)];
+    elapsedTimeView             = [[CarPanel2ElapsedTimeView alloc] initWithFrame:CGRectMake(-5, 125, 180, 50)];
     systemStatusView            = [[SystemStatusView alloc] initWithFrame:CGRectMake(0, 0, 180, 50)];
-    speedView                   = [[CarPanel2SpeedView alloc] initWithFrame:CGRectMake(0, 100, 200, 200)];
-    circleView                  = [[CarPanel2CircleView alloc] initWithFrame:CGRectMake(250, 100, 200, 200)];
-    
+    cumulativeDistanceView      = [[CarPanel2CumulativeDistanceView alloc] initWithFrame:CGRectMake(13, 190, 180, 50)];
+    speedView                   = [[CarPanel2SpeedView alloc] initWithFrame:CGRectMake(210+xOffset, 30, 260, 300)];
+    headingView                 = [[CarPanel2HeadingView alloc] initWithFrame:CGRectMake(210+xOffset, 30, 260, 260)];
+    headingView.imageName       = @"cp2_heading";
     
     [self addSubview:systemStatusView];
+    [self addSubview:clockView];
+    [self addSubview:elapsedTimeView];
+    [self addSubview:cumulativeDistanceView];
+    [self addSubview:headingView];
     [self addSubview:speedView];
-    [self addSubview:circleView];
+    
+
 }
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -92,13 +108,29 @@
 
 #pragma mark -- Property
 
+-(void)setIsHud:(BOOL)isHud
+{
+    _isHud = isHud;
+    
+    if(TRUE == _isHud)
+    {
+        self.transform = CGAffineTransformMakeScale(1,-1);
+    }
+    else
+    {
+        self.transform = CGAffineTransformMakeScale(1,1);
+    }
+}
 -(void)setColor:(UIColor *)color
 {
 
-    _color                  = color;
-    systemStatusView.color  = self.color;
-    speedView.color         = self.color;
-    circleView.color        = self.color;
+    _color                          = color;
+    systemStatusView.color          = self.color;
+    speedView.color                 = self.color;
+    headingView.color               = self.color;
+    clockView.color                 = self.color;
+    elapsedTimeView.color           = self.color;
+    cumulativeDistanceView.color    = self.color;
 }
 
 -(void)setSpeed:(double)speed
@@ -109,25 +141,38 @@
 
 -(void)setIsSpeedUnitMph:(BOOL)isSpeedUnitMph
 {
-    _isSpeedUnitMph             = isSpeedUnitMph;
-    speedView.isSpeedUnitMph    = self.isSpeedUnitMph;
+    logBool(isSpeedUnitMph);
+    _isSpeedUnitMph                         = isSpeedUnitMph;
+    speedView.isSpeedUnitMph                = self.isSpeedUnitMph;
+    cumulativeDistanceView.isSpeedUnitMph   = self.isSpeedUnitMph;
 }
 
 -(void)setHeading:(double)heading
 {
-    logfn();
-    circleView.heading = heading;
+    headingView.heading = heading;
+}
+
+-(void)setLocation:(CLLocationCoordinate2D)location
+{
+    _location = CLLocationCoordinate2DMake(location.latitude, location.longitude);
+    cumulativeDistanceView.location = self.location;
 }
 
 #pragma -- operation
 -(void)active
 {
     [systemStatusView active];
+    [clockView active];
+    [elapsedTimeView active];
+    [cumulativeDistanceView active];
 }
 
 -(void)inactive
 {
     [systemStatusView inactive];
+    [clockView inactive];
+    [elapsedTimeView inactive];
+    [cumulativeDistanceView inactive];
 }
 
 @end

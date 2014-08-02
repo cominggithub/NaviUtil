@@ -10,12 +10,16 @@
 		2B13073E191E793500F83D52 /* RouteTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B13073D191E793500F83D52 /* RouteTrack.m */; };
 		2B1372FF189510B300B398FD /* RSSecrets.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1372FE189510B300B398FD /* RSSecrets.m */; };
 		2B1373021895356900B398FD /* SKProduct+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1373011895356900B398FD /* SKProduct+category.m */; };
+		2B1429BC198CD128009B6B55 /* CarPanel2HeadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1429BB198CD128009B6B55 /* CarPanel2HeadingView.m */; };
 		2B18AA911748D19700277F52 /* UILabel+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B18AA901748D19700277F52 /* UILabel+category.m */; };
-		2B1B7B3A19812D8400241BEA /* CarPanel2CircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1B7B3919812D8400241BEA /* CarPanel2CircleView.m */; };
+		2B1B7B3A19812D8400241BEA /* CarPanelCircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1B7B3919812D8400241BEA /* CarPanelCircleView.m */; };
 		2B1C47141788474600ED6D98 /* DrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C47131788474600ED6D98 /* DrawBlock.m */; };
 		2B1C471817884D0400ED6D98 /* TimeDrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C471717884D0400ED6D98 /* TimeDrawBlock.m */; };
 		2B1C471B178851DC00ED6D98 /* DigitalNumDrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C471A178851DC00ED6D98 /* DigitalNumDrawBlock.m */; };
 		2B1C472117885ECC00ED6D98 /* CarPanel1UIView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C472017885ECC00ED6D98 /* CarPanel1UIView.m */; };
+		2B1F14EC198D2F480013390A /* CarPanel2ClockView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1F14EB198D2F480013390A /* CarPanel2ClockView.m */; };
+		2B1F14EF198D369A0013390A /* CarPanel2ElapsedTimeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1F14EE198D369A0013390A /* CarPanel2ElapsedTimeView.m */; };
+		2B1F14F2198D3D5C0013390A /* CarPanel2CumulativeDistanceView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1F14F1198D3D5C0013390A /* CarPanel2CumulativeDistanceView.m */; };
 		2B1F3661190947CF007E0C9A /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B1F3660190947CF007E0C9A /* GoogleMaps.framework */; };
 		2B1F3663190947DB007E0C9A /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 2B1F3662190947DB007E0C9A /* GoogleMaps.bundle */; };
 		2B2447301843949E00813A0F /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B2447241843949E00813A0F /* AVFoundation.framework */; };
@@ -121,10 +125,12 @@
 		2B1372FE189510B300B398FD /* RSSecrets.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RSSecrets.m; sourceTree = "<group>"; };
 		2B1373001895356900B398FD /* SKProduct+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "SKProduct+category.h"; sourceTree = "<group>"; };
 		2B1373011895356900B398FD /* SKProduct+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SKProduct+category.m"; sourceTree = "<group>"; };
+		2B1429BA198CD128009B6B55 /* CarPanel2HeadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel2HeadingView.h; sourceTree = "<group>"; };
+		2B1429BB198CD128009B6B55 /* CarPanel2HeadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel2HeadingView.m; sourceTree = "<group>"; };
 		2B18AA8F1748D19700277F52 /* UILabel+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+category.h"; sourceTree = "<group>"; };
 		2B18AA901748D19700277F52 /* UILabel+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+category.m"; sourceTree = "<group>"; };
-		2B1B7B3819812D8400241BEA /* CarPanel2CircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel2CircleView.h; sourceTree = "<group>"; };
-		2B1B7B3919812D8400241BEA /* CarPanel2CircleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel2CircleView.m; sourceTree = "<group>"; };
+		2B1B7B3819812D8400241BEA /* CarPanelCircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanelCircleView.h; sourceTree = "<group>"; };
+		2B1B7B3919812D8400241BEA /* CarPanelCircleView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanelCircleView.m; sourceTree = "<group>"; };
 		2B1B7B3B1981369100241BEA /* CarPanelHeadingProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarPanelHeadingProtocol.h; sourceTree = "<group>"; };
 		2B1C47121788474600ED6D98 /* DrawBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawBlock.h; sourceTree = "<group>"; };
 		2B1C47131788474600ED6D98 /* DrawBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DrawBlock.m; sourceTree = "<group>"; };
@@ -134,6 +140,12 @@
 		2B1C471A178851DC00ED6D98 /* DigitalNumDrawBlock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DigitalNumDrawBlock.m; sourceTree = "<group>"; };
 		2B1C471F17885ECC00ED6D98 /* CarPanel1UIView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel1UIView.h; sourceTree = "<group>"; };
 		2B1C472017885ECC00ED6D98 /* CarPanel1UIView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel1UIView.m; sourceTree = "<group>"; };
+		2B1F14EA198D2F480013390A /* CarPanel2ClockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel2ClockView.h; sourceTree = "<group>"; };
+		2B1F14EB198D2F480013390A /* CarPanel2ClockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel2ClockView.m; sourceTree = "<group>"; };
+		2B1F14ED198D369A0013390A /* CarPanel2ElapsedTimeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel2ElapsedTimeView.h; sourceTree = "<group>"; };
+		2B1F14EE198D369A0013390A /* CarPanel2ElapsedTimeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel2ElapsedTimeView.m; sourceTree = "<group>"; };
+		2B1F14F0198D3D5C0013390A /* CarPanel2CumulativeDistanceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel2CumulativeDistanceView.h; sourceTree = "<group>"; };
+		2B1F14F1198D3D5C0013390A /* CarPanel2CumulativeDistanceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel2CumulativeDistanceView.m; sourceTree = "<group>"; };
 		2B1F3660190947CF007E0C9A /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
 		2B1F3662190947DB007E0C9A /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = "../../ios/framework/GoogleMaps-iOS-1.7.2/GoogleMaps.framework/Versions/A/Resources/GoogleMaps.bundle"; sourceTree = "<group>"; };
 		2B2447241843949E00813A0F /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -304,9 +316,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2B1429B9198CD103009B6B55 /* base */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = base;
+			sourceTree = "<group>";
+		};
 		2B1C471517884C6E00ED6D98 /* CarPanel */ = {
 			isa = PBXGroup;
 			children = (
+				2B1429B9198CD103009B6B55 /* base */,
+				2B1B7B3819812D8400241BEA /* CarPanelCircleView.h */,
+				2B1B7B3919812D8400241BEA /* CarPanelCircleView.m */,
 				2BCF79FF197FCEB5001EDD9D /* Protocol */,
 				2BD71FF7197F8D94002E7E92 /* CarPanel2 */,
 				2BEF697117A954D6005EC74A /* BatteryLifeView.h */,
@@ -567,8 +589,14 @@
 				2BD72003197F8E8A002E7E92 /* CarPanel2View.m */,
 				2BCF79FC197FCE50001EDD9D /* CarPanel2SpeedView.h */,
 				2BCF79FD197FCE50001EDD9D /* CarPanel2SpeedView.m */,
-				2B1B7B3819812D8400241BEA /* CarPanel2CircleView.h */,
-				2B1B7B3919812D8400241BEA /* CarPanel2CircleView.m */,
+				2B1429BA198CD128009B6B55 /* CarPanel2HeadingView.h */,
+				2B1429BB198CD128009B6B55 /* CarPanel2HeadingView.m */,
+				2B1F14EA198D2F480013390A /* CarPanel2ClockView.h */,
+				2B1F14EB198D2F480013390A /* CarPanel2ClockView.m */,
+				2B1F14ED198D369A0013390A /* CarPanel2ElapsedTimeView.h */,
+				2B1F14EE198D369A0013390A /* CarPanel2ElapsedTimeView.m */,
+				2B1F14F0198D3D5C0013390A /* CarPanel2CumulativeDistanceView.h */,
+				2B1F14F1198D3D5C0013390A /* CarPanel2CumulativeDistanceView.m */,
 			);
 			name = CarPanel2;
 			sourceTree = "<group>";
@@ -684,13 +712,14 @@
 				2B13073E191E793500F83D52 /* RouteTrack.m in Sources */,
 				2B6CBFE916DFA6FD0095CBD4 /* GuideRouteUIView.m in Sources */,
 				2B6CBFEA16DFA6FD0095CBD4 /* NaviQueryManager.m in Sources */,
+				2B1F14F2198D3D5C0013390A /* CarPanel2CumulativeDistanceView.m in Sources */,
 				2B6CBFEB16DFA6FD0095CBD4 /* NSString+category.m in Sources */,
 				2B6CBFEC16DFA6FD0095CBD4 /* NSValue+category.m in Sources */,
 				2B6CBFED16DFA6FD0095CBD4 /* Place.m in Sources */,
 				2B4D5E06193B647900442F2A /* CoordinateTranslator.m in Sources */,
 				2B6CBFEE16DFA6FD0095CBD4 /* Route.m in Sources */,
 				2B6CBFEF16DFA6FD0095CBD4 /* RouteInstruction.m in Sources */,
-				2B1B7B3A19812D8400241BEA /* CarPanel2CircleView.m in Sources */,
+				2B1B7B3A19812D8400241BEA /* CarPanelCircleView.m in Sources */,
 				2B6CBFF016DFA6FD0095CBD4 /* Speech.m in Sources */,
 				2BFAC090190B487C006FFD94 /* NaviState.m in Sources */,
 				2B6CBFF116DFA6FD0095CBD4 /* SystemManager.m in Sources */,
@@ -715,6 +744,7 @@
 				2B1372FF189510B300B398FD /* RSSecrets.m in Sources */,
 				2B1C471B178851DC00ED6D98 /* DigitalNumDrawBlock.m in Sources */,
 				2B1C472117885ECC00ED6D98 /* CarPanel1UIView.m in Sources */,
+				2B1429BC198CD128009B6B55 /* CarPanel2HeadingView.m in Sources */,
 				2B1373021895356900B398FD /* SKProduct+category.m in Sources */,
 				2B8B71B2178C32E7005E460F /* UIImage+simple-image-processing.mm in Sources */,
 				2B8B71C7178C35B6005E460F /* Image.mm in Sources */,
@@ -726,7 +756,9 @@
 				2B94C8E217A4C8B3002581F3 /* JsonFile.m in Sources */,
 				2BCBD07B183A5E4700B08D1D /* MapManager.m in Sources */,
 				2BC2C3C317A6AE9F00A9AEE0 /* UIColor+category.m in Sources */,
+				2B1F14EC198D2F480013390A /* CarPanel2ClockView.m in Sources */,
 				2BEF697317A954D6005EC74A /* BatteryLifeView.m in Sources */,
+				2B1F14EF198D369A0013390A /* CarPanel2ElapsedTimeView.m in Sources */,
 				2B89A7B017B5F1960042539F /* UIFont+category.m in Sources */,
 				2BEBB83717BF66BC00B336E6 /* ClockView.m in Sources */,
 				2B6EAF48188B9FE2000F484D /* RouteView.m in Sources */,
