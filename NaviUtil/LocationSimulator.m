@@ -74,7 +74,6 @@
     NSString *fileContents = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL];
     CLLocation *location;
     NSDateFormatter *formatter;
-    double heading;
 
     _locationIndexOfTrackFile       = 0;
     

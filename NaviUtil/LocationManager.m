@@ -216,7 +216,6 @@ static NSMutableArray *_savedLocations;
                 updateLocationCount++;
             }
             
-            logF(c.course);
             heading = TO_RADIUS(c.course);
             hasNewLocationInThisUpdate  = TRUE;
             lastUpdatedLocation         = c.coordinate;
