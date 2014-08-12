@@ -80,12 +80,12 @@
 {
     int xOffset;
     xOffset                     = ([SystemManager lanscapeScreenRect].size.width - 480)/2;
-    clockView                   = [[CarPanel2ClockView alloc] initWithFrame:CGRectMake(0, 50, 180, 50)];
-    elapsedTimeView             = [[CarPanel2ElapsedTimeView alloc] initWithFrame:CGRectMake(-5, 125, 180, 50)];
+    clockView                   = [[CarPanel2ClockView alloc] initWithFrame:CGRectMake(0, 70, 180, 50)];
+    elapsedTimeView             = [[CarPanel2ElapsedTimeView alloc] initWithFrame:CGRectMake(-5, 145, 180, 50)];
     systemStatusView            = [[SystemStatusView alloc] initWithFrame:CGRectMake(0, 0, 180, 50)];
-    cumulativeDistanceView      = [[CarPanel2CumulativeDistanceView alloc] initWithFrame:CGRectMake(13, 190, 180, 50)];
-    speedView                   = [[CarPanel2SpeedView alloc] initWithFrame:CGRectMake(210+xOffset, 30, 260, 300)];
-    headingView                 = [[CarPanel2HeadingView alloc] initWithFrame:CGRectMake(210+xOffset, 30, 260, 260)];
+    cumulativeDistanceView      = [[CarPanel2CumulativeDistanceView alloc] initWithFrame:CGRectMake(13, 210, 180, 50)];
+    speedView                   = [[CarPanel2SpeedView alloc] initWithFrame:CGRectMake(210+xOffset, 50, 260, 300)];
+    headingView                 = [[CarPanel2HeadingView alloc] initWithFrame:CGRectMake(210+xOffset, 50, 260, 260)];
     headingView.imageName       = @"cp2_heading";
     
     [self addSubview:systemStatusView];

@@ -91,7 +91,7 @@
 }
 
 
--(UIImage*) getImageByNumber:(int) number
+-(UIImage*) getImageByNumber:(long) number
 {
     switch(number)
     {

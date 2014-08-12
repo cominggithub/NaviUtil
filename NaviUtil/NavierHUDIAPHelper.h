@@ -9,6 +9,7 @@
 #import "IAPHelper.h"
 
 #define IAP_NO_AD_STORE_USER_PLACE @"com.coming.NavierHUD.Iap.AdvancedVersion"
+#define IAP_CAR_PANEL_2 @"com.coming.NavierHUD.Iap.carpanel2"
 
 @interface NavierHUDIAPHelper : IAPHelper
 

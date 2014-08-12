@@ -195,6 +195,11 @@
 {
     return [NSString stringWithFormat:@"%d", value];
 }
++(NSString*) stringFromLong:(long) value
+{
+    return [NSString stringWithFormat:@"%ld", value];
+}
+
 +(NSString*) stringFromDouble:(double) value
 {
     return [NSString stringWithFormat:@"%f", value];

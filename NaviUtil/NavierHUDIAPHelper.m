@@ -41,6 +41,7 @@ static BOOL retrieveIapSuccess;
     dispatch_once(&once, ^{
         NSSet * productIdentifiers = [NSSet setWithObjects:
                                       IAP_NO_AD_STORE_USER_PLACE,
+                                      IAP_CAR_PANEL_2,
                                       nil];
         sharedInstance = [[self alloc] initWithProductIdentifiers:productIdentifiers];
     });
@@ -61,7 +62,7 @@ static BOOL retrieveIapSuccess;
         }
         else
         {
-            
+
         }
     }];
 
@@ -92,6 +93,7 @@ static BOOL retrieveIapSuccess;
                            ]];
 
     }
+    NSLog(@"%@", msg);
 }
 
 +(SKProduct*) productByKey:(NSString*) key

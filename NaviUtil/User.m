@@ -909,7 +909,7 @@ static NSMutableArray*  _recentPlaces;
         [searchedPlaceTextArray addObject:place];
     }
 
-    [userDic setObject:[NSString stringFromInt:self.version] forKey:USERJSON_VERSION];
+    [userDic setObject:[NSString stringFromLong:self.version] forKey:USERJSON_VERSION];
     [userDic setObject:self.name forKey:USERJSON_NAME];
     [userDic setObject:self.email forKey:USERJSON_EMAIL];
     

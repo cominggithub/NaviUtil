@@ -14,8 +14,10 @@
 #import "DownloadManager.h"
 #import "DownloadRequest.h"
 #import "DrawBlock.h"
+#import "FBUtil.h"
 #import "FileDownloader.h"
 #import "GeoUtil.h"
+#import "GoogleUtil.h"
 #import "GuideRouteUIView.h"
 #import "LocationManager.h"
 #import "LocationSimulator.h"
@@ -37,6 +39,7 @@
 #import "SystemConfig.h"
 #import "SystemManager.h"
 #import "TimeDrawBlock.h"
+#import "TwitterUtil.h"
 #import "User.h"
 #import "UIAnimation.h"
 

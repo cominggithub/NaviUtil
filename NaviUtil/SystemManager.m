@@ -279,7 +279,7 @@ static NSDictionary *_defaultLanguageDic;
 +(void) initSupportedLanguage
 {
     NSString *path;
-    _supportedLanguage = [[NSArray alloc] initWithObjects:@"en", @"zh-Hant", @"zh-Hans", nil];
+    _supportedLanguage = [[NSArray alloc] initWithObjects:@"en", @"zh-Hant", @"zh-Hans", @"nl", nil];
     if ([_supportedLanguage containsObject:[self getSystemLanguage]])
     {
         _defaultLanguage = [self getSystemLanguage];

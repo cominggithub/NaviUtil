@@ -78,7 +78,7 @@
 
 -(void)addUIComponents
 {
-    speedLabel                      = [[UILabel alloc] initWithFrame:CGRectMake(5, 20, 250, 300)];
+    speedLabel                      = [[UILabel alloc] initWithFrame:CGRectMake(5, 30, 250, 300)];
     speedLabel.font                 = [UIFont fontWithName:@"CordiaUPC" size:200];
     speedLabel.textAlignment        = UITextAlignmentCenter;
 

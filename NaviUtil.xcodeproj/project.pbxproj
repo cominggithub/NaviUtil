@@ -11,6 +11,12 @@
 		2B1372FF189510B300B398FD /* RSSecrets.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1372FE189510B300B398FD /* RSSecrets.m */; };
 		2B1373021895356900B398FD /* SKProduct+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1373011895356900B398FD /* SKProduct+category.m */; };
 		2B1429BC198CD128009B6B55 /* CarPanel2HeadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1429BB198CD128009B6B55 /* CarPanel2HeadingView.m */; };
+		2B17DBF71999FB2D004E9675 /* FBUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B17DBF61999FB2D004E9675 /* FBUtil.m */; };
+		2B17DC491999FDF4004E9675 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B17DC481999FDF4004E9675 /* FacebookSDK.framework */; };
+		2B17DC4C1999FEB2004E9675 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B17DC481999FDF4004E9675 /* FacebookSDK.framework */; };
+		2B17DC83199A2AA6004E9675 /* GoogleUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B17DC82199A2AA6004E9675 /* GoogleUtil.m */; };
+		2B17DC85199A3F65004E9675 /* Social.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B17DC84199A3F65004E9675 /* Social.framework */; };
+		2B17DC88199A4606004E9675 /* TwitterUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B17DC87199A4606004E9675 /* TwitterUtil.m */; };
 		2B18AA911748D19700277F52 /* UILabel+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B18AA901748D19700277F52 /* UILabel+category.m */; };
 		2B1B7B3A19812D8400241BEA /* CarPanelCircleView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1B7B3919812D8400241BEA /* CarPanelCircleView.m */; };
 		2B1C47141788474600ED6D98 /* DrawBlock.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1C47131788474600ED6D98 /* DrawBlock.m */; };
@@ -39,7 +45,7 @@
 		2B4D5E06193B647900442F2A /* CoordinateTranslator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4D5E05193B647900442F2A /* CoordinateTranslator.m */; };
 		2B4D5E09193B690100442F2A /* NaviStatus.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B4D5E08193B690100442F2A /* NaviStatus.m */; };
 		2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B61D8661771E64400ACB1AA /* SystemConfig.m */; };
-		2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */; };
+		2B6CBFA216DFA6D90095CBD4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBFA116DFA6D90095CBD4 /* Foundation.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		2B6CBFA716DFA6D90095CBD4 /* NaviUtil.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 2B6CBFA616DFA6D90095CBD4 /* NaviUtil.h */; };
 		2B6CBFA916DFA6D90095CBD4 /* NaviUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B6CBFA816DFA6D90095CBD4 /* NaviUtil.m */; };
 		2B6CBFB116DFA6DA0095CBD4 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B6CBFB016DFA6DA0095CBD4 /* SenTestingKit.framework */; };
@@ -127,6 +133,24 @@
 		2B1373011895356900B398FD /* SKProduct+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SKProduct+category.m"; sourceTree = "<group>"; };
 		2B1429BA198CD128009B6B55 /* CarPanel2HeadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel2HeadingView.h; sourceTree = "<group>"; };
 		2B1429BB198CD128009B6B55 /* CarPanel2HeadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel2HeadingView.m; sourceTree = "<group>"; };
+		2B17DBF51999FB2D004E9675 /* FBUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBUtil.h; sourceTree = "<group>"; };
+		2B17DBF61999FB2D004E9675 /* FBUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBUtil.m; sourceTree = "<group>"; };
+		2B17DC481999FDF4004E9675 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../Users/Coming/Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
+		2B17DC5C199A03F3004E9675 /* GAI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GAI.h; sourceTree = "<group>"; };
+		2B17DC5D199A03F3004E9675 /* GAIDictionaryBuilder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GAIDictionaryBuilder.h; sourceTree = "<group>"; };
+		2B17DC5E199A03F3004E9675 /* GAIEcommerceFields.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GAIEcommerceFields.h; sourceTree = "<group>"; };
+		2B17DC5F199A03F3004E9675 /* GAIEcommerceProduct.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GAIEcommerceProduct.h; sourceTree = "<group>"; };
+		2B17DC60199A03F3004E9675 /* GAIEcommerceProductAction.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GAIEcommerceProductAction.h; sourceTree = "<group>"; };
+		2B17DC61199A03F3004E9675 /* GAIEcommercePromotion.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GAIEcommercePromotion.h; sourceTree = "<group>"; };
+		2B17DC62199A03F3004E9675 /* GAIFields.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GAIFields.h; sourceTree = "<group>"; };
+		2B17DC63199A03F3004E9675 /* GAILogger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GAILogger.h; sourceTree = "<group>"; };
+		2B17DC64199A03F3004E9675 /* GAITrackedViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GAITrackedViewController.h; sourceTree = "<group>"; };
+		2B17DC65199A03F3004E9675 /* GAITracker.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GAITracker.h; sourceTree = "<group>"; };
+		2B17DC81199A2AA6004E9675 /* GoogleUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GoogleUtil.h; sourceTree = "<group>"; };
+		2B17DC82199A2AA6004E9675 /* GoogleUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleUtil.m; sourceTree = "<group>"; };
+		2B17DC84199A3F65004E9675 /* Social.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Social.framework; path = System/Library/Frameworks/Social.framework; sourceTree = SDKROOT; };
+		2B17DC86199A4606004E9675 /* TwitterUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwitterUtil.h; sourceTree = "<group>"; };
+		2B17DC87199A4606004E9675 /* TwitterUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwitterUtil.m; sourceTree = "<group>"; };
 		2B18AA8F1748D19700277F52 /* UILabel+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UILabel+category.h"; sourceTree = "<group>"; };
 		2B18AA901748D19700277F52 /* UILabel+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UILabel+category.m"; sourceTree = "<group>"; };
 		2B1B7B3819812D8400241BEA /* CarPanelCircleView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanelCircleView.h; sourceTree = "<group>"; };
@@ -160,6 +184,7 @@
 		2B24472D1843949E00813A0F /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		2B24472E1843949E00813A0F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2B24472F1843949E00813A0F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		2B24E7771993A325007EF85D /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
 		2B27CEA11894990D00FBE5FF /* IAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IAPHelper.h; sourceTree = "<group>"; };
 		2B27CEA21894990D00FBE5FF /* IAPHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAPHelper.m; sourceTree = "<group>"; };
 		2B27CEA418949A0D00FBE5FF /* NavierHUDIAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavierHUDIAPHelper.h; sourceTree = "<group>"; };
@@ -285,6 +310,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B17DC85199A3F65004E9675 /* Social.framework in Frameworks */,
+				2B17DC4C1999FEB2004E9675 /* FacebookSDK.framework in Frameworks */,
 				2B2447301843949E00813A0F /* AVFoundation.framework in Frameworks */,
 				2B2447311843949E00813A0F /* CoreData.framework in Frameworks */,
 				2B2447321843949E00813A0F /* CoreLocation.framework in Frameworks */,
@@ -307,6 +334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B6CBFB116DFA6DA0095CBD4 /* SenTestingKit.framework in Frameworks */,
+				2B17DC491999FDF4004E9675 /* FacebookSDK.framework in Frameworks */,
 				2B6CBFB316DFA6DA0095CBD4 /* UIKit.framework in Frameworks */,
 				2B6CBFB416DFA6DA0095CBD4 /* Foundation.framework in Frameworks */,
 				2B6CBFB716DFA6DA0095CBD4 /* libNaviUtil.a in Frameworks */,
@@ -321,6 +349,37 @@
 			children = (
 			);
 			name = base;
+			sourceTree = "<group>";
+		};
+		2B17DBF41999FB20004E9675 /* Share */ = {
+			isa = PBXGroup;
+			children = (
+				2B17DC5B199A03DB004E9675 /* GAHeader */,
+				2B17DC81199A2AA6004E9675 /* GoogleUtil.h */,
+				2B17DC82199A2AA6004E9675 /* GoogleUtil.m */,
+				2B17DBF51999FB2D004E9675 /* FBUtil.h */,
+				2B17DBF61999FB2D004E9675 /* FBUtil.m */,
+				2B17DC86199A4606004E9675 /* TwitterUtil.h */,
+				2B17DC87199A4606004E9675 /* TwitterUtil.m */,
+			);
+			name = Share;
+			sourceTree = "<group>";
+		};
+		2B17DC5B199A03DB004E9675 /* GAHeader */ = {
+			isa = PBXGroup;
+			children = (
+				2B17DC5C199A03F3004E9675 /* GAI.h */,
+				2B17DC5D199A03F3004E9675 /* GAIDictionaryBuilder.h */,
+				2B17DC5E199A03F3004E9675 /* GAIEcommerceFields.h */,
+				2B17DC5F199A03F3004E9675 /* GAIEcommerceProduct.h */,
+				2B17DC60199A03F3004E9675 /* GAIEcommerceProductAction.h */,
+				2B17DC61199A03F3004E9675 /* GAIEcommercePromotion.h */,
+				2B17DC62199A03F3004E9675 /* GAIFields.h */,
+				2B17DC63199A03F3004E9675 /* GAILogger.h */,
+				2B17DC64199A03F3004E9675 /* GAITrackedViewController.h */,
+				2B17DC65199A03F3004E9675 /* GAITracker.h */,
+			);
+			name = GAHeader;
 			sourceTree = "<group>";
 		};
 		2B1C471517884C6E00ED6D98 /* CarPanel */ = {
@@ -488,6 +547,9 @@
 		2B6CBFA016DFA6D90095CBD4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				2B17DC84199A3F65004E9675 /* Social.framework */,
+				2B17DC481999FDF4004E9675 /* FacebookSDK.framework */,
+				2B24E7771993A325007EF85D /* libsqlite3.0.dylib */,
 				2B1F3660190947CF007E0C9A /* GoogleMaps.framework */,
 				2B1F3662190947DB007E0C9A /* GoogleMaps.bundle */,
 				2B27CEA71894A36F00FBE5FF /* StoreKit.framework */,
@@ -513,6 +575,7 @@
 		2B6CBFA316DFA6D90095CBD4 /* NaviUtil */ = {
 			isa = PBXGroup;
 			children = (
+				2B17DBF41999FB20004E9675 /* Share */,
 				2B8B71B4178C3587005E460F /* Third Party */,
 				2B3D573E17896A5100437464 /* Category */,
 				2B3D573C17896A0E00437464 /* System */,
@@ -701,6 +764,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B17DBF71999FB2D004E9675 /* FBUtil.m in Sources */,
 				2B6CBFA916DFA6D90095CBD4 /* NaviUtil.m in Sources */,
 				2B6CBFE516DFA6FD0095CBD4 /* DownloadManager.m in Sources */,
 				2B6CBFE616DFA6FD0095CBD4 /* DownloadRequest.m in Sources */,
@@ -739,7 +803,9 @@
 				2B18AA911748D19700277F52 /* UILabel+category.m in Sources */,
 				2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */,
 				2BDC6B9117859E9C003E61E9 /* UIImage+category.m in Sources */,
+				2B17DC88199A4606004E9675 /* TwitterUtil.m in Sources */,
 				2B1C47141788474600ED6D98 /* DrawBlock.m in Sources */,
+				2B17DC83199A2AA6004E9675 /* GoogleUtil.m in Sources */,
 				2B1C471817884D0400ED6D98 /* TimeDrawBlock.m in Sources */,
 				2B1372FF189510B300B398FD /* RSSecrets.m in Sources */,
 				2B1C471B178851DC00ED6D98 /* DigitalNumDrawBlock.m in Sources */,
@@ -862,6 +928,7 @@
 					"$(inherited)",
 					/Data/Program/NaviUtil,
 					"$(PROJECT_DIR)",
+					/Users/Coming/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";
@@ -880,6 +947,7 @@
 					"$(inherited)",
 					/Data/Program/NaviUtil,
 					"$(PROJECT_DIR)",
+					/Users/Coming/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";
@@ -897,6 +965,8 @@
 					"\\\"$(SDKROOT)/Developer/Library/Frameworks\\\"",
 					"\\\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\\\"",
 					/Data/Program/NaviUtil,
+					/Users/Coming/Documents/FacebookSDK/FBAudienceNetwork,
+					/Users/Coming/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";
@@ -913,6 +983,8 @@
 					"\\\"$(SDKROOT)/Developer/Library/Frameworks\\\"",
 					"\\\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\\\"",
 					/Data/Program/NaviUtil,
+					/Users/Coming/Documents/FacebookSDK/FBAudienceNetwork,
+					/Users/Coming/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";
@@ -955,6 +1027,7 @@
 					"$(inherited)",
 					/Data/Program/NaviUtil,
 					"$(PROJECT_DIR)",
+					/Users/Coming/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";
@@ -972,6 +1045,8 @@
 					"\\\"$(SDKROOT)/Developer/Library/Frameworks\\\"",
 					"\\\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\\\"",
 					/Data/Program/NaviUtil,
+					/Users/Coming/Documents/FacebookSDK/FBAudienceNetwork,
+					/Users/Coming/Documents/FacebookSDK,
 				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "NaviUtil/NaviUtil-Prefix.pch";
