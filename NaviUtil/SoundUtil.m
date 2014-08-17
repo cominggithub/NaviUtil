@@ -50,8 +50,15 @@ AVAudioPlayer *audioPlayer;
 {
     [self play:@"switch-7.mp3"];
 }
+
 +(void)playPopup
 {
     [self play:@"popup.mp3"];
 }
+
++(void)playCarStart
+{
+    [self play:@"car_start_long.mp3"];
+}
+
 @end
