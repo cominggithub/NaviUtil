@@ -94,6 +94,7 @@
 		2BE3A81317046DD5007621EC /* LocationSimulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A81217046DD5007621EC /* LocationSimulator.m */; };
 		2BE7765817C24AEB007AE899 /* MessageBoxLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE7765717C24AEB007AE899 /* MessageBoxLabel.m */; };
 		2BE8FE0217C06E890060395E /* SpeedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8FE0117C06E890060395E /* SpeedView.m */; };
+		2BEB32D319A0959C007BD029 /* SoundUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEB32D219A0959C007BD029 /* SoundUtil.m */; };
 		2BEBB83717BF66BC00B336E6 /* ClockView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEBB83617BF66BC00B336E6 /* ClockView.m */; };
 		2BEBB83A17BF99D900B336E6 /* SystemStatusView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEBB83917BF99D900B336E6 /* SystemStatusView.m */; };
 		2BEF697317A954D6005EC74A /* BatteryLifeView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEF697217A954D6005EC74A /* BatteryLifeView.m */; };
@@ -293,6 +294,8 @@
 		2BE7765717C24AEB007AE899 /* MessageBoxLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageBoxLabel.m; sourceTree = "<group>"; };
 		2BE8FE0017C06E890060395E /* SpeedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeedView.h; sourceTree = "<group>"; };
 		2BE8FE0117C06E890060395E /* SpeedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SpeedView.m; sourceTree = "<group>"; };
+		2BEB32D119A0959C007BD029 /* SoundUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundUtil.h; sourceTree = "<group>"; };
+		2BEB32D219A0959C007BD029 /* SoundUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundUtil.m; sourceTree = "<group>"; };
 		2BEBB83517BF66BC00B336E6 /* ClockView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClockView.h; sourceTree = "<group>"; };
 		2BEBB83617BF66BC00B336E6 /* ClockView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ClockView.m; sourceTree = "<group>"; };
 		2BEBB83817BF99D900B336E6 /* SystemStatusView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemStatusView.h; sourceTree = "<group>"; };
@@ -491,6 +494,8 @@
 				2B94C8E117A4C8B3002581F3 /* JsonFile.m */,
 				2B995CD61706F27500991700 /* Reachability.h */,
 				2B995CD71706F27500991700 /* Reachability.m */,
+				2BEB32D119A0959C007BD029 /* SoundUtil.h */,
+				2BEB32D219A0959C007BD029 /* SoundUtil.m */,
 			);
 			name = System;
 			sourceTree = "<group>";
@@ -773,6 +778,7 @@
 				2BD72004197F8E8A002E7E92 /* CarPanel2View.m in Sources */,
 				2B6CBFE816DFA6FD0095CBD4 /* GeoUtil.m in Sources */,
 				2BCF79FE197FCE50001EDD9D /* CarPanel2SpeedView.m in Sources */,
+				2BEB32D319A0959C007BD029 /* SoundUtil.m in Sources */,
 				2B13073E191E793500F83D52 /* RouteTrack.m in Sources */,
 				2B6CBFE916DFA6FD0095CBD4 /* GuideRouteUIView.m in Sources */,
 				2B6CBFEA16DFA6FD0095CBD4 /* NaviQueryManager.m in Sources */,

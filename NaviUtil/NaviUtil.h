@@ -35,6 +35,7 @@
 #import "Place.h"
 #import "Route.h"
 #import "RouteInstruction.h"
+#import "SoundUtil.h"
 #import "Speech.h"
 #import "SystemConfig.h"
 #import "SystemManager.h"
