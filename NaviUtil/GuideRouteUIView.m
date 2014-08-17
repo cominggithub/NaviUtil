@@ -328,13 +328,14 @@
     CGPoint endPoint;
     CGPoint lastCircle;
     CGRect roundRect;
-    CGRect routeRect = rect;
+    CGRect routeRect;
     CGRect endPointRect;
     int roundRectSize = ROUTE_LINE_RECT_SIZE;
     NSMutableArray *stepPoint;
     RouteLine *tmpRouteLine;
     int drawedMinRouteLineNo;
     int drawedMaxRouteLineNo;
+    int routeLineInterval;
     
     
     drawedMinRouteLineNo    = -1;
@@ -344,6 +345,8 @@
     stepPoint               = [[NSMutableArray alloc] init];
     lastCircle.x            = 0;
     lastCircle.y            = 0;
+    routeRect               = rect;
+    routeLineInterval       = 100;
     
     // draw route line
     CGContextSetFillColorWithColor(context, self.color.CGColor);
@@ -352,7 +355,7 @@
     
     if (nil == drawedRouteLines)
     {
-        drawedRouteLines = [[NSMutableArray alloc] initWithCapacity:30];
+        drawedRouteLines = [[NSMutableArray alloc] initWithCapacity:routeLineInterval*2];
     }
     
     [drawedRouteLines removeAllObjects];
@@ -361,8 +364,8 @@
     CGContextSetStrokeColorWithColor(context, self.color.CGColor);
     
     // find out the max and min route line no to be drawed
-    i = currentRouteLine.no - 30 > -1 ? currentRouteLine.no - 30 : 0;
-    for (; i<currentRouteLine.no+30 && i<route.routeLines.count; i++)
+    i = currentRouteLine.no - routeLineInterval > -1 ? currentRouteLine.no - routeLineInterval : 0;
+    for (; i<currentRouteLine.no+routeLineInterval && i<route.routeLines.count; i++)
     {
         RouteLine *rl;
         rl              = [route.routeLines objectAtIndex:i];
@@ -1366,6 +1369,9 @@
 
 -(void) startRouteNavigation
 {
+    
+    mlogInfo(@"Start: %@, To: %@", routeStartPlace, routeEndPlace);
+    
     GoogleJsonStatus status = [GoogleJson getStatus:routeDownloadRequest.filePath];
     if ( kGoogleJsonStatus_Ok == status)
     {
@@ -1399,6 +1405,7 @@
 
 -(BOOL) startRouteNavigationFrom:(Place*) s To:(Place*) e
 {
+    logfn();
     mlogInfo(@"Start: %@, To: %@", s, e);
     if (nil == s || nil == e)
     {
@@ -1436,8 +1443,10 @@
 
 -(void) planRoute
 {
+    logfn();
     planRouteCount++;
     
+    mlogDebug(@"plan route from %@ to %@", routeStartPlace, routeEndPlace);
     if (nil != routeStartPlace && nil != routeEndPlace)
     {
         if (YES == [routeStartPlace isNullPlace])
@@ -1458,11 +1467,13 @@
         }
         else
         {
+            logfn();
             [naviState sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
         }
     }
     else
     {
+        logfn();
         [naviState sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
     }
 }

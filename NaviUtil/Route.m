@@ -413,17 +413,10 @@
 
 -(NSString*) getDocumentDirectory
 {
-    NSFileManager *filemanager;
-    NSString *currentPath;
-    
-    filemanager =[NSFileManager defaultManager];
-    currentPath = [filemanager currentDirectoryPath];
-    
     NSArray *dirPaths;
     NSString *docsDir;
     
-    dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,
-                                                   NSUserDomainMask, YES);
+    dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     docsDir = [dirPaths objectAtIndex:0];
     return docsDir;
 }
@@ -520,7 +513,6 @@
     double tmpDistance;
     double tmpStartDistance;
     double distanceFromStart;
-    RouteLine* candidateRouteLine;
     
     distanceFromStart = DISTANCE_FROM_START_POINT_THRESHOLD;
     
@@ -547,7 +539,6 @@
         if(tmpStartDistance < distanceFromStart)
         {
             distanceFromStart   = tmpStartDistance;
-            candidateRouteLine  = rl;
         }
     }
     
@@ -634,9 +625,6 @@
             searchCount++;
         }
         
-        /* look backward */
-        if(lastRouteLine == nil)
-            i = -1;
         for(i=lastRouteLine.no-1; i>=0 && i>=lastRouteLine.no-radius && i<routeLineCount; i--)
         {
             RouteLine *rl = [self.routeLines objectAtIndex:i];

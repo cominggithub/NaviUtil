@@ -191,7 +191,6 @@ static NSDictionary *_defaultLanguageDic;
 {
     Reachability* networkStatus = [Reachability reachabilityForInternetConnection];
     NetworkStatus netStatus     = [networkStatus currentReachabilityStatus];
-    BOOL connectionRequired     = [networkStatus connectionRequired];
     NSString* statusString= @"";
     switch (netStatus)
     {
@@ -199,7 +198,6 @@ static NSDictionary *_defaultLanguageDic;
         {
             statusString        = @"None";
             //Minor interface detail- connectionRequired may return yes, even when the host is unreachable.  We cover that up here...
-            connectionRequired  = NO;
             _wifiStatus         = 0;
             _threeGStatus       = 0;
             _networkStatus      = 0;
@@ -299,18 +297,12 @@ static NSDictionary *_defaultLanguageDic;
 {
     int i;
     NSDateFormatter *dateFormattor;
-    NSFileManager *filemanager;
-    NSString *currentPath;
     NSArray *dirPaths;
     NSString *tmpStr;
 
     
     dateFormattor  = [[NSDateFormatter alloc] init];
     [dateFormattor setDateFormat:@"yyyy-MM-dd"];
-
-    filemanager =[NSFileManager defaultManager];
-    currentPath = [filemanager currentDirectoryPath];
-    
     dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     
     _pathArray = [NSMutableArray arrayWithCapacity:kSystemManager_Path_Max];

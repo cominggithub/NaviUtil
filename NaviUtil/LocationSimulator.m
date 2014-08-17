@@ -213,7 +213,6 @@
     {
         double requiredDistance;
         double tmpDistance;
-        double distanceFromStart;
         
         requiredDistance            = advanceDistance;
         curRouteLine                = [route.routeLines objectAtIndex:curRouteLineNo];
@@ -255,8 +254,6 @@
             
 
             requiredDistance -= tmpDistance;
-
-            distanceFromStart = [GeoUtil getGeoDistanceFromLocation:nextCoordinate2D ToLocation:curRouteLine.startLocation];
         }
     }
     else
@@ -316,6 +313,10 @@
             break;
         case kLocationSimulator_File:
             location = [self getNextLocationFromFile];
+            locationCoordinate2D = [self getNextRouteLocation];
+            break;
+        default:
+            locationCoordinate2D = [self getNextRouteLocation];
             break;
             
     }

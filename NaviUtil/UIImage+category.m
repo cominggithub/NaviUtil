@@ -86,7 +86,7 @@
     // Fill and end the transparency layer
     
     
-    const float* colors = CGColorGetComponents( color.CGColor );
+    const CGFloat* colors = CGColorGetComponents( color.CGColor );
     CGContextSetRGBFillColor(c, colors[0], colors[1], colors[2], .75);
     
     contextRect.size.height = -contextRect.size.height;

@@ -44,8 +44,6 @@
 
 +(void)initializeGoogleAnalytics
 {
-    logfn();
-    id<GAITracker> tracker;
     // Optional: automatically send uncaught exceptions to Google Analytics.
     [GAI sharedInstance].trackUncaughtExceptions = YES;
     
@@ -57,7 +55,7 @@
     [[[GAI sharedInstance] logger] setLogLevel:kGAILogLevelVerbose];
     
     // Initialize tracker. Replace with your tracking ID.
-    tracker = [[GAI sharedInstance] trackerWithTrackingId:@"UA-53605712-1"];
+    [[GAI sharedInstance] trackerWithTrackingId:@"UA-53605712-1"];
     
 }
 

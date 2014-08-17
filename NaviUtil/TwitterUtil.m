@@ -8,6 +8,8 @@
 
 #import "TwitterUtil.h"
 #import <Social/Social.h>
+#import "GoogleUtil.h"
+#import "SystemConfig.h"
 
 #if DEBUG
 #define FILE_DEBUG TRUE
@@ -42,8 +44,28 @@
         NSLog(@"Couldn't image");
     }
 
+    slvc.completionHandler = ^(SLComposeViewControllerResult result) {
+        switch(result) {
+                //  This means the user cancelled without sending the Tweet
+            case SLComposeViewControllerResultCancelled:
+                break;
+                //  This means the user hit 'Send'
+            case SLComposeViewControllerResultDone:
+                [GoogleUtil sendButtonEvent:@"Share App Store Link on Twitter"];
+                [SystemConfig setValue:CONFIG_IS_SHARE_ON_TWITTER BOOL:TRUE];
+                break;
+        }
+    };
+        
 //    [[[UIApplication sharedApplication].keyWindow.rootViewController].navigationController pushViewController:twitterViewController animated:TRUE];
 //    [parent.navigationController pushViewController:twitterViewController animated:TRUE];
     [parent presentViewController:slvc animated:TRUE completion:nil];
+    
+}
+
++(void)shareAppStoreLink
+{
+    UIViewController *currentViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    [self shareAppStoreLink:currentViewController];
 }
 @end

@@ -443,7 +443,6 @@
 
 -(void) processRouteDownloadRequestStatusChange
 {
-    bool updateStatus = false;
     /* search place finished */
     if (routeDownloadRequest.status == kDownloadStatus_Finished)
     {
@@ -467,10 +466,6 @@
             self.hasRoute = TRUE;
             self.isShowPlanRouteFailedForCurrentPlace = TRUE;
         }
-        else
-        {
-            updateStatus = true;
-        }
         
         if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:routePlanning:)])
         {
@@ -481,8 +476,6 @@
     /* search failed */
     else if(YES == routeDownloadRequest.done)
     {
-        updateStatus = true;
-        
         if (nil != self.delegate && [self.delegate respondsToSelector:@selector(mapManager:routePlanning:)])
         {
             [self.delegate mapManager:self routePlanning:FALSE];

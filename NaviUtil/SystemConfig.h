@@ -51,6 +51,10 @@
 #define CONFIG_USE_COUNT                     @"UseCount"
 
 
+#define CONFIG_IS_SHARE_ON_FB                @"SHARE_ON_FB"
+#define CONFIG_IS_SHARE_ON_TWITTER           @"SHARE_ON_TWITTER"
+
+
 
 #define CONFIG_IAP_IS_ADVANCED_VERSION      @"IAP_AdvancedVersion"
 

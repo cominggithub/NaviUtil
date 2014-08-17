@@ -705,7 +705,7 @@ static NSMutableArray*  _recentPlaces;
 +(void) createDebugConfig
 {
     mlogInfo(@"Create new user profile");
-    Place *p                = [[Place alloc] init];
+    Place* p;
     _name                   = @"Coming";
     _email                  = @"misscoming@gmail.com";
     _homePlaces             = [[NSMutableArray alloc] initWithCapacity:0];

@@ -166,14 +166,6 @@ static NSMutableArray *_savedLocations;
     _dateFormatter2 = [[NSDateFormatter alloc] init];
     [_dateFormatter2 setDateFormat:@"yyyy-MM-dd HH-mm"];
     
-    NSDateFormatter *dateFormattor = [[NSDateFormatter alloc] init];
-    NSFileManager *filemanager;
-    NSString *currentPath;
-    
-    [dateFormattor setDateFormat:@"HHMM"];
-    filemanager =[NSFileManager defaultManager];
-    currentPath = [filemanager currentDirectoryPath];
-    
     [LocationManager reprobeLocation];
     
 }
@@ -191,7 +183,6 @@ static NSMutableArray *_savedLocations;
     int updateLocationCount = 0;
     CLLocationCoordinate2D nextLocation = _currentCLLocationCoordinate2D;
     NSDate *updateTime = [NSDate date];
-    NSTimeInterval timeDiff;
     BOOL hasNewLocationInThisUpdate   = FALSE;
     CLLocationSpeed speed = 0;
     CLLocationDirection heading = 0;
@@ -234,7 +225,6 @@ static NSMutableArray *_savedLocations;
     }
         
     distance = [GeoUtil getGeoDistanceFromLocation:_currentCLLocationCoordinate2D ToLocation:nextLocation];
-    timeDiff = [updateTime timeIntervalSinceDate:_lastUpdateTime];
 
     if (YES == [GeoUtil isCLLocationCoordinate2DEqual:_lastCLLocationCoordinate2D To:lastUpdatedLocation])
     {
@@ -292,7 +282,7 @@ static NSMutableArray *_savedLocations;
 
 +(Place*) currentPlace
 {
-    Place *p = _currentPlace;
+    Place *p;
     
     if (TRUE == [SystemConfig getBoolValue:CONFIG_H_IS_MANUAL_PLACE])
         p = _currentManualPlace;

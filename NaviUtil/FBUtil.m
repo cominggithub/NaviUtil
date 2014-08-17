@@ -8,6 +8,8 @@
 
 #import "FBUtil.h"
 #import <Social/Social.h>
+#import "GoogleUtil.h"
+#import "SystemConfig.h"
 
 #if DEBUG
 #define FILE_DEBUG TRUE
@@ -26,13 +28,14 @@
     // Check if the Facebook app is installed and we can present
     // the message dialog
     
+    logfn();
     FBLinkShareParams *params = [[FBLinkShareParams alloc] init];
     params.link =
     [NSURL URLWithString:@"https://itunes.apple.com/app/navier-hud/id806144673"];
-    params.name = @"[navier]Naiver HUD";
-    params.caption = @"Awesome iPhone Navigation App";
+    params.name = @"Naiver HUD";
+//    params.caption = @"Awesome iPhone Navigation App";
     params.picture = [NSURL URLWithString:@"https://dl.dropboxusercontent.com/u/14692540/blog/global/4/navigation_green.png"];
-    params.linkDescription   = @"this is link description";
+//    params.linkDescription   = @"";
 
     if ([FBDialogs canPresentMessageDialogWithParams:params]) {
         
@@ -41,6 +44,7 @@
                                           if(error) {
                                           } else {
                                               [GoogleUtil sendButtonEvent:@"Share App Store Link on Facebook"];
+                                              [SystemConfig setValue:CONFIG_IS_SHARE_ON_FB BOOL:TRUE];
                                           }
                                       }];
     }  else {
@@ -70,6 +74,7 @@
     
     //    [[[UIApplication sharedApplication].keyWindow.rootViewController].navigationController pushViewController:twitterViewController animated:TRUE];
     [parent presentViewController:slvc animated:TRUE completion:nil];
+
 }
 
 @end

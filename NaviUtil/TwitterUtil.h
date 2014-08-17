@@ -11,4 +11,5 @@
 
 @interface TwitterUtil : NSObject
 +(void)shareAppStoreLink:(UIViewController*) parent;
++(void)shareAppStoreLink;
 @end

@@ -276,6 +276,11 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_TRIGGER_LOCATION_INTERVAL     defaultValue:[NSString stringFromInt:0]];
     [self checkKey:CONFIG_ROUTE_PLAN_TIMEOUT            defaultValue:[NSString stringFromInt:6]];
     
+    
+    [self checkKey:CONFIG_IS_SHARE_ON_FB                defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_IS_SHARE_ON_TWITTER           defaultValue:[NSString stringFromBOOL:FALSE]];
+    
+    
     [self save];
 
 }
