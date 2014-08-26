@@ -188,7 +188,21 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 {
     mlogAssertStrNotEmptyR(key, nil);
     if ([key isEqualToString:@"com.coming.NavierHUD.Iap.AdvancedVersion"])
+    {
         return CONFIG_IAP_IS_ADVANCED_VERSION;
+    }
+    else if ([key isEqualToString:@"com.coming.NavierHUD.Iap.carpanel2"])
+    {
+        return CONFIG_IAP_IS_CAR_PANEL_2;
+    }
+    else if ([key isEqualToString:@"com.coming.NavierHUD.Iap.carpanel3"])
+    {
+        return CONFIG_IAP_IS_CAR_PANEL_3;
+    }
+    else if ([key isEqualToString:@"com.coming.NavierHUD.Iap.carpanel4"])
+    {
+        return CONFIG_IAP_IS_CAR_PANEL_4;
+    }
     
     return nil;
 }

@@ -57,19 +57,8 @@
     [self addSubview:_speedLabel];
     [self addSubview:_speedUnitLabel];
     
-    [self updateUIByLanguage];
-
 }
 
--(void) updateUIByLanguage
-{
-    NSString* language = [SystemManager getSystemLanguage];
-    
-    if ([language isEqualToString:@"zh-Hant"] || [language isEqualToString:@"zh-Hans"])
-    {
-        _speedUnitLabel.font = [_speedUnitLabel.font newFontsize:12];
-    }
-}
 
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
@@ -126,7 +115,6 @@
 -(void) active
 {
     self.speed          = 0;
-    [self updateUIByLanguage];
     [LocationManager addDelegate:self];
 
 }

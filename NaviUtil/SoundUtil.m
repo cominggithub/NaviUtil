@@ -26,23 +26,18 @@ AVAudioPlayer *audioPlayer;
 {
     @try {
         NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/%@", [[NSBundle mainBundle] resourcePath], file]];
-        
         NSError *error;
         audioPlayer = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:&error];
-        audioPlayer.numberOfLoops = 0;
         
+
+        audioPlayer.numberOfLoops = 0;
+        [audioPlayer stop];
+        [audioPlayer setCurrentTime:0];
+        [audioPlayer prepareToPlay];
         [audioPlayer play];
     }
     @catch (NSException *exception) {
         mlogDebug(@"%@", [exception reason]);
-    }
-    
-    @try
-    {
-        [audioPlayer play];
-    }
-    @catch (NSException *exception) {
-        NSLog(@"%@", [exception reason]);
     }
 }
 

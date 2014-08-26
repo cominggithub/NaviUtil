@@ -42,6 +42,8 @@ static BOOL retrieveIapSuccess;
         NSSet * productIdentifiers = [NSSet setWithObjects:
                                       IAP_NO_AD_STORE_USER_PLACE,
                                       IAP_CAR_PANEL_2,
+                                      IAP_CAR_PANEL_3,
+                                      IAP_CAR_PANEL_4,
                                       nil];
         sharedInstance = [[self alloc] initWithProductIdentifiers:productIdentifiers];
     });
@@ -84,7 +86,7 @@ static BOOL retrieveIapSuccess;
     {
         skProduct = [iapItems objectForKey:key];
         [formatter setLocale:skProduct.priceLocale];
-        [msg appendString:[NSString stringWithFormat:@"%@ %@ %0.2f \n%@ %@\n",
+        [msg appendString:[NSString stringWithFormat:@"-- \n%@ %@ %0.2f \n%@\n%@\n",
                            skProduct.productIdentifier,
                            skProduct.localizedTitle,
                            skProduct.price.floatValue,
