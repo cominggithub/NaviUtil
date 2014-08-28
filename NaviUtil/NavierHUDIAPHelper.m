@@ -60,6 +60,7 @@ static BOOL retrieveIapSuccess;
             for (SKProduct* p in products)
             {
                 [iapItems setValue:p forKey:p.productIdentifier];
+                [self dumpIapItems];
             }
         }
         else
