@@ -10,6 +10,17 @@
 #import "NSString+category.h"
 #import "UIFont+category.h"
 
+#if DEBUG
+#define FILE_DEBUG TRUE
+#elif RELEASE_TEST
+#define FILE_DEBUG TRUE
+#else
+#define FILE_DEBUG TRUE
+#endif
+
+#include "Log.h"
+
+
 @implementation CarPanel2ClockView
 {
     UILabel *_hourLabel;
@@ -71,6 +82,7 @@
 
 -(void) update
 {
+    logfn();
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *components = [calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit) fromDate:[NSDate date]];
     NSInteger hour      = [components hour];

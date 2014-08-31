@@ -51,9 +51,13 @@ typedef enum
 +(void) startLocationTracking;
 +(void) stopLocationTracking;
 
++(void) start;
++(void) stop;
+
 -(void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations;
 -(void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading;
 -(void) startMonitorLocationChange;
 -(void) stopMonitorLocationChange;
+
 
 @end

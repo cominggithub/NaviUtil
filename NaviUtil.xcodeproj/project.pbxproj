@@ -186,6 +186,7 @@
 		2B24472E1843949E00813A0F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2B24472F1843949E00813A0F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		2B24E7771993A325007EF85D /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
+		2B24ED6A19B33ABC00C9A218 /* IAP_EVENT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IAP_EVENT.h; sourceTree = "<group>"; };
 		2B27CEA11894990D00FBE5FF /* IAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IAPHelper.h; sourceTree = "<group>"; };
 		2B27CEA21894990D00FBE5FF /* IAPHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAPHelper.m; sourceTree = "<group>"; };
 		2B27CEA418949A0D00FBE5FF /* NavierHUDIAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavierHUDIAPHelper.h; sourceTree = "<group>"; };
@@ -496,6 +497,7 @@
 				2B995CD71706F27500991700 /* Reachability.m */,
 				2BEB32D119A0959C007BD029 /* SoundUtil.h */,
 				2BEB32D219A0959C007BD029 /* SoundUtil.m */,
+				2B24ED6A19B33ABC00C9A218 /* IAP_EVENT.h */,
 			);
 			name = System;
 			sourceTree = "<group>";

@@ -100,6 +100,7 @@
     }
     
     distance = [GeoUtil getGeoDistanceFromLocation:self.location ToLocation:location];
+    logF(distance);
     _location = CLLocationCoordinate2DMake(location.latitude, location.longitude);
     [self addDistance:distance];
     
@@ -109,6 +110,7 @@
     double distanceToShow = 0;
     _cumulativeDistance = cumulativeDistance;
 
+    logF(_cumulativeDistance);
     if (self.isSpeedUnitMph == YES)
     {
         distanceToShow = M_TO_MILE(_cumulativeDistance);
@@ -117,6 +119,8 @@
     {
         distanceToShow = _cumulativeDistance/1000.0;
     }
+
+    logF(distanceToShow);
     
     if (distanceToShow < 9.9999)
     {

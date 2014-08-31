@@ -21,11 +21,11 @@
 
 NSMutableDictionary* iapItems;
 
-static BOOL retrieveIapSuccess;
+static IAP_STATUS iapStatus;
 +(void) init
 {
     iapItems = [[NSMutableDictionary alloc] initWithCapacity:0];
-    retrieveIapSuccess = FALSE;
+    iapStatus = IAP_STATUS_RETRIEVING;
     [self retrieveProduct];
 }
 
@@ -53,19 +53,22 @@ static BOOL retrieveIapSuccess;
 
 +(void) retrieveProduct
 {
+    iapStatus = IAP_STATUS_RETRIEVING;
     [[NavierHUDIAPHelper sharedInstance] requestProductsWithCompletionHandler:^(BOOL success, NSArray *products) {
         if (success)
         {
-            retrieveIapSuccess = TRUE;
             for (SKProduct* p in products)
             {
                 [iapItems setValue:p forKey:p.productIdentifier];
-                [self dumpIapItems];
             }
+            iapStatus = IAP_STATUS_RETRIEVED;
+            [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_IAP_STATUS_RETRIEVED object:self];
+            
         }
         else
         {
-
+            iapStatus = IAP_STATUS_RETRIEVE_FAIL;
+            [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_IAP_STATUS_RETRIEVE_FAIL object:self];
         }
     }];
 
@@ -114,9 +117,9 @@ static BOOL retrieveIapSuccess;
     [[NavierHUDIAPHelper sharedInstance] restoreCompletedTransactions];
 }
 
-+ (BOOL)retrieveIap
++ (IAP_STATUS)retrieveIap
 {
-    return retrieveIapSuccess;
+    return iapStatus;
 }
 
 

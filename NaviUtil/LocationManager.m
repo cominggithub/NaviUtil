@@ -11,7 +11,7 @@
 #import "SystemManager.h"
 #import "LocationSimulator.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 #define LOCATION_UPDATE_DISTANCE_THRESHOLD 30 /* 30 meter */ 
@@ -70,14 +70,16 @@ static NSMutableArray *_savedLocations;
 
 -(void) startMonitorLocationChange
 {
+    mlogDebug(@"Start monitor location change");
     [_locationManager startUpdatingLocation];
-    [_locationManager startUpdatingHeading];
+//    [_locationManager startUpdatingHeading];
 }
 
 -(void) stopMonitorLocationChange
 {
+    mlogDebug(@"Stop monitor location change");
     [_locationManager stopUpdatingLocation];
-    [_locationManager stopUpdatingHeading];
+//    [_locationManager stopUpdatingHeading];
 }
 
 
@@ -352,33 +354,6 @@ static NSMutableArray *_savedLocations;
     return _currentCLLocationCoordinate2D;
 }
 
-+(void) startMonitorLocation
-{
-    [_locationSimulator stop];
-    [_locationManager startMonitorLocationChange];
-}
-
-+(void) stopMonitorLocation
-{
-    [_locationManager stopMonitorLocationChange];
-}
-
-+(void) startLocationSimulation
-{
-    [_locationManager stopMonitorLocationChange];
-    [_locationSimulator start];
-}
-
-+(void) stopLocationSimulation
-{
-    [_locationSimulator stop];
-}
-
-+(void) triggerLocationUpdate
-{
-    [_locationSimulator triggerLocationUpdate];
-}
-
 +(void) setRoute:(Route*) route
 {
     [_locationSimulator setRoute:route];
@@ -560,4 +535,52 @@ static NSMutableArray *_savedLocations;
     
     [self saveToKml];
 }
+
++(void) triggerLocationUpdate
+{
+    [_locationSimulator triggerLocationUpdate];
+}
+
+#pragma mark -- start-stop
+
++(void) start
+{
+    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_LOCATION_SIMULATOR])
+    {
+        [_locationSimulator start];
+    }
+    else
+    {
+        [_locationManager startMonitorLocationChange];
+    }
+}
+
++(void) stop
+{
+    [_locationSimulator stop];
+    [_locationManager stopMonitorLocationChange];
+}
+
++(void) startMonitorLocation
+{
+    [_locationSimulator stop];
+    [_locationManager startMonitorLocationChange];
+}
+
++(void) stopMonitorLocation
+{
+    [_locationManager stopMonitorLocationChange];
+}
+
++(void) startLocationSimulation
+{
+    [_locationManager stopMonitorLocationChange];
+    [_locationSimulator start];
+}
+
++(void) stopLocationSimulation
+{
+    [_locationSimulator stop];
+}
+
 @end
