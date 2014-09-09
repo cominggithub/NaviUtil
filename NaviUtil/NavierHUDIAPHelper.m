@@ -25,7 +25,6 @@ static IAP_STATUS iapStatus;
 +(void) init
 {
     iapItems = [[NSMutableDictionary alloc] initWithCapacity:0];
-    iapStatus = IAP_STATUS_RETRIEVING;
     [self retrieveProduct];
 }
 
@@ -123,4 +122,9 @@ static IAP_STATUS iapStatus;
 }
 
 
++ (BOOL)hasUnbroughtIap
+{
+    return ![SystemConfig getBoolValue:IAP_NO_AD_STORE_USER_PLACE] || ![SystemConfig getBoolValue:IAP_CAR_PANEL_2] ||
+    ![SystemConfig getBoolValue:IAP_CAR_PANEL_3] || ![SystemConfig getBoolValue:IAP_CAR_PANEL_4];
+}
 @end

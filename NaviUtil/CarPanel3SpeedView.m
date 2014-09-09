@@ -1,32 +1,28 @@
 //
-//  CarPanel2SpeedView.m
+//  CarPanel3SpeedView.m
 //  NaviUtil
 //
-//  Created by Coming on 7/23/14.
+//  Created by Coming on 9/9/14.
 //  Copyright (c) 2014 Coming. All rights reserved.
 //
 
-#import "CarPanel2SpeedView.h"
+#import "CarPanel3SpeedView.h"
 #import "UIImage+category.h"
 
 #if DEBUG
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #elif RELEASE_TEST
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #else
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #endif
 
 #include "Log.h"
 
-
-@implementation CarPanel2SpeedView
+@implementation CarPanel3SpeedView
 {
     UILabel *speedLabel;
     UILabel *speedLabelUint;
-    UIView *speedLabelMask;
-    UIImageView *arrow;
-    UIImage *arrowImage;
 }
 
 - (id)initWithFrame:(CGRect)frame
@@ -62,10 +58,10 @@
 {
     [self addUIComponents];
     speedLabel.text     = @"120";
+    speedLabelUint.text = @"mph";
     self.isSpeedUnitMph = YES;
     
 }
-
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
@@ -75,27 +71,16 @@
 }
 */
 
-
 -(void)addUIComponents
 {
-    speedLabel                      = [[UILabel alloc] initWithFrame:CGRectMake(5, 30, 250, 300)];
-    speedLabel.font                 = [UIFont fontWithName:@"CordiaUPC" size:200];
+    speedLabel                      = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 250, 300)];
+    speedLabel.font                 = [UIFont fontWithName:@"SWIsop3" size:100];
     speedLabel.textAlignment        = UITextAlignmentCenter;
 
-    speedLabelUint                  = [[UILabel alloc] initWithFrame:CGRectMake(5, -30, 250, 300)];
-    speedLabelUint.font             = [UIFont fontWithName:@"IrisUPC" size:50];
+    speedLabelUint                  = [[UILabel alloc] initWithFrame:CGRectMake(50, 80, 250, 300)];
+    speedLabelUint.font             = [UIFont fontWithName:@"SWIsop3" size:30];
     speedLabelUint.textAlignment    = UITextAlignmentCenter;
     
-    speedLabelMask                  = [[UIView alloc] initWithFrame:CGRectMake(-5, 135, 270, 130)];
-    speedLabelMask.backgroundColor  = [UIColor blackColor];
-    
-    arrow                           = [[UIImageView alloc] initWithFrame:CGRectMake(118, 55, 25, 28) ];
-    arrowImage                      = [UIImage imageNamed:@"cp2_arrow"];
-    arrow.image                     = arrowImage;
-    
-
-    [self addSubview:speedLabelMask];
-    [self addSubview:arrow];
     [self addSubview:speedLabel];
     [self addSubview:speedLabelUint];
 }
@@ -108,7 +93,6 @@
     _color = color;
     speedLabel.textColor        = [UIColor colorWithCGColor:[color CGColor]];
     speedLabelUint.textColor    = [UIColor colorWithCGColor:[color CGColor]];
-    arrow.image                 = [arrowImage imageTintedWithColor:self.color];
 }
 
 -(void)setSpeed:(double)speed

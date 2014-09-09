@@ -11,6 +11,10 @@
 		2B1372FF189510B300B398FD /* RSSecrets.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1372FE189510B300B398FD /* RSSecrets.m */; };
 		2B1373021895356900B398FD /* SKProduct+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1373011895356900B398FD /* SKProduct+category.m */; };
 		2B1429BC198CD128009B6B55 /* CarPanel2HeadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1429BB198CD128009B6B55 /* CarPanel2HeadingView.m */; };
+		2B16D00B19BF263C008FE8F5 /* CarPanel3View.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B16D00A19BF263C008FE8F5 /* CarPanel3View.m */; };
+		2B16D00E19BF270A008FE8F5 /* CarPanel3SpeedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B16D00D19BF270A008FE8F5 /* CarPanel3SpeedView.m */; };
+		2B16D01719BF323D008FE8F5 /* CarPanel3HeadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B16D01619BF323D008FE8F5 /* CarPanel3HeadingView.m */; };
+		2B16D01A19BF3798008FE8F5 /* CarPanelSwitchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B16D01919BF3798008FE8F5 /* CarPanelSwitchView.m */; };
 		2B17DBF71999FB2D004E9675 /* FBUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B17DBF61999FB2D004E9675 /* FBUtil.m */; };
 		2B17DC491999FDF4004E9675 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B17DC481999FDF4004E9675 /* FacebookSDK.framework */; };
 		2B17DC4C1999FEB2004E9675 /* FacebookSDK.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B17DC481999FDF4004E9675 /* FacebookSDK.framework */; };
@@ -134,6 +138,14 @@
 		2B1373011895356900B398FD /* SKProduct+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "SKProduct+category.m"; sourceTree = "<group>"; };
 		2B1429BA198CD128009B6B55 /* CarPanel2HeadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel2HeadingView.h; sourceTree = "<group>"; };
 		2B1429BB198CD128009B6B55 /* CarPanel2HeadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel2HeadingView.m; sourceTree = "<group>"; };
+		2B16D00919BF263C008FE8F5 /* CarPanel3View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel3View.h; sourceTree = "<group>"; };
+		2B16D00A19BF263C008FE8F5 /* CarPanel3View.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel3View.m; sourceTree = "<group>"; };
+		2B16D00C19BF270A008FE8F5 /* CarPanel3SpeedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel3SpeedView.h; sourceTree = "<group>"; };
+		2B16D00D19BF270A008FE8F5 /* CarPanel3SpeedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel3SpeedView.m; sourceTree = "<group>"; };
+		2B16D01519BF323D008FE8F5 /* CarPanel3HeadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel3HeadingView.h; sourceTree = "<group>"; };
+		2B16D01619BF323D008FE8F5 /* CarPanel3HeadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel3HeadingView.m; sourceTree = "<group>"; };
+		2B16D01819BF3798008FE8F5 /* CarPanelSwitchView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanelSwitchView.h; sourceTree = "<group>"; };
+		2B16D01919BF3798008FE8F5 /* CarPanelSwitchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanelSwitchView.m; sourceTree = "<group>"; };
 		2B17DBF51999FB2D004E9675 /* FBUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FBUtil.h; sourceTree = "<group>"; };
 		2B17DBF61999FB2D004E9675 /* FBUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FBUtil.m; sourceTree = "<group>"; };
 		2B17DC481999FDF4004E9675 /* FacebookSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FacebookSDK.framework; path = ../../../Users/Coming/Documents/FacebookSDK/FacebookSDK.framework; sourceTree = "<group>"; };
@@ -186,7 +198,7 @@
 		2B24472E1843949E00813A0F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2B24472F1843949E00813A0F /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		2B24E7771993A325007EF85D /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
-		2B24ED6A19B33ABC00C9A218 /* IAP_EVENT.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IAP_EVENT.h; sourceTree = "<group>"; };
+		2B24ED6A19B33ABC00C9A218 /* IAPEvent.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IAPEvent.h; sourceTree = "<group>"; };
 		2B27CEA11894990D00FBE5FF /* IAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IAPHelper.h; sourceTree = "<group>"; };
 		2B27CEA21894990D00FBE5FF /* IAPHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IAPHelper.m; sourceTree = "<group>"; };
 		2B27CEA418949A0D00FBE5FF /* NavierHUDIAPHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavierHUDIAPHelper.h; sourceTree = "<group>"; };
@@ -351,8 +363,25 @@
 		2B1429B9198CD103009B6B55 /* base */ = {
 			isa = PBXGroup;
 			children = (
+				2B1B7B3819812D8400241BEA /* CarPanelCircleView.h */,
+				2B1B7B3919812D8400241BEA /* CarPanelCircleView.m */,
+				2B16D01819BF3798008FE8F5 /* CarPanelSwitchView.h */,
+				2B16D01919BF3798008FE8F5 /* CarPanelSwitchView.m */,
 			);
 			name = base;
+			sourceTree = "<group>";
+		};
+		2B16D00819BF2615008FE8F5 /* CarPanel3 */ = {
+			isa = PBXGroup;
+			children = (
+				2B16D00919BF263C008FE8F5 /* CarPanel3View.h */,
+				2B16D00A19BF263C008FE8F5 /* CarPanel3View.m */,
+				2B16D00C19BF270A008FE8F5 /* CarPanel3SpeedView.h */,
+				2B16D00D19BF270A008FE8F5 /* CarPanel3SpeedView.m */,
+				2B16D01519BF323D008FE8F5 /* CarPanel3HeadingView.h */,
+				2B16D01619BF323D008FE8F5 /* CarPanel3HeadingView.m */,
+			);
+			name = CarPanel3;
 			sourceTree = "<group>";
 		};
 		2B17DBF41999FB20004E9675 /* Share */ = {
@@ -389,9 +418,8 @@
 		2B1C471517884C6E00ED6D98 /* CarPanel */ = {
 			isa = PBXGroup;
 			children = (
+				2B16D00819BF2615008FE8F5 /* CarPanel3 */,
 				2B1429B9198CD103009B6B55 /* base */,
-				2B1B7B3819812D8400241BEA /* CarPanelCircleView.h */,
-				2B1B7B3919812D8400241BEA /* CarPanelCircleView.m */,
 				2BCF79FF197FCEB5001EDD9D /* Protocol */,
 				2BD71FF7197F8D94002E7E92 /* CarPanel2 */,
 				2BEF697117A954D6005EC74A /* BatteryLifeView.h */,
@@ -497,7 +525,7 @@
 				2B995CD71706F27500991700 /* Reachability.m */,
 				2BEB32D119A0959C007BD029 /* SoundUtil.h */,
 				2BEB32D219A0959C007BD029 /* SoundUtil.m */,
-				2B24ED6A19B33ABC00C9A218 /* IAP_EVENT.h */,
+				2B24ED6A19B33ABC00C9A218 /* IAPEvent.h */,
 			);
 			name = System;
 			sourceTree = "<group>";
@@ -774,6 +802,7 @@
 				2B17DBF71999FB2D004E9675 /* FBUtil.m in Sources */,
 				2B6CBFA916DFA6D90095CBD4 /* NaviUtil.m in Sources */,
 				2B6CBFE516DFA6FD0095CBD4 /* DownloadManager.m in Sources */,
+				2B16D00B19BF263C008FE8F5 /* CarPanel3View.m in Sources */,
 				2B6CBFE616DFA6FD0095CBD4 /* DownloadRequest.m in Sources */,
 				2B6CBFE716DFA6FD0095CBD4 /* FileDownloader.m in Sources */,
 				2B4D5E09193B690100442F2A /* NaviStatus.m in Sources */,
@@ -788,6 +817,8 @@
 				2B6CBFEB16DFA6FD0095CBD4 /* NSString+category.m in Sources */,
 				2B6CBFEC16DFA6FD0095CBD4 /* NSValue+category.m in Sources */,
 				2B6CBFED16DFA6FD0095CBD4 /* Place.m in Sources */,
+				2B16D01A19BF3798008FE8F5 /* CarPanelSwitchView.m in Sources */,
+				2B16D00E19BF270A008FE8F5 /* CarPanel3SpeedView.m in Sources */,
 				2B4D5E06193B647900442F2A /* CoordinateTranslator.m in Sources */,
 				2B6CBFEE16DFA6FD0095CBD4 /* Route.m in Sources */,
 				2B6CBFEF16DFA6FD0095CBD4 /* RouteInstruction.m in Sources */,
@@ -796,6 +827,7 @@
 				2BFAC090190B487C006FFD94 /* NaviState.m in Sources */,
 				2B6CBFF116DFA6FD0095CBD4 /* SystemManager.m in Sources */,
 				2B7ADCAC16E4E5DE00F8A182 /* Log.m in Sources */,
+				2B16D01719BF323D008FE8F5 /* CarPanel3HeadingView.m in Sources */,
 				2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */,
 				2B27CEA31894990D00FBE5FF /* IAPHelper.m in Sources */,
 				2B98912716EB82D90057A226 /* TextValue.m in Sources */,

@@ -15,9 +15,6 @@
 #define FILE_DEBUG TRUE
 #include "Log.h"
 
-NSString *const IAPHelperProductPurchasedNotification = @"IAPHelperProductPurchasedNotification";
-NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedNotification";
-
 // 2
 @interface IAPHelper () <SKProductsRequestDelegate, SKPaymentTransactionObserver>
 @end
@@ -81,7 +78,6 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 {
     _completionHandler(YES, response.products);
     _completionHandler = nil;
-    [[NSNotificationCenter defaultCenter] postNotificationName:IAPHelperProductUpdatedNotification object:nil userInfo:nil];
     
 }
 
@@ -121,14 +117,14 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
     
     [self provideContentForProductIdentifier:transaction.payment.productIdentifier];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_COMPLETE_TRANSACTION object:transaction.payment.productIdentifier];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_TRANSACTION_COMPLETE object:transaction.payment.productIdentifier];
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
     mlogDebug(@"restoreTransaction...");
     [self provideContentForProductIdentifier:transaction.originalTransaction.payment.productIdentifier];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-    [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_RESTORE_TRANSACTION object:transaction.payment.productIdentifier];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_TRANSACTION_RESTORE object:transaction.payment.productIdentifier];
 }
 
 - (void)failedTransaction:(SKPaymentTransaction *)transaction {
@@ -144,7 +140,6 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 - (void)provideContentForProductIdentifier:(NSString *)productIdentifier {
     mlogAssertStrNotEmpty(productIdentifier);
     [self addPurchasedProductIdentifier:productIdentifier];
-    [[NSNotificationCenter defaultCenter] postNotificationName:IAPHelperProductPurchasedNotification object:productIdentifier userInfo:nil];
     
 //    [_purchasedProductIdentifiers addObject:productIdentifier];
 //    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:productIdentifier];

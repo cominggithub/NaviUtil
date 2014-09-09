@@ -33,6 +33,15 @@
 -(void)inactive;
 @end
 
+@protocol CarPanelNetworkSwitchProtocol <NSObject>
+-(void)networkOn;
+-(void)networkOff;
+@end
+
+@protocol CarPanelPgskSwitchProtocol <NSObject>
+-(void)gpsOn;
+-(void)gpsOff;
+@end
 
 @protocol CarPanelViewProtocol <CarPanelActiveProtocol, CarPanelSpeedProtocol, CarPanelColorProtocol, CarPanelHeadingProtocol, CarPanelLocationProtocol>
 -(void)setIsHud:(BOOL)isHud;

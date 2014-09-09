@@ -7,7 +7,8 @@
 //
 
 #import "IAPHelper.h"
-#import "IAP_EVENT.h"
+#import "IAPEvent.h"
+#import "SystemConfig.h"
 
 #define IAP_NO_AD_STORE_USER_PLACE @"com.coming.NavierHUD.Iap.AdvancedVersion"
 #define IAP_CAR_PANEL_2 @"com.coming.NavierHUD.Iap.carpanel2"
@@ -34,5 +35,6 @@ typedef enum
 + (void)buyProduct:(SKProduct*) product;
 + (void)restorePurchasedProduct;
 + (IAP_STATUS)retrieveIap;
++ (BOOL)hasUnbroughtIap;
 
 @end
