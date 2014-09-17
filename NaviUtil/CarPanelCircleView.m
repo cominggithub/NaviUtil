@@ -93,7 +93,6 @@
 -(void)setImageName:(NSString *)imageName
 {
     self.circleImage = [UIImage imageNamed:imageName];
-    self.color = self.color;
 }
 
 -(void)setColor:(UIColor *)color

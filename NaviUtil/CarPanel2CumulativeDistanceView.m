@@ -64,7 +64,6 @@
 
 -(void)active
 {
-    logfn();
     self.location = CLLocationCoordinate2DMake(0.0, 0.0);
     self.cumulativeDistance = 0;
 }

@@ -18,6 +18,7 @@
 #import "RouteView.h"
 #import "RouteTrack.h"
 #import "CoordinateTranslator.h"
+#import "LocationUpdateEvent.h"
 
 #if DEBUG
 #define FILE_DEBUG TRUE
@@ -199,6 +200,12 @@
     naviState           = [[NaviState alloc] init];
     naviState.delegate  = self;
     carStatus           = [[CarStatus alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveLocationUpdateEvent:)
+                                                 name:LOCATION_MANAGER_LOCATION_UPDATE_EVENT
+                                               object:nil];
+    
 
 }
 
@@ -1405,7 +1412,6 @@
 
 -(BOOL) startRouteNavigationFrom:(Place*) s To:(Place*) e
 {
-    logfn();
     mlogInfo(@"Start: %@, To: %@", s, e);
     if (nil == s || nil == e)
     {
@@ -1436,14 +1442,12 @@
     }
     else
     {
-        logfn();
         [naviState sendEvent:GR_EVENT_LOCATION_LOST];
     }
 }
 
 -(void) planRoute
 {
-    logfn();
     planRouteCount++;
     
     mlogDebug(@"plan route from %@ to %@", routeStartPlace, routeEndPlace);
@@ -1467,13 +1471,11 @@
         }
         else
         {
-            logfn();
             [naviState sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
         }
     }
     else
     {
-        logfn();
         [naviState sendEvent:GR_EVENT_ROUTE_DESTINATION_ERROR];
     }
 }
@@ -1532,7 +1534,6 @@
     
     if (nil == currentRouteLine && nil == lastRouteLine && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
-        logfn();
         currentRouteLine = firstRouteLine;
         lastValidRouteLineTime = [NSDate date];
         [naviState sendEvent:GR_EVENT_ROUTE_LINE_READY];
@@ -1541,7 +1542,6 @@
     /* found matched route line */
     else if (nil != currentRouteLine)
     {
-        logfn();
         /* reset the out of route line count */
         outOfRouteLineCount = 0;
         
@@ -1561,7 +1561,6 @@
     /* cannot find matched route line */
     else
     {
-        logfn();
         NSTimeInterval duration;
         /* let the current route line be the last route line */
         currentCarLocation  = lastCarLocation;
@@ -1575,7 +1574,6 @@
             /* stay at GPS_READY if missing GPS signal is less than the CONFIG_MAX_OUT_OF_ROUTELINE_COUNT */
             if (duration < [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_TIME] && outOfRouteLineCount <= 3)
             {
-                logfn();
                 [naviState sendEvent:GR_EVENT_GPS_READY];
             }
             /* location lost */
@@ -1766,7 +1764,7 @@
     [clockView active];
     [speedView active];
     
-    [LocationManager addDelegate:self];
+///    [LocationManager addDelegate:self];
 
     debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_H_IS_DEBUG];
     self.isNetwork  = [SystemManager getNetworkStatus] > 0;
@@ -1781,7 +1779,7 @@
 
 -(void) inactive
 {
-    [LocationManager removeDelegate:self];
+//    [LocationManager removeDelegate:self];
     [systemStatusView inactive];
     [clockView inactive];
     [speedView inactive];
@@ -1949,7 +1947,6 @@
     }
     else if (NO == self.checkRouteDestination)
     {
-        logfn();
         [naviState sendEvent:GR_EVENT_LOCATION_LOST];
     }
     else
@@ -2124,6 +2121,16 @@
     }
     
     changeMessageTimer = nil;
+}
+
+#pragma mark -- notification
+
+- (void)receiveLocationUpdateEvent:(NSNotification *)notification
+{
+    logfn();
+    LocationUpdateEvent *event;
+    event = [notification.userInfo objectForKey:@"data"];
+    [self locationManager:NULL update:event.location speed:event.speed distance:event.distance heading:event.heading];
 }
 
 @end

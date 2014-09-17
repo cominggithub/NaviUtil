@@ -11,6 +11,8 @@
 #import "Place.h"
 #import "Route.h"
 
+#define LOCATION_MANAGER_LOCATION_UPDATE_EVENT @"location_manager_location_update_event"
+
 @class LocationManager;
 
 @protocol LocationManagerDelegate <NSObject>

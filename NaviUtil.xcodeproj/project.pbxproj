@@ -92,6 +92,7 @@
 		2BCBD07B183A5E4700B08D1D /* MapManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BCBD07A183A5E4700B08D1D /* MapManager.m */; };
 		2BCF79FE197FCE50001EDD9D /* CarPanel2SpeedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BCF79FD197FCE50001EDD9D /* CarPanel2SpeedView.m */; };
 		2BD72004197F8E8A002E7E92 /* CarPanel2View.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD72003197F8E8A002E7E92 /* CarPanel2View.m */; };
+		2BDA39EB19C9C04A00A36A06 /* LocationUpdateEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDA39EA19C9C04A00A36A06 /* LocationUpdateEvent.m */; };
 		2BDC6B9117859E9C003E61E9 /* UIImage+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDC6B9017859E9C003E61E9 /* UIImage+category.m */; };
 		2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE15360178ED92600C55363 /* UIImageView+category.m */; };
 		2BE3A81017046D92007621EC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A80F17046D92007621EC /* LocationManager.m */; };
@@ -295,6 +296,8 @@
 		2BD71FF6197F8B9B002E7E92 /* CarPanelViewProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarPanelViewProtocol.h; sourceTree = "<group>"; };
 		2BD72002197F8E8A002E7E92 /* CarPanel2View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel2View.h; sourceTree = "<group>"; };
 		2BD72003197F8E8A002E7E92 /* CarPanel2View.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel2View.m; sourceTree = "<group>"; };
+		2BDA39E919C9C04A00A36A06 /* LocationUpdateEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationUpdateEvent.h; sourceTree = "<group>"; };
+		2BDA39EA19C9C04A00A36A06 /* LocationUpdateEvent.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationUpdateEvent.m; sourceTree = "<group>"; };
 		2BDC6B8F17859E9C003E61E9 /* UIImage+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+category.h"; sourceTree = "<group>"; };
 		2BDC6B9017859E9C003E61E9 /* UIImage+category.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+category.m"; sourceTree = "<group>"; };
 		2BE1535F178ED92600C55363 /* UIImageView+category.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImageView+category.h"; sourceTree = "<group>"; };
@@ -491,6 +494,8 @@
 				2B4D5E05193B647900442F2A /* CoordinateTranslator.m */,
 				2B4D5E07193B690100442F2A /* NaviStatus.h */,
 				2B4D5E08193B690100442F2A /* NaviStatus.m */,
+				2BDA39E919C9C04A00A36A06 /* LocationUpdateEvent.h */,
+				2BDA39EA19C9C04A00A36A06 /* LocationUpdateEvent.m */,
 			);
 			name = GeoNavigation;
 			sourceTree = "<group>";
@@ -837,6 +842,7 @@
 				2BE3A81017046D92007621EC /* LocationManager.m in Sources */,
 				2BE3A81317046DD5007621EC /* LocationSimulator.m in Sources */,
 				2B995CD81706F27500991700 /* Reachability.m in Sources */,
+				2BDA39EB19C9C04A00A36A06 /* LocationUpdateEvent.m in Sources */,
 				2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */,
 				2BFAC096190B6557006FFD94 /* CarStatus.m in Sources */,
 				2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */,

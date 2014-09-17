@@ -66,7 +66,6 @@
 
 -(void) initSelf
 {
-    logfn();
     [self addUIComponents];
 }
 

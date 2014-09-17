@@ -47,14 +47,12 @@
 
 -(void)setColor:(UIColor *)color
 {
-    logfn();
     _color      = color;
     self.image  = [self.image imageTintedWithColor:self.color];
 }
 
 -(void)on
 {
-    logfn();
     self.image = [onImage imageTintedWithColor:self.color];
 }
 

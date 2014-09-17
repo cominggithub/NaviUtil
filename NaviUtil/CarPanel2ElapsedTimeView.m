@@ -79,7 +79,6 @@
 
 -(void) update
 {
-    logfn();
     NSTimeInterval timeInterval = [[NSDate date] timeIntervalSinceDate:startTime];
     
     NSInteger ti = (NSInteger)timeInterval;

@@ -57,7 +57,6 @@
 
 -(void) initSelf
 {
-    logfn();
     [self addUIComponents];
 
 }
@@ -82,7 +81,6 @@
 
 -(void)setColor:(UIColor *)color
 {
-    logfn();
     [super setColor:color];
 
     arrow.image = [arrow.image  imageTintedWithColor:self.color];

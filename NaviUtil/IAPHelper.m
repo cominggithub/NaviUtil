@@ -99,14 +99,18 @@
         switch (transaction.transactionState)
         {
             case SKPaymentTransactionStatePurchased:
+                mlogDebug(@"SKPaymentTransactionStatePurchased");
                 [self completeTransaction:transaction];
                 break;
             case SKPaymentTransactionStateFailed:
+                mlogDebug(@"SKPaymentTransactionStateFailed");
                 [self failedTransaction:transaction];
                 break;
             case SKPaymentTransactionStateRestored:
+                mlogDebug(@"SKPaymentTransactionStateRestored");
                 [self restoreTransaction:transaction];
-            default:
+            case SKPaymentTransactionStatePurchasing:
+                mlogDebug(@"SKPaymentTransactionStatePurchasing");
                 break;
         }
     };

@@ -130,13 +130,11 @@
         // location -> start -> end
         if (distanceToEndLocation > self.distance)
         {
-            logfn();
             return distanceToStartLocation;
         }
         // start -> location -> end
         else
         {
-            logfn();
             return 0;
         }
     }

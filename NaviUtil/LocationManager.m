@@ -10,6 +10,7 @@
 #import "SystemConfig.h"
 #import "SystemManager.h"
 #import "LocationSimulator.h"
+#import "LocationUpdateEvent.h"
 
 #define FILE_DEBUG TRUE
 #include "Log.h"
@@ -311,17 +312,10 @@ static NSMutableArray *_savedLocations;
 
 +(void) triggerLocationUpdateNotify
 {
+
     NSDate *updateTime = [NSDate date];
-    NSTimeInterval timeInterval = [updateTime timeIntervalSinceDate:_lastTriggerLocationUpdateTime]*1000;
-
-    if ( [SystemConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL] > timeInterval && _lastTriggerLocationUpdateTime != nil)
-    {
-        mlogDebug(@"skip location update notify %.0fms > %.0fms", [SystemConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL], timeInterval);
-        return;
-    }
-
-
-
+    LocationUpdateEvent *locationUpdateEvent;
+    NSDictionary *dict;
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(locationManager:update:speed:distance:heading:)])
@@ -334,6 +328,18 @@ static NSMutableArray *_savedLocations;
              ];
         }
     }
+
+    locationUpdateEvent = [[LocationUpdateEvent alloc] initWitchCLLocationCoordinate2D:_currentCLLocationCoordinate2D
+                                                                                 speed:_currentSpeed
+                                                                              distance:_currentDistance
+                                                                               heading:_currentHeading];
+    
+    
+    dict = [NSDictionary dictionaryWithObject:locationUpdateEvent forKey:@"data"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:LOCATION_MANAGER_LOCATION_UPDATE_EVENT
+                                                        object:self
+                                                      userInfo:dict];
+    
     
     _lastTriggerLocationUpdateTime = updateTime;
 }

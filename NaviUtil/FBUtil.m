@@ -28,7 +28,6 @@
     // Check if the Facebook app is installed and we can present
     // the message dialog
     
-    logfn();
     FBLinkShareParams *params = [[FBLinkShareParams alloc] init];
     params.link =
     [NSURL URLWithString:@"https://itunes.apple.com/app/navier-hud/id806144673"];

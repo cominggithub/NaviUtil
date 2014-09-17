@@ -12,7 +12,7 @@
 @interface CarPanelCircleView : UIImageView<CarPanelColorProtocol>
 
 @property (weak, nonatomic) UIColor* color;
-@property (weak, nonatomic) UIImage *circleImage;
+@property (strong, nonatomic) UIImage *circleImage;
 @property (weak, nonatomic) NSString *imageName;
 @property (nonatomic) double heading;
 

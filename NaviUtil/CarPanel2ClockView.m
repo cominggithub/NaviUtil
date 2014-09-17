@@ -82,7 +82,6 @@
 
 -(void) update
 {
-    logfn();
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *components = [calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit) fromDate:[NSDate date]];
     NSInteger hour      = [components hour];

@@ -16,11 +16,11 @@
 
 
 #if DEBUG
-#define FILE_DEBUG TRUE
+#define FILE_DEBUG FALSE
 #elif RELEASE_TEST
-#define FILE_DEBUG TRUE
+#define FILE_DEBUG FALSE
 #else
-#define FILE_DEBUG TRUE
+#define FILE_DEBUG FALSE
 #endif
 
 #include "Log.h"
