@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "Appirater.h"
 #import "BatteryLifeView.h"
+#import "CarPanelSetting.h"
 #import "CarPanel1UIView.h"
 #import "DigitalNumDrawBlock.h"
 #import "DownloadManager.h"

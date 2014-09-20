@@ -85,12 +85,15 @@
 		2B98912A16EB89C10057A226 /* NSDictionary+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B98912916EB89C10057A226 /* NSDictionary+category.m */; };
 		2B995CD81706F27500991700 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B995CD71706F27500991700 /* Reachability.m */; };
 		2BAD7FAA17281CA100162D20 /* RouteLine.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BAD7FA917281CA100162D20 /* RouteLine.m */; };
+		2BB1C76C19CDCADA00359A4C /* CarPanelNumberView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BB1C76B19CDCADA00359A4C /* CarPanelNumberView.m */; };
 		2BB2E1EB18BA08A1008BB41B /* Appirater.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BB2E1E918BA08A1008BB41B /* Appirater.m */; };
 		2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BBA453E16E8CB6500C0B7FC /* GoogleJson.m */; };
 		2BC2C3C317A6AE9F00A9AEE0 /* UIColor+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC2C3C217A6AE9F00A9AEE0 /* UIColor+category.m */; };
 		2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BC61A96173E783C00990DA7 /* UIView+category.m */; };
 		2BCBD07B183A5E4700B08D1D /* MapManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BCBD07A183A5E4700B08D1D /* MapManager.m */; };
 		2BCF79FE197FCE50001EDD9D /* CarPanel2SpeedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BCF79FD197FCE50001EDD9D /* CarPanel2SpeedView.m */; };
+		2BD3D58B19CD1B1800162D79 /* SettingFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD3D58A19CD1B1800162D79 /* SettingFactory.m */; };
+		2BD3D58E19CD1B9000162D79 /* CarPanelSetting.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD3D58D19CD1B9000162D79 /* CarPanelSetting.m */; };
 		2BD72004197F8E8A002E7E92 /* CarPanel2View.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BD72003197F8E8A002E7E92 /* CarPanel2View.m */; };
 		2BDA39EB19C9C04A00A36A06 /* LocationUpdateEvent.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDA39EA19C9C04A00A36A06 /* LocationUpdateEvent.m */; };
 		2BDC6B9117859E9C003E61E9 /* UIImage+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BDC6B9017859E9C003E61E9 /* UIImage+category.m */; };
@@ -278,6 +281,8 @@
 		2B995CD71706F27500991700 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		2BAD7FA817281CA100162D20 /* RouteLine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouteLine.h; sourceTree = "<group>"; };
 		2BAD7FA917281CA100162D20 /* RouteLine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RouteLine.m; sourceTree = "<group>"; };
+		2BB1C76A19CDCADA00359A4C /* CarPanelNumberView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanelNumberView.h; sourceTree = "<group>"; };
+		2BB1C76B19CDCADA00359A4C /* CarPanelNumberView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanelNumberView.m; sourceTree = "<group>"; };
 		2BB2E1E818BA08A1008BB41B /* Appirater.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Appirater.h; sourceTree = "<group>"; };
 		2BB2E1E918BA08A1008BB41B /* Appirater.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Appirater.m; sourceTree = "<group>"; };
 		2BB2E1EA18BA08A1008BB41B /* AppiraterDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppiraterDelegate.h; sourceTree = "<group>"; };
@@ -293,6 +298,10 @@
 		2BCF79FD197FCE50001EDD9D /* CarPanel2SpeedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel2SpeedView.m; sourceTree = "<group>"; };
 		2BCF7A00197FCEFE001EDD9D /* CarPanelSpeedProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarPanelSpeedProtocol.h; sourceTree = "<group>"; };
 		2BCF7A01197FCF1F001EDD9D /* CarPanelColorProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarPanelColorProtocol.h; sourceTree = "<group>"; };
+		2BD3D58919CD1B1800162D79 /* SettingFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingFactory.h; sourceTree = "<group>"; };
+		2BD3D58A19CD1B1800162D79 /* SettingFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingFactory.m; sourceTree = "<group>"; };
+		2BD3D58C19CD1B9000162D79 /* CarPanelSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanelSetting.h; sourceTree = "<group>"; };
+		2BD3D58D19CD1B9000162D79 /* CarPanelSetting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanelSetting.m; sourceTree = "<group>"; };
 		2BD71FF6197F8B9B002E7E92 /* CarPanelViewProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CarPanelViewProtocol.h; sourceTree = "<group>"; };
 		2BD72002197F8E8A002E7E92 /* CarPanel2View.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel2View.h; sourceTree = "<group>"; };
 		2BD72003197F8E8A002E7E92 /* CarPanel2View.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel2View.m; sourceTree = "<group>"; };
@@ -366,6 +375,10 @@
 		2B1429B9198CD103009B6B55 /* base */ = {
 			isa = PBXGroup;
 			children = (
+				2BD3D58C19CD1B9000162D79 /* CarPanelSetting.h */,
+				2BB1C76A19CDCADA00359A4C /* CarPanelNumberView.h */,
+				2BB1C76B19CDCADA00359A4C /* CarPanelNumberView.m */,
+				2BD3D58D19CD1B9000162D79 /* CarPanelSetting.m */,
 				2B1B7B3819812D8400241BEA /* CarPanelCircleView.h */,
 				2B1B7B3919812D8400241BEA /* CarPanelCircleView.m */,
 				2B16D01819BF3798008FE8F5 /* CarPanelSwitchView.h */,
@@ -531,6 +544,8 @@
 				2BEB32D119A0959C007BD029 /* SoundUtil.h */,
 				2BEB32D219A0959C007BD029 /* SoundUtil.m */,
 				2B24ED6A19B33ABC00C9A218 /* IAPEvent.h */,
+				2BD3D58919CD1B1800162D79 /* SettingFactory.h */,
+				2BD3D58A19CD1B1800162D79 /* SettingFactory.m */,
 			);
 			name = System;
 			sourceTree = "<group>";
@@ -805,6 +820,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B17DBF71999FB2D004E9675 /* FBUtil.m in Sources */,
+				2BD3D58E19CD1B9000162D79 /* CarPanelSetting.m in Sources */,
 				2B6CBFA916DFA6D90095CBD4 /* NaviUtil.m in Sources */,
 				2B6CBFE516DFA6FD0095CBD4 /* DownloadManager.m in Sources */,
 				2B16D00B19BF263C008FE8F5 /* CarPanel3View.m in Sources */,
@@ -857,6 +873,7 @@
 				2B1C471B178851DC00ED6D98 /* DigitalNumDrawBlock.m in Sources */,
 				2B1C472117885ECC00ED6D98 /* CarPanel1UIView.m in Sources */,
 				2B1429BC198CD128009B6B55 /* CarPanel2HeadingView.m in Sources */,
+				2BD3D58B19CD1B1800162D79 /* SettingFactory.m in Sources */,
 				2B1373021895356900B398FD /* SKProduct+category.m in Sources */,
 				2B8B71B2178C32E7005E460F /* UIImage+simple-image-processing.mm in Sources */,
 				2B8B71C7178C35B6005E460F /* Image.mm in Sources */,
@@ -875,6 +892,7 @@
 				2BEBB83717BF66BC00B336E6 /* ClockView.m in Sources */,
 				2B6EAF48188B9FE2000F484D /* RouteView.m in Sources */,
 				2BEBB83A17BF99D900B336E6 /* SystemStatusView.m in Sources */,
+				2BB1C76C19CDCADA00359A4C /* CarPanelNumberView.m in Sources */,
 				2BE8FE0217C06E890060395E /* SpeedView.m in Sources */,
 				2BE7765817C24AEB007AE899 /* MessageBoxLabel.m in Sources */,
 			);
