@@ -1,12 +1,12 @@
 //
-//  CarPanelNumberView.m
+//  CarPanelTimeNumberView.m
 //  NaviUtil
 //
-//  Created by Coming on 9/20/14.
+//  Created by Coming on 9/21/14.
 //  Copyright (c) 2014 Coming. All rights reserved.
 //
 
-#import "CarPanelNumberView.h"
+#import "CarPanelTimeNumberView.h"
 #import "UIImageView+category.h"
 #import "UIView+category.h"
 
@@ -20,9 +20,11 @@
 
 #include "Log.h"
 
-// 2, 1, 0
-@implementation CarPanelNumberView
-
+@implementation CarPanelTimeNumberView
+{
+    int numOfNumBlock;
+    int numOfNumImage;
+}
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -54,15 +56,17 @@
 
 -(void) initInternal
 {
-   self.numberGapPadding = 10;
-    maxNumberImageHeight = 0;
+    numOfNumBlock           = 5;
+    numOfNumImage           = 11;
+    self.numberGapPadding   = 10;
+    maxNumberImageHeight    = 0;
     
     [self addNumberImage];
 }
 -(void) initRawImage
 {
     maxNumberImageHeight = 0;
-    for (int i=0; i<10; i++)
+    for (int i=0; i<numOfNumImage; i++)
     {
         rawImage[i] = [UIImage imageNamed:[self getImageNameByNumber:i]];
         if (rawImage[i].size.height > maxNumberImageHeight)
@@ -72,10 +76,10 @@
     }
 }
 
-// 2, 1, 0
+// 3, 2, 1, 0
 -(void) addNumberImage
 {
-    for (int i=0; i<3; i++)
+    for (int i=0; i<numOfNumBlock; i++)
     {
         numberImage[i]                  = [[UIImageView alloc] init];
         numberImage[i].frame            = CGRectMake(0+i*50, 0, 50, 50);
@@ -86,27 +90,11 @@
 
 -(void) adjustNumberImage
 {
-    for (int i=0; i<3; i++)
+    for (int i=0; i<numOfNumBlock; i++)
     {
         numberImage[i].frame = CGRectMake(self.numberBlockWidth*(2-i) + (2-i)*self.numberGapPadding, 0, self.numberBlockWidth, self.numberBlockHeight);
-//        
-//        if(i==0)
-//            numberImage[i].backgroundColor = [UIColor grayColor];
-//        else if (i==1)
-//            numberImage[i].backgroundColor = [UIColor redColor];
-//        else
-//            numberImage[i].backgroundColor = [UIColor greenColor];
     }
 }
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 -(void) setImagePrefix:(NSString *)imagePrefix
 {
@@ -118,38 +106,24 @@
 
 -(void)setNumber:(int)number
 {
-    int quotient = 0;
-    int remainder = 0;
-    _number = number;
-    
-    for (int i=0; i<2; i++)
-    {
-        remainder = number%((int)pow(10, 2-i));
-        quotient = (number - remainder)/(int)pow(10, 2-i);
-        numberBlock[2-i] = quotient;
-        numberBlock[2-i-1] = remainder;
-        number = remainder;
-    }
-    
+    numberBlock[4] = (int)number/1000;
+    numberBlock[3] = (int)number/100;
+    numberBlock[1] = (int)number/10;
+    numberBlock[0] = (int)number%10;
+
     [self refreshNumberImage];
 }
 
+
 -(void)refreshNumberImage
 {
-    for (int i=0; i<3; i++)
+    for (int i=0; i<numOfNumBlock; i++)
     {
-        if (numberBlock[i] == 0 && i != 0)
-        {
-            numberImage[i].hidden = YES;
-        }
-        else
-        {
-            numberImage[i].hidden = NO;
-        }
-        
-        numberImage[i].image = [UIImage imageNamed:[self getImageNameByNumber:numberBlock[i]]];
+        numberImage[i].image = rawImage[i];
         [numberImage[i] setImageTintColor:self.color];
     }
+    
+    numberImage[2].hidden = !numberImage[2].hidden;
 }
 
 -(NSString*) getImageNameByNumber:(int) num
@@ -161,9 +135,10 @@
 -(void)setColor:(UIColor *)color
 {
     _color = color;
-    for (int i=0; i<3; i++)
+    for (int i=0; i<numOfNumBlock; i++)
     {
         [numberImage[i] setImageTintColor:self.color];
     }
 }
+
 @end

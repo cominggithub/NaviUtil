@@ -1,18 +1,18 @@
 //
-//  CarPanelNumberView.h
+//  CarPanelTimeNumberView.h
 //  NaviUtil
 //
-//  Created by Coming on 9/20/14.
+//  Created by Coming on 9/21/14.
 //  Copyright (c) 2014 Coming. All rights reserved.
 //
 
 #import <UIKit/UIKit.h>
 
-@interface CarPanelNumberView : UIView
+@interface CarPanelTimeNumberView : UIView
 {
-    UIImageView *numberImage[3];
-    int numberBlock[3];
-    UIImage* rawImage[10];
+    UIImageView *numberImage[5];
+    int numberBlock[5];
+    UIImage* rawImage[11];
     int maxNumberImageHeight;
     
 }
@@ -22,7 +22,5 @@
 @property (nonatomic, assign) int numberGapPadding;
 @property (nonatomic, assign) int numberBlockWidth;
 @property (nonatomic, assign) int numberBlockHeight;
-
-
--(NSString*) getImageNameByNumber:(int) num;
+@property (nonatomic, assign) int colonWidth;
 @end

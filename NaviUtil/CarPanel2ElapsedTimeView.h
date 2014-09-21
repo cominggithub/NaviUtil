@@ -11,5 +11,4 @@
 
 @interface CarPanel2ElapsedTimeView : UIView<CarPanelColorProtocol, CarPanelActiveProtocol>
 @property (weak, nonatomic) UIColor* color;
-
 @end

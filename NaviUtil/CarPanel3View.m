@@ -8,9 +8,11 @@
 
 #import "CarPanel3View.h"
 #import "CarPanel3SpeedView.h"
+#import "CarPanel3SpeedView2.h"
 #import "CarPanel3HeadingView.h"
 #import "SystemManager.h"
 #import "CarPanelSwitchView.h"
+#import "CarPanel3CumulativeDistanceView.h"
 
 #if DEBUG
 #define FILE_DEBUG TRUE
@@ -28,6 +30,8 @@
     CarPanel3HeadingView* headingView;
     CarPanelSwitchView* networkStatusView;
     CarPanelSwitchView* gpsStatusView;
+    CarPanel3SpeedView2* speedView2;
+    CarPanel3CumulativeDistanceView* cumulativeDistanceView;
 
 }
 @end
@@ -78,16 +82,18 @@
 //    elapsedTimeView             = [[CarPanel2ElapsedTimeView alloc] initWithFrame:CGRectMake(-5, 145, 180, 50)];
 //    systemStatusView            = [[SystemStatusView alloc] initWithFrame:CGRectMake(0, 0, 180, 50)];
 //    cumulativeDistanceView      = [[CarPanel2CumulativeDistanceView alloc] initWithFrame:CGRectMake(13, 210, 180, 50)];
-    speedView                   = [[CarPanel3SpeedView alloc] initWithFrame:CGRectMake(210+xOffset, 50, 291, 285)];
-    headingView                 = [[CarPanel3HeadingView alloc] initWithFrame:CGRectMake(210+xOffset, 50, 291, 285)];
+//    speedView                   = [[CarPanel3SpeedView alloc] initWithFrame:CGRectMake(210+xOffset, 50, 291, 285)];
+    speedView2                  = [[CarPanel3SpeedView2 alloc] initWithFrame:CGRectMake(295+xOffset, 118, 140, 120)];
+    cumulativeDistanceView      = [[CarPanel3CumulativeDistanceView alloc] initWithFrame:CGRectMake(20, 150, 100, 32)];
+    headingView                 = [[CarPanel3HeadingView alloc] initWithFrame:CGRectMake(220+xOffset, 20, 291, 285)];
     headingView.imageName       = @"cp3_heading";
     
-    networkStatusView               = [[CarPanelSwitchView alloc] initWithFrame:CGRectMake(50+xOffset, 280, 31, 31)];
+    networkStatusView               = [[CarPanelSwitchView alloc] initWithFrame:CGRectMake(50, 280, 31, 31)];
     networkStatusView.onImageName   = @"cp3_3g";
     networkStatusView.offImageName  = @"cp3_3g";
     [networkStatusView on];
 
-    gpsStatusView                   = [[CarPanelSwitchView alloc] initWithFrame:CGRectMake(95+xOffset, 280, 21, 21)];
+    gpsStatusView                   = [[CarPanelSwitchView alloc] initWithFrame:CGRectMake(95, 280, 21, 21)];
     gpsStatusView.onImageName       = @"cp3_gps";
     gpsStatusView.offImageName      = @"cp3_gps";
     [gpsStatusView on];
@@ -97,10 +103,15 @@
 //    [self addSubview:clockView];
 //    [self addSubview:elapsedTimeView];
 //    [self addSubview:cumulativeDistanceView];
+
+//    speedView2.backgroundColor = [UIColor whiteColor];
+//    cumulativeDistanceView.backgroundColor = [UIColor whiteColor];
+    [self addSubview:speedView2];
+    
     [self addSubview:headingView];
-    [self addSubview:speedView];
     [self addSubview:networkStatusView];
     [self addSubview:gpsStatusView];
+    [self addSubview:cumulativeDistanceView];
     
     
 }
@@ -141,19 +152,22 @@
 //    cumulativeDistanceView.color    = self.color;
     networkStatusView.color         = self.color;
     gpsStatusView.color             = self.color;
+    speedView2.color                = self.color;
+    cumulativeDistanceView.color    = self.color;
 }
 
 -(void)setSpeed:(double)speed
 {
     _speed          = speed;
     speedView.speed = self.speed;
+    speedView2.speed = self.speed;
 }
 
 -(void)setIsSpeedUnitMph:(BOOL)isSpeedUnitMph
 {
     _isSpeedUnitMph                         = isSpeedUnitMph;
     speedView.isSpeedUnitMph                = self.isSpeedUnitMph;
-//    cumulativeDistanceView.isSpeedUnitMph   = self.isSpeedUnitMph;
+    cumulativeDistanceView.isSpeedUnitMph   = self.isSpeedUnitMph;
 }
 
 -(void)setHeading:(double)heading
@@ -164,7 +178,7 @@
 -(void)setLocation:(CLLocationCoordinate2D)location
 {
     _location = CLLocationCoordinate2DMake(location.latitude, location.longitude);
-//    cumulativeDistanceView.location = self.location;
+    cumulativeDistanceView.location = self.location;
 }
 
 #pragma -- operation
