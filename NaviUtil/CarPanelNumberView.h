@@ -25,4 +25,7 @@
 
 
 -(NSString*) getImageNameByNumber:(int) num;
+-(void) adjustNumberImagePosition;
+-(void)addUIComponent;
+-(void)setColor:(UIColor *)color;
 @end

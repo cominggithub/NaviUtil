@@ -57,7 +57,7 @@
    self.numberGapPadding = 10;
     maxNumberImageHeight = 0;
     
-    [self addNumberImage];
+    [self addUIComponent];
 }
 -(void) initRawImage
 {
@@ -72,6 +72,10 @@
     }
 }
 
+-(void)addUIComponent
+{
+    [self addNumberImage];
+}
 // 2, 1, 0
 -(void) addNumberImage
 {
@@ -84,18 +88,37 @@
     }
 }
 
--(void) adjustNumberImage
+-(void) adjustNumberImagePosition
 {
-    for (int i=0; i<3; i++)
+    // three digital
+    if (self.number >= 100)
     {
-        numberImage[i].frame = CGRectMake(self.numberBlockWidth*(2-i) + (2-i)*self.numberGapPadding, 0, self.numberBlockWidth, self.numberBlockHeight);
-//        
-//        if(i==0)
-//            numberImage[i].backgroundColor = [UIColor grayColor];
-//        else if (i==1)
-//            numberImage[i].backgroundColor = [UIColor redColor];
-//        else
-//            numberImage[i].backgroundColor = [UIColor greenColor];
+        for (int i=0; i<3; i++)
+        {
+            numberImage[i].frame = CGRectMake(self.numberBlockWidth*(2-i) + (2-i)*self.numberGapPadding, 0, self.numberBlockWidth, self.numberBlockHeight);
+        }
+    }
+    // two digital
+    else if (self.number < 100 && self.number >= 10)
+    {
+        numberImage[1].frame = CGRectMake(self.numberBlockWidth*(2-1) + (2-1)*self.numberGapPadding - (self.numberBlockWidth + self.numberGapPadding)/2
+                                          ,
+                                          0,
+                                          self.numberBlockWidth,
+                                          self.numberBlockHeight
+                                          );
+        
+        numberImage[0].frame = CGRectMake(self.numberBlockWidth*(2-0) + (2-0)*self.numberGapPadding - (self.numberBlockWidth + self.numberGapPadding)/2
+                                          ,
+                                          0,
+                                          self.numberBlockWidth,
+                                          self.numberBlockHeight
+                                          );
+    }
+    // one digital
+    else
+    {
+        numberImage[0].frame = CGRectMake(self.numberBlockWidth*(2-1) + (2-1)*self.numberGapPadding, 0, self.numberBlockWidth, self.numberBlockHeight);
     }
 }
 
@@ -112,7 +135,6 @@
 {
     _imagePrefix = imagePrefix;
     [self initRawImage];
-    [self adjustNumberImage];
     [self refreshNumberImage];
 }
 
@@ -138,18 +160,21 @@
 {
     for (int i=0; i<3; i++)
     {
-        if (numberBlock[i] == 0 && i != 0)
-        {
-            numberImage[i].hidden = YES;
-        }
-        else
-        {
-            numberImage[i].hidden = NO;
-        }
-        
+        numberImage[i].hidden = NO;
         numberImage[i].image = [UIImage imageNamed:[self getImageNameByNumber:numberBlock[i]]];
         [numberImage[i] setImageTintColor:self.color];
     }
+    
+    if (self.number < 100)
+    {
+        numberImage[2].hidden = YES;
+        if (self.number < 10)
+        {
+            numberImage[1].hidden = YES;
+        }
+    }
+    
+    [self adjustNumberImagePosition];
 }
 
 -(NSString*) getImageNameByNumber:(int) num

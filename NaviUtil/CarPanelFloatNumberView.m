@@ -10,6 +10,7 @@
 #import "UIImageView+category.h"
 #import "UIView+category.h"
 
+
 #if DEBUG
 #define FILE_DEBUG TRUE
 #elif RELEASE_TEST
@@ -24,72 +25,63 @@
 @implementation CarPanelFloatNumberView
 
 
--(void)setNumber:(double) floatNumber
+-(void)setFloatNumber:(double) floatNumber
 {
-    
-    
     int number;
-    int quotient = 0;
-    int remainder = 0;
     
-    logF(floatNumber);
-
+    _floatNumber = floatNumber;
+    self.number = floatNumber;
     number = (int)(floatNumber*10);
     
-    // if float number > 10, display XX
-    if (number > 99)
+    if (floatNumber < 10)
     {
-        [super setNumber:number/10];
-//        // remove floating part
-//        number = number/10;
-//        for (int i=0; i<2; i++)
-//        {
-//            remainder = number%((int)pow(10, 2-i));
-//            quotient = (number - remainder)/(int)pow(10, 2-i);
-//            numberBlock[2-i] = quotient;
-//            numberBlock[2-i-1] = remainder;
-//            number = remainder;
-//        }
-    }
-    // float number < 10, display X.X
-    else
-    {
+        logfn();
         numberBlock[0] = number%10; // floating part
-        numberBlock[1] = 11; // use 11 to represent dot (.)
+        numberBlock[1] = 11; // floating part
         numberBlock[2] = number/10; // integer part
     }
     
-    logI(numberBlock[0]);
-    logI(numberBlock[1]);
-    logI(numberBlock[2]);
-    
     [self refreshNumberImage];
 }
+
+-(void) adjustNumberImagePosition
+{
+    float diff;
+
+//    diff = (self.numberBlockWidth - self.dotWidth)/2;
+    diff = 0;
+    
+    // x.x, three digits
+    if (self.floatNumber < 10)
+    {
+        numberImage[2].frame = CGRectMake(diff, 0, self.numberBlockWidth, self.numberBlockHeight);
+        numberImage[1].frame = CGRectMake(diff + self.numberBlockWidth + self.numberGapPadding, self.numberBlockHeight - self.dotHeight, self.dotWidth, self.dotHeight);
+        numberImage[0].frame = CGRectMake(diff+self.numberBlockWidth+self.dotWidth+self.numberGapPadding*2, 0, self.numberBlockWidth, self.numberBlockHeight);
+    }
+    else
+    {
+        [super adjustNumberImagePosition];
+    }
+    
+}
+
 -(void)refreshNumberImage
 {
     for (int i=0; i<3; i++)
     {
-        if (numberBlock[i] == 0 && i != 0)
-        {
-            // show 0.x, so we must read next numberBlock
-            // the next number is not 11 (.)
-            if (numberBlock[1] != 11)
-            {
-                numberImage[i].hidden = YES;
-            }
-            else
-            {
-                numberImage[i].hidden = NO;
-            }
-        }
-        else
-        {
-            numberImage[i].hidden = NO;
-        }
-        
+        numberImage[i].hidden = NO;
         numberImage[i].image = [UIImage imageNamed:[self getImageNameByNumber:numberBlock[i]]];
         [numberImage[i] setImageTintColor:self.color];
     }
+    
+    if (self.floatNumber < 100 && self.floatNumber >= 10)
+    {
+        numberImage[1].hidden = YES;
+    }
+    
+    logF(self.floatNumber);
+    
+    [self adjustNumberImagePosition];
 }
 
 @end

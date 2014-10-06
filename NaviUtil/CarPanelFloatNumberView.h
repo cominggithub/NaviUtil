@@ -11,5 +11,9 @@
 
 @interface CarPanelFloatNumberView : CarPanelNumberView
 
-@property (nonatomic, assign) double number;
+@property (nonatomic, assign) double floatNumber;
+@property (nonatomic, assign) int dotWidth;
+@property (nonatomic, assign) int dotHeight;
+
+
 @end

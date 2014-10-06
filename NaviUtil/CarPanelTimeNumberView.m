@@ -57,10 +57,11 @@
 -(void) initInternal
 {
     numOfNumBlock           = 5;
-    numOfNumImage           = 11;
+    numOfNumImage           = 13;
     self.numberGapPadding   = 10;
     maxNumberImageHeight    = 0;
-    
+    numberBlock[2]          = 12;
+    [self initRawImage];
     [self addNumberImage];
 }
 -(void) initRawImage
@@ -76,7 +77,7 @@
     }
 }
 
-// 3, 2, 1, 0
+
 -(void) addNumberImage
 {
     for (int i=0; i<numOfNumBlock; i++)
@@ -84,46 +85,45 @@
         numberImage[i]                  = [[UIImageView alloc] init];
         numberImage[i].frame            = CGRectMake(0+i*50, 0, 50, 50);
         numberImage[i].contentMode      = UIViewContentModeScaleAspectFit;
+        // set colon image
+        if (i == 2)
+        {
+            numberImage[i].image        = rawImage[11];
+        }
         [self addSubview:numberImage[i]];
     }
 }
-
--(void) adjustNumberImage
+// 0 1 2 3 4
+//     :
+-(void) adjustNumberImagePosition
 {
+    int cumWidth = 0;
     for (int i=0; i<numOfNumBlock; i++)
     {
-        numberImage[i].frame = CGRectMake(self.numberBlockWidth*(2-i) + (2-i)*self.numberGapPadding, 0, self.numberBlockWidth, self.numberBlockHeight);
+        if (i!=2)
+        {
+            numberImage[i].frame = CGRectMake(cumWidth, 0, self.numberBlockWidth, self.numberBlockHeight);
+            cumWidth += self.numberBlockWidth + self.numberGapPadding;
+        }
+        else
+        {
+            numberImage[i].frame = CGRectMake(cumWidth, self.colonTopOffset, self.colonWidth, self.colonHeight);
+            cumWidth += self.colonWidth + self.numberGapPadding;
+        }
+        
     }
 }
-
--(void) setImagePrefix:(NSString *)imagePrefix
-{
-    _imagePrefix = imagePrefix;
-    [self initRawImage];
-    [self adjustNumberImage];
-    [self refreshNumberImage];
-}
-
--(void)setNumber:(int)number
-{
-    numberBlock[4] = (int)number/1000;
-    numberBlock[3] = (int)number/100;
-    numberBlock[1] = (int)number/10;
-    numberBlock[0] = (int)number%10;
-
-    [self refreshNumberImage];
-}
-
 
 -(void)refreshNumberImage
 {
     for (int i=0; i<numOfNumBlock; i++)
     {
-        numberImage[i].image = rawImage[i];
+        numberImage[i].image = rawImage[numberBlock[i]];
         [numberImage[i] setImageTintColor:self.color];
     }
     
     numberImage[2].hidden = !numberImage[2].hidden;
+    [self adjustNumberImagePosition];
 }
 
 -(NSString*) getImageNameByNumber:(int) num
@@ -139,6 +139,53 @@
     {
         [numberImage[i] setImageTintColor:self.color];
     }
+}
+
+-(void)setDate:(NSDate *)date
+{
+    
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *components = [calendar components:(NSHourCalendarUnit | NSMinuteCalendarUnit) fromDate:date];
+    NSInteger hour;
+    _date           = date;
+
+    hour = [components hour];
+    if (hour > 12)
+    {
+        hour -= 12;
+    }
+    
+    numberBlock[0]  = (int)hour/10;
+    numberBlock[1]  = (int)hour%10;
+    numberBlock[2]  = 12;
+    numberBlock[3]  = (int)[components minute]/10;
+    numberBlock[4]  = (int)[components minute]%10;
+    
+
+    [self refreshNumberImage];
+}
+
+-(void)setElapsedTime:(NSTimeInterval)elapsedTime
+{
+    div_t h = div(elapsedTime, 3600);
+    int hour = h.quot;
+    div_t m = div(h.rem, 60);
+    int minute = m.quot;
+
+    numberBlock[0]  = (int)hour/10;
+    numberBlock[1]  = (int)hour%10;
+    numberBlock[2]  = 12;
+    numberBlock[3]  = (int)minute/10;
+    numberBlock[4]  = (int)minute%10;
+
+    [self refreshNumberImage];
+}
+
+-(void) setImagePrefix:(NSString *)imagePrefix
+{
+    _imagePrefix = imagePrefix;
+    [self initRawImage];
+    [self refreshNumberImage];
 }
 
 @end

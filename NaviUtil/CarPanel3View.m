@@ -13,6 +13,9 @@
 #import "SystemManager.h"
 #import "CarPanelSwitchView.h"
 #import "CarPanel3CumulativeDistanceView.h"
+#import "CarPanelTimeView.h"
+#import "CarPanelBatteryView.h"
+
 
 #if DEBUG
 #define FILE_DEBUG TRUE
@@ -26,12 +29,14 @@
 
 @interface CarPanel3View()
 {
-    CarPanel3SpeedView* speedView;
     CarPanel3HeadingView* headingView;
     CarPanelSwitchView* networkStatusView;
     CarPanelSwitchView* gpsStatusView;
     CarPanel3SpeedView2* speedView2;
     CarPanel3CumulativeDistanceView* cumulativeDistanceView;
+    CarPanelTimeView* timeView;
+    CarPanelTimeView* cumTimeView;
+    CarPanelBatteryView* batteryView;
 
 }
 @end
@@ -77,41 +82,60 @@
 -(void) addUIComponents
 {
     int xOffset;
-    xOffset                     = ([SystemManager lanscapeScreenRect].size.width - 480)/2;
-//    clockView                   = [[CarPanel2ClockView alloc] initWithFrame:CGRectMake(0, 70, 180, 50)];
-//    elapsedTimeView             = [[CarPanel2ElapsedTimeView alloc] initWithFrame:CGRectMake(-5, 145, 180, 50)];
-//    systemStatusView            = [[SystemStatusView alloc] initWithFrame:CGRectMake(0, 0, 180, 50)];
-//    cumulativeDistanceView      = [[CarPanel2CumulativeDistanceView alloc] initWithFrame:CGRectMake(13, 210, 180, 50)];
-//    speedView                   = [[CarPanel3SpeedView alloc] initWithFrame:CGRectMake(210+xOffset, 50, 291, 285)];
+    xOffset                     = ([SystemManager lanscapeScreenRect].size.width - 480)/4;
     speedView2                  = [[CarPanel3SpeedView2 alloc] initWithFrame:CGRectMake(295+xOffset, 118, 140, 120)];
-    cumulativeDistanceView      = [[CarPanel3CumulativeDistanceView alloc] initWithFrame:CGRectMake(20, 150, 100, 32)];
-    headingView                 = [[CarPanel3HeadingView alloc] initWithFrame:CGRectMake(220+xOffset, 20, 291, 285)];
+
+    headingView                 = [[CarPanel3HeadingView alloc] initWithFrame:CGRectMake(218+xOffset, 20, 291, 285)];
     headingView.imageName       = @"cp3_heading";
     
-    networkStatusView               = [[CarPanelSwitchView alloc] initWithFrame:CGRectMake(50, 280, 31, 31)];
-    networkStatusView.onImageName   = @"cp3_3g";
-    networkStatusView.offImageName  = @"cp3_3g";
-    [networkStatusView on];
-
-    gpsStatusView                   = [[CarPanelSwitchView alloc] initWithFrame:CGRectMake(95, 280, 21, 21)];
-    gpsStatusView.onImageName       = @"cp3_gps";
-    gpsStatusView.offImageName      = @"cp3_gps";
-    [gpsStatusView on];
+    batteryView                     = [[CarPanelBatteryView alloc] initWithFrame:CGRectMake(20+xOffset, 275, 39, 16)];
+    batteryView.batteryLifeRect     = CGRectMake(0, 0, 39, 16);
     
-//
-//    [self addSubview:systemStatusView];
-//    [self addSubview:clockView];
-//    [self addSubview:elapsedTimeView];
-//    [self addSubview:cumulativeDistanceView];
+    networkStatusView               = [[CarPanelSwitchView alloc] initWithFrame:CGRectMake(75+xOffset, 270, 31, 31)];
+    networkStatusView.onImageName   = @"cp3_3g_on";
+    networkStatusView.offImageName  = @"cp3_3g_off";
+    [networkStatusView off];
 
-//    speedView2.backgroundColor = [UIColor whiteColor];
-//    cumulativeDistanceView.backgroundColor = [UIColor whiteColor];
+    gpsStatusView                   = [[CarPanelSwitchView alloc] initWithFrame:CGRectMake(120+xOffset, 273, 21, 21)];
+    gpsStatusView.onImageName       = @"cp3_gps_on";
+    gpsStatusView.offImageName      = @"cp3_gps_off";
+    [gpsStatusView off];
+    
+    timeView                        = [[CarPanelTimeView alloc] initWithFrame:CGRectMake(16+xOffset, 28, 187, 44)];
+    timeView.numberBlockWidth       = 27;
+    timeView.numberBlockHeight      = 44;
+    timeView.numberGapPadding       = 6;
+    timeView.noonTopOffset          = 19;
+    timeView.noonLeftOffset         = 150;
+    timeView.colonWidth             = 6;
+    timeView.colonHeight            = 22;
+    timeView.colonTopOffset         = 12;
+    timeView.hideNoon               = NO;
+    timeView.imagePrefix            = @"cp3_time_";
+    timeView.cumulativeTime         = FALSE;
+    
+    cumTimeView                     = [[CarPanelTimeView alloc] initWithFrame:CGRectMake(20+xOffset, 102, 100, 32)];
+    cumTimeView.numberBlockWidth    = 20;
+    cumTimeView.numberBlockHeight   = 32;
+    cumTimeView.numberGapPadding    = 4;
+    cumTimeView.colonWidth          = 5;
+    cumTimeView.colonHeight         = 17;
+    cumTimeView.colonTopOffset      = 8;
+    cumTimeView.hideNoon            = YES;
+    cumTimeView.imagePrefix         = @"cp3_cum_";
+    cumTimeView.cumulativeTime      = TRUE;
+    
+    cumulativeDistanceView          = [[CarPanel3CumulativeDistanceView alloc] initWithFrame:CGRectMake(20+xOffset, 164, 100, 32)];
+
     [self addSubview:speedView2];
     
     [self addSubview:headingView];
+    [self addSubview:batteryView];
     [self addSubview:networkStatusView];
     [self addSubview:gpsStatusView];
     [self addSubview:cumulativeDistanceView];
+    [self addSubview:timeView];
+    [self addSubview:cumTimeView];
     
     
 }
@@ -144,29 +168,27 @@
 {
     
     _color                          = color;
-//    systemStatusView.color          = self.color;
-    speedView.color                 = self.color;
     headingView.color               = self.color;
-//    clockView.color                 = self.color;
-//    elapsedTimeView.color           = self.color;
-//    cumulativeDistanceView.color    = self.color;
+    batteryView.color               = self.color;
     networkStatusView.color         = self.color;
     gpsStatusView.color             = self.color;
     speedView2.color                = self.color;
     cumulativeDistanceView.color    = self.color;
+    timeView.color                  = self.color;
+    cumTimeView.color               = self.color;
+    
 }
 
 -(void)setSpeed:(double)speed
 {
-    _speed          = speed;
-    speedView.speed = self.speed;
-    speedView2.speed = self.speed;
+    _speed              = speed;
+    speedView2.speed    = self.speed;
 }
 
 -(void)setIsSpeedUnitMph:(BOOL)isSpeedUnitMph
 {
     _isSpeedUnitMph                         = isSpeedUnitMph;
-    speedView.isSpeedUnitMph                = self.isSpeedUnitMph;
+    speedView2.isSpeedUnitMph                = self.isSpeedUnitMph;
     cumulativeDistanceView.isSpeedUnitMph   = self.isSpeedUnitMph;
 }
 
@@ -184,18 +206,14 @@
 #pragma -- operation
 -(void)active
 {
-//    [systemStatusView active];
-//    [clockView active];
-//    [elapsedTimeView active];
-//    [cumulativeDistanceView active];
+    [cumTimeView active];
+    [timeView active];
 }
 
 -(void)inactive
 {
-//    [systemStatusView inactive];
-//    [clockView inactive];
-//    [elapsedTimeView inactive];
-//    [cumulativeDistanceView inactive];
+    [cumTimeView inactive];
+    [timeView active];
 }
 
 @end

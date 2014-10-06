@@ -60,14 +60,16 @@
     floatNumberView                     = [[CarPanelFloatNumberView alloc] initWithFrame:CGRectMake(0, 0, 100, 70)];
     floatNumberView.numberBlockWidth    = 20;
     floatNumberView.numberBlockHeight   = 32;
-    floatNumberView.numberGapPadding    = 0;
-    floatNumberView.imagePrefix         = @"cp3_cum_dis_";
-    floatNumberView.number              = 10.01;
+    floatNumberView.numberGapPadding    = 5;
+    floatNumberView.dotWidth            = 5;
+    floatNumberView.dotHeight           = 6;
+    floatNumberView.imagePrefix         = @"cp3_cum_";
+    floatNumberView.floatNumber         = 0.0;
     
     kmImage = [UIImage imageNamed:@"cp3_km"];
     mlImage = [UIImage imageNamed:@"cp3_ml"];
     
-    unitImage = [[UIImageView alloc] initWithFrame:CGRectMake(70, 16, 25, 16)];
+    unitImage = [[UIImageView alloc] initWithFrame:CGRectMake(75, 16, 25, 16)];
     unitImage.image = kmImage;
     unitImage.backgroundColor = [UIColor blackColor];
     
@@ -84,15 +86,22 @@
 
 -(void)setLocation:(CLLocationCoordinate2D)location
 {
+    logfn();
     cumDisCalculator.location = location;
+    logF(cumDisCalculator.cumulativeDistance);
     if (self.isSpeedUnitMph == YES)
     {
-        floatNumberView.number = M_TO_MILE(cumDisCalculator.cumulativeDistance);
+        logfn();
+        floatNumberView.floatNumber = M_TO_MILE(cumDisCalculator.cumulativeDistance);
     }
     else
     {
-        floatNumberView.number = cumDisCalculator.cumulativeDistance/1000.0;
+        logfn();
+
+        floatNumberView.floatNumber = cumDisCalculator.cumulativeDistance/1000.0;
     }
+    
+    logF(floatNumberView.number);
 }
 
 -(void)setIsSpeedUnitMph:(double)isSpeedUnitMph

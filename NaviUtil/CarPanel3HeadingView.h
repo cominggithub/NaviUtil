@@ -9,6 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "CarPanelCircleView.h"
 
-@interface CarPanel3HeadingView : CarPanelCircleView
+@interface CarPanel3HeadingView : UIView
 
+@property (nonatomic, strong) UIColor *color;
+@property (nonatomic, assign) double heading;
+@property (nonatomic, copy) NSString* imageName;
 @end

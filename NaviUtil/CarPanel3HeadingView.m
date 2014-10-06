@@ -21,6 +21,7 @@
 
 @interface CarPanel3HeadingView()
 {
+    CarPanelCircleView* circleView;
     UIImageView *arrow;
 }
 @end
@@ -76,14 +77,29 @@
     // 36, 32, 18, 16
     arrow       = [[UIImageView alloc] initWithFrame:CGRectMake(291/2-7, 55, 18, 16)];
     arrow.image = [[UIImage imageNamed:@"cp3_arrow"] imageTintedWithColor:[UIColor redColor]];
+    
+    circleView  = [[CarPanelCircleView alloc] initWithFrame:CGRectMake(0, 0, 291, 285)];
     [self addSubview:arrow];
+    [self addSubview:circleView];
 }
 
 -(void)setColor:(UIColor *)color
 {
-    [super setColor:color];
-
+    _color = color;
     arrow.image = [arrow.image  imageTintedWithColor:self.color];
+    circleView.color = self.color;
+}
+
+-(void)setHeading:(double)heading
+{
+    _heading = heading;
+    circleView.heading = self.heading;
+}
+
+-(void)setImageName:(NSString *)imageName
+{
+    _imageName = imageName;
+    circleView.imageName = imageName;
 }
 
 @end
