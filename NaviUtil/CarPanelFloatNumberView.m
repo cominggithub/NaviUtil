@@ -35,7 +35,6 @@
     
     if (floatNumber < 10)
     {
-        logfn();
         numberBlock[0] = number%10; // floating part
         numberBlock[1] = 11; // floating part
         numberBlock[2] = number/10; // integer part

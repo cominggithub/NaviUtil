@@ -123,6 +123,7 @@
     }
     
     numberImage[2].hidden = !numberImage[2].hidden;
+
     [self adjustNumberImagePosition];
 }
 
