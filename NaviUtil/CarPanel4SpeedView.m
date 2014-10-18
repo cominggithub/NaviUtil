@@ -1,12 +1,12 @@
 //
-//  CarPanel3SpeedView2.m
+//  CarPanel4SpeedView.m
 //  NaviUtil
 //
-//  Created by Coming on 9/21/14.
+//  Created by Coming on 10/18/14.
 //  Copyright (c) 2014 Coming. All rights reserved.
 //
 
-#import "CarPanel3SpeedView2.h"
+#import "CarPanel4SpeedView.h"
 #import "CarPanelNumberView.h"
 #import "UIView+category.h"
 #import "UIImage+category.h"
@@ -23,7 +23,7 @@
 
 #include "Log.h"
 
-@implementation CarPanel3SpeedView2
+@implementation CarPanel4SpeedView
 {
     CarPanelNumberView *numberView;
     UIImageView *speedUnitView;
@@ -57,6 +57,8 @@
         // Initialization code
         [self initSelf];
     }
+    
+
     return self;
 }
 
@@ -65,36 +67,37 @@
     [self addUIComponent];
     self.isSpeedUnitMph = YES;
     self.backgroundColor = [UIColor blackColor];
+
 }
 
 -(void)addUIComponent
 {
     numberView = [[CarPanelNumberView alloc] initWithFrame:CGRectMake(0, 0, 40*3+30, 80)];
-    numberView.numberBlockWidth     = 40;
-    numberView.numberBlockHeight    = 64;
+    numberView.numberBlockWidth     = 66;
+    numberView.numberBlockHeight    = 104;
     numberView.numberGapPadding     = 10;
-    numberView.imagePrefix          = @"cp3_speed_";
-    numberView.number               = 101;
+    numberView.imagePrefix          = @"cp4_speed_";
+    numberView.number               = 164;
     
-    kmhImage = [UIImage imageNamed:@"cp3_kmh"];
-    mphImage = [UIImage imageNamed:@"cp3_mph"];
+    kmhImage = [UIImage imageNamed:@"cp4_kmh"];
+    mphImage = [UIImage imageNamed:@"cp4_mph"];
     
     speedUnitView = [[UIImageView alloc] initWithFrame:
-                     CGRectMake((self.frame.size.width - kmhImage.size.width)/2, 80, kmhImage.size.width, kmhImage.size.height)];
+                     CGRectMake(220, 72, kmhImage.size.width, kmhImage.size.height)];
     
     [self addSubview:numberView];
     [self addSubview:speedUnitView];
-
+    
 }
 
 /*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
+ // Only override drawRect: if you perform custom drawing.
+ // An empty implementation adversely affects performance during animation.
+ - (void)drawRect:(CGRect)rect
+ {
+ // Drawing code
+ }
+ */
 
 -(void)setSpeed:(double)speed
 {
@@ -114,14 +117,12 @@
     }
     
     numberView.number = (int)self.speed;
-    
-
 }
 
 -(void)setIsSpeedUnitMph:(BOOL)isSpeedUnitMph
 {
     _isSpeedUnitMph = isSpeedUnitMph;
-    if (self.isSpeedUnitMph)
+    if (YES == self.isSpeedUnitMph)
     {
         speedUnitView.image= [mphImage imageTintedWithColor:self.color];
     }
@@ -137,5 +138,4 @@
     numberView.color = self.color;
     [speedUnitView setImageTintColor:self.color];
 }
-
 @end

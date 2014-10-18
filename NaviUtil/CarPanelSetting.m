@@ -45,12 +45,15 @@
     if (self)
     {
         self.name = name;
+        [self resetDefault];
         if (![self checkSetting])
         {
+            logfn();
             [self resetDefault];
         }
         else
         {
+            logfn();
             [self loadDefault];
         }
     }
@@ -74,7 +77,9 @@
 
 -(void) initColorByName
 {
-    self.primaryColors = @[@"0000FF",
+    logfn();
+    logO(self.name);
+    self.primaryColors = @[@"00FF00",
                            @"FFFFFF",
                            @"00BFFF",
                            @"FFFF00",
@@ -88,9 +93,37 @@
                              @"00FFFF",
                              ];
     
-    if ([self.name isEqualToString:@"CarPanel2"])
+    if ([self.name isEqualToString:@"CarPanel3"])
     {
-
+        self.primaryColors = @[@"99FFFF",
+                               @"A5CC3E",
+                               @"F8F8CB",
+                               @"FF8700",
+                               @"FF2D3A",
+                               ];
+        
+        self.secondaryColors = @[@"FFFF99",
+                                 @"99FFFF",
+                                 @"99FFFF",
+                                 @"FFFF00",
+                                 @"FFFF99",
+                                 ];
+    }
+    else if ([self.name isEqualToString:@"CarPanel4"])
+    {
+        self.primaryColors = @[@"99FFFF",
+                               @"A5CC3E",
+                               @"F8F8CB",
+                               @"FF8700",
+                               @"FF2D3A",
+                               ];
+        
+        self.secondaryColors = @[@"FF8700",
+                                 @"99FFFF",
+                                 @"99FFFF",
+                                 @"FFFF00",
+                                 @"FFFF99",
+                                 ];
     }
     
     self.selPrimaryColor = [self.primaryColors objectAtIndex:0];
@@ -123,6 +156,8 @@
     {
         return FALSE;
     }
+    
+
     return TRUE;
 }
 
@@ -194,7 +229,8 @@
     for (int i=0; i<self.primaryColors.count; i++)
     {
         UIColor* c = [self.primaryColors objectAtIndex:i];
-        if ([c isEqual:self.primaryColors])
+        
+        if ([c isEqual:primaryColor])
         {
             return [self.secondaryColors objectAtIndex:i];
         }

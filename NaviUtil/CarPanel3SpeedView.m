@@ -81,6 +81,8 @@
     speedLabelUint.font             = [UIFont fontWithName:@"SWIsop3" size:30];
     speedLabelUint.textAlignment    = UITextAlignmentCenter;
     
+    
+
     [self addSubview:speedLabel];
     [self addSubview:speedLabelUint];
 }

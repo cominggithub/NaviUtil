@@ -8,6 +8,7 @@
 
 #import "CarPanel2SpeedView.h"
 #import "UIImage+category.h"
+#import "GeoUtil.h"
 
 #if DEBUG
 #define FILE_DEBUG FALSE
@@ -113,12 +114,28 @@
 
 -(void)setSpeed:(double)speed
 {
-    speedLabel.text = [NSString stringWithFormat:@"%.0f", speed];
+    if (speed == 0 && self.speed > 10)
+    {
+        _speed = speed;
+        return;
+    }
+    
+    if (YES == self.isSpeedUnitMph)
+    {
+        _speed = MS_TO_MPH(speed);
+    }
+    else
+    {
+        _speed = MS_TO_KMH(speed);
+    }
+    
+    speedLabel.text = [NSString stringWithFormat:@"%.0f", self.speed];
 }
 
 -(void)setIsSpeedUnitMph:(BOOL)isSpeedUnitMph
 {
-    if (YES == isSpeedUnitMph)
+    _isSpeedUnitMph = isSpeedUnitMph;
+    if (YES == self.isSpeedUnitMph)
     {
         speedLabelUint.text = [SystemManager getLanguageString:@"mph"];
     }

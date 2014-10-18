@@ -15,4 +15,7 @@
 @property (nonatomic) double cumulativeDistance;
 @property (nonatomic) double isSpeedUnitMph;
 @property (nonatomic) CLLocationCoordinate2D location;
+
+@property (nonatomic, strong) NSString *floatNumberImagePrefix;
+@property (nonatomic, strong) NSString *unitImagePrefix;
 @end

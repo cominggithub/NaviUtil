@@ -52,8 +52,6 @@
     timeNumber.colonHeight          = 22;
     noonImage                       = [[UIImageView alloc] initWithFrame:CGRectMake(152, 17, 27, 17)];
     
-    self.imagePrefix                = @"cp3_time_";
-    
     [self addSubview:timeNumber];
     [self addSubview:noonImage];
     clockTimer = nil;
@@ -167,5 +165,17 @@
 {
     _colonTopOffset             = colonTopOffset;
     timeNumber.colonTopOffset   = self.colonTopOffset;
+}
+
+-(void)setNoonTopOffset:(int)noonTopOffset
+{
+    _noonTopOffset = noonTopOffset;
+    noonImage.frame = CGRectMake(noonImage.frame.origin.x, self.noonTopOffset, noonImage.frame.size.width, noonImage.frame.size.height);
+}
+
+-(void)setNoonLeftOffset:(int)noonLeftOffset
+{
+    _noonLeftOffset = noonLeftOffset;
+    noonImage.frame = CGRectMake(self.noonLeftOffset, noonImage.frame.origin.y, noonImage.frame.size.width, noonImage.frame.size.height);
 }
 @end

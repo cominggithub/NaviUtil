@@ -86,7 +86,6 @@
     int xOffset;
     xOffset                     = ([SystemManager lanscapeScreenRect].size.width - 480)/4;
     speedView2                  = [[CarPanel3SpeedView2 alloc] initWithFrame:CGRectMake(295+xOffset, 118, 140, 120)];
-
     headingView                 = [[CarPanel3HeadingView alloc] initWithFrame:CGRectMake(218+xOffset, 20, 291, 285)];
     headingView.imageName       = @"cp3_heading";
     
@@ -128,9 +127,10 @@
     cumTimeView.cumulativeTime      = TRUE;
     
     cumulativeDistanceView          = [[CarPanel3CumulativeDistanceView alloc] initWithFrame:CGRectMake(20+xOffset, 164, 100, 32)];
-
-    [self addSubview:speedView2];
+    cumulativeDistanceView.floatNumberImagePrefix   = @"cp3_cum_";
+    cumulativeDistanceView.unitImagePrefix          = @"cp3_";
     
+    [self addSubview:speedView2];
     [self addSubview:headingView];
     [self addSubview:batteryView];
     [self addSubview:networkStatusView];
@@ -174,11 +174,16 @@
     batteryView.color               = self.color;
     networkStatusView.color         = self.color;
     gpsStatusView.color             = self.color;
-    speedView2.color                = self.color;
     cumulativeDistanceView.color    = self.color;
     timeView.color                  = self.color;
     cumTimeView.color               = self.color;
-    
+
+}
+
+-(void)setSecondaryColor:(UIColor *)secondaryColor
+{
+    _secondaryColor                 = secondaryColor;
+    speedView2.color                = self.secondaryColor;
 }
 
 -(void)setSpeed:(double)speed
@@ -190,7 +195,7 @@
 -(void)setIsSpeedUnitMph:(BOOL)isSpeedUnitMph
 {
     _isSpeedUnitMph                         = isSpeedUnitMph;
-    speedView2.isSpeedUnitMph                = self.isSpeedUnitMph;
+    speedView2.isSpeedUnitMph               = self.isSpeedUnitMph;
     cumulativeDistanceView.isSpeedUnitMph   = self.isSpeedUnitMph;
 }
 

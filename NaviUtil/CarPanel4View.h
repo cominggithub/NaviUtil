@@ -12,6 +12,7 @@
 @interface CarPanel4View : UIView<CarPanelViewProtocol>
 
 @property (weak, nonatomic) UIColor* color;
+@property (weak, nonatomic) UIColor* secondaryColor;
 @property (nonatomic) double speed;
 @property (nonatomic) double heading;
 @property (nonatomic) BOOL isSpeedUnitMph;

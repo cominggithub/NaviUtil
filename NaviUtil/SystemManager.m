@@ -102,8 +102,16 @@ static NSDictionary *_defaultLanguageDic;
     _screenRect                         = screenBounds;
     _lanscapeScreenRect.origin.x        = 0;
     _lanscapeScreenRect.origin.y        = 0;
-    _lanscapeScreenRect.size.width      = _screenRect.size.height;
-    _lanscapeScreenRect.size.height     = _screenRect.size.width;
+    if (_screenRect.size.width > _screenRect.size.height)
+    {
+        _lanscapeScreenRect.size.width      = _screenRect.size.width;
+        _lanscapeScreenRect.size.height     = _screenRect.size.height;
+    }
+    else
+    {
+        _lanscapeScreenRect.size.width      = _screenRect.size.height;
+        _lanscapeScreenRect.size.height     = _screenRect.size.width;
+    }
 
     [device setBatteryMonitoringEnabled:YES];
 

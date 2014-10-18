@@ -63,11 +63,8 @@
     floatNumberView.numberGapPadding    = 5;
     floatNumberView.dotWidth            = 5;
     floatNumberView.dotHeight           = 6;
-    floatNumberView.imagePrefix         = @"cp3_cum_";
     floatNumberView.floatNumber         = 0.0;
     
-    kmImage = [UIImage imageNamed:@"cp3_km"];
-    mlImage = [UIImage imageNamed:@"cp3_ml"];
     
     unitImage = [[UIImageView alloc] initWithFrame:CGRectMake(75, 16, 25, 16)];
     unitImage.image = kmImage;
@@ -86,22 +83,15 @@
 
 -(void)setLocation:(CLLocationCoordinate2D)location
 {
-    logfn();
     cumDisCalculator.location = location;
-    logF(cumDisCalculator.cumulativeDistance);
     if (self.isSpeedUnitMph == YES)
     {
-        logfn();
         floatNumberView.floatNumber = M_TO_MILE(cumDisCalculator.cumulativeDistance);
     }
     else
     {
-        logfn();
-
         floatNumberView.floatNumber = cumDisCalculator.cumulativeDistance/1000.0;
     }
-    
-    logF(floatNumberView.number);
 }
 
 -(void)setIsSpeedUnitMph:(double)isSpeedUnitMph
@@ -116,5 +106,23 @@
         unitImage.image = [kmImage imageTintedWithColor:self.color];
     }
 }
+
+
+-(void) setFloatNumberImagePrefix:(NSString *)floatNumberImagePrefix
+{
+    _floatNumberImagePrefix = floatNumberImagePrefix;
+    floatNumberView.imagePrefix = self.floatNumberImagePrefix;
+}
+
+-(void) setUnitImagePrefix:(NSString *)unitImagePrefix
+{
+    _unitImagePrefix = unitImagePrefix;
+
+    kmImage = [UIImage imageNamed:[NSString stringWithFormat:@"%@km", self.unitImagePrefix]];
+    mlImage = [UIImage imageNamed:[NSString stringWithFormat:@"%@ml", self.unitImagePrefix]];
+    
+    self.isSpeedUnitMph = self.isSpeedUnitMph;
+}
+
 
 @end

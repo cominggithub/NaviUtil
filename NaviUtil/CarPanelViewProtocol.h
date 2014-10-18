@@ -18,6 +18,8 @@
 
 @protocol CarPanelColorProtocol <NSObject>
 -(void)setColor:(UIColor*) color;
+@optional
+-(void)setSecondaryColor:(UIColor*) color;
 @end
 
 @protocol CarPanelHeadingProtocol <NSObject>

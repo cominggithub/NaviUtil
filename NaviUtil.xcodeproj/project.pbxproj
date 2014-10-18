@@ -108,6 +108,8 @@
 		2BE15361178ED92600C55363 /* UIImageView+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE15360178ED92600C55363 /* UIImageView+category.m */; };
 		2BE3A81017046D92007621EC /* LocationManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A80F17046D92007621EC /* LocationManager.m */; };
 		2BE3A81317046DD5007621EC /* LocationSimulator.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE3A81217046DD5007621EC /* LocationSimulator.m */; };
+		2BE42DE419F2017100F8A576 /* CarPanel4SpeedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE42DE319F2017100F8A576 /* CarPanel4SpeedView.m */; };
+		2BE42DE719F203C300F8A576 /* CarPanel4HeadingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE42DE619F203C300F8A576 /* CarPanel4HeadingView.m */; };
 		2BE7765817C24AEB007AE899 /* MessageBoxLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE7765717C24AEB007AE899 /* MessageBoxLabel.m */; };
 		2BE8FE0217C06E890060395E /* SpeedView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BE8FE0117C06E890060395E /* SpeedView.m */; };
 		2BEB32D319A0959C007BD029 /* SoundUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEB32D219A0959C007BD029 /* SoundUtil.m */; };
@@ -339,6 +341,10 @@
 		2BE3A80F17046D92007621EC /* LocationManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationManager.m; sourceTree = "<group>"; };
 		2BE3A81117046DD5007621EC /* LocationSimulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocationSimulator.h; sourceTree = "<group>"; };
 		2BE3A81217046DD5007621EC /* LocationSimulator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LocationSimulator.m; sourceTree = "<group>"; };
+		2BE42DE219F2017100F8A576 /* CarPanel4SpeedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel4SpeedView.h; sourceTree = "<group>"; };
+		2BE42DE319F2017100F8A576 /* CarPanel4SpeedView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel4SpeedView.m; sourceTree = "<group>"; };
+		2BE42DE519F203C300F8A576 /* CarPanel4HeadingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanel4HeadingView.h; sourceTree = "<group>"; };
+		2BE42DE619F203C300F8A576 /* CarPanel4HeadingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanel4HeadingView.m; sourceTree = "<group>"; };
 		2BE7765617C24AEB007AE899 /* MessageBoxLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBoxLabel.h; sourceTree = "<group>"; };
 		2BE7765717C24AEB007AE899 /* MessageBoxLabel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageBoxLabel.m; sourceTree = "<group>"; };
 		2BE8FE0017C06E890060395E /* SpeedView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeedView.h; sourceTree = "<group>"; };
@@ -763,6 +769,10 @@
 			children = (
 				2BDDB09019E41F7A00025AD3 /* CarPanel4View.h */,
 				2BDDB09119E41F7A00025AD3 /* CarPanel4View.m */,
+				2BE42DE219F2017100F8A576 /* CarPanel4SpeedView.h */,
+				2BE42DE319F2017100F8A576 /* CarPanel4SpeedView.m */,
+				2BE42DE519F203C300F8A576 /* CarPanel4HeadingView.h */,
+				2BE42DE619F203C300F8A576 /* CarPanel4HeadingView.m */,
 			);
 			name = CarPanel4;
 			sourceTree = "<group>";
@@ -804,7 +814,7 @@
 			name = NaviUtilTests;
 			productName = NaviUtilTests;
 			productReference = 2B6CBFAF16DFA6DA0095CBD4 /* NaviUtilTests.octest */;
-			productType = "com.apple.product-type.bundle";
+			productType = "com.apple.product-type.bundle.ocunit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -902,6 +912,7 @@
 				2B6CBFF116DFA6FD0095CBD4 /* SystemManager.m in Sources */,
 				2B7ADCAC16E4E5DE00F8A182 /* Log.m in Sources */,
 				2BDD829319CEFD90002F7455 /* CarPanelTimeNumberView.m in Sources */,
+				2BE42DE419F2017100F8A576 /* CarPanel4SpeedView.m in Sources */,
 				2BD98CC819D8487600DE88A8 /* CarPanelTimeView.m in Sources */,
 				2B16D01719BF323D008FE8F5 /* CarPanel3HeadingView.m in Sources */,
 				2BBA453F16E8CB6500C0B7FC /* GoogleJson.m in Sources */,
@@ -930,6 +941,7 @@
 				2B1429BC198CD128009B6B55 /* CarPanel2HeadingView.m in Sources */,
 				2B1373021895356900B398FD /* SKProduct+category.m in Sources */,
 				2B8B71B2178C32E7005E460F /* UIImage+simple-image-processing.mm in Sources */,
+				2BE42DE719F203C300F8A576 /* CarPanel4HeadingView.m in Sources */,
 				2B8B71C7178C35B6005E460F /* Image.mm in Sources */,
 				2B27CEA618949A0D00FBE5FF /* NavierHUDIAPHelper.m in Sources */,
 				2BB2E1EB18BA08A1008BB41B /* Appirater.m in Sources */,
