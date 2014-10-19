@@ -45,15 +45,12 @@
     if (self)
     {
         self.name = name;
-        [self resetDefault];
         if (![self checkSetting])
         {
-            logfn();
             [self resetDefault];
         }
         else
         {
-            logfn();
             [self loadDefault];
         }
     }
@@ -77,8 +74,6 @@
 
 -(void) initColorByName
 {
-    logfn();
-    logO(self.name);
     self.primaryColors = @[@"00FF00",
                            @"FFFFFF",
                            @"00BFFF",

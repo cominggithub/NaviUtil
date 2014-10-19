@@ -10,6 +10,7 @@
 #import "Appirater.h"
 #import "BatteryLifeView.h"
 #import "CarPanelSetting.h"
+#import "CarPanelUsage.h"
 #import "CarPanel1UIView.h"
 #import "DigitalNumDrawBlock.h"
 #import "DownloadManager.h"

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B0E77AD19F34FFA0007991C /* CarPanelUsage.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B0E77AC19F34FFA0007991C /* CarPanelUsage.m */; };
 		2B13073E191E793500F83D52 /* RouteTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B13073D191E793500F83D52 /* RouteTrack.m */; };
 		2B1372FF189510B300B398FD /* RSSecrets.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1372FE189510B300B398FD /* RSSecrets.m */; };
 		2B1373021895356900B398FD /* SKProduct+category.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B1373011895356900B398FD /* SKProduct+category.m */; };
@@ -144,6 +145,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2B0E77AB19F34FFA0007991C /* CarPanelUsage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarPanelUsage.h; sourceTree = "<group>"; };
+		2B0E77AC19F34FFA0007991C /* CarPanelUsage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarPanelUsage.m; sourceTree = "<group>"; };
 		2B13073C191E793500F83D52 /* RouteTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RouteTrack.h; sourceTree = "<group>"; };
 		2B13073D191E793500F83D52 /* RouteTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RouteTrack.m; sourceTree = "<group>"; };
 		2B1372FD189510B300B398FD /* RSSecrets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RSSecrets.h; sourceTree = "<group>"; };
@@ -421,6 +424,8 @@
 				2BD98CC719D8487600DE88A8 /* CarPanelTimeView.m */,
 				2BDF963019DC3EF9007C75F0 /* CarPanelBatteryView.h */,
 				2BDF963119DC3EF9007C75F0 /* CarPanelBatteryView.m */,
+				2B0E77AB19F34FFA0007991C /* CarPanelUsage.h */,
+				2B0E77AC19F34FFA0007991C /* CarPanelUsage.m */,
 			);
 			name = base;
 			sourceTree = "<group>";
@@ -929,6 +934,7 @@
 				2BFAC096190B6557006FFD94 /* CarStatus.m in Sources */,
 				2BC61A97173E783C00990DA7 /* UIView+category.m in Sources */,
 				2B18AA911748D19700277F52 /* UILabel+category.m in Sources */,
+				2B0E77AD19F34FFA0007991C /* CarPanelUsage.m in Sources */,
 				2B61D8671771E64400ACB1AA /* SystemConfig.m in Sources */,
 				2BDC6B9117859E9C003E61E9 /* UIImage+category.m in Sources */,
 				2B17DC88199A4606004E9675 /* TwitterUtil.m in Sources */,
