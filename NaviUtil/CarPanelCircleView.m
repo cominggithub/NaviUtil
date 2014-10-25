@@ -62,7 +62,8 @@
 
 -(void) initSelf
 {
-    count  = 0;
+    count               = 0;
+    self.inclinedAngle  = 0;
     [self addUIComponents];
 /*
     timer = [NSTimer scheduledTimerWithTimeInterval:1.0
@@ -95,6 +96,18 @@
     self.circleImage = [UIImage imageNamed:imageName];
 }
 
+-(void)setMaskImageName:(NSString *)maskImageName
+{
+    return;
+    CALayer *mask = [CALayer layer];
+    UIImage *maskImage = [UIImage imageNamed:maskImageName];
+    mask.contents = (id)[maskImage CGImage];
+    mask.frame = CGRectMake(0, 0, maskImage.size.width, maskImage.size.height);
+    self.layer.mask = mask;
+    self.layer.masksToBounds = YES;
+    
+}
+
 -(void)setColor:(UIColor *)color
 {
     _color = color;
@@ -114,6 +127,8 @@
 
 -(void)rotate:(UIView*) view toAngle:(double)angle
 {
+//    CGAffineTransform inclienTransform  = CGAffineTransformMake(1, 0, 2*sinf(self.inclinedAngle), 1, 0, 0);
+//    CGAffineTransform rotationTransform = CGAffineTransformRotate(inclienTransform, angle);
     CGAffineTransform rotationTransform = CGAffineTransformMakeRotation(angle);
     
     [UIView animateWithDuration:0.8

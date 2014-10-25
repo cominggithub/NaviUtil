@@ -14,7 +14,6 @@
 @property (weak, nonatomic) UIColor* color;
 @property (nonatomic) NSString *onImageName;
 @property (nonatomic) NSString *offImageName;
+@property (nonatomic, assign) BOOL enabled;
 
--(void)on;
--(void)off;
 @end

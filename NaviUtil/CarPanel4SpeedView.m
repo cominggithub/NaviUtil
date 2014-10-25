@@ -83,7 +83,7 @@
     mphImage = [UIImage imageNamed:@"cp4_mph"];
     
     speedUnitView = [[UIImageView alloc] initWithFrame:
-                     CGRectMake(220, 72, kmhImage.size.width, kmhImage.size.height)];
+                     CGRectMake(220, 65, kmhImage.size.width, kmhImage.size.height)];
     
     [self addSubview:numberView];
     [self addSubview:speedUnitView];
@@ -106,15 +106,7 @@
         _speed = speed;
         return;
     }
-    
-    if (YES == self.isSpeedUnitMph)
-    {
-        _speed = MS_TO_MPH(speed);
-    }
-    else
-    {
-        _speed = MS_TO_KMH(speed);
-    }
+    _speed = speed;
     
     numberView.number = (int)self.speed;
 }

@@ -119,15 +119,7 @@
         _speed = speed;
         return;
     }
-    
-    if (YES == self.isSpeedUnitMph)
-    {
-        _speed = MS_TO_MPH(speed);
-    }
-    else
-    {
-        _speed = MS_TO_KMH(speed);
-    }
+    _speed = speed;
     
     speedLabel.text = [NSString stringWithFormat:@"%.0f", self.speed];
 }

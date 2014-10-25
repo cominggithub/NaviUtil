@@ -17,5 +17,8 @@
 @property (nonatomic) BOOL isSpeedUnitMph;
 @property (nonatomic) BOOL isHud;
 @property (nonatomic) CLLocationCoordinate2D location;
+@property (nonatomic) float batteryLife;
+@property (nonatomic) BOOL networkEnabled;
+@property (nonatomic) BOOL gpsEnabled;
 
 @end

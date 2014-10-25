@@ -13,6 +13,7 @@
 #import "CarPanel4HeadingView.h"
 #import "CarPanel3CumulativeDistanceView.h"
 #import "CarPanelTimeView.h"
+#import "GeoUtil.h"
 
 
 #if DEBUG
@@ -87,12 +88,12 @@
     networkStatusView               = [[CarPanelSwitchView alloc] initWithFrame:CGRectMake(465+xOffset, 270, 31, 31)];
     networkStatusView.onImageName   = @"cp3_3g_on";
     networkStatusView.offImageName  = @"cp3_3g_off";
-    [networkStatusView off];
+    networkStatusView.enabled       = NO;
     
     gpsStatusView                   = [[CarPanelSwitchView alloc] initWithFrame:CGRectMake(510+xOffset, 273, 21, 21)];
     gpsStatusView.onImageName       = @"cp3_gps_on";
     gpsStatusView.offImageName      = @"cp3_gps_off";
-    [gpsStatusView off];
+    gpsStatusView.enabled           = NO;
 
     headingView                     = [[CarPanel4HeadingView alloc] initWithFrame:CGRectMake(120, 20, 291, 285)];
     speedView                       = [[CarPanel4SpeedView alloc] initWithFrame:CGRectMake(10, 120, 21, 21)];
@@ -197,8 +198,8 @@
 
 -(void)setHeading:(double)heading
 {
-    _heading = heading;
-    headingView.heading = heading;
+    _heading = heading + TO_RADIUS(10);
+    headingView.heading = self.heading;
 }
 
 -(void)setLocation:(CLLocationCoordinate2D)location
@@ -206,6 +207,24 @@
     _location = CLLocationCoordinate2DMake(location.latitude, location.longitude);
     cumulativeDistanceView.location = self.location;
 
+}
+
+-(void)setBatteryLife:(float)batteryLife
+{
+    _batteryLife = batteryLife;
+    batteryView.batteryPercentage = self.batteryLife * 100;
+}
+
+-(void)setNetworkEnabled:(BOOL)networkEnabled
+{
+    _networkEnabled = networkEnabled;
+    networkStatusView.enabled = self.networkEnabled;
+}
+
+-(void)setGpsEnabled:(BOOL)gpsEnabled
+{
+    _gpsEnabled = gpsEnabled;
+    gpsStatusView.enabled = self.gpsEnabled;
 }
 
 #pragma -- operation

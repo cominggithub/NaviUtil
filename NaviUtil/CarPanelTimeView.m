@@ -43,7 +43,7 @@
 
 -(void) initSelf
 {
-    self.backgroundColor            = [UIColor blackColor];
+    self.backgroundColor            = [UIColor clearColor];
 
     timeNumber                      = [[CarPanelTimeNumberView alloc] init];
     timeNumber.numberBlockWidth     = 27;

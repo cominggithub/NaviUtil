@@ -51,6 +51,18 @@
     self.image  = [self.image imageTintedWithColor:self.color];
 }
 
+-(void)setEnabled:(BOOL)enabled
+{
+    _enabled = enabled;
+    if (self.enabled)
+    {
+        [self on];
+    }
+    else
+    {
+        [self off];
+    }
+}
 -(void)on
 {
     self.image = [onImage imageTintedWithColor:self.color];

@@ -87,8 +87,10 @@
     arrow.image                 = [[UIImage imageNamed:@"cp4_arrow"] imageTintedWithColor:[UIColor redColor]];
     
     circleView                  = [[CarPanelCircleView alloc] initWithFrame:CGRectMake(0, 0, 291, 285)];
-    circleView.transform        = CGAffineTransformMake(1, 0, 2*sinf(angle), 1, 0, 0);
-    self.imageName              = @"cp4_heading";
+//    circleView.transform        = CGAffineTransformMake(1, 0, 2*sinf(angle), 1, 0, 0);
+    circleView.inclinedAngle    = angle;
+    circleView.imageName        = @"cp4_heading";
+    circleView.maskImageName    = @"cp4_heading_mask";
     
     blackMask                   = [[UIView alloc] initWithFrame:CGRectMake(0, 60, 160, 240)];
     blackMask.backgroundColor   = [UIColor blackColor];
@@ -109,14 +111,10 @@
 -(void)setHeading:(double)heading
 {
     _heading = heading;
-    circleView.heading = self.heading;
+    circleView.heading      = self.heading;
+
 }
 
--(void)setImageName:(NSString *)imageName
-{
-    _imageName = imageName;
-    circleView.imageName = imageName;
-}
 
 
 @end

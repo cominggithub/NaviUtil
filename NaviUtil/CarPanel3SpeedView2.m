@@ -103,15 +103,7 @@
         _speed = speed;
         return;
     }
-    
-    if (YES == self.isSpeedUnitMph)
-    {
-        _speed = MS_TO_MPH(speed);
-    }
-    else
-    {
-        _speed = MS_TO_KMH(speed);
-    }
+    _speed = speed;
     
     numberView.number = (int)self.speed;
     

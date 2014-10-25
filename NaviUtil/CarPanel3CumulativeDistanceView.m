@@ -66,9 +66,10 @@
     floatNumberView.floatNumber         = 0.0;
     
     
-    unitImage = [[UIImageView alloc] initWithFrame:CGRectMake(75, 16, 25, 16)];
-    unitImage.image = kmImage;
-    unitImage.backgroundColor = [UIColor blackColor];
+    unitImage = [[UIImageView alloc] initWithFrame:CGRectMake(75, 16, 38, 16)];
+    unitImage.contentMode       = UIViewContentModeScaleAspectFit;
+    unitImage.image             = kmImage;
+    unitImage.backgroundColor   = [UIColor clearColor];
     
     [self addSubview:floatNumberView];
     [self addSubview:unitImage];

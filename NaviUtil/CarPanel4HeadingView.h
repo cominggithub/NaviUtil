@@ -12,6 +12,5 @@
 
 @property (nonatomic, strong) UIColor *color;
 @property (nonatomic, assign) double heading;
-@property (nonatomic, copy) NSString* imageName;
 
 @end

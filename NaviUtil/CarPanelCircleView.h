@@ -14,6 +14,8 @@
 @property (weak, nonatomic) UIColor* color;
 @property (strong, nonatomic) UIImage *circleImage;
 @property (weak, nonatomic) NSString *imageName;
+@property (weak, nonatomic) NSString *maskImageName;
 @property (nonatomic) double heading;
+@property (nonatomic, assign) double inclinedAngle;
 
 @end
