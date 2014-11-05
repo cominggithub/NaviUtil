@@ -111,6 +111,11 @@
                 [self restoreTransaction:transaction];
             case SKPaymentTransactionStatePurchasing:
                 mlogDebug(@"SKPaymentTransactionStatePurchasing");
+//                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                break;
+            case SKPaymentTransactionStateDeferred:
+                mlogDebug(@"SKPaymentTransactionStateDeferred");
+//                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
         }
     };
@@ -137,7 +142,6 @@
     mlogDebug(@"Transaction error: %@", transaction.error.localizedDescription);
     
     [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
-    
     [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_TRANSACTION_FAILED object:transaction.payment.productIdentifier];
 }
 
@@ -152,6 +156,7 @@
 }
 
 - (void)restoreCompletedTransactions {
+
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 

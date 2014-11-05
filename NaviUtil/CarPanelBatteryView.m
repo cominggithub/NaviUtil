@@ -52,7 +52,7 @@
     batteryFrameImage.image         = [UIImage imageNamed:@"cp3_battery_empty"];
 
     
-    [self addSubview:batteryLifeView];
+//    [self addSubview:batteryLifeView];
     [self addSubview:batteryFrameImage];
     
 }

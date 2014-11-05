@@ -129,6 +129,7 @@
     cumulativeDistanceView.floatNumberImagePrefix   = @"cp4_cum_";
     cumulativeDistanceView.unitImagePrefix          = @"cp4_cum_";
     
+    self.heading = 0;
     [self addSubview:batteryView];
     [self addSubview:networkStatusView];
     [self addSubview:gpsStatusView];

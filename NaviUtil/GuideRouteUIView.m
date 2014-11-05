@@ -1764,8 +1764,6 @@
     [clockView active];
     [speedView active];
     
-///    [LocationManager addDelegate:self];
-
     debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_H_IS_DEBUG];
     self.isNetwork  = [SystemManager getNetworkStatus] > 0;
     self.isGps      = [SystemManager getGpsStatus] > 0;
@@ -1779,7 +1777,6 @@
 
 -(void) inactive
 {
-//    [LocationManager removeDelegate:self];
     [systemStatusView inactive];
     [clockView inactive];
     [speedView inactive];

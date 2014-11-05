@@ -95,7 +95,6 @@
     [self addSubview:headingView];
     [self addSubview:speedView];
     
-
 }
 /*
 // Only override drawRect: if you perform custom drawing.
@@ -141,7 +140,6 @@
 
 -(void)setIsSpeedUnitMph:(BOOL)isSpeedUnitMph
 {
-    logBool(isSpeedUnitMph);
     _isSpeedUnitMph                         = isSpeedUnitMph;
     speedView.isSpeedUnitMph                = self.isSpeedUnitMph;
     cumulativeDistanceView.isSpeedUnitMph   = self.isSpeedUnitMph;

@@ -11,6 +11,7 @@
 
 
 
+
 #define CONFIG_H_IS_DEBUG                       @"@IsDebug"
 #define CONFIG_H_IS_AD                          @"@IsAd"
 #define CONFIG_H_IS_USER_PLACE                  @"@IsUserPlace"
@@ -57,9 +58,9 @@
 
 
 #define CONFIG_IAP_IS_ADVANCED_VERSION      @"IAP_AdvancedVersion"
-#define CONFIG_IAP_IS_CAR_PANEL_2           @"IAP_CarPanel2"
-#define CONFIG_IAP_IS_CAR_PANEL_3           @"IAP_CarPanel3"
-#define CONFIG_IAP_IS_CAR_PANEL_4           @"IAP_CarPanel4"
+#define CONFIG_IAP_IS_CAR_PANEL_2           @"com.coming.NavierHUD.Iap.carpanel2"
+#define CONFIG_IAP_IS_CAR_PANEL_3           @"com.coming.NavierHUD.Iap.carpanel3"
+#define CONFIG_IAP_IS_CAR_PANEL_4           @"com.coming.NavierHUD.Iap.carpanel4"
 
 /* for car panel 1 */
 #define CONFIG_CP1_COLOR                    @"CP1_Color"

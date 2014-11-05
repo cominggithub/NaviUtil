@@ -11,6 +11,7 @@
 #import "SystemConfig.h"
 
 #define IAP_NO_AD_STORE_USER_PLACE @"com.coming.NavierHUD.Iap.AdvancedVersion"
+#define IAP_ADVANCE_VERSION @"com.coming.NavierHUD.Iap.AdvancedVersion"
 #define IAP_CAR_PANEL_2 @"com.coming.NavierHUD.Iap.carpanel2"
 #define IAP_CAR_PANEL_3 @"com.coming.NavierHUD.Iap.carpanel3"
 #define IAP_CAR_PANEL_4 @"com.coming.NavierHUD.Iap.carpanel4"

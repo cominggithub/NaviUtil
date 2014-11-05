@@ -27,7 +27,7 @@
 {
     CarPanelCircleView* circleView;
     UIImageView *arrow;
-    UIView *blackMask;
+    UIImageView *blackMask;
     double angle;
 }
 @end
@@ -86,14 +86,15 @@
     arrow                       = [[UIImageView alloc] initWithFrame:CGRectMake(291/2-7, 60, 40, 51)];
     arrow.image                 = [[UIImage imageNamed:@"cp4_arrow"] imageTintedWithColor:[UIColor redColor]];
     
-    circleView                  = [[CarPanelCircleView alloc] initWithFrame:CGRectMake(0, 0, 291, 285)];
+    circleView                  = [[CarPanelCircleView alloc] initWithFrame:CGRectMake(0, 0, 285, 285)];
 //    circleView.transform        = CGAffineTransformMake(1, 0, 2*sinf(angle), 1, 0, 0);
     circleView.inclinedAngle    = angle;
     circleView.imageName        = @"cp4_heading";
-    circleView.maskImageName    = @"cp4_heading_mask";
+//    circleView.maskImageName    = @"cp4_heading_mask";
     
-    blackMask                   = [[UIView alloc] initWithFrame:CGRectMake(0, 60, 160, 240)];
-    blackMask.backgroundColor   = [UIColor blackColor];
+    blackMask                   = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 285, 285)];
+    blackMask.image             = [UIImage imageNamed:@"cp4_heading_mask"];
+    blackMask.backgroundColor   = [UIColor clearColor];
     
 
     [self addSubview:circleView];

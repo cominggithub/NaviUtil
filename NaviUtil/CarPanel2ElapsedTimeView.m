@@ -89,6 +89,10 @@
     _hourLabel.text        = [NSString stringFromLong:hours numOfDigits:2];
     _minuteLabel.text      = [NSString stringFromLong:minutes numOfDigits:2];
     _secondLabel.hidden    = !_secondLabel.hidden;
+
+//        _hourLabel.text        = @"09";
+//        _minuteLabel.text      = @"12";
+//        _secondLabel.hidden    = NO;
     
 }
 

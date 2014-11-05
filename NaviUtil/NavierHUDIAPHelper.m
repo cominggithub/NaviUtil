@@ -127,13 +127,12 @@ static IAP_STATUS iapStatus;
     // car panel 4 is not available for screen size 480x320
     if ([SystemManager lanscapeScreenRect].size.width >= 568)
     {
-        
-        return ![SystemConfig getBoolValue:IAP_NO_AD_STORE_USER_PLACE] || ![SystemConfig getBoolValue:IAP_CAR_PANEL_2] ||
-        ![SystemConfig getBoolValue:IAP_CAR_PANEL_3] || ![SystemConfig getBoolValue:IAP_CAR_PANEL_4];
+        return ![SystemConfig getBoolValue:CONFIG_IAP_IS_ADVANCED_VERSION] || ![SystemConfig getBoolValue:CONFIG_IAP_IS_CAR_PANEL_2] ||
+        ![SystemConfig getBoolValue:CONFIG_IAP_IS_CAR_PANEL_3] || ![SystemConfig getBoolValue:CONFIG_IAP_IS_CAR_PANEL_4];
     }
     
-    return ![SystemConfig getBoolValue:IAP_NO_AD_STORE_USER_PLACE] || ![SystemConfig getBoolValue:IAP_CAR_PANEL_2] ||
-    ![SystemConfig getBoolValue:IAP_CAR_PANEL_3];
+    return ![SystemConfig getBoolValue:CONFIG_IAP_IS_ADVANCED_VERSION] || ![SystemConfig getBoolValue:CONFIG_IAP_IS_CAR_PANEL_2] ||
+    ![SystemConfig getBoolValue:CONFIG_IAP_IS_CAR_PANEL_3];
 }
 
 

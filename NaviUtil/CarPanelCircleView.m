@@ -86,7 +86,7 @@
 -(void)addUIComponents
 {
 
-    self.imageName = @"cp2_course";
+//    self.imageName = @"cp2_course";
 }
 
 #pragma mark -- Property
@@ -102,7 +102,7 @@
     CALayer *mask = [CALayer layer];
     UIImage *maskImage = [UIImage imageNamed:maskImageName];
     mask.contents = (id)[maskImage CGImage];
-    mask.frame = CGRectMake(0, 0, maskImage.size.width, maskImage.size.height);
+    mask.frame = CGRectMake(0, 0, maskImage.size.width/2, maskImage.size.height/2);
     self.layer.mask = mask;
     self.layer.masksToBounds = YES;
     
