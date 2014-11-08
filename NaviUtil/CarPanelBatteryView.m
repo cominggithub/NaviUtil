@@ -66,7 +66,7 @@
     [self addSubview:batteryLifeView];
     [self addSubview:batteryFrameImage];
     
-    self.batteryPercentage          = 0.1;
+    self.batteryPercentage          = 0;
     
 }
 

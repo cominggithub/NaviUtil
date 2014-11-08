@@ -244,15 +244,19 @@ static NSDictionary *_defaultLanguageDic;
     [self triggerNetworkChangeStatusNotify];
 }
 
-+(void) updateBatteryLevel
++(float)getFilteredBatterLife:(float)rawBatteryLife
 {
     float batteryLife;
-    batteryLife = [[UIDevice currentDevice] batteryLevel];
-
     // make sure battery life is between 0 ~ 1
-    _batteryLife = batteryLife <=0 ? 0: batteryLife;
-    if (_batteryLife > 1)
-        _batteryLife = 1;
+    batteryLife = rawBatteryLife <=0 ? 0: rawBatteryLife;
+    if (batteryLife > 1)
+        batteryLife = 1;
+    return batteryLife;
+}
+
++(void) updateBatteryLevel
+{
+    _batteryLife = [self getFilteredBatterLife:[[UIDevice currentDevice] batteryLevel]];
     
     [self triggerBatterStatusChangeNotify];
 }
@@ -269,8 +273,7 @@ static NSDictionary *_defaultLanguageDic;
 
 +(float) getBatteryLife
 {
-    _batteryLife = [[UIDevice currentDevice] batteryLevel];
-
+    _batteryLife = [self getFilteredBatterLife:[[UIDevice currentDevice] batteryLevel]];
     return _batteryLife;
 }
 
