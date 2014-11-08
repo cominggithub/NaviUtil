@@ -12,6 +12,6 @@
 @interface CarPanelBatteryView : UIView
 
 @property (nonatomic, assign) CGRect batteryLifeRect;
-@property (nonatomic, assign) int batteryPercentage;
+@property (nonatomic, assign) float batteryPercentage;
 @property (nonatomic, strong) UIColor *color;
 @end

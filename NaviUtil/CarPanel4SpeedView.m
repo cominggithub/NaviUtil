@@ -101,13 +101,7 @@
 
 -(void)setSpeed:(double)speed
 {
-    if (speed == 0 && self.speed > 10)
-    {
-        _speed = speed;
-        return;
-    }
     _speed = speed;
-    
     numberView.number = (int)self.speed;
 }
 

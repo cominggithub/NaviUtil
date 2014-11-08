@@ -2124,7 +2124,6 @@
 
 - (void)receiveLocationUpdateEvent:(NSNotification *)notification
 {
-    logfn();
     LocationUpdateEvent *event;
     event = [notification.userInfo objectForKey:@"data"];
     [self locationManager:NULL update:event.location speed:event.speed distance:event.distance heading:event.heading];

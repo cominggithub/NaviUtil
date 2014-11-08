@@ -39,7 +39,7 @@
         NSLog(@"Couldn't add url");
     }
     
-    if (![slvc addImage:[UIImage imageNamed:@"fbshare_1136x640.png"]])
+    if (![slvc addImage:[UIImage imageNamed:@"fbshare.jpg"]])
     {
         NSLog(@"Couldn't image");
     }

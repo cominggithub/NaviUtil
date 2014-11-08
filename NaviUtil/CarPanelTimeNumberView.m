@@ -161,6 +161,13 @@
     numberBlock[2]  = 12;
     numberBlock[3]  = (int)[components minute]/10;
     numberBlock[4]  = (int)[components minute]%10;
+
+//    numberBlock[0]  = 8;
+//    numberBlock[1]  = 9;
+//    numberBlock[2]  = 12;
+//    numberBlock[3]  = 8;
+//    numberBlock[4]  = 9;
+
     
 
     [self refreshNumberImage];
@@ -179,6 +186,12 @@
     numberBlock[3]  = (int)minute/10;
     numberBlock[4]  = (int)minute%10;
 
+    numberBlock[0]  = 8;
+    numberBlock[1]  = 9;
+    numberBlock[2]  = 12;
+    numberBlock[3]  = 8;
+    numberBlock[4]  = 9;
+    
     [self refreshNumberImage];
 }
 

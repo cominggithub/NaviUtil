@@ -10,6 +10,16 @@
 #import "UIColor+category.h"
 #import "UIImageView+category.h"
 
+#if DEBUG
+#define FILE_DEBUG TRUE
+#elif RELEASE_TEST
+#define FILE_DEBUG TRUE
+#else
+#define FILE_DEBUG TRUE
+#endif
+
+#include "Log.h"
+
 @implementation CarPanelBatteryView
 {
     UIImageView *batteryFrameImage;
@@ -43,6 +53,7 @@
     CALayer* maskLayer = [CALayer layer];
     batteryLifeMaxWidth             = 0;
     batteryLifeView                 = [[UIView alloc] init];
+    batteryLifeView.frame           = CGRectMake(0, 0, 39, 16);
 
     maskLayer.frame                 = CGRectMake(0, 0, 39, 16);
     maskLayer.contents              = (__bridge id)[[UIImage imageNamed:@"cp3_battery"] CGImage];
@@ -52,8 +63,10 @@
     batteryFrameImage.image         = [UIImage imageNamed:@"cp3_battery_empty"];
 
     
-//    [self addSubview:batteryLifeView];
+    [self addSubview:batteryLifeView];
     [self addSubview:batteryFrameImage];
+    
+    self.batteryPercentage          = 0.1;
     
 }
 
@@ -73,12 +86,14 @@
     batteryLifeMaxWidth = batteryLifeRect.size.width;
 }
 
--(void)setBatteryPercentage:(int)batteryPercentage
+
+-(void)setBatteryPercentage:(float)batteryPercentage
 {
+    _batteryPercentage = batteryPercentage;
     batteryLifeView.frame = CGRectMake(
                                        batteryLifeView.frame.origin.x,
                                        batteryLifeView.frame.origin.y,
-                                       batteryLifeMaxWidth * (batteryPercentage/100.0),
+                                       batteryLifeMaxWidth * self.batteryPercentage,
                                        batteryLifeView.frame.size.height);
 }
 

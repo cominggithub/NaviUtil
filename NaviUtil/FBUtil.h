@@ -10,6 +10,6 @@
 #import <FacebookSDK/FacebookSDK.h>
 
 @interface FBUtil : NSObject
-+(void)shareAppleStoreLink;
-+(void)shareAppleStoreLink:(UIViewController*) parent;
++(void)shareAppStoreLink;
++(void)shareAppStoreLink:(UIViewController*) parent;
 @end

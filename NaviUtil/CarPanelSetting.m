@@ -45,6 +45,7 @@
     if (self)
     {
         self.name = name;
+        [self overwriteColor];
         if (![self checkSetting])
         {
             [self resetDefault];
@@ -60,17 +61,16 @@
 
 -(void) resetDefault
 {
+    [self initColorByName];
     self.isHud              = false;
     self.isSpeedUnitMph     = true;
     self.isCourse           = true;
-
-    [self initColorByName];
-    
+    self.selPrimaryColor    = [UIColor colorWithRGBHexCode:[_primaryColors objectAtIndex:0]];
     [[NSUserDefaults standardUserDefaults] setObject:_primaryColors forKey:[self getKey:PRIMARY_COLORS]];
     [[NSUserDefaults standardUserDefaults] setObject:_secondaryColors forKey:[self getKey:SECONDARY_COLORS]];
-    
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
+
 
 -(void) initColorByName
 {
@@ -121,7 +121,7 @@
                                  ];
     }
     
-    self.selPrimaryColor = [self.primaryColors objectAtIndex:0];
+
     
     
 }
@@ -129,31 +129,45 @@
 {
     if (nil == [[NSUserDefaults standardUserDefaults] objectForKey:[self getKey:IS_HUD]])
     {
+        logfn();
         return FALSE;
     }
     if (nil == [[NSUserDefaults standardUserDefaults] objectForKey:[self getKey:IS_SPEED_MPH]])
     {
+        logfn();
         return FALSE;
     }
     if (nil == [[NSUserDefaults standardUserDefaults] objectForKey:[self getKey:IS_COURSE]])
     {
+        logfn();
         return FALSE;
     }
     if (nil == [[NSUserDefaults standardUserDefaults] objectForKey:[self getKey:SEL_PRIMARY_COLOR]])
     {
+        logfn();
         return FALSE;
     }
     if (nil == [[NSUserDefaults standardUserDefaults] objectForKey:[self getKey:PRIMARY_COLORS]])
     {
+        logfn();
         return FALSE;
     }
     if (nil == [[NSUserDefaults standardUserDefaults] objectForKey:[self getKey:SECONDARY_COLORS]])
     {
+        logfn();
         return FALSE;
     }
     
 
     return TRUE;
+}
+
+-(void)overwriteColor
+{
+    [self initColorByName];
+    [[NSUserDefaults standardUserDefaults] setObject:_primaryColors forKey:[self getKey:PRIMARY_COLORS]];
+    [[NSUserDefaults standardUserDefaults] setObject:_secondaryColors forKey:[self getKey:SECONDARY_COLORS]];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 -(void) loadDefault

@@ -23,7 +23,7 @@
 
 @implementation FBUtil
 
-+(void)shareAppleStoreLink
++(void)shareAppStoreLink
 {
     // Check if the Facebook app is installed and we can present
     // the message dialog
@@ -31,9 +31,9 @@
     FBLinkShareParams *params = [[FBLinkShareParams alloc] init];
     params.link =
     [NSURL URLWithString:@"https://itunes.apple.com/app/navier-hud/id806144673"];
-    params.name = @"Naiver HUD";
+    params.name = @"Navier HUD";
 //    params.caption = @"Awesome iPhone Navigation App";
-    params.picture = [NSURL URLWithString:@"https://dl.dropboxusercontent.com/u/14692540/blog/global/4/navigation_green.png"];
+    params.picture = [NSURL URLWithString:@"https://dl.dropboxusercontent.com/u/14692540/blog/global/4/fbshare.jpg"];
 //    params.linkDescription   = @"";
 
     if ([FBDialogs canPresentMessageDialogWithParams:params]) {
@@ -50,7 +50,7 @@
     }
 }
 
-+(void)shareAppleStoreLink:(UIViewController*) parent
++(void)shareAppStoreLink:(UIViewController*) parent
 {
     SLComposeViewController* slvc = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
     NSString *titleToShare = @"Navier HUD, iPhone Navigation App";
@@ -66,7 +66,7 @@
         NSLog(@"Couldn't add url");
     }
     
-    if (![slvc addImage:[UIImage imageNamed:@"fbshare_1136x640"]])
+    if (![slvc addImage:[UIImage imageNamed:@"fbshare.jpg"]])
     {
         NSLog(@"Couldn't image");
     }

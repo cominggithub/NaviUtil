@@ -63,7 +63,7 @@
     floatNumberView.numberGapPadding    = 5;
     floatNumberView.dotWidth            = 5;
     floatNumberView.dotHeight           = 6;
-    floatNumberView.floatNumber         = 0.0;
+    floatNumberView.floatNumber         = 000;
     
     
     unitImage = [[UIImageView alloc] initWithFrame:CGRectMake(75, 16, 38, 16)];

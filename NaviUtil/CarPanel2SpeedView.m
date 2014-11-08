@@ -114,13 +114,7 @@
 
 -(void)setSpeed:(double)speed
 {
-    if (speed == 0 && self.speed > 10)
-    {
-        _speed = speed;
-        return;
-    }
     _speed = speed;
-    
     speedLabel.text = [NSString stringWithFormat:@"%.0f", self.speed];
 }
 

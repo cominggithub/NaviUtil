@@ -216,7 +216,7 @@
 -(void)setBatteryLife:(float)batteryLife
 {
     _batteryLife = batteryLife;
-    batteryView.batteryPercentage = self.batteryLife * 100;
+    batteryView.batteryPercentage = self.batteryLife;
 }
 
 -(void)setNetworkEnabled:(BOOL)networkEnabled

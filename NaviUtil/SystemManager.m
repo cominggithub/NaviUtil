@@ -246,7 +246,14 @@ static NSDictionary *_defaultLanguageDic;
 
 +(void) updateBatteryLevel
 {
-    _batteryLife = [[UIDevice currentDevice] batteryLevel];
+    float batteryLife;
+    batteryLife = [[UIDevice currentDevice] batteryLevel];
+
+    // make sure battery life is between 0 ~ 1
+    _batteryLife = batteryLife <=0 ? 0: batteryLife;
+    if (_batteryLife > 1)
+        _batteryLife = 1;
+    
     [self triggerBatterStatusChangeNotify];
 }
 

@@ -451,16 +451,17 @@
         if ( kGoogleJsonStatus_Ok == status)
         {
             currentRoute = [Route parseJson:routeDownloadRequest.filePath];
-            
-            if (self.routeEndPlace.placeType == kPlaceType_Home ||
-                self.routeEndPlace.placeType == kPlaceType_Favor ||
-                self.routeEndPlace.placeType == kPlaceType_Office ||
-                self.routeEndPlace.placeType == kPlaceType_SearchedPlace ||
-                self.routeEndPlace.placeType == kPlaceType_None)
-            {
-                [User addRecentPlace:self.routeEndPlace];
-                [User save];
-            }
+
+                // should not save route end place here
+//            if (self.routeEndPlace.placeType == kPlaceType_Home ||
+//                self.routeEndPlace.placeType == kPlaceType_Favor ||
+//                self.routeEndPlace.placeType == kPlaceType_Office ||
+//                self.routeEndPlace.placeType == kPlaceType_SearchedPlace ||
+//                self.routeEndPlace.placeType == kPlaceType_None)
+//            {
+//                [User addRecentPlace:self.routeEndPlace];
+//                [User save];
+//            }
             
             [self replaceRoutePolyline];
             self.hasRoute = TRUE;
@@ -770,6 +771,7 @@
 
 -(void) searchPlace:(NSString *)locationName
 {
+    logO(locationName);
     if (nil != locationName && locationName.length > 0)
     {
         [self searchPlaceByRadarSearch:locationName];
@@ -804,6 +806,7 @@
 {
     if (nil != locationName && locationName.length > 0)
     {
+        logfn();
         searchPlaceRadarSearchDownloadRequest          = [NaviQueryManager getPlaceNearBySearchDownloadRequest:locationName
                                                                                   locaiton:self.currentPlace.coordinate
                                                                                     radius:NEAR_PLACE_SEARCH_RADIUS];
