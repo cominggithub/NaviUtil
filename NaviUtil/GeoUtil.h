@@ -16,6 +16,7 @@
 #define MS_TO_KMH(m) (m*3.6)
 #define MS_TO_MPH(m) (m*2.23693)
 #define KMH_TO_MS(m) (m/3.6)
+#define M_TO_MILE(m) (m*0.000621371);
 
 #define MAX_LEVEL 20
 typedef struct PointD

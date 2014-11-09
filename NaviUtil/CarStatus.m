@@ -11,7 +11,9 @@
 
 
 @implementation CarStatus
-
+{
+    int zeroSpeedCount;
+}
 -(id) init
 {
     self = [super init];
@@ -27,16 +29,34 @@
     _location   = CLLocationCoordinate2DMake(0, 0);
     _speed      = 0;
     _heading    = 0;
+    zeroSpeedCount = 0;
 }
 
 -(void) updateLocation:(CLLocationCoordinate2D)location speed:(double)speed heading:(double)heading
 {
 
     _location   = location;
-    _speed      = speed;
+    _speed      = [self filterSpeed:speed];
     _heading    = heading;
 }
 
+-(double)filterSpeed:(double)speed
+{
+    if (speed == 0)
+    {
+        zeroSpeedCount++;
+        if (zeroSpeedCount >= 2)
+        {
+            return 0;
+        }
+        else
+        {
+            return self.speed;
+        }
+    }
+    
+    return speed;
+}
 -(float) getMoveTimeByDistance:(double) distance
 {
     // speed is meter/s

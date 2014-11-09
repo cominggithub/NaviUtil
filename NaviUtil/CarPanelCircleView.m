@@ -6,9 +6,10 @@
 //  Copyright (c) 2014 Coming. All rights reserved.
 //
 
-#import "CarPanel2CircleView.h"
+#import "CarPanelCircleView.h"
 #import "UIImage+category.h"
 #import "UIImageView+category.h"
+#import "GeoUtil.h"
 
 
 #if DEBUG
@@ -22,7 +23,7 @@
 #include "Log.h"
 
 
-@implementation CarPanel2CircleView
+@implementation CarPanelCircleView
 {
     NSTimer* timer;
     int count;
@@ -61,7 +62,8 @@
 
 -(void) initSelf
 {
-    count  = 0;
+    count               = 0;
+    self.inclinedAngle  = 0;
     [self addUIComponents];
 /*
     timer = [NSTimer scheduledTimerWithTimeInterval:1.0
@@ -84,7 +86,7 @@
 -(void)addUIComponents
 {
 
-    self.imageName = @"cp2_course";
+//    self.imageName = @"cp2_course";
 }
 
 #pragma mark -- Property
@@ -92,7 +94,18 @@
 -(void)setImageName:(NSString *)imageName
 {
     self.circleImage = [UIImage imageNamed:imageName];
-    self.color = self.color;
+}
+
+-(void)setMaskImageName:(NSString *)maskImageName
+{
+    return;
+    CALayer *mask = [CALayer layer];
+    UIImage *maskImage = [UIImage imageNamed:maskImageName];
+    mask.contents = (id)[maskImage CGImage];
+    mask.frame = CGRectMake(0, 0, maskImage.size.width/2, maskImage.size.height/2);
+    self.layer.mask = mask;
+    self.layer.masksToBounds = YES;
+    
 }
 
 -(void)setColor:(UIColor *)color
@@ -103,12 +116,26 @@
 
 -(void)setHeading:(double)heading
 {
-    self.transform = CGAffineTransformMakeRotation(heading);
+    [self rotate:self toAngle:heading];
+    
 }
 
 -(void)targetMethod
 {
     self.transform = CGAffineTransformMakeRotation(0.1*count++);
 }
+
+-(void)rotate:(UIView*) view toAngle:(double)angle
+{
+//    CGAffineTransform inclienTransform  = CGAffineTransformMake(1, 0, 2*sinf(self.inclinedAngle), 1, 0, 0);
+//    CGAffineTransform rotationTransform = CGAffineTransformRotate(inclienTransform, angle);
+    CGAffineTransform rotationTransform = CGAffineTransformMakeRotation(angle);
+    
+    [UIView animateWithDuration:0.8
+                     animations:^{
+                         view.transform = rotationTransform;
+                     }];
+}
+
 
 @end

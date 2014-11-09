@@ -46,6 +46,7 @@
     self = [super init];
     if(self)
     {
+        CGPoint tmpPoint;
         self.startLocation      = startLocation;
         self.endLocation        = endLocation;
         self.stepNo             = stepNo;
@@ -56,9 +57,14 @@
         self.cumulativeDistance = 0;
         self.startRouteLine     = startRouteLine;
      
-        _startProjectedPoint             = [CoordinateTranslator projectCoordinate:startLocation];
-        _endProjectedPoint               = [CoordinateTranslator projectCoordinate:endLocation];
+        tmpPoint                = [CoordinateTranslator projectCoordinate:startLocation];
+        _startProjectedPoint    = CGPointMake((int)tmpPoint.x, (int)tmpPoint.y);
+        tmpPoint                = [CoordinateTranslator projectCoordinate:endLocation];
+        _endProjectedPoint      = CGPointMake((int)tmpPoint.x, (int)tmpPoint.y);
         
+        logPoint(_startProjectedPoint);
+        logPoint(_endProjectedPoint);
+
         [self calculateLineEquation];
 
     }
@@ -130,13 +136,11 @@
         // location -> start -> end
         if (distanceToEndLocation > self.distance)
         {
-            logfn();
             return distanceToStartLocation;
         }
         // start -> location -> end
         else
         {
-            logfn();
             return 0;
         }
     }

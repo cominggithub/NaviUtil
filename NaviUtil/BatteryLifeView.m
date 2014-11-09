@@ -36,13 +36,14 @@
     _lifeLabel.textColor        = [UIColor whiteColor];
     _firstDraw                  = FALSE;
     _width                      = 34;
-    self.life                   = 0;
+    self.life                   = 100;
 
 
     if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_DEBUG])
     {
-        [self addSubview:_lifeLabel];
+//        [self addSubview:_lifeLabel];
     }
+    
 }
 
 -(void) setColor:(UIColor *)color

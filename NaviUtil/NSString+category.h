@@ -18,6 +18,7 @@
 -(UIColor*) uicolorValue;
 +(NSString *) encodeStringWithCoordinate:(CLLocationCoordinate2D )coordinate;
 +(NSString*) stringFromInt:(int) value;
++(NSString*) stringFromLong:(long) value;
 +(NSString*) stringFromDouble:(double) value;
 +(NSString*) stringFromFloat:(float) value;
 +(NSString*) stringFromBOOL:(BOOL) value;

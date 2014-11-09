@@ -11,6 +11,8 @@
 #import "Place.h"
 #import "Route.h"
 
+#define LOCATION_MANAGER_LOCATION_UPDATE_EVENT @"location_manager_location_update_event"
+
 @class LocationManager;
 
 @protocol LocationManagerDelegate <NSObject>
@@ -51,9 +53,13 @@ typedef enum
 +(void) startLocationTracking;
 +(void) stopLocationTracking;
 
++(void) start;
++(void) stop;
+
 -(void) locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations;
 -(void) locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading;
 -(void) startMonitorLocationChange;
 -(void) stopMonitorLocationChange;
+
 
 @end

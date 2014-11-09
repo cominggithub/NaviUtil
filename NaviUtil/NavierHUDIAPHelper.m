@@ -21,11 +21,10 @@
 
 NSMutableDictionary* iapItems;
 
-static BOOL retrieveIapSuccess;
+static IAP_STATUS iapStatus;
 +(void) init
 {
     iapItems = [[NSMutableDictionary alloc] initWithCapacity:0];
-    retrieveIapSuccess = FALSE;
     [self retrieveProduct];
 }
 
@@ -41,6 +40,9 @@ static BOOL retrieveIapSuccess;
     dispatch_once(&once, ^{
         NSSet * productIdentifiers = [NSSet setWithObjects:
                                       IAP_NO_AD_STORE_USER_PLACE,
+                                      IAP_CAR_PANEL_2,
+                                      IAP_CAR_PANEL_3,
+                                      IAP_CAR_PANEL_4,
                                       nil];
         sharedInstance = [[self alloc] initWithProductIdentifiers:productIdentifiers];
     });
@@ -50,18 +52,22 @@ static BOOL retrieveIapSuccess;
 
 +(void) retrieveProduct
 {
+    iapStatus = IAP_STATUS_RETRIEVING;
     [[NavierHUDIAPHelper sharedInstance] requestProductsWithCompletionHandler:^(BOOL success, NSArray *products) {
         if (success)
         {
-            retrieveIapSuccess = TRUE;
             for (SKProduct* p in products)
             {
                 [iapItems setValue:p forKey:p.productIdentifier];
             }
+            iapStatus = IAP_STATUS_RETRIEVED;
+            [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_IAP_STATUS_RETRIEVED object:self];
+            
         }
         else
         {
-            
+            iapStatus = IAP_STATUS_RETRIEVE_FAIL;
+            [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_IAP_STATUS_RETRIEVE_FAIL object:self];
         }
     }];
 
@@ -83,7 +89,7 @@ static BOOL retrieveIapSuccess;
     {
         skProduct = [iapItems objectForKey:key];
         [formatter setLocale:skProduct.priceLocale];
-        [msg appendString:[NSString stringWithFormat:@"%@ %@ %0.2f \n%@ %@\n",
+        [msg appendString:[NSString stringWithFormat:@"-- \n%@ %@ %0.2f \n%@\n%@\n",
                            skProduct.productIdentifier,
                            skProduct.localizedTitle,
                            skProduct.price.floatValue,
@@ -92,6 +98,7 @@ static BOOL retrieveIapSuccess;
                            ]];
 
     }
+    NSLog(@"%@", msg);
 }
 
 +(SKProduct*) productByKey:(NSString*) key
@@ -109,9 +116,23 @@ static BOOL retrieveIapSuccess;
     [[NavierHUDIAPHelper sharedInstance] restoreCompletedTransactions];
 }
 
-+ (BOOL)retrieveIap
++ (IAP_STATUS)retrieveIap
 {
-    return retrieveIapSuccess;
+    return iapStatus;
+}
+
+
++ (BOOL)hasUnbroughtIap
+{
+    // car panel 4 is not available for screen size 480x320
+    if ([SystemManager lanscapeScreenRect].size.width >= 568)
+    {
+        return ![SystemConfig getBoolValue:CONFIG_IAP_IS_ADVANCED_VERSION] || ![SystemConfig getBoolValue:CONFIG_IAP_IS_CAR_PANEL_2] ||
+        ![SystemConfig getBoolValue:CONFIG_IAP_IS_CAR_PANEL_3] || ![SystemConfig getBoolValue:CONFIG_IAP_IS_CAR_PANEL_4];
+    }
+    
+    return ![SystemConfig getBoolValue:CONFIG_IAP_IS_ADVANCED_VERSION] || ![SystemConfig getBoolValue:CONFIG_IAP_IS_CAR_PANEL_2] ||
+    ![SystemConfig getBoolValue:CONFIG_IAP_IS_CAR_PANEL_3];
 }
 
 

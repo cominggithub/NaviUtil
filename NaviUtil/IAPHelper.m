@@ -12,11 +12,8 @@
 #import "RSSecrets.h"
 #import "SystemConfig.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
-
-NSString *const IAPHelperProductPurchasedNotification = @"IAPHelperProductPurchasedNotification";
-NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedNotification";
 
 // 2
 @interface IAPHelper () <SKProductsRequestDelegate, SKPaymentTransactionObserver>
@@ -37,20 +34,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
         
         // Store product identifiers
         _productIdentifiers = productIdentifiers;
-/*
-        // Check for previously purchased products
-//        _purchasedProductIdentifiers = [NSMutableSet set];
-        for (NSString * productIdentifier in _productIdentifiers) {
-  //          BOOL productPurchased = [[NSUserDefaults standardUserDefaults] boolForKey:productIdentifier];
-            if (productPurchased) {
-                [_purchasedProductIdentifiers addObject:productIdentifier];
-                mlogDebug(@"Previously purchased: %@", productIdentifier);
-            } else {
-                mlogDebug(@"Not purchased: %@", productIdentifier);
-            }
-        }
-*/
-        // Add self as transaction observer
+
         [[SKPaymentQueue defaultQueue] addTransactionObserver:self];
         
     }
@@ -94,7 +78,6 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 {
     _completionHandler(YES, response.products);
     _completionHandler = nil;
-    [[NSNotificationCenter defaultCenter] postNotificationName:IAPHelperProductUpdatedNotification object:nil userInfo:nil];
     
 }
 
@@ -116,14 +99,23 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
         switch (transaction.transactionState)
         {
             case SKPaymentTransactionStatePurchased:
+                mlogDebug(@"SKPaymentTransactionStatePurchased");
                 [self completeTransaction:transaction];
                 break;
             case SKPaymentTransactionStateFailed:
+                mlogDebug(@"SKPaymentTransactionStateFailed");
                 [self failedTransaction:transaction];
                 break;
             case SKPaymentTransactionStateRestored:
+                mlogDebug(@"SKPaymentTransactionStateRestored");
                 [self restoreTransaction:transaction];
-            default:
+            case SKPaymentTransactionStatePurchasing:
+                mlogDebug(@"SKPaymentTransactionStatePurchasing");
+//                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+                break;
+            case SKPaymentTransactionStateDeferred:
+                mlogDebug(@"SKPaymentTransactionStateDeferred");
+//                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
         }
     };
@@ -134,12 +126,14 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
     
     [self provideContentForProductIdentifier:transaction.payment.productIdentifier];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_TRANSACTION_COMPLETE object:transaction.payment.productIdentifier];
 }
 
 - (void)restoreTransaction:(SKPaymentTransaction *)transaction {
     mlogDebug(@"restoreTransaction...");
     [self provideContentForProductIdentifier:transaction.originalTransaction.payment.productIdentifier];
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_TRANSACTION_RESTORE object:transaction.payment.productIdentifier];
 }
 
 - (void)failedTransaction:(SKPaymentTransaction *)transaction {
@@ -148,12 +142,12 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
     mlogDebug(@"Transaction error: %@", transaction.error.localizedDescription);
     
     [[SKPaymentQueue defaultQueue] finishTransaction: transaction];
+    [[NSNotificationCenter defaultCenter] postNotificationName:IAP_EVENT_TRANSACTION_FAILED object:transaction.payment.productIdentifier];
 }
 
 - (void)provideContentForProductIdentifier:(NSString *)productIdentifier {
     mlogAssertStrNotEmpty(productIdentifier);
     [self addPurchasedProductIdentifier:productIdentifier];
-    [[NSNotificationCenter defaultCenter] postNotificationName:IAPHelperProductPurchasedNotification object:productIdentifier userInfo:nil];
     
 //    [_purchasedProductIdentifiers addObject:productIdentifier];
 //    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:productIdentifier];
@@ -162,6 +156,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 }
 
 - (void)restoreCompletedTransactions {
+
     [[SKPaymentQueue defaultQueue] restoreCompletedTransactions];
 }
 
@@ -172,6 +167,7 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
     if (nil != iapKey)
     {
         [SystemConfig addIAPItem:iapKey];
+        
     }
     
     return ;
@@ -188,7 +184,21 @@ NSString *const IAPHelperProductUpdatedNotification = @"IAPHelperProductUpdatedN
 {
     mlogAssertStrNotEmptyR(key, nil);
     if ([key isEqualToString:@"com.coming.NavierHUD.Iap.AdvancedVersion"])
+    {
         return CONFIG_IAP_IS_ADVANCED_VERSION;
+    }
+    else if ([key isEqualToString:@"com.coming.NavierHUD.Iap.carpanel2"])
+    {
+        return CONFIG_IAP_IS_CAR_PANEL_2;
+    }
+    else if ([key isEqualToString:@"com.coming.NavierHUD.Iap.carpanel3"])
+    {
+        return CONFIG_IAP_IS_CAR_PANEL_3;
+    }
+    else if ([key isEqualToString:@"com.coming.NavierHUD.Iap.carpanel4"])
+    {
+        return CONFIG_IAP_IS_CAR_PANEL_4;
+    }
     
     return nil;
 }

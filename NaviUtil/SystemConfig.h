@@ -11,6 +11,7 @@
 
 
 
+
 #define CONFIG_H_IS_DEBUG                       @"@IsDebug"
 #define CONFIG_H_IS_AD                          @"@IsAd"
 #define CONFIG_H_IS_USER_PLACE                  @"@IsUserPlace"
@@ -51,14 +52,22 @@
 #define CONFIG_USE_COUNT                     @"UseCount"
 
 
+#define CONFIG_IS_SHARE_ON_FB                @"SHARE_ON_FB"
+#define CONFIG_IS_SHARE_ON_TWITTER           @"SHARE_ON_TWITTER"
+
+
 
 #define CONFIG_IAP_IS_ADVANCED_VERSION      @"IAP_AdvancedVersion"
+#define CONFIG_IAP_IS_CAR_PANEL_2           @"com.coming.NavierHUD.Iap.carpanel2"
+#define CONFIG_IAP_IS_CAR_PANEL_3           @"com.coming.NavierHUD.Iap.carpanel3"
+#define CONFIG_IAP_IS_CAR_PANEL_4           @"com.coming.NavierHUD.Iap.carpanel4"
 
 /* for car panel 1 */
 #define CONFIG_CP1_COLOR                    @"CP1_Color"
 #define CONFIG_CP1_IS_HUD                   @"CP1_IsHud"
 #define CONFIG_CP1_IS_COURSE                @"CP1_IsCourse"
 #define CONFIG_CP1_IS_SPEED_UNIT_MPH        @"CP1_IsSpeedUnitMPH"
+
 
 /* for route navigation 1 */
 #define CONFIG_RN1_COLOR                    @"RN1_Color"

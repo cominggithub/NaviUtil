@@ -102,8 +102,16 @@ static NSDictionary *_defaultLanguageDic;
     _screenRect                         = screenBounds;
     _lanscapeScreenRect.origin.x        = 0;
     _lanscapeScreenRect.origin.y        = 0;
-    _lanscapeScreenRect.size.width      = _screenRect.size.height;
-    _lanscapeScreenRect.size.height     = _screenRect.size.width;
+    if (_screenRect.size.width > _screenRect.size.height)
+    {
+        _lanscapeScreenRect.size.width      = _screenRect.size.width;
+        _lanscapeScreenRect.size.height     = _screenRect.size.height;
+    }
+    else
+    {
+        _lanscapeScreenRect.size.width      = _screenRect.size.height;
+        _lanscapeScreenRect.size.height     = _screenRect.size.width;
+    }
 
     [device setBatteryMonitoringEnabled:YES];
 
@@ -191,7 +199,6 @@ static NSDictionary *_defaultLanguageDic;
 {
     Reachability* networkStatus = [Reachability reachabilityForInternetConnection];
     NetworkStatus netStatus     = [networkStatus currentReachabilityStatus];
-    BOOL connectionRequired     = [networkStatus connectionRequired];
     NSString* statusString= @"";
     switch (netStatus)
     {
@@ -199,7 +206,6 @@ static NSDictionary *_defaultLanguageDic;
         {
             statusString        = @"None";
             //Minor interface detail- connectionRequired may return yes, even when the host is unreachable.  We cover that up here...
-            connectionRequired  = NO;
             _wifiStatus         = 0;
             _threeGStatus       = 0;
             _networkStatus      = 0;
@@ -238,9 +244,20 @@ static NSDictionary *_defaultLanguageDic;
     [self triggerNetworkChangeStatusNotify];
 }
 
++(float)getFilteredBatterLife:(float)rawBatteryLife
+{
+    float batteryLife;
+    // make sure battery life is between 0 ~ 1
+    batteryLife = rawBatteryLife <=0 ? 0: rawBatteryLife;
+    if (batteryLife > 1)
+        batteryLife = 1;
+    return batteryLife;
+}
+
 +(void) updateBatteryLevel
 {
-    _batteryLife = [[UIDevice currentDevice] batteryLevel];
+    _batteryLife = [self getFilteredBatterLife:[[UIDevice currentDevice] batteryLevel]];
+    
     [self triggerBatterStatusChangeNotify];
 }
 
@@ -256,8 +273,7 @@ static NSDictionary *_defaultLanguageDic;
 
 +(float) getBatteryLife
 {
-    _batteryLife = [[UIDevice currentDevice] batteryLevel];
-
+    _batteryLife = [self getFilteredBatterLife:[[UIDevice currentDevice] batteryLevel]];
     return _batteryLife;
 }
 
@@ -279,7 +295,7 @@ static NSDictionary *_defaultLanguageDic;
 +(void) initSupportedLanguage
 {
     NSString *path;
-    _supportedLanguage = [[NSArray alloc] initWithObjects:@"en", @"zh-Hant", @"zh-Hans", nil];
+    _supportedLanguage = [[NSArray alloc] initWithObjects:@"en", @"zh-Hant", @"zh-Hans", @"nl", nil];
     if ([_supportedLanguage containsObject:[self getSystemLanguage]])
     {
         _defaultLanguage = [self getSystemLanguage];
@@ -299,18 +315,12 @@ static NSDictionary *_defaultLanguageDic;
 {
     int i;
     NSDateFormatter *dateFormattor;
-    NSFileManager *filemanager;
-    NSString *currentPath;
     NSArray *dirPaths;
     NSString *tmpStr;
 
     
     dateFormattor  = [[NSDateFormatter alloc] init];
     [dateFormattor setDateFormat:@"yyyy-MM-dd"];
-
-    filemanager =[NSFileManager defaultManager];
-    currentPath = [filemanager currentDirectoryPath];
-    
     dirPaths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
     
     _pathArray = [NSMutableArray arrayWithCapacity:kSystemManager_Path_Max];

@@ -11,7 +11,7 @@
 #import "NSString+category.h"
 #import "RSSecrets.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 @implementation SystemConfig
@@ -55,7 +55,7 @@ static JsonFile *_hiddenConfigFile;
 
 +(BOOL) getBoolValue:(NSString*) key
 {
-    if ([key hasPrefix:@"IAP_"])
+    if ([key hasPrefix:@"IAP_"] || [key hasPrefix:@"com.coming.NavierHUD.Iap"])
     {
         return [self hasIAPItem:key];
     }
@@ -90,6 +90,7 @@ static JsonFile *_hiddenConfigFile;
 + (BOOL)hasIAPItem:(NSString*) key
 {
     mlogAssertStrNotEmptyR(key, FALSE);
+    
     return [RSSecrets hasKey:key];
 }
 
@@ -275,6 +276,11 @@ static JsonFile *_hiddenConfigFile;
     [self checkKey:CONFIG_LOCALE                        defaultValue:@"unknown"];
     [self checkKey:CONFIG_TRIGGER_LOCATION_INTERVAL     defaultValue:[NSString stringFromInt:0]];
     [self checkKey:CONFIG_ROUTE_PLAN_TIMEOUT            defaultValue:[NSString stringFromInt:6]];
+    
+    
+    [self checkKey:CONFIG_IS_SHARE_ON_FB                defaultValue:[NSString stringFromBOOL:FALSE]];
+    [self checkKey:CONFIG_IS_SHARE_ON_TWITTER           defaultValue:[NSString stringFromBOOL:FALSE]];
+    
     
     [self save];
 

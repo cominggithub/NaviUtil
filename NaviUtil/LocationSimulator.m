@@ -74,7 +74,6 @@
     NSString *fileContents = [NSString stringWithContentsOfFile:fileName encoding:NSUTF8StringEncoding error:NULL];
     CLLocation *location;
     NSDateFormatter *formatter;
-    double heading;
 
     _locationIndexOfTrackFile       = 0;
     
@@ -214,7 +213,6 @@
     {
         double requiredDistance;
         double tmpDistance;
-        double distanceFromStart;
         
         requiredDistance            = advanceDistance;
         curRouteLine                = [route.routeLines objectAtIndex:curRouteLineNo];
@@ -256,8 +254,6 @@
             
 
             requiredDistance -= tmpDistance;
-
-            distanceFromStart = [GeoUtil getGeoDistanceFromLocation:nextCoordinate2D ToLocation:curRouteLine.startLocation];
         }
     }
     else
@@ -317,6 +313,10 @@
             break;
         case kLocationSimulator_File:
             location = [self getNextLocationFromFile];
+            locationCoordinate2D = [self getNextRouteLocation];
+            break;
+        default:
+            locationCoordinate2D = [self getNextRouteLocation];
             break;
             
     }

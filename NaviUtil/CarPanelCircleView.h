@@ -9,11 +9,13 @@
 #import <UIKit/UIKit.h>
 #import "CarPanelViewProtocol.h"
 
-@interface CarPanel2CircleView : UIImageView<CarPanelColorProtocol>
+@interface CarPanelCircleView : UIImageView<CarPanelColorProtocol>
 
 @property (weak, nonatomic) UIColor* color;
-@property (weak, nonatomic) UIImage *circleImage;
+@property (strong, nonatomic) UIImage *circleImage;
 @property (weak, nonatomic) NSString *imageName;
+@property (weak, nonatomic) NSString *maskImageName;
 @property (nonatomic) double heading;
+@property (nonatomic, assign) double inclinedAngle;
 
 @end

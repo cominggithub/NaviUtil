@@ -16,5 +16,4 @@
 @property (nonatomic) double heading;
 @property (nonatomic) BOOL isSpeedUnitMph;
 
-
 @end

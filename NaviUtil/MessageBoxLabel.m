@@ -57,11 +57,9 @@
 {
     int fontSize;
     int measuredLineCount;
-    int lineCount;
     CGSize maximumLabelSize;
     CGSize expectedLabelSize;
     CGRect newFrame;
-    BOOL fit;
     UIFont *font;
     
 
@@ -70,8 +68,6 @@
     
     super.text  = text;
     fontSize    = self.maxFont;
-    fit         = FALSE;
-    lineCount   = 0;
 
     do
     {

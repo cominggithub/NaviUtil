@@ -7,9 +7,8 @@
 //
 
 #import <StoreKit/StoreKit.h>
+#import "IAPEvent.h"
 
-UIKIT_EXTERN NSString *const IAPHelperProductPurchasedNotification;
-UIKIT_EXTERN NSString *const IAPHelperProductUpdatedNotification;
 
 typedef void (^RequestProductsCompletionHandler)(BOOL success, NSArray * products);
 

@@ -57,13 +57,13 @@
     if (self.accessibilityLabel != nil)
     {
         
-        return [NSString stringWithFormat:@"%s(%s): (%.0f, %.0f) %.0f X %.0f",
+        return [NSString stringWithFormat:@"%s(%s): (%.0f, %.0f) %.0f X %.0f 0x%X",
                 [self.accessibilityLabel UTF8String], (char*)class_getName([self class]),
-                self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height
+                self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height, (int)self
                 ];
     }
-    return [NSString stringWithFormat:@"%s:  (%.0f, %.0f) %.0f X %.0f",
-            (char*)class_getName([self class]), self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height];
+    return [NSString stringWithFormat:@"%s:  (%.0f, %.0f) %.0f X %.0f 0x%X",
+            (char*)class_getName([self class]), self.frame.origin.x, self.frame.origin.y, self.frame.size.width, self.frame.size.height, (int)self];
 }
 
 -(void) dumpFrame:(NSString*) name

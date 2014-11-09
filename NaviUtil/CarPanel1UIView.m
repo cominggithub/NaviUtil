@@ -93,7 +93,6 @@
     
 
 
-    [LocationManager addDelegate:self];
 
 }
 

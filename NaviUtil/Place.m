@@ -225,10 +225,8 @@
     if (nil == name || name.length < 1)
         return true;
     
-    int location, length, matchedCount, i;
+    long matchedCount, i;
     float matchedRate = 0;
-    location = [self.name rangeOfString:name].location;
-    length = [self.name rangeOfString:name].length;
 
     matchedCount = 0;
     

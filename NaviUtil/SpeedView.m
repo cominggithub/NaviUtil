@@ -13,12 +13,15 @@
 #import "LocationManager.h"
 #import "UIFont+category.h"
 #import "UIColor+category.h"
+#import "LocationUpdateEvent.h"
 
 #include "Log.h"
 @implementation SpeedView
 {
     UILabel *_speedLabel;
     UILabel *_speedUnitLabel;
+    double zeroSpeedCount;
+    double rawSpeed;
 }
 - (id)initWithFrame:(CGRect)frame
 {
@@ -32,8 +35,15 @@
 
 -(void) initSelf
 {
-    
+    zeroSpeedCount  = 0;
+    rawSpeed        = 0;
     [self addUIComponent];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveLocationUpdateEvent:)
+                                                 name:LOCATION_MANAGER_LOCATION_UPDATE_EVENT
+                                               object:nil];
+    
 }
 
 -(void) addUIComponent
@@ -57,30 +67,44 @@
     [self addSubview:_speedLabel];
     [self addSubview:_speedUnitLabel];
     
-    [self updateUIByLanguage];
-
 }
 
--(void) updateUIByLanguage
-{
-    NSString* language = [SystemManager getSystemLanguage];
-    
-    if ([language isEqualToString:@"zh-Hant"] || [language isEqualToString:@"zh-Hans"])
-    {
-        _speedUnitLabel.font = [_speedUnitLabel.font newFontsize:12];
-    }
-}
 
 -(void) locationManager:(LocationManager *)locationManager update:(CLLocationCoordinate2D)location speed:(double)speed distance:(int)distance heading:(double)heading
 {
+    double filteredSpeed;
+    filteredSpeed = [self filterSpeed:speed];
+    
     if (YES == _isSpeedUnitMph)
     {
-        self.speed = MS_TO_MPH(speed);
+        self.speed = MS_TO_MPH(filteredSpeed);
     }
     else
     {
-        self.speed = MS_TO_KMH(speed);
+        self.speed = MS_TO_KMH(filteredSpeed);
     }
+}
+
+-(double)filterSpeed:(double)speed
+{
+    if (speed == 0)
+    {
+        zeroSpeedCount++;
+        if (zeroSpeedCount >= 2)
+        {
+            rawSpeed = 0;
+            return 0;
+        }
+        else
+        {
+            return rawSpeed;
+        }
+    }
+    
+    zeroSpeedCount  = 0;
+    rawSpeed        = speed;
+    
+    return rawSpeed;
 }
 
 -(void) setColor:(UIColor *)color
@@ -126,22 +150,20 @@
 -(void) active
 {
     self.speed          = 0;
-    [self updateUIByLanguage];
-    [LocationManager addDelegate:self];
+
 
 }
 
 -(void) inactive
 {
-    [LocationManager removeDelegate:self];
+
 }
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
+
+- (void)receiveLocationUpdateEvent:(NSNotification *)notification
 {
-    // Drawing code
+    LocationUpdateEvent *event;
+    event = [notification.userInfo objectForKey:@"data"];
+    [self locationManager:NULL update:event.location speed:event.speed distance:event.distance heading:event.heading];
 }
-*/
 
 @end

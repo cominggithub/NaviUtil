@@ -18,6 +18,7 @@
 #import "RouteView.h"
 #import "RouteTrack.h"
 #import "CoordinateTranslator.h"
+#import "LocationUpdateEvent.h"
 
 #if DEBUG
 #define FILE_DEBUG TRUE
@@ -199,6 +200,12 @@
     naviState           = [[NaviState alloc] init];
     naviState.delegate  = self;
     carStatus           = [[CarStatus alloc] init];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(receiveLocationUpdateEvent:)
+                                                 name:LOCATION_MANAGER_LOCATION_UPDATE_EVENT
+                                               object:nil];
+    
 
 }
 
@@ -328,13 +335,14 @@
     CGPoint endPoint;
     CGPoint lastCircle;
     CGRect roundRect;
-    CGRect routeRect = rect;
+    CGRect routeRect;
     CGRect endPointRect;
     int roundRectSize = ROUTE_LINE_RECT_SIZE;
     NSMutableArray *stepPoint;
     RouteLine *tmpRouteLine;
     int drawedMinRouteLineNo;
     int drawedMaxRouteLineNo;
+    int routeLineInterval;
     
     
     drawedMinRouteLineNo    = -1;
@@ -344,6 +352,8 @@
     stepPoint               = [[NSMutableArray alloc] init];
     lastCircle.x            = 0;
     lastCircle.y            = 0;
+    routeRect               = rect;
+    routeLineInterval       = 100;
     
     // draw route line
     CGContextSetFillColorWithColor(context, self.color.CGColor);
@@ -352,7 +362,7 @@
     
     if (nil == drawedRouteLines)
     {
-        drawedRouteLines = [[NSMutableArray alloc] initWithCapacity:30];
+        drawedRouteLines = [[NSMutableArray alloc] initWithCapacity:routeLineInterval*2];
     }
     
     [drawedRouteLines removeAllObjects];
@@ -361,8 +371,8 @@
     CGContextSetStrokeColorWithColor(context, self.color.CGColor);
     
     // find out the max and min route line no to be drawed
-    i = currentRouteLine.no - 30 > -1 ? currentRouteLine.no - 30 : 0;
-    for (; i<currentRouteLine.no+30 && i<route.routeLines.count; i++)
+    i = currentRouteLine.no - routeLineInterval > -1 ? currentRouteLine.no - routeLineInterval : 0;
+    for (; i<currentRouteLine.no+routeLineInterval && i<route.routeLines.count; i++)
     {
         RouteLine *rl;
         rl              = [route.routeLines objectAtIndex:i];
@@ -1366,6 +1376,9 @@
 
 -(void) startRouteNavigation
 {
+    
+    mlogInfo(@"Start: %@, To: %@", routeStartPlace, routeEndPlace);
+    
     GoogleJsonStatus status = [GoogleJson getStatus:routeDownloadRequest.filePath];
     if ( kGoogleJsonStatus_Ok == status)
     {
@@ -1429,7 +1442,6 @@
     }
     else
     {
-        logfn();
         [naviState sendEvent:GR_EVENT_LOCATION_LOST];
     }
 }
@@ -1438,6 +1450,7 @@
 {
     planRouteCount++;
     
+    mlogDebug(@"plan route from %@ to %@", routeStartPlace, routeEndPlace);
     if (nil != routeStartPlace && nil != routeEndPlace)
     {
         if (YES == [routeStartPlace isNullPlace])
@@ -1521,7 +1534,6 @@
     
     if (nil == currentRouteLine && nil == lastRouteLine && distanceFromCarToRouteStart <= distanceFromCarInitToRouteStart+15)
     {
-        logfn();
         currentRouteLine = firstRouteLine;
         lastValidRouteLineTime = [NSDate date];
         [naviState sendEvent:GR_EVENT_ROUTE_LINE_READY];
@@ -1530,7 +1542,6 @@
     /* found matched route line */
     else if (nil != currentRouteLine)
     {
-        logfn();
         /* reset the out of route line count */
         outOfRouteLineCount = 0;
         
@@ -1550,7 +1561,6 @@
     /* cannot find matched route line */
     else
     {
-        logfn();
         NSTimeInterval duration;
         /* let the current route line be the last route line */
         currentCarLocation  = lastCarLocation;
@@ -1564,7 +1574,6 @@
             /* stay at GPS_READY if missing GPS signal is less than the CONFIG_MAX_OUT_OF_ROUTELINE_COUNT */
             if (duration < [SystemConfig getIntValue:CONFIG_MAX_OUT_OF_ROUTELINE_TIME] && outOfRouteLineCount <= 3)
             {
-                logfn();
                 [naviState sendEvent:GR_EVENT_GPS_READY];
             }
             /* location lost */
@@ -1755,8 +1764,6 @@
     [clockView active];
     [speedView active];
     
-    [LocationManager addDelegate:self];
-
     debugMsgLabel.hidden = ![SystemConfig getBoolValue:CONFIG_H_IS_DEBUG];
     self.isNetwork  = [SystemManager getNetworkStatus] > 0;
     self.isGps      = [SystemManager getGpsStatus] > 0;
@@ -1770,7 +1777,6 @@
 
 -(void) inactive
 {
-    [LocationManager removeDelegate:self];
     [systemStatusView inactive];
     [clockView inactive];
     [speedView inactive];
@@ -1938,7 +1944,6 @@
     }
     else if (NO == self.checkRouteDestination)
     {
-        logfn();
         [naviState sendEvent:GR_EVENT_LOCATION_LOST];
     }
     else
@@ -2113,6 +2118,15 @@
     }
     
     changeMessageTimer = nil;
+}
+
+#pragma mark -- notification
+
+- (void)receiveLocationUpdateEvent:(NSNotification *)notification
+{
+    LocationUpdateEvent *event;
+    event = [notification.userInfo objectForKey:@"data"];
+    [self locationManager:NULL update:event.location speed:event.speed distance:event.distance heading:event.heading];
 }
 
 @end

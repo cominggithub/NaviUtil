@@ -10,8 +10,9 @@
 #import "SystemConfig.h"
 #import "SystemManager.h"
 #import "LocationSimulator.h"
+#import "LocationUpdateEvent.h"
 
-#define FILE_DEBUG FALSE
+#define FILE_DEBUG TRUE
 #include "Log.h"
 
 #define LOCATION_UPDATE_DISTANCE_THRESHOLD 30 /* 30 meter */ 
@@ -70,14 +71,16 @@ static NSMutableArray *_savedLocations;
 
 -(void) startMonitorLocationChange
 {
+    mlogDebug(@"Start monitor location change");
     [_locationManager startUpdatingLocation];
-    [_locationManager startUpdatingHeading];
+//    [_locationManager startUpdatingHeading];
 }
 
 -(void) stopMonitorLocationChange
 {
+    mlogDebug(@"Stop monitor location change");
     [_locationManager stopUpdatingLocation];
-    [_locationManager stopUpdatingHeading];
+//    [_locationManager stopUpdatingHeading];
 }
 
 
@@ -166,14 +169,6 @@ static NSMutableArray *_savedLocations;
     _dateFormatter2 = [[NSDateFormatter alloc] init];
     [_dateFormatter2 setDateFormat:@"yyyy-MM-dd HH-mm"];
     
-    NSDateFormatter *dateFormattor = [[NSDateFormatter alloc] init];
-    NSFileManager *filemanager;
-    NSString *currentPath;
-    
-    [dateFormattor setDateFormat:@"HHMM"];
-    filemanager =[NSFileManager defaultManager];
-    currentPath = [filemanager currentDirectoryPath];
-    
     [LocationManager reprobeLocation];
     
 }
@@ -191,7 +186,6 @@ static NSMutableArray *_savedLocations;
     int updateLocationCount = 0;
     CLLocationCoordinate2D nextLocation = _currentCLLocationCoordinate2D;
     NSDate *updateTime = [NSDate date];
-    NSTimeInterval timeDiff;
     BOOL hasNewLocationInThisUpdate   = FALSE;
     CLLocationSpeed speed = 0;
     CLLocationDirection heading = 0;
@@ -216,7 +210,6 @@ static NSMutableArray *_savedLocations;
                 updateLocationCount++;
             }
             
-            logF(c.course);
             heading = TO_RADIUS(c.course);
             hasNewLocationInThisUpdate  = TRUE;
             lastUpdatedLocation         = c.coordinate;
@@ -235,7 +228,6 @@ static NSMutableArray *_savedLocations;
     }
         
     distance = [GeoUtil getGeoDistanceFromLocation:_currentCLLocationCoordinate2D ToLocation:nextLocation];
-    timeDiff = [updateTime timeIntervalSinceDate:_lastUpdateTime];
 
     if (YES == [GeoUtil isCLLocationCoordinate2DEqual:_lastCLLocationCoordinate2D To:lastUpdatedLocation])
     {
@@ -293,7 +285,7 @@ static NSMutableArray *_savedLocations;
 
 +(Place*) currentPlace
 {
-    Place *p = _currentPlace;
+    Place *p;
     
     if (TRUE == [SystemConfig getBoolValue:CONFIG_H_IS_MANUAL_PLACE])
         p = _currentManualPlace;
@@ -320,17 +312,10 @@ static NSMutableArray *_savedLocations;
 
 +(void) triggerLocationUpdateNotify
 {
+
     NSDate *updateTime = [NSDate date];
-    NSTimeInterval timeInterval = [updateTime timeIntervalSinceDate:_lastTriggerLocationUpdateTime]*1000;
-
-    if ( [SystemConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL] > timeInterval && _lastTriggerLocationUpdateTime != nil)
-    {
-        mlogDebug(@"skip location update notify %.0fms > %.0fms", [SystemConfig getDoubleValue:CONFIG_TRIGGER_LOCATION_INTERVAL], timeInterval);
-        return;
-    }
-
-
-
+    LocationUpdateEvent *locationUpdateEvent;
+    NSDictionary *dict;
     for (id<LocationManagerDelegate> delegate in _delegates)
     {
         if ([delegate respondsToSelector:@selector(locationManager:update:speed:distance:heading:)])
@@ -343,6 +328,18 @@ static NSMutableArray *_savedLocations;
              ];
         }
     }
+
+    locationUpdateEvent = [[LocationUpdateEvent alloc] initWitchCLLocationCoordinate2D:_currentCLLocationCoordinate2D
+                                                                                 speed:_currentSpeed
+                                                                              distance:_currentDistance
+                                                                               heading:_currentHeading];
+    
+    
+    dict = [NSDictionary dictionaryWithObject:locationUpdateEvent forKey:@"data"];
+    [[NSNotificationCenter defaultCenter] postNotificationName:LOCATION_MANAGER_LOCATION_UPDATE_EVENT
+                                                        object:self
+                                                      userInfo:dict];
+    
     
     _lastTriggerLocationUpdateTime = updateTime;
 }
@@ -361,33 +358,6 @@ static NSMutableArray *_savedLocations;
 +(CLLocationCoordinate2D) getCurrentCLLocationCoordinate2D
 {
     return _currentCLLocationCoordinate2D;
-}
-
-+(void) startMonitorLocation
-{
-    [_locationSimulator stop];
-    [_locationManager startMonitorLocationChange];
-}
-
-+(void) stopMonitorLocation
-{
-    [_locationManager stopMonitorLocationChange];
-}
-
-+(void) startLocationSimulation
-{
-    [_locationManager stopMonitorLocationChange];
-    [_locationSimulator start];
-}
-
-+(void) stopLocationSimulation
-{
-    [_locationSimulator stop];
-}
-
-+(void) triggerLocationUpdate
-{
-    [_locationSimulator triggerLocationUpdate];
 }
 
 +(void) setRoute:(Route*) route
@@ -571,4 +541,52 @@ static NSMutableArray *_savedLocations;
     
     [self saveToKml];
 }
+
++(void) triggerLocationUpdate
+{
+    [_locationSimulator triggerLocationUpdate];
+}
+
+#pragma mark -- start-stop
+
++(void) start
+{
+    if (YES == [SystemConfig getBoolValue:CONFIG_H_IS_LOCATION_SIMULATOR])
+    {
+        [_locationSimulator start];
+    }
+    else
+    {
+        [_locationManager startMonitorLocationChange];
+    }
+}
+
++(void) stop
+{
+    [_locationSimulator stop];
+    [_locationManager stopMonitorLocationChange];
+}
+
++(void) startMonitorLocation
+{
+    [_locationSimulator stop];
+    [_locationManager startMonitorLocationChange];
+}
+
++(void) stopMonitorLocation
+{
+    [_locationManager stopMonitorLocationChange];
+}
+
++(void) startLocationSimulation
+{
+    [_locationManager stopMonitorLocationChange];
+    [_locationSimulator start];
+}
+
++(void) stopLocationSimulation
+{
+    [_locationSimulator stop];
+}
+
 @end
