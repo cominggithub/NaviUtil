@@ -62,7 +62,7 @@
 -(void) initSelf
 {
     [self addUIComponents];
-    speedLabel.text     = @"120";
+    speedLabel.text     = @"0";
     self.isSpeedUnitMph = YES;
     
 }

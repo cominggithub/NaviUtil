@@ -89,8 +89,8 @@
 
 -(void)setBatteryPercentage:(float)batteryPercentage
 {
-    _batteryPercentage = batteryPercentage;
-    batteryLifeView.frame = CGRectMake(
+    _batteryPercentage      = batteryPercentage;
+    batteryLifeView.frame   = CGRectMake(
                                        batteryLifeView.frame.origin.x,
                                        batteryLifeView.frame.origin.y,
                                        batteryLifeMaxWidth * self.batteryPercentage,

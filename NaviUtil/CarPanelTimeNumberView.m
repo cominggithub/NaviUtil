@@ -186,11 +186,11 @@
     numberBlock[3]  = (int)minute/10;
     numberBlock[4]  = (int)minute%10;
 
-    numberBlock[0]  = 8;
-    numberBlock[1]  = 9;
-    numberBlock[2]  = 12;
-    numberBlock[3]  = 8;
-    numberBlock[4]  = 9;
+//    numberBlock[0]  = 1;
+//    numberBlock[1]  = 0;
+//    numberBlock[2]  = 12;
+//    numberBlock[3]  = 4;
+//    numberBlock[4]  = 5;
     
     [self refreshNumberImage];
 }

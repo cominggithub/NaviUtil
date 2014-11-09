@@ -74,7 +74,7 @@
     numberView.numberBlockHeight    = 64;
     numberView.numberGapPadding     = 10;
     numberView.imagePrefix          = @"cp3_speed_";
-    numberView.number               = 123;
+    numberView.number               = 0;
     
     kmhImage = [UIImage imageNamed:@"cp3_kmh"];
     mphImage = [UIImage imageNamed:@"cp3_mph"];

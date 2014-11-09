@@ -97,7 +97,7 @@
 
     headingView                     = [[CarPanel4HeadingView alloc] initWithFrame:CGRectMake(120, 20, 291, 285)];
     speedView                       = [[CarPanel4SpeedView alloc] initWithFrame:CGRectMake(10, 120, 21, 21)];
-    speedView.speed                 = 164;
+    speedView.speed                 = 0;
 
     
     timeView                        = [[CarPanelTimeView alloc] initWithFrame:CGRectMake(375+xOffset, 28, 187, 44)];
